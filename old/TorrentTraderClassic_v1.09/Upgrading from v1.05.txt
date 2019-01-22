@@ -1,0 +1,11 @@
+UPGRADING FROM FINAL v1.06/7 ONLY!!!!!!
+
+Please remember to backup EVERYTHING FIRST!!!
+
+This guide is only for unmodified releases, if you have applied any hacks you will need to re-apply them after.
+
+replace the following files:
+
+* backend/admin-functions.php
+* pjirc/css.php
+* browse.php

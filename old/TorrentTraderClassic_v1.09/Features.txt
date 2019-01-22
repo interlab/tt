@@ -1,0 +1,61 @@
+FEATURES LIST:
+=============
+
+Tracker Features:
+- Fully themeable (Three themes included)
+- Advance "completed by" information on all local torrents
+- User Agent (Client) detection
+- 14 Languages included
+- optimised announce.php and scrape.php codes
+- Optional auto addition of DHT Private flag (not recommended)
+- Site polls
+- IRC web chat applet (free source)
+- IRC Announcer (announces new torrents and forum posts to your IRC channel)
+- Intergrated custom forums
+- Enhanced Torrents comments with user stats
+- Staff Information Page
+- Advanced Site statistics
+- Site Logs
+- Ban IP's and ranges
+- Peerguardian import facility
+- Server load and SQL statistics
+- Database tools (optimise tables, backups etc)
+- Advance RSS Feed For torrents and categories
+- Requests system
+- Banners system
+- Shoutbox
+- Sortable Torrent Table
+
+Admin Features:
+- Admin only, confirm user registration option
+- Bad word censor
+- Ability for staff to reset user passwords
+- Private message "spy"
+- Editable number of user invites
+- Cheaters detection system
+- Customisable FAQ
+- Customisable Rules
+- Viewable user account comments and forums post history's
+- Moderator Edit/Delete comments
+- Site news system, with comments
+- Site welcome msg/notice
+- Ratio Based Wait Times and auto warn system
+- User warnings system
+- Limit character length of torrents on index
+- Ability to report to the moderators: users, torrents and forum posts
+- Disabled Accounts Management
+- Mass PM System with selectable reciever groups
+- Advanced user search
+- User Torrent History
+
+User Features:
+- PM notify on new comments
+- Anonymous uploading of torrents (set user prefs to strong privacy)
+- Editable User titles
+- Signatures viewable on Forums + Comments pages
+- Privacy option in UserCP to hide certain stats from forums/comments
+- Quote Posts In Forums
+- Latest active forum topics
+- Search Forums Function
+
+

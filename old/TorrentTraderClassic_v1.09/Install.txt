@@ -1,0 +1,47 @@
+TORRENTTRADER CLASSIC v1.09 - 16/April/2009
+===================================================
+www.torrenttrader.org
+Classic FINAL
+
+REQUIREMENTS
+-------------
+PHP4.3 OR HIGHER (KNOWN ISSUES WITH PHP5)
+MYSQL 4 (KNOWN ISSUES WITH MYSQL5)
+Register_globals no longer needs to be ON, the script will emulate it as ON.
+short_open_tag MUST be on
+
+
+INSTALLATION
+-------------
+Please remember to backup all files AND database before you update anything!
+FRESH INSTALL INSTRUCTIONS ONLY!!!!
+
+1) Copy ALL files to your webserver
+
+2) chmod install/includes/config.php and backend/config.php to 777
+
+3) Run the installer, http://yoursite/install
+
+or do a manual install:
+
+2) Import via phpmyadmin "Full Database.sql" (this will also create a admin user login)
+
+3) Edit the file backend/config.php to suit your MYSQL connection, and set your paths (ALL OTHER SETTINGS CAN BE ADJUSTED ONCE LOGGED INTO SITE AS ADMIN.
+
+4) Run check.php from your browser to check you have configured everything ok
+   check.php is designed for UNIX systems, if you are using WINDOWS it may not report the paths correctly.
+
+5) Login to site using the following
+Username: admin
+Password: admin
+
+List of CHMODS to be applied (777 or 666):
+backend/config.php
+backend/oldconfig.php
+backups
+uploads
+
+We advise banners.txt and sponsors.txt is only edited via FTP (CHMOD 644), do not CHMOD to 777
+
+
+Any problems please visit www.torrenttrader.org

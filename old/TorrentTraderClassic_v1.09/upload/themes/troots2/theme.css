@@ -1,0 +1,298 @@
+/* Define Torrent Table Outer */
+.ttable_headouter {
+    border-collapse: collapse
+    border: #646262;
+	border:1px solid #646262;
+}
+/* Define Torrent Table Inner */
+.ttable_headinner {
+	border-collapse:collapse;
+	border:1px solid #D6D9DB;
+}
+
+/* Define Torrent Table Header */
+.ttable_head {
+background:#F0F0F0; font-family: 'Verdana';
+border:1px solid #D6D9DB;
+color: #000000;
+font-size: 7pt;
+text-align: center 
+}
+
+/* Define Torrent Table Columns (colx=misc) */
+.ttable_col1 {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #F7F7F7; color:#000000
+}
+.ttable_col2 {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #ECECEC; color:#000000
+}
+.ttable_colx {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #ECECEC; color:#000000
+}
+
+/* Define Other Tables */
+.table_table {
+/*width:100%;*/
+border-left:border-collapse border-style #000000; border-right:border-collapse border-style #000000; border-top:1px border-style #000000; border-bottom:collapse border-style #000000; 
+
+}
+.table_head {
+background-position: 0% 0%; font-family: 'Verdana';
+border:1px solid #000000;
+color: #000000;
+font-size: 7pt;
+background-image:none; background-repeat:repeat; background-attachment:scroll
+}
+.table_col1 {
+font-family: 'Verdana';
+border:1px solid #CFCFCF;
+font-size: 8pt;
+background: #F7F7F7;
+}
+.table_col2 {
+font-family: 'Verdana';
+border:1px solid #CFCFCF;
+font-size: 8pt;
+background: #ECECEC;
+}
+
+
+/* OLD CSS FOLLOWS... */
+th {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 9px;
+	color: #333333;
+}
+
+.alt1 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #F7F7F7;
+}
+
+.alt2 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #ECECEC;
+}
+
+.alt3 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #808080;
+}
+
+.alt4 {
+border-right-style: none; 
+border-right-width: medium; 
+border-bottom-style: none; 
+border-bottom-width: medium
+}
+
+.alt5 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #ECECEC;
+}
+
+BODY {
+	MARGIN-TOP: 0px; FONT-SIZE: 8pt; MARGIN-BOTTOM: 0px; PADDING-BOTTOM: 0px; COLOR: #000000; PADDING-TOP: 0px; FONT-FAMILY: Tahoma, Arial, Helvetica, Sans-serif; BACKGROUND-COLOR: #cc3333
+}
+TABLE {
+	BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none; BORDER-COLLAPSE: collapse; BACKGROUND-COLOR: #ece9d8
+}
+TABLE.main {
+	BACKGROUND-COLOR: #f5f4ea
+}
+TABLE.mainouter {
+	BACKGROUND-COLOR: #f5f4ea
+}
+TABLE.bottom {
+	BACKGROUND: none transparent scroll repeat 0% 0%
+}
+H1 {
+	FONT-SIZE: 12pt
+}
+H2 {
+	FONT-SIZE: 10pt; MARGIN-BOTTOM: 6px
+}
+P {
+	FONT-SIZE: 8pt
+}
+P.sub {
+	MARGIN-BOTTOM: 4pt
+}
+TD {
+	BORDER-RIGHT: #000000 1px solid; BORDER-TOP: #000000 1px solid; FONT-SIZE: 8pt; BORDER-LEFT: #000000 1px solid; BORDER-BOTTOM: #000000 1px solid
+}
+TD.embedded {
+	BORDER-RIGHT: medium none; PADDING-RIGHT: 0px; BORDER-TOP: medium none; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; BORDER-LEFT: medium none; PADDING-TOP: 0px; BORDER-BOTTOM: medium none; TEXT-ALIGN: left
+}
+TD.bottom {
+	BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none
+}
+TD.heading {
+	FONT-WEIGHT: bold
+}
+TD.text {
+	PADDING-RIGHT: 10pt; PADDING-LEFT: 10pt; PADDING-BOTTOM: 10pt; PADDING-TOP: 10pt
+}
+TD.comment {
+	PADDING-RIGHT: 10pt; PADDING-LEFT: 10pt; FONT-SIZE: 8pt; PADDING-BOTTOM: 10pt; PADDING-TOP: 10pt; TEXT-ALIGN: left
+}
+TD.colhead {
+	FONT-WEIGHT: bold; COLOR: #ffffff; BACKGROUND-COLOR: #cc3333
+}
+TD.rowhead {
+	FONT-WEIGHT: bold; VERTICAL-ALIGN: top; TEXT-ALIGN: right
+}
+TD.title {
+	FONT-SIZE: 14pt
+}
+TD.navigation {
+	BORDER-RIGHT: medium none; BORDER-TOP: medium none; FONT-WEIGHT: bold; FONT-SIZE: 10pt; BORDER-LEFT: medium none; BORDER-BOTTOM: medium none
+}
+TD.clear {
+	BORDER-RIGHT: 0px; PADDING-RIGHT: 0px; BORDER-TOP: 0px; PADDING-LEFT: 0px; BACKGROUND: none transparent scroll repeat 0% 0%; PADDING-BOTTOM: 0px; BORDER-LEFT: 0px; PADDING-TOP: 0px; BORDER-BOTTOM: 0px
+}
+FORM {
+	MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px
+}
+.sublink {
+	FONT-WEIGHT: normal; FONT-SIZE: 7pt; FONT-STYLE: italic
+}
+FONT.gray {
+	COLOR: #aca899; TEXT-DECORATION: underline
+}
+A:link {
+	COLOR: #000000; TEXT-DECORATION: underline
+}
+A:visited {
+	COLOR: #000000; TEXT-DECORATION: underline
+}
+A:hover {
+	COLOR: #ff0000
+}
+A.index {
+	FONT-WEIGHT: bold
+}
+A.sort {
+	FONT-WEIGHT: bold; COLOR: #ffffff
+}
+A.biglink {
+	FONT-WEIGHT: bold; FONT-SIZE: 12pt
+}
+A.altlink:link {
+	FONT-WEIGHT: bold; COLOR: #a83838; TEXT-DECORATION: none
+}
+A.altlink:visited {
+	FONT-WEIGHT: bold; COLOR: #a83838; TEXT-DECORATION: none
+}
+A.toollink:link {
+	FONT-WEIGHT: bold; COLOR: #a83838; TEXT-DECORATION: none
+}
+A.toollink:visited {
+	FONT-WEIGHT: bold; COLOR: #a83838; TEXT-DECORATION: none
+}
+A.altlink:hover {
+	TEXT-DECORATION: underline
+}
+A.altlink_blue:link {
+	FONT-WEIGHT: bold; COLOR: #004e98; TEXT-DECORATION: none
+}
+A.altlink_blue:visited {
+	FONT-WEIGHT: bold; COLOR: #004e98; TEXT-DECORATION: none
+}
+A.altlink_blue:hover {
+	TEXT-DECORATION: underline
+}
+A.altlink_green:link {
+	FONT-WEIGHT: bold; COLOR: #007800; TEXT-DECORATION: none
+}
+A.altlink_green:visited {
+	FONT-WEIGHT: bold; COLOR: #007800; TEXT-DECORATION: none
+}
+A.altlink_green:hover {
+	TEXT-DECORATION: underline
+}
+.important {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt
+}
+.red {
+	COLOR: #ee0000
+}
+.yellow {
+	COLOR: #997700
+}
+.sort {
+	FONT-WEIGHT: bold; COLOR: #ffffff; BACKGROUND-COLOR: #cc3333
+}
+.green {
+	COLOR: #000000
+}
+INPUT {
+	FONT-SIZE: 8pt; FONT-FAMILY: Tahoma, Arial, Helvetica, Sans-serif
+}
+SELECT {
+	FONT-SIZE: 8pt; FONT-FAMILY: Tahoma, Arial, Helvetica, Sans-serif
+}
+TEXTAREA {
+	FONT-SIZE: 8pt; FONT-FAMILY: Tahoma, Arial, Helvetica, Sans-serif
+}
+.btn {
+	WIDTH: 75px; HEIGHT: 23px
+}
+.small {
+	FONT-SIZE: 7pt
+}
+.big {
+	FONT-SIZE: 10pt
+}
+LI {
+	MARGIN-TOP: 6pt; MARGIN-BOTTOM: 6pt
+}
+UL {
+	MARGIN-TOP: 0px; MARGIN-BOTTOM: 0px; MARGIN-LEFT: 16pt
+}
+IMG.border {
+	BORDER-RIGHT: #000000 1px solid; BORDER-TOP: #000000 1px solid; BORDER-LEFT: #000000 1px solid; BORDER-BOTTOM: #000000 1px solid
+}
+
+.codemain,
+.sqlmain,
+.htmlmain
+{
+	background: #FAFCFE;
+	border: 1px dotted #000;
+	color: #465584;
+	font-family: Courier, Courier New, Verdana, Arial;
+	margin: 0 auto 0 auto;
+	padding: 2px;
+	width: 98%;
+}
+
+#QUOTE,
+#CODE
+{
+	background: #FAFCFE;
+	border: 1px solid #000;
+	color: #465584;
+	font-family: Verdana, Arial;
+	font-size: 11px;
+	padding: 2px;
+	white-space: normal;
+}
+
+#CODE
+{
+	font-family: Courier, Courier New, Verdana, Arial;
+}

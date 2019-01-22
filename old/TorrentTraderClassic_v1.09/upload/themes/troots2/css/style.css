@@ -1,0 +1,284 @@
+BODY {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+TD {
+	FONT-SIZE: 11px; COLOR: #4f4f4f; FONT-FAMILY: Tahoma, Verdana, Arial
+}
+TH {
+	FONT-SIZE: 11px; COLOR: #4f4f4f; FONT-FAMILY: Tahoma, Verdana, Arial
+}
+.mainHeader TD {
+	VERTICAL-ALIGN: top
+}
+.botpreview {
+	BORDER-TOP: #ffffff 1px solid; VERTICAL-ALIGN: middle; COLOR: #ffffff; BACKGROUND-COLOR: #3f89c3; TEXT-ALIGN: center
+}
+.white {
+	COLOR: #ffffff
+}
+.red {
+	COLOR: #ed1c24
+}
+.blue {
+	COLOR: #425e89
+}
+.loghtgray {
+	COLOR: #434343
+}
+.graylink {
+	COLOR: #434343; TEXT-DECORATION: underline
+}
+.smallpad {
+	PADDING-RIGHT: 1px; PADDING-LEFT: 1px; PADDING-BOTTOM: 1px; COLOR: #434343; PADDING-TOP: 1px
+}
+.pricestyle {
+	PADDING-RIGHT: 3px; BORDER-TOP: #434343 1px solid; PADDING-LEFT: 3px; PADDING-BOTTOM: 3px; COLOR: #535353; PADDING-TOP: 3px
+}
+A:hover {
+	COLOR: #7CC5FF; TEXT-DECORATION: overline underline
+}
+A {
+	TEXT-DECORATION: none; color:#000000
+}
+A.gray {
+	COLOR: gray; TEXT-DECORATION: none
+}
+a:visited.gray {
+	COLOR: gray; TEXT-DECORATION: none
+}
+a:hover.gray {
+	COLOR: #808080; 
+}
+.bottomarea {
+	BORDER-TOP: #425e89 1px solid; COLOR: #3d3d3d
+}
+.bottomarea TD {
+	VERTICAL-ALIGN: top
+}
+.bottomarea A {
+	COLOR: #3d3d3d; TEXT-DECORATION: underline
+}
+.bottomarea A:hover {
+	COLOR: #3f89c3; TEXT-DECORATION: underline
+}
+.maindiv {
+	PADDING-RIGHT: 4px; PADDING-LEFT: 4px; PADDING-BOTTOM: 4px; PADDING-TOP: 4px
+}
+.blueheader {
+	FONT-WEIGHT: bold; FONT-SIZE: 13px; COLOR: #3f89c3
+}
+.inputstyle {
+	BORDER-RIGHT: #6d90b0 1px solid; BORDER-TOP: #6d90b0 1px solid; FONT-SIZE: 11px; BORDER-LEFT: #6d90b0 1px solid; COLOR: #333333; BORDER-BOTTOM: #6d90b0 1px solid; FONT-FAMILY: Tahoma, Verdana, Arial; HEIGHT: 20px; BACKGROUND-COLOR: #edf5fb
+}
+INPUT.text {
+	BORDER-RIGHT: #6d90b0 1px solid; BORDER-TOP: #6d90b0 1px solid; FONT-SIZE: 11px; BORDER-LEFT: #6d90b0 1px solid; COLOR: #333333; BORDER-BOTTOM: #6d90b0 1px solid; FONT-FAMILY: Tahoma, Verdana, Arial; HEIGHT: 20px; BACKGROUND-COLOR: #edf5fb
+}
+.disable_input {
+	BORDER-RIGHT: #6d90b0 1px solid; BORDER-TOP: #6d90b0 1px solid; FONT-SIZE: 11px; BORDER-LEFT: #6d90b0 1px solid; COLOR: #555555; BORDER-BOTTOM: #6d90b0 1px solid; FONT-FAMILY: Tahoma, Verdana, Arial; HEIGHT: 20px; BACKGROUND-COLOR: #eeeeee
+}
+.textarea_style {
+	BORDER-RIGHT: #6d90b0 1px solid; BORDER-TOP: #6d90b0 1px solid; FONT-WEIGHT: bold; FONT-SIZE: 11px; BORDER-LEFT: #6d90b0 1px solid; COLOR: #333333; BORDER-BOTTOM: #6d90b0 1px solid; FONT-FAMILY: Tahoma, Verdana, Arial; BACKGROUND-COLOR: #edf5fb
+}
+.textarea_style_slim {
+	BORDER-RIGHT: #6d90b0 1px solid; BORDER-TOP: #6d90b0 1px solid; FONT-SIZE: 11px; BORDER-LEFT: #6d90b0 1px solid; COLOR: #333333; BORDER-BOTTOM: #6d90b0 1px solid; FONT-FAMILY: Tahoma, Verdana, Arial; BACKGROUND-COLOR: #edf5fb
+}
+.middleright {
+	VERTICAL-ALIGN: middle; TEXT-ALIGN: right
+}
+.middlecenter {
+	VERTICAL-ALIGN: middle; TEXT-ALIGN: center
+}
+.toplinks {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; VERTICAL-ALIGN: middle; PADDING-TOP: 0px; BACKGROUND-REPEAT: repeat-x
+}
+.toplinks A {
+	COLOR: #ffffff; TEXT-DECORATION: underline
+}
+.toplinks A:hover {
+	COLOR: #d1ebff; TEXT-DECORATION: underline
+}
+.mainnavigation {
+	VERTICAL-ALIGN: middle; PADDING-TOP: 10px; BACKGROUND-REPEAT: no-repeat; TEXT-ALIGN: center
+}
+.mainnavigation A {
+	FONT-WEIGHT: bold; COLOR: #ffffff; TEXT-DECORATION: none
+}
+.mainnavigation A:hover {
+	COLOR: #d1ebff; TEXT-DECORATION: none
+}
+.topright {
+	COLOR: #4c6892; BACKGROUND-REPEAT: no-repeat
+}
+.topright A {
+	COLOR: #4c6892; TEXT-DECORATION: underline
+}
+.topright A:hover {
+	COLOR: #639fce
+}
+.lightblue {
+	COLOR: #3780b9
+}
+.tinyborder {
+	BORDER-RIGHT: #425e89 1px solid; BORDER-TOP: #425e89 1px solid; BORDER-LEFT: #425e89 1px solid; BORDER-BOTTOM: #425e89 1px solid
+}
+.bluebar {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; PADDING-TOP: 5px; BACKGROUND-COLOR: #4396ca; TEXT-ALIGN: center
+}
+.bluebar A {
+	FONT-WEIGHT: bold; FONT-SIZE: 10px; COLOR: #ffffff; TEXT-DECORATION: none
+}
+.bluebar A:hover {
+	COLOR: #c1d5e1; TEXT-DECORATION: underline
+}
+.darkred {
+	COLOR: #b90404
+}
+.smallfont {
+	FONT-SIZE: 9px
+}
+.bluenav {
+	FONT-SIZE: 11px; COLOR: #ffffff
+}
+.bluenav A {
+	COLOR: #ffffff; TEXT-DECORATION: none
+}
+.bluenav A:hover {
+	COLOR: #d1ebff; TEXT-DECORATION: underline
+}
+.bluelink {
+	COLOR: #3780b9; TEXT-DECORATION: underline
+}
+.none_decor {
+	COLOR: #3780b9; TEXT-DECORATION: none
+}
+:hover.none_decor {
+	TEXT-DECORATION: none
+}
+TABLE.valignTop TD {
+	VERTICAL-ALIGN: top
+}
+TABLE.valignTop TH {
+	VERTICAL-ALIGN: top
+}
+A.altTitle {
+	FONT-WEIGHT: bold; CURSOR: default; TEXT-DECORATION: none
+}
+a:hover.altTitle {
+	FONT-WEIGHT: bold; CURSOR: default; TEXT-DECORATION: none
+}
+a:hover.altTitle {
+	BORDER-BOTTOM: 1px dotted
+}
+A.free_friday_image {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #ffffff; BACKGROUND-COLOR: #418dc5; TEXT-DECORATION: none
+}
+a:hover.free_friday_image {
+	FONT-WEIGHT: bold; TEXT-DECORATION: underline
+}
+UL.list {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 12px; LIST-STYLE-POSITION: outside; LIST-STYLE-IMAGE: url(images/dot_arrow.gif); PADDING-BOTTOM: 0px; MARGIN: 10px 0px 4px 12px; PADDING-TOP: 0px
+}
+UL.list LI {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 6px; PADDING-TOP: 0px
+}
+
+/* Define Torrent Table Outer */
+.ttable_headouter {
+    border-collapse: collapse
+    border: #646262;
+	border:1px solid #646262;
+}
+/* Define Torrent Table Inner */
+.ttable_headinner {
+	border-collapse:collapse;
+	border:1px solid #D6D9DB;
+}
+
+/* Define Torrent Table Header */
+.ttable_head {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+color: #FFFFFF;
+font-size: 7pt;
+background: #3F89C3;
+text-align: center
+}
+
+/* Define Torrent Table Columns (colx=misc) */
+.ttable_col1 {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #F7F7F7;
+}
+.ttable_col2 {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #ECECEC;
+}
+.ttable_colx {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #ECECEC;
+}
+
+/* Define Other Tables */
+.table_table {
+/*width:100%;*/
+border-left:border-collapse border-style #000000; border-right:border-collapse border-style #000000; border-top:1px border-style #000000; border-bottom:collapse border-style #000000; 
+
+}
+.table_head {
+font-family: 'Verdana';
+border:1px solid #000000;
+color: #FFFFFF;
+font-size: 7pt;
+background: #3F89C3;
+}
+.table_col1 {
+font-family: 'Verdana';
+border:1px solid #CFCFCF;
+font-size: 8pt;
+background: #F7F7F7;
+}
+.table_col2 {
+font-family: 'Verdana';
+border:1px solid #CFCFCF;
+font-size: 8pt;
+background: #ECECEC;
+}
+
+
+/* OLD CSS FOLLOWS... */
+.alt1 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #F7F7F7;
+}
+
+.alt2 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #ECECEC;
+}
+
+.alt3 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #3F89C3;
+}
+
+.alt4 {
+border-right-style: none; 
+border-right-width: medium; 
+border-bottom-style: none; 
+border-bottom-width: medium
+}
+
+.alt5 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #ECECEC;
+}

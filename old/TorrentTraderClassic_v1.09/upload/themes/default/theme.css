@@ -1,0 +1,211 @@
+/* Link colors */
+A:link			{ text-decoration: none; color: #0000AA;}
+A:visited		{ text-decoration: none; color: #0000AA;}
+A:active		{ text-decoration: none; color: #000050;}
+A:hover			{ text-decoration: underline; color: #0000AA;}
+
+/* Define BODY style */
+BODY{
+    scrollbar-base-color: #EFEFEF;
+	scrollbar-face-color: #FFFFFF;
+	scrollbar-track-color: #FFFFFF;
+	scrollbar-arrow-color: #000000;
+	scrollbar-highlight-color: #000000;
+	scrollbar-3dlight-color: #000000;
+	scrollbar-shadow-color: #000000;
+	scrollbar-darkshadow-color: #000000;
+	margin: 0px;
+	background-image: url("images/background.gif");
+	font-style:normal; font-variant:normal; font-weight:normal; font-size:8pt; font-family:Verdana 
+}	
+
+/* Define Torrent Table Outer */
+.ttable_headouter {
+    border-collapse: collapse
+    border: #646262;
+	border:1px solid #646262;
+}
+/* Define Torrent Table Inner */
+.ttable_headinner {
+	border-collapse:collapse;
+	border:1px solid #D6D9DB;
+}
+
+/* Define Torrent Table Header */
+.ttable_head {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+color: #FFFFFF;
+font-size: 7pt;
+background: #808080;
+text-align: center;
+}
+
+/* Define Torrent Table Columns (colx=misc) */
+.ttable_col1 {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #F7F7F7;
+}
+.ttable_col2 {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #ECECEC;
+}
+.ttable_colx {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #ECECEC;
+}
+
+/* Define Other Tables */
+.table_table {
+/*width:100%;*/
+border: #000000;
+border-style: border-style;
+border-width: 1px
+border-collapse:collapse;
+
+}
+.table_head {
+font-family: 'Verdana';
+border:1px solid #000000;
+color: #FFFFFF;
+font-size: 7pt;
+background: #808080;
+}
+.table_col1 {
+font-family: 'Verdana';
+border:1px solid #CFCFCF;
+font-size: 8pt;
+background: #F7F7F7;
+}
+.table_col2 {
+font-family: 'Verdana';
+border:1px solid #CFCFCF;
+font-size: 8pt;
+background: #ECECEC;
+}
+
+
+/* OLD CSS FOLLOWS... */
+td {
+font-family: 'Verdana';
+font-size: 8pt; 
+}
+
+.alt1 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #F7F7F7;
+}
+
+.alt2 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #ECECEC;
+}
+
+.alt3 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #808080;
+}
+
+.alt4 {
+border-right-style: none; 
+border-right-width: medium; 
+border-bottom-style: none; 
+border-bottom-width: medium
+}
+
+.alt5 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #ECECEC;
+}
+
+.main {
+background: #CBCAC5;
+}
+
+/* ************** Define BEGIN_FRAME() Style  ************** */
+.frame_top_left {
+background: url("images/frame_top_left.gif"); width: 9; height: 24;
+}
+
+.frame_top {
+background-image: url("images/frame_top.gif");  width: 100%; height: 24px;
+}
+
+.frame_top_right {
+background: url("images/frame_top_right.gif"); width: 9px; height: 24px;
+}
+
+.frame_middle_left {
+background-image: url("images/frame_middle_left.jpg"); width: 9px; height: 8px;
+}
+
+.frame_middle {
+background: #FFFFFF; width: 100%; 
+}
+
+.frame_middle_right {
+background-image: url("images/frame_middle_right.jpg"); width: 9px; height: 8px;
+}
+
+.frame_bottom_left {
+background-image: url("images/frame_bottom_left.gif"); width: 9px; height: 10px;
+}
+
+.frame_bottom {
+background-image: url("images/frame_bottom.jpg");  width: 100%;  height: 10px;
+}
+
+.frame_bottom_right {
+background-image: url("images/frame_bottom_right.gif"); width: 9px; height: 10px;
+}
+
+space {
+background-image: url("images/bar08.gif");width: 8px; height: 8px;
+}
+
+/* ************** Define BEGIN_BLOCK() Style  ************** */
+.block_topl {
+background: url("images/block_top_left.gif"); width: 15; height: 27;
+}
+
+.block_top {
+background-image: url("images/block_top.gif");  width: 100%; height: 27px;
+}
+
+.block_topr {
+background: url("images/block_top_right.gif"); width: 15; height: 27;
+}
+
+.block_left {
+background-image: url("images/block_middle_left.gif"); width: 15px; height: 10px;
+}
+
+.block_bg {
+background-image: url("images/block_bg.jpg"); width: 100%; 
+}
+
+.block_right {
+background-image: url("images/block_middle_right.gif"); width: 15px; height: 10px;
+}
+
+.block_bottoml {
+background-image: url("images/block_bottom_left.gif"); width: 15px; height: 23px;
+}
+
+.block_bottom {
+background-image: url("images/block_bottom.gif");  width: 100%;  height: 23px;
+}
+
+.block_bottomr {
+background-image: url("images/block_bottom_right.gif"); width: 15px; height: 23px;
+}
