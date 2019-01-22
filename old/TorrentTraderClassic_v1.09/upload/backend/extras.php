@@ -1,6 +1,6 @@
-<?
+<?php
 
-$smilies = array(
+$smilies = [
   ":)" => "smile1.gif",
   ";)" => "wink.gif",
   ":D" => "grin.gif",
@@ -132,9 +132,9 @@ $smilies = array(
   ":dumbells:" => "dumbells.gif",
   ":clover:" => "clover.gif",
   ":shit:" => "shit.gif",
-);
+];
 
-$privatesmilies = array(
+$privatesmilies = [
   ":-)" => "smile1.gif",
   ";-)" => "wink.gif",
   ":-D" => "grin.gif",
@@ -144,7 +144,7 @@ $privatesmilies = array(
   ":deadhorse:" => "deadhorse.gif",
   ":spank:" => "spank.gif",
   ":yoji:" => "yoji.gif",
-);
+];
 
 $tzs["-720"] = "(GMT - 12:00 hours) Enitwetok, Kwajalien";
 $tzs["-660"] = "(GMT - 11:00 hours) Midway Island, Samoa";
@@ -176,4 +176,3 @@ $tzs["570"]  = "(GMT + 9:30 hours) Adelaide, Darwin";
 $tzs["600"]  = "(GMT + 10:00 hours) Melbourne, Papua New Guinea, Sydney, Vladivostok";
 $tzs["660"]  = "(GMT + 11:00 hours) Magadan, New Caledonia, Solomon Islands";
 $tzs["720"]  = "(GMT + 12:00 hours) Auckland, Wellington, Fiji, Marshall Island";
-?>

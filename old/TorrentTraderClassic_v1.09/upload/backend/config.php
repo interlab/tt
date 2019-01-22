@@ -1,10 +1,10 @@
-<?
+<?php
 
 // MySQL Settings (please change these to reflect your MYSQL settings, all other settings can be changed via adminCP)
 $mysql_host = "localhost";
-$mysql_user = "username";
-$mysql_pass = "password";
-$mysql_db = "databasename";
+$mysql_user = 'smf';
+$mysql_pass = 'smf2';
+$mysql_db = 'ttpmr';
 
 // Default Language / Theme Settings (These are currently set via the databases DEFAULT values, NOT THE ADMIN CP)
 $language = "1";
@@ -96,6 +96,3 @@ $signup_timeout = "259200";
 $minvotes = "1";
 $maxsiteusers = "10000";
 $max_dead_torrent_time = "21600";
-
-
-?>

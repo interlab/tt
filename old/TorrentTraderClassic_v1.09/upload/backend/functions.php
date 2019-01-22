@@ -1,8 +1,20 @@
-<?
-error_reporting(E_ALL ^ E_NOTICE);
-// register_globals on *fix*
-if (!ini_get("register_globals")) {
-    import_request_variables('GPC');
+<?php
+
+// error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(-1);
+// error_reporting(E_ALL ^ E_NOTICE);
+
+define('ST_START_TIME', microtime(true));
+
+mb_internal_encoding('UTF-8');
+setlocale(LC_ALL, 'ru_RU.UTF-8');
+header("Content-Type: text/html; charset=UTF-8");
+set_time_limit(30);
+ignore_user_abort(true);
+date_default_timezone_set('Europe/Kiev');
+
+if (PHP_MAJOR_VERSION < 7) {
+    die ('Your version not support. You will should be used php >= 7');
 }
 
 $GLOBALS['ttversion'] = '1.09';
@@ -18,6 +30,12 @@ require_once("config.php");
 require_once("cleanup.php");
 require_once("extras.php");
 
+define('ST_ROOT_DIR', dirname(__DIR__));
+require_once ST_ROOT_DIR . '/helper/DB.php';
+require_once ST_ROOT_DIR . '/helper/Yaml.php';
+require_once ST_ROOT_DIR . '/libs/vendor/autoload.php';
+
+
 //temp place for invites variables
 $invite_timeout = 86400 * 3;
 $invites = 3000;
@@ -25,37 +43,40 @@ $invites = 3000;
 // PHP5 with register_long_arrays off?
 if (!isset($HTTP_POST_VARS) && isset($_POST))
 {
-$HTTP_POST_VARS = $_POST;
-$HTTP_GET_VARS = $_GET;
-$HTTP_SERVER_VARS = $_SERVER;
-$HTTP_COOKIE_VARS = $_COOKIE;
-$HTTP_ENV_VARS = $_ENV;
-$HTTP_POST_FILES = $_FILES;
+    $HTTP_POST_VARS = $_POST;
+    $HTTP_GET_VARS = $_GET;
+    $HTTP_SERVER_VARS = $_SERVER;
+    $HTTP_COOKIE_VARS = $_COOKIE;
+    $HTTP_ENV_VARS = $_ENV;
+    $HTTP_POST_FILES = $_FILES;
+}
+
+function h($str)
+{
+    return htmlspecialchars($str, ENT_COMPAT, 'utf-8', false);
 }
 
 // IP Validation
 function validip($ip)
 {
-	if (!empty($ip) && $ip == long2ip(ip2long($ip)))
-	{
+	if (!empty($ip) && $ip == long2ip(ip2long($ip))) {
 		// reserved IANA IPv4 addresses
 		// http://www.iana.org/assignments/ipv4-address-space
-		$reserved_ips = array (
-				array('0.0.0.0','2.255.255.255'),
-				array('10.0.0.0','10.255.255.255'),
-				array('127.0.0.0','127.255.255.255'),
-				array('169.254.0.0','169.254.255.255'),
-				array('172.16.0.0','172.31.255.255'),
-				array('192.0.2.0','192.0.2.255'),
-				array('192.168.0.0','192.168.255.255'),
-				array('255.255.255.0','255.255.255.255')
-		);
+		$reserved_ips = [
+            array('0.0.0.0','2.255.255.255'),
+            array('10.0.0.0','10.255.255.255'),
+            array('127.0.0.0','127.255.255.255'),
+            array('169.254.0.0','169.254.255.255'),
+            array('172.16.0.0','172.31.255.255'),
+            array('192.0.2.0','192.0.2.255'),
+            array('192.168.0.0','192.168.255.255'),
+            array('255.255.255.0','255.255.255.255')
+		];
 
-		foreach ($reserved_ips as $r)
-		{
-				$min = ip2long($r[0]);
-				$max = ip2long($r[1]);
-				if ((ip2long($ip) >= $min) && (ip2long($ip) <= $max)) return false;
+		foreach ($reserved_ips as $r) {
+            $min = ip2long($r[0]);
+            $max = ip2long($r[1]);
+            if ((ip2long($ip) >= $min) && (ip2long($ip) <= $max)) return false;
 		}
 		return true;
 	}
@@ -85,49 +106,81 @@ function getip() {
    return $ip;
  }
 
-function dbconn($autoclean = false) {
+function dbconn($autoclean = false)
+{
     global $mysql_host, $mysql_user, $mysql_pass, $mysql_db;
-    if (!@mysql_connect($mysql_host, $mysql_user, $mysql_pass))
-    {
-      die('dbconn: mysql_connect: ' . mysql_error());
-    }
-    mysql_select_db($mysql_db)
-        or die('dbconn: mysql_select_db: ' + mysql_error());
+
+    my_pdo_connect($mysql_db, $mysql_user, $mysql_pass, $mysql_host);
 
     userlogin();
 
-    if ($autoclean)
-        register_shutdown_function("autoclean");
+    // todo
+    // if ($autoclean) {
+        // register_shutdown_function("autoclean");
+    // }
 }
 
-function userlogin() {
+function userlogin()
+{
     global $GLOBALBAN, $HTTP_SERVER_VARS, $SITE_ONLINE;
-    unset($GLOBALS["CURUSER"]);
+
+    unset($GLOBALS['CURUSER']);
 
     $ip = getip();
-	$nip = ip2long($ip);
-    $res = mysql_query("SELECT * FROM bans WHERE $nip >= first AND $nip <= last") or sqlerr(__FILE__, __LINE__);
-    if (mysql_num_rows($res) > 0)
-    {
-      $row = mysql_fetch_array($res);
-      header("HTTP/1.0 403 Forbidden");
-      print("<html><head><title>Forbidden</title></head><body><h1>Forbidden</h1>Unauthorized IP address.<br />Reason for banning: " . $row["comment"] . "</body></html>\n");
-      die;
+    $nip = ip2long($ip);
+    $row = DB::fetchAssoc('
+        SELECT *
+        FROM bans
+        WHERE ' . $nip . ' >= first
+            AND ' . $nip . ' <= last
+    ');
+    if ($row) {
+        header("HTTP/1.0 403 Forbidden");
+        echo '
+    <html>
+    <head>
+    <title>Forbidden</title>
+    </head>
+    <body>
+    <h1>Forbidden</h1>Unauthorized IP address.
+    <br />
+    Reason for banning: ', $row['comment'], '
+    </body>
+    </html>';
+        die;
     }
 
-    if (empty($_COOKIE["uid"]) || empty($_COOKIE["pass"]))
+    if (empty($_COOKIE["uid"]) || empty($_COOKIE["pass"])) {
         return;
-    $id = 0 + $_COOKIE["uid"];
-    if (!$id || strlen($_COOKIE["pass"]) != 32)
+    }
+    $id = (int) $_COOKIE["uid"];
+    if (!$id || strlen($_COOKIE["pass"]) != 32) {
         return;
-    $res = mysql_query("SELECT * FROM users WHERE id = $id AND enabled='yes' AND status = 'confirmed'") or die(mysql_error());
-    $row = mysql_fetch_array($res);
-    if (!$row)
+    }
+    $row = DB::fetchAssoc("
+    SELECT *
+    FROM users
+    WHERE id = $id
+        AND enabled = 'yes'
+        AND status = 'confirmed'");
+    if (!$row) {
         return;
+    }
     $sec = hash_pad($row["secret"]);
-    if ($_COOKIE["pass"] != md5($sec . $row["password"] . $sec))
+    if ($_COOKIE["pass"] != md5($sec.$row["password"].$sec)) {
         return;
-    mysql_query("UPDATE users SET last_access='" . get_date_time() . "', ip=".sqlesc($ip)." WHERE id=" . $row["id"]) or die(mysql_error());
+    }
+
+    DB::update('users', [
+            'last_access' => get_date_time(),
+            'ip' => $ip,
+            'showext' => $showext,
+            'url' => getenv("REQUEST_URI"),
+            'useragent' => $_SERVER["HTTP_USER_AGENT"],
+        ],
+        [ 'id' => $row["id"] ]
+    );
+
     $row['ip'] = $ip;
     $GLOBALS["CURUSER"] = $row;
 }
@@ -561,12 +614,9 @@ function searchfield($s) {
     return preg_replace(array('/[^a-z0-9]/si', '/^\s*/s', '/\s*$/s', '/\s+/s'), array(" ", "", "", " "), $s);
 }
 
-function genrelist() {
-    $ret = array();
-    $res = mysql_query("SELECT id, name FROM categories ORDER BY sort_index, id");
-    while ($row = mysql_fetch_array($res))
-        $ret[] = $row;
-    return $ret;
+function genrelist()
+{
+    return DB::fetchAll('SELECT id, name FROM categories ORDER BY sort_index, id');
 }
 
 function linkcolor($num) {
@@ -584,61 +634,104 @@ function ratingpic($num) {
     return "<img src=\"images/$r.gif\" border=\"0\" alt=\"rating: $num / 5\" />";
 }
 
-function stdhead($title = "", $msgalert = true) {
- global $CURUSER, $HTTP_SERVER_VARS, $PHP_SELF, $SITE_ONLINE, $FORUMS, $IRCCHAT, $FUNDS, $OFFLINEMSG, $SITENAME, $GLOBALBANS, $POLLSON, $theme, $REMOVALSON, $NEWSON, $USENET, $DONATEON, $DISCLAIMERON, $absolute_path, $sizebytes, $sizelimit, $limitedext, $extlimit, $INVITEONLY, $SITEURL;
+function stdhead($title = "", $msgalert = true)
+{
+    global $CURUSER, $HTTP_SERVER_VARS, $PHP_SELF, $SITE_ONLINE, $FORUMS, $IRCCHAT;
+    global $FUNDS, $OFFLINEMSG, $SITENAME, $GLOBALBANS, $POLLSON, $theme, $REMOVALSON;
+    global $NEWSON, $USENET, $DONATEON, $DISCLAIMERON, $absolute_path, $sizebytes, $sizelimit;
+    global $limitedext, $extlimit, $INVITEONLY, $SITEURL;
 
-if (!$SITE_ONLINE){
-	if(get_user_class() != UC_ADMINISTRATOR) {
-		echo '<BR><BR><BR><CENTER>'. stripslashes($OFFLINEMSG) .'</CENTER><BR><BR>';
-		die;
-	}else{
-		echo '<BR><BR><BR><CENTER><B><FONT COLOR=RED>SITE OFFLINE, ADMIN ONLY VIEWING! DO NOT LOGOUT</FONT></B><BR>If you logout please edit backend/config.php and set $SITE_ONLINE to true </CENTER><BR><BR>';
-	}
+    header("Content-Type: text/html; charset=UTF-8");
+
+    loadLanguage();
+    global $txt;
+    // dump($GLOBALS);
+
+    if (!$SITE_ONLINE) {
+        if (get_user_class() != UC_ADMINISTRATOR) {
+            echo '<BR><BR><BR><CENTER>'.stripslashes($OFFLINEMSG).'</CENTER><BR><BR>';
+            die;
+        } else {
+            echo '<BR><BR><BR><CENTER><B>
+            <FONT COLOR=RED>SITE OFFLINE, ADMIN ONLY VIEWING! DO NOT LOGOUT</FONT></B>
+            <BR>If you logout please edit backend/config.php and set $SITE_ONLINE to true </CENTER><BR><BR>';
+        }
+    }
+
+    if (!$CURUSER) {
+        guestadd();
+    }
+
+    if ($title == '') {
+        $title = $SITENAME;
+    } else {
+        $title = $SITENAME . ' :: ' . h($title);
+    }
+
+    $ss_uri = getThemeUri();
+
+    $GLOBALS['ss_uri'] = $ss_uri;
+    $GLOBALS['SITEURL'] = $SITEURL;
+
+    require_once ST_ROOT_DIR.'/themes/'.$ss_uri.'/block.php'; //add theme blocks modification
+    require_once ST_ROOT_DIR.'/themes/'.$ss_uri.'/header.php';
 }
 
+function getThemeUri()
+{
+    global $CURUSER, $st;
 
-    header("Content-Type: text/html; charset=iso-8859-1");
+    if (isset($st['cache']['styleUri'])) {
+        return $st['cache']['styleUri'];
+    }
+
+    $res = DB::fetchAssoc('
+        SELECT uri
+        FROM stylesheets
+        WHERE id = :id
+        LIMIT 1',
+        [ 'id' => $CURUSER ? $CURUSER['stylesheet'] : 1 ]
+    );
+
+    $uri = $res['uri'] ?? 'default';
+
+    $st['cache']['styleUri'] = $uri;
+
+    return $uri;
+}
+
+function loadLanguage()
+{
+    global $CURUSER, $txt;
+    static $st_load_lang = null;
+
+    if (! is_null($st_load_lang)) {
+        return;
+    }
+
+    if ($CURUSER) {
+        $lang_uri = DB::fetchAssoc("
+    SELECT uri
+    FROM languages
+    WHERE id = ".$CURUSER["language"])["uri"];
+    }
+
+    if (! isset($lang_uri)) {
+        $lang_uri = DB::fetchAssoc('
+    SELECT uri
+    FROM languages
+    WHERE id = 1')["uri"];
+    }
+
+    // dump($lang_uri, ST_ROOT_DIR . '/languages/' . $lang_uri);
     
-    if (!$CURUSER) guestadd();
+    $GLOBALS['txt'] = st_parse_yaml(ST_ROOT_DIR . '/languages/' . $lang_uri);
+    // $GLOBALS['txt'] = st_parse_yaml(ST_ROOT_DIR . '/languages/russian.yml');
 
-    if ($title == "")
-        $title = $SITENAME;
-    else
-        $title = "$SITENAME :: " . htmlspecialchars($title);
-
-  if ($CURUSER)
-  {
-    $ss_a = @mysql_fetch_array(@mysql_query("select uri from stylesheets where id=" . $CURUSER["stylesheet"]));
-    if ($ss_a) $ss_uri = $ss_a["uri"];
-  }
-  if (!$ss_uri)
-  {
-    ($r = mysql_query("SELECT uri FROM stylesheets WHERE id=1")) or die(mysql_error());
-    ($a = mysql_fetch_array($r)) or die(mysql_error());
-    $ss_uri = $a["uri"];
-  }
-  if ($CURUSER)
-  {
-    $lng_a = @mysql_fetch_array(@mysql_query("select uri from languages where id=" . $CURUSER["language"]));
-    if ($lng_a) $lang_uri = $lng_a["uri"];
-  }
-  if (!$lang_uri)
-  {
-    ($z = mysql_query("SELECT uri FROM languages WHERE id=1")) or die(mysql_error());
-    ($b = mysql_fetch_array($z)) or die(mysql_error());
-    $lang_uri = $b["uri"];
-  }
-  if ($msgalert && $CURUSER)
-  {
-    $res = mysql_query("SELECT COUNT(*) FROM messages WHERE receiver=" . $CURUSER["id"] . " && unread='yes'") or die("OopppsY!");
-    $arr = mysql_fetch_row($res);
-    $unread = $arr[0];
-  }
-	$GLOBALS['ss_uri'] = $ss_uri;
-        $GLOBALS['SITEURL'] = $SITEURL;
-	require_once("themes/" . $ss_uri . "/block.php"); //add theme blocks modification
-	require_once("languages/" . $lang_uri . "");
-	require_once("themes/" . $ss_uri . "/header.php");
+    // dump($GLOBALS['txt']);
+    // die;
+    
+    $st_load_lang = true;
 }
 
 function stdfoot() {
@@ -682,7 +775,7 @@ function torrenttable($res, $variant = "index") {
 <table align=center cellpadding="0" cellspacing="0" class="ttable_headinner" width=100%>
 
 <!---------------------START SORTING MOD------------------------->
-<?
+<?php
 $count_get = 0;
 foreach ($_GET as $get_name => $get_value) {
 if ($get_name != "sort" && $get_name != "type") {
@@ -775,13 +868,13 @@ if ($link8 == "") { $link8 = "desc"; } //for Categories
 
 <!--------------------END SORTING MOD--------------------->
 
-<td class=ttable_head><a href="?<? print $oldlink;?>sort=8&type=<? print $link8; ?>"><? echo "" . TYPE . "";?></a></td>
-<td class=ttable_head><a href="?<? print $oldlink;?>sort=1&type=<? print $link1; ?>"><? echo "" . NAME . "";?></a></td>
-<?if ($variant == "index"){
+<td class=ttable_head><a href="?<?= $oldlink; ?>sort=8&type=<?= $link8; ?>"><?= TYPE ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink; ?>sort=1&type=<?= $link1; ?>"><?= NAME ?></a></td>
+<?php if ($variant == "index"){
 echo "<td class=ttable_head>DL</td>";
 ?>
-<td class=ttable_head><a href="?<? print $oldlink;?>sort=2&type=<? print $link2; ?>">NFO</a></td>
-<?
+<td class=ttable_head><a href="?<?= $oldlink; ?>sort=2&type=<?= $link2; ?>">NFO</a></td>
+<?php
 }
 elseif ($variant == "mytorrents"){
 echo "<td class=ttable_head>" . EDIT . "</td>";
@@ -796,17 +889,16 @@ if ($MEMBERSONLY_WAIT){
 		}
 }
 ?>
-<td class=ttable_head><a href="?<? print $oldlink;?>sort=3&type=<? print $link3; ?>"><? echo "" . COMMENTS . "";?></a></td>
-<!-- <td class=ttable_head><? echo "" . RATINGS . "";?></td> -->
-<td class=ttable_head><a href="?<? print $oldlink;?>sort=4&type=<? print $link4; ?>"><? echo "" . SIZE . "";?></a></td>
-<!-- <td class=ttable_head><? echo "" . FILES . "";?></td> -->
-<td class=ttable_head><a href="?<? print $oldlink;?>sort=5&type=<? print $link5; ?>"><? echo "" . COMPLETED . "";?></a></td>
-<td class=ttable_head><a href="?<? print $oldlink;?>sort=6&type=<? print $link6; ?>"><? echo "" . SEEDS . "";?></a></td>
-<td class=ttable_head><a href="?<? print $oldlink;?>sort=7&type=<? print $link7; ?>"><? echo "" . LEECH . "";?></a></td>
-<td class=ttable_head><? echo "" . HEALTH . "";?></td>
+<td class=ttable_head><a href="?<?= $oldlink; ?>sort=3&type=<?= $link3; ?>"><?= COMMENTS ?></a></td>
+<!-- <td class=ttable_head><?= RATINGS ?></td> -->
+<td class=ttable_head><a href="?<?= $oldlink;?>sort=4&type=<?= $link4; ?>"><?= SIZE ?></a></td>
+<!-- <td class=ttable_head><?= FILES ?></td> -->
+<td class=ttable_head><a href="?<?= $oldlink;?>sort=5&type=<?= $link5; ?>"><?= COMPLETED ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink;?>sort=6&type=<?= $link6; ?>"><?= SEEDS ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink;?>sort=7&type=<?= $link7; ?>"><?= LEECH ?></a></td>
+<td class=ttable_head><?= HEALTH ?></td>
 
-<?
-
+<?php
 	print("</tr>\n");
 
 	while ($row = mysql_fetch_assoc($res)) {
@@ -1426,24 +1518,34 @@ function get_elapsed_time($ts)
   return "< 1 min";
 }
 
-function hex2bin($hexdata) {
-  $bindata = "";
-  for ($i=0;$i<strlen($hexdata);$i+=2) {
-    $bindata.=chr(hexdec(substr($hexdata,$i,2)));
-  }
- 
-  return $bindata;
+if (! function_exists('hex2bin')) {
+    function hex2bin($hexdata) {
+      $bindata = '';
+      for ($i=0; $i<strlen($hexdata); $i+=2) {
+        $bindata.=chr(hexdec(substr($hexdata,$i,2)));
+      }
+     
+      return $bindata;
+    }
 }
 
-function guestadd() {
+function guestadd()
+{
     $ip = $_SERVER["REMOTE_ADDR"];
-	$sql = mysql_query("SELECT time FROM guests WHERE ip='$ip'");
+    $sql = DB::fetchAssoc('
+        SELECT time
+        FROM guests
+        WHERE ip = ?',
+        [$ip]
+    );
     $ctime = time();
-    if (mysql_fetch_row($sql))
-	{
-		@mysql_query("UPDATE guests SET ip='$ip', time='$ctime' WHERE ip='$ip'");
+    if ($sql) {
+        DB::update('guests', 
+            ['ip' => $ip, 'time' => $ctime],
+            ['ip' => $ip]
+        );
     } else {
-		@mysql_query("INSERT INTO guests (ip, time) VALUES ('$ip', '$ctime')");
+        DB::insert('guests', ['ip' => $ip, 'time' => $ctime]);
     }
 }
 
@@ -1475,7 +1577,7 @@ function CutName ($vTxt, $Car) {
 	} return $vTxt;
 }
 
-function textbbcode($form,$name,$content="") {?><script language=javascript>function SmileIT(smile,form,text){  document.forms[form].elements[text].value = document.forms[form].elements[text].value+" "+smile+" ";  document.forms[form].elements[text].focus();}function PopMoreSmiles(form,name) {        link='moresmiles.php?form='+form+'&text='+name        newWin=window.open(link,'moresmile','height=500,width=300,resizable=no,scrollbars=yes');        if (window.focus) {newWin.focus()}}function BBTag(tag,s,text,form){switch(tag)  {  case '[quote]':  if (document.forms[form].elements[s].value=="QUOTE ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[quote]";      document.forms[form].elements[s].value="QUOTE*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/quote]";         document.forms[form].elements[s].value="QUOTE ";         }      break;  case '[img]':  if (document.forms[form].elements[s].value=="IMG ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[img]";      document.forms[form].elements[s].value="IMG*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/img]";         document.forms[form].elements[s].value="IMG ";         }      break;  case '[url]':  if (document.forms[form].elements[s].value=="URL ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[url]";      document.forms[form].elements[s].value="URL*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/url]";         document.forms[form].elements[s].value="URL ";         }      break;  case '[*]':  if (document.forms[form].elements[s].value=="List ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[*]";      }      break;  case '':  if (document.forms[form].elements[s].value=="B ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[b]";      document.forms[form].elements[s].value="B*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";         document.forms[form].elements[s].value="B ";         }      break;  case '':  if (document.forms[form].elements[s].value=="I ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[i]";      document.forms[form].elements[s].value="I*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";         document.forms[form].elements[s].value="I ";         }      break;  case '':  if (document.forms[form].elements[s].value=="U ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[u]";      document.forms[form].elements[s].value="U*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";         document.forms[form].elements[s].value="U ";         }      break;  }  document.forms[form].elements[text].focus();}</script><table width="100%" style='margin: 3px' cellpadding="0" cellspacing="0">  <tr>    <td class=embedded colspan=3>    <table cellpadding="2" cellspacing="1">    <tr>    <td class=embedded><input style="font-weight: bold;" type="button" name="bold" value="B " onclick="javascript: BBTag('[b]','bold','<? echo $name; ?>','<? echo $form; ?>')" /></td>    <td class=embedded><input style="font-style: italic;" type="button" name="italic" value="I " onclick="javascript: BBTag('[i]','italic','<? echo $name; ?>','<? echo $form; ?>')" /></td>    <td class=embedded><input style="text-decoration: underline;" type="button" name="underline" value="U " onclick="javascript: BBTag('[u]','underline','<? echo $name; ?>','<? echo $form; ?>')" /></td>    <td class=embedded><input type="button" name="li" value="List " onclick="javascript: BBTag('[*]','li','<? echo $name; ?>','<? echo $form; ?>')" /></td>    <td class=embedded><input type="button" name="quote" value="QUOTE " onclick="javascript: BBTag('[quote]','quote','<? echo $name; ?>','<? echo $form; ?>')" /></td>    <td class=embedded><input type="button" name="url" value="URL " onclick="javascript: BBTag('[url]','url','<? echo $name; ?>','<? echo $form; ?>')" /></td>    <td class=embedded><input type="button" name="img" value="IMG " onclick="javascript: BBTag('[img]','img','<? echo $name; ?>','<? echo $form; ?>')" /></td>    </tr>    </table>    </td>  </tr>  <tr>    <td class=embedded>    <textarea name="<? echo $name; ?>" rows="15" cols="80"><? echo $content; ?></textarea>    </td>    <td class=embedded>    <table cellpadding="3" cellspacing="1">    <?    global $smilies;    while ((list($code, $url) = each($smilies)) && $count<36) {       if ($count % 4==0)          print("<tr>");          print("\n<td class=embedded style='padding: 3px; margin: 2px'><a href=\"javascript: SmileIT('".str_replace("'","\'",$code)."','$form','$name')\"><img border=0 src=pic/smilies/".$url."></a></td>");          $count++;       if ($count % 4==0)          print("</tr>");    }    ?>    </table> <center><a href="javascript: PopMoreSmiles('<? echo $form; ?>','<? echo $name; ?>')"><? echo MORE_SMILES;?></a></center>    </td>  </tr></table>
-<?}
+function textbbcode($form,$name,$content="") {?><script language=javascript>function SmileIT(smile,form,text){  document.forms[form].elements[text].value = document.forms[form].elements[text].value+" "+smile+" ";  document.forms[form].elements[text].focus();}function PopMoreSmiles(form,name) {        link='moresmiles.php?form='+form+'&text='+name        newWin=window.open(link,'moresmile','height=500,width=300,resizable=no,scrollbars=yes');        if (window.focus) {newWin.focus()}}function BBTag(tag,s,text,form){switch(tag)  {  case '[quote]':  if (document.forms[form].elements[s].value=="QUOTE ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[quote]";      document.forms[form].elements[s].value="QUOTE*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/quote]";         document.forms[form].elements[s].value="QUOTE ";         }      break;  case '[img]':  if (document.forms[form].elements[s].value=="IMG ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[img]";      document.forms[form].elements[s].value="IMG*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/img]";         document.forms[form].elements[s].value="IMG ";         }      break;  case '[url]':  if (document.forms[form].elements[s].value=="URL ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[url]";      document.forms[form].elements[s].value="URL*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/url]";         document.forms[form].elements[s].value="URL ";         }      break;  case '[*]':  if (document.forms[form].elements[s].value=="List ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[*]";      }      break;  case '':  if (document.forms[form].elements[s].value=="B ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[b]";      document.forms[form].elements[s].value="B*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";         document.forms[form].elements[s].value="B ";         }      break;  case '':  if (document.forms[form].elements[s].value=="I ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[i]";      document.forms[form].elements[s].value="I*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";         document.forms[form].elements[s].value="I ";         }      break;  case '':  if (document.forms[form].elements[s].value=="U ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[u]";      document.forms[form].elements[s].value="U*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";         document.forms[form].elements[s].value="U ";         }      break;  }  document.forms[form].elements[text].focus();}</script><table width="100%" style='margin: 3px' cellpadding="0" cellspacing="0">  <tr>    <td class=embedded colspan=3>    <table cellpadding="2" cellspacing="1">    <tr>    <td class=embedded><input style="font-weight: bold;" type="button" name="bold" value="B " onclick="javascript: BBTag('[b]','bold','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input style="font-style: italic;" type="button" name="italic" value="I " onclick="javascript: BBTag('[i]','italic','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input style="text-decoration: underline;" type="button" name="underline" value="U " onclick="javascript: BBTag('[u]','underline','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input type="button" name="li" value="List " onclick="javascript: BBTag('[*]','li','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input type="button" name="quote" value="QUOTE " onclick="javascript: BBTag('[quote]','quote','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input type="button" name="url" value="URL " onclick="javascript: BBTag('[url]','url','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input type="button" name="img" value="IMG " onclick="javascript: BBTag('[img]','img','<?= $name; ?>','<?= $form; ?>')" /></td>    </tr>    </table>    </td>  </tr>  <tr>    <td class=embedded>    <textarea name="<?= $name; ?>" rows="15" cols="80"><?= $content; ?></textarea>    </td>    <td class=embedded>    <table cellpadding="3" cellspacing="1">    <?    global $smilies;    while ((list($code, $url) = each($smilies)) && $count<36) {       if ($count % 4==0)          print("<tr>");          print("\n<td class=embedded style='padding: 3px; margin: 2px'><a href=\"javascript: SmileIT('".str_replace("'","\'",$code)."','$form','$name')\"><img border=0 src=pic/smilies/".$url."></a></td>");          $count++;       if ($count % 4==0)          print("</tr>");    }    ?>    </table> <center><a href="javascript: PopMoreSmiles('<?= $form; ?>','<?= $name; ?>')"><?= MORE_SMILES;?></a></center>    </td>  </tr></table>
+<?php }
 
 ?>
