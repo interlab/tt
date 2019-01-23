@@ -1,4 +1,4 @@
-<?
+<?php
 //
 // - Theme And Language Updated 27.Nov.05
 //
@@ -6,7 +6,7 @@ ob_start("ob_gzhandler");
 require "backend/functions.php";
 dbconn();
 stdhead("Rules");
-begin_frame("" . SITE_RULES . "");
+begin_frame($txt['SITE_RULES']);
 
 $res = mysql_query("select * from rules order by id");
 while ($arr=mysql_fetch_assoc($res)){
@@ -29,4 +29,3 @@ echo "<BR><BR>";
 end_frame();
 
 stdfoot();
-?>

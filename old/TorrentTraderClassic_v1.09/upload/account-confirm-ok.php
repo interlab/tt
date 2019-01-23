@@ -1,16 +1,15 @@
-<?
-//
-//
-// Confirm account OK!
+<?php
+
 require_once("backend/functions.php");
 dbconn();
 
-if (!mkglobal("type"))
-	die();
+if (!mkglobal("type")) {
+    die();
+}
 
 if ($type == "signup" && mkglobal("email")) {
-	stdhead("" . ACCOUNT_USER_SIGNUP ."");
-        begin_frame("" . ACCOUNT_SIGNUP_SUCCESS . "");
+	stdhead($txt['ACCOUNT_USER_SIGNUP']);
+        begin_frame($txt['ACCOUNT_SIGNUP_SUCCESS']);
 		if (!$ACONFIRM) {
 			print("" . ACCOUNT_CONFIRM_SENT_TO_ADDY . " (" . htmlspecialchars($email) . "). " . ACCOUNT_CONFIRM_SENT_TO_ADDY_REST . " <br/ >");
 		} else {
@@ -19,8 +18,8 @@ if ($type == "signup" && mkglobal("email")) {
 	end_frame();
 }
 elseif ($type == "confirmed") {
-	stdhead("" . ACCOUNT_ALREADY_CONFIRMED . "");
-        begin_frame("" . ACCOUNT_ALREADY_CONFIRMED . "");
+	stdhead($txt['ACCOUNT_ALREADY_CONFIRMED']);
+        begin_frame($txt['ACCOUNT_ALREADY_CONFIRMED']);
 	print("" . ACCOUNT_ALREADY_CONFIRMED . "\n");
 	end_frame();
 }
@@ -36,16 +35,16 @@ stdfoot();
 
 elseif ($type == "confirm") {
 	if (isset($CURUSER)) {
-		stdhead("" . ACCOUNT_SIGNUP_CONFIRMATION . "");
-		begin_frame("" . ACCOUNT_SUCCESS_CONFIRMED . "");
+		stdhead($txt['ACCOUNT_SIGNUP_CONFIRMATION']);
+		begin_frame($txt['ACCOUNT_SUCCESS_CONFIRMED']);
 		print("" . ACCOUNT_ACTIVATED . " <a href=". $SITEURL ."/index.php>" . ACCOUNT_ACTIVATED_REST . "\n");
-		print("" . ACCOUNT_BEFOR_USING . "" . $SITENAME . " " . ACCOUNT_BEFOR_USING_REST ."\n");
+		print($txt['ACCOUNT_BEFOR_USING'] . $SITENAME . " " . ACCOUNT_BEFOR_USING_REST ."\n");
 		end_frame();
 	}
 	else {
-		stdhead("" . ACCOUNT_SIGNUP_CONFIRMATION . "");
-		begin_frame("" . ACCOUNT_SUCCESS_CONFIRMED . "");
-		print("" . ACCOUNT_ACTIVATED . "");
+		stdhead($txt['ACCOUNT_SIGNUP_CONFIRMATION']);
+		begin_frame($txt['ACCOUNT_SUCCESS_CONFIRMED']);
+		print($txt['ACCOUNT_ACTIVATED']);
 		end_frame();
 	}
         //send welcome pm
@@ -60,5 +59,3 @@ else
 
 stdfoot();
 
-
-?>

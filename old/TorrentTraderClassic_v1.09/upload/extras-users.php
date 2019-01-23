@@ -1,4 +1,4 @@
-<?
+<?php
 //
 // - Theme And Language Updated 26.Nov.05
 //
@@ -17,7 +17,7 @@ if ($search != '' || $class)
 {
 $query = "username LIKE " . sqlesc("%$search%") . " AND status='confirmed'";
 if ($search)
-$q = "search=" . htmlspecialchars($search);
+$q = "search=" . h($search);
 }
 else
 {
@@ -38,10 +38,10 @@ $query .= " AND class=$class";
 $q .= ($q ? "&amp;" : "") . "class=$class";
 }
 
-stdhead("" . USERS . "");
-begin_frame("" . MEMBERS . "", center);
+stdhead($txt['USERS']);
+begin_frame($txt['MEMBERS'], 'center');
 print("<br /><form method=get action=?>\n");
-print("" . SEARCH . ": <input type=text size=30 name=search>\n");
+print("" . $txt['SEARCH'] . ": <input type=text size=30 name=search>\n");
 print("<select name=class>\n");
 print("<option value='-'>(any class)</option>\n");
 for ($i = 0;;++$i)
@@ -52,12 +52,12 @@ for ($i = 0;;++$i)
 	  break;
 }
 print("</select>\n");
-print("<input type=submit value='". SEARCH . "'>\n");
+print("<input type=submit value='" . $txt['SEARCH'] . "'>\n");
 print("</form>\n");
 
 print("<p>\n");
 
-print("<a href=extras-users.php><b>" . ALL . "</b></a> - \n");
+print("<a href=extras-users.php><b>" . $txt['ALL'] . "</b></a> - \n");
 for ($i = 97; $i < 123; ++$i)
 {
 	$l = chr($i);
@@ -111,7 +111,7 @@ $res = mysql_query("SELECT * FROM users WHERE $query ORDER BY username LIMIT $of
 $num = mysql_num_rows($res);
 
 begin_table();
-print("<tr><td class=ttable_head align=left>" . USERNAME . "</td><td class=ttable_head>" . REGISTERED . "</td><td class=ttable_head>" . LAST_ACCESS . "</td><td class=ttable_head>" . RANK . "</td><td class=ttable_head>" . COUNTRY . "</td></tr>\n");
+print("<tr><td class=ttable_head align=left>" . $txt['USERNAME'] . "</td><td class=ttable_head>" . $txt['REGISTERED'] . "</td><td class=ttable_head>" . $txt['LAST_ACCESS'] . "</td><td class=ttable_head>" . $txt['RANK'] . "</td><td class=ttable_head>" . $txt['COUNTRY'] . "</td></tr>\n");
 for ($i = 0; $i < $num; ++$i)
 {
   $arr = mysql_fetch_assoc($res);
@@ -141,4 +141,3 @@ end_frame();
 stdfoot();
 die;
 
-?>

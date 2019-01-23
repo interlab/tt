@@ -1,4 +1,5 @@
 <?php
+
 ob_start();
 require_once("backend/functions.php");
 
@@ -9,7 +10,7 @@ modonly();
 stdhead("Categories");
 require_once("backend/admin-functions.php");
 adminmenu();
-begin_frame("" . CATEGORIES . "");
+begin_frame($txt['CATEGORIES']);
 
 //DELETE CAT
 $sure = $_GET['sure'];

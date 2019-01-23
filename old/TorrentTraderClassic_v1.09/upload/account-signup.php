@@ -1,4 +1,4 @@
-<?
+<?php
 
 require_once("backend/functions.php");
 dbconn();
@@ -114,7 +114,7 @@ if ($message != "")
 	bark2("Signup Failed", $message);
 ?>
 
-<? echo "" . COOKIES . "";?>
+<?= $txt['COOKIES'] ?>
 <p>
 <form method="post" action="account-signup.php">
 	<table cellSpacing="0" cellPadding="2" border="0" >

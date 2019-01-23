@@ -1,11 +1,12 @@
-<?
+<?php
+
 ob_start("ob_gzhandler");
 require "backend/functions.php";
 dbconn(false);
 
 loggedinorreturn();
 
-//SOME FUNCTIONS AND SQL
+// SOME FUNCTIONS AND SQL
 function maketable($res)
 {
   $ret = "<table class=table_table border=1 cellspacing=0 cellpadding=2>" .
@@ -182,16 +183,16 @@ print("<BR><br><a href=account-inbox.php?receiver=$user[username]>" . ACCOUNT_SE
 		<TR><TD>
 <!--  -->
 			<table width=100% border=0 cellspacing=0 cellpadding=3>
-			<tr><td><?echo "" . LAST_ACCESS . "";?>: </td><td align=left><?=$lastseen?></td></tr>
-			<tr><td><?echo "" . COUNTRY . "";?>: </td><td align=left><?=$country?></td></tr>
-			<tr><td><?echo "" . AGE . "";?>: </td><td align=left><?=$user["age"]?></td></tr>
-			<tr><td><?echo "" . GENDER . "";?>: </td><td align=left><?=$user["gender"]?></td></tr>
-			<tr><td><?echo "" . CLIENT . "";?>: </td><td align=left><?=$user["client"]?></td></tr>
-			<tr><td><?echo "" . COMMENTS . "";?>: </td><td align=left><?=$torrentcomments?></td></tr>
-			<tr><td><?echo "" . WARNED . "";?>: </td><td align=left><?=$user["warned"]?></td></tr>
-            <? if($arr_rws['warned'] == 'yes'){?><tr><td><?echo "Days until ban";?>: </td><td align=left><?=$timeleft?></td></tr><?}?>
-			<tr><td><?echo "" . FORUM_POSTS . "";?>: </td><td align=left><?=$forumposts?></td></tr>
-			<tr><td><?echo "" . TORRENTS_POSTED . "";?>: </td><td align=left><?=$torrenttorrents?></td></tr>
+			<tr><td><?= $txt['LAST_ACCESS'] ?>: </td><td align=left><?=$lastseen?></td></tr>
+			<tr><td><?= $txt['COUNTRY'] ?>: </td><td align=left><?=$country?></td></tr>
+			<tr><td><?= $txt['AGE'] ?>: </td><td align=left><?=$user["age"]?></td></tr>
+			<tr><td><?= $txt['GENDER'] ?>: </td><td align=left><?=$user["gender"]?></td></tr>
+			<tr><td><?= $txt['CLIENT'] ?>: </td><td align=left><?=$user["client"]?></td></tr>
+			<tr><td><?= $txt['COMMENTS'] ?>: </td><td align=left><?=$torrentcomments?></td></tr>
+			<tr><td><?= $txt['WARNED'] ?>: </td><td align=left><?=$user["warned"]?></td></tr>
+            <?php if($arr_rws['warned'] == 'yes'){?><tr><td><?= "Days until ban";?>: </td><td align=left><?=$timeleft?></td></tr><?}?>
+			<tr><td><?= $txt['FORUM_POSTS'] ?>: </td><td align=left><?=$forumposts?></td></tr>
+			<tr><td><?= $txt['TORRENTS_POSTED'] ?>: </td><td align=left><?=$torrenttorrents?></td></tr>
 			</TABLE>
 		</TD></TR></TABLE>
 <!--  -->
@@ -202,16 +203,16 @@ print("<BR><br><a href=account-inbox.php?receiver=$user[username]>" . ACCOUNT_SE
 		<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262><TR><TD width=100% valign=middle class=table_head height=30><B>Statistics:</B></TD></TR>
 		<TR><TD>
 		<table width=100% border=0 cellspacing=0 cellpadding=3>
-		<?
+		<?php
 		if ($privacylevel == "strong"){?>
-			<tr><td><?echo "" . UPLOADED . "";?>: </td><td align=left>---</td></tr>
-			<tr><td><?echo "" . DOWNLOADED . "";?>: </td><td align=left>---</td></tr>
-		<?}else{?>
-<tr><td><?echo "" . UPLOADED . "";?>: </td><td align=left><?=mksize($user["uploaded"])?></td></tr>
-<tr><td><?echo "" . DOWNLOADED . "";?>: </td><td align=left><?=mksize($user["downloaded"])?></td></tr>
+			<tr><td><?echo $txt['UPLOADED'];?>: </td><td align=left>---</td></tr>
+			<tr><td><?echo $txt['DOWNLOADED'];?>: </td><td align=left>---</td></tr>
+		<?php } else { ?>
+<tr><td><?echo $txt['UPLOADED'];?>: </td><td align=left><?=mksize($user["uploaded"])?></td></tr>
+<tr><td><?echo $txt['DOWNLOADED'];?>: </td><td align=left><?=mksize($user["downloaded"])?></td></tr>
 <tr><td><?echo "Avg Daily DL:";?></td><td align=left><?=mksize($user["downloaded"] / $user["added"])?></td></tr>
 <tr><td><?echo "Avg Daily UL:";?></td><td align=left><?=mksize($user["uploaded"] / $user["added"])?></td></tr>
-<?
+<?php
 		}
 
   if ($user["downloaded"] > 0)
@@ -237,7 +238,7 @@ print("<BR><br><a href=account-inbox.php?receiver=$user[username]>" . ACCOUNT_SE
 		</TD></TR>
 		</TABLE>
 
-		<?
+		<?php
 		//now do the mod only stuff
 if (get_user_class() >= UC_JMODERATOR)
 {?>
@@ -245,16 +246,16 @@ if (get_user_class() >= UC_JMODERATOR)
 		<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262><TR><TD width=100% valign=middle bgcolor=green height=30><B>Moderator Only:</B></TD></TR>
 		<TR><TD>
 		<table width=100% border=0 cellspacing=0 cellpadding=3>
-   <?
+   <?php
 	print("<tr><td>Email: </td><td align=left>$user[email] - <a href=account-inbox.php?receiver=$user[username]>Send PM</a></td></tr>\n");
   if ($addr)
     print("<tr><td>IP Address: </td><td align=left>$user[ip]</td></tr>\n");
     print("<tr><td>Host: </td><td align=left>$dom</td></tr>\n");
 	?>
-	<tr><td><?echo "" . UPLOADED . "";?>: </td><td align=left><?=mksize($user["uploaded"])?></td></tr>
-	<tr><td><?echo "" . DOWNLOADED . "";?>: </td><td align=left><?=mksize($user["downloaded"])?></td></tr>
-	<tr><td><?echo "" . DONATED . "";?>: </td><td align=left><?=$user["donated"]?></td></tr>
-	<?
+	<tr><td><?echo $txt['UPLOADED'];?>: </td><td align=left><?=mksize($user["uploaded"])?></td></tr>
+	<tr><td><?echo $txt['DOWNLOADED'];?>: </td><td align=left><?=mksize($user["downloaded"])?></td></tr>
+	<tr><td><?echo $txt['DONATED'];?>: </td><td align=left><?=$user["donated"]?></td></tr>
+	<?php
 
 	//invite code start
 if (get_user_class() >= UC_JMODERATOR && $user[invites] > 0 || $user["id"] == $CURUSER["id"] && $user[invites] > 0)
@@ -271,7 +272,7 @@ if (get_user_class() >= UC_JMODERATOR && $user[invitees] > 0 || $user["id"] == $
 {
 $compl = $user["invitees"];
 $compl_list = explode(" ", $compl);
-$arr = array();
+$arr = [];
 
 foreach($compl_list as $array_list)
 $arr[] = $array_list;
@@ -290,7 +291,7 @@ echo("<tr><td class=rowhead width=1%>Invited Users: </td><td>");
 
 $compl = $user["invitees"];
 $compl_list = explode(" ", $compl);
-$arr = array();
+$arr = [];
 
 foreach($compl_list as $array_list)
 $arr[] = $array_list;
@@ -352,11 +353,11 @@ $sd = $fetched_result['name'];
 
 		</table>
 		</td></tr></table>
-<?}?>
+<?php } ?>
 
 	</td></tr></table>
 </td></tr></table><BR>
-<?
+<?php
 if ($torrents)
   print("<B>" . UPLOADED_TORRENTS . ":</B><BR>$torrents<BR><BR>");
 if ($seeding)
@@ -429,4 +430,3 @@ begin_frame("IP Ban", center);
 }
 stdfoot();
 
-?>

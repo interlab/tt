@@ -224,10 +224,10 @@ $totalnow = $arr4[0];
 if ($CURUSER)
 	guestadd();
 if (!$activepeople)
-  $activepeople = "" . NO_USERS . "";
+  $activepeople = $txt['NO_USERS'];
 
   if (!$todayactive)
-  $todayactive = "" . NO_USERS . "";
+  $todayactive = $txt['NO_USERS'];
 $guests = getguests();
 if (!$guests)
 	$guests = "0";
@@ -239,7 +239,7 @@ $time_start = getmicrotime();
 
   stdhead();
 
-  begin_frame("" . STATS . "", center);
+  begin_frame($txt['STATS'], 'center');
 
 echo "<div align=left><font class=stats>" . WELCOME_NEW . ": " . $latestuser . "</font><br>";
 if (!$activepeople)

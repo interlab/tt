@@ -253,7 +253,7 @@ function deadtime() {
 function mkprettytime($s) {
     if ($s < 0)
         $s = 0;
-    $t = array();
+    $t = [];
     foreach (array("60:sec","60:min","24:hour","0:day") as $x) {
         $y = explode(":", $x);
         if ($y[0] > 1) {
@@ -452,7 +452,7 @@ function deletetorrent($id) {
 	@unlink("$nfo_dir/$id.nfo");
 }
 
-function pager($rpp, $count, $href, $opts = array()) {
+function pager($rpp, $count, $href, $opts = []) {
     $pages = ceil($count / $rpp);
 
     if (!$opts["lastpagedefault"])
@@ -493,7 +493,7 @@ function pager($rpp, $count, $href, $opts = array()) {
         $pager .= $as;
 
     if ($count) {
-        $pagerarr = array();
+        $pagerarr = [];
         $dotted = 0;
         $dotspace = 3;
         $dotend = $pages - $dotspace;
@@ -532,9 +532,9 @@ function pager($rpp, $count, $href, $opts = array()) {
 }
 
 function downloaderdata($res) {
-    $rows = array();
-    $ids = array();
-    $peerdata = array();
+    $rows = [];
+    $ids = [];
+    $peerdata = [];
     while ($row = mysql_fetch_assoc($res)) {
         $rows[] = $row;
         $id = $row["id"];
@@ -1074,17 +1074,17 @@ if ($MEMBERSONLY_WAIT){
 			print("<td class=ttable_col1 align=center><font color=red><B>" . $row["leechers"] . "</b></td>\n");
 
 // Progressbar Mod
-$seedersProgressbar = array();
-$leechersProgressbar = array();
+$seedersProgressbar = [];
+$leechersProgressbar = [];
 $resProgressbar = mysql_query("SELECT p.seeder, p.to_go, t.size FROM torrents AS t LEFT JOIN peers AS p ON t.id = p.torrent WHERE  p.torrent = '$id'") or sqlerr();
 $progressPerTorrent = 0;
 $iProgressbar = 0;
 while ($rowProgressbar = mysql_fetch_array($resProgressbar)) {
-$progressPerTorrent += sprintf("%.2f", 100 * (1 - ($rowProgressbar["to_go"] / $rowProgressbar["size"])));    
-$iProgressbar++;
+    $progressPerTorrent += sprintf("%.2f", 100 * (1 - ($rowProgressbar["to_go"] / $rowProgressbar["size"])));    
+    $iProgressbar++;
 }
-if ($iProgressbar == 0) 
-$iProgressbar = 1;
+if ($iProgressbar == 0)
+    $iProgressbar = 1;
 $progressTotal = sprintf("%.2f", $progressPerTorrent / $iProgressbar);
 $picProgress = get_percent_completed_image(floor($progressTotal))." (".round($progressTotal)."%)";
 print("<td class=ttable_col2 align=left>$picProgress</td>\n");

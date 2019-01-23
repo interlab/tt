@@ -209,7 +209,7 @@ function bdec_list($s) {
 		return;
 	$sl = strlen($s);
 	$i = 1;
-	$v = array();
+	$v = [];
 	$ss = "l";
 	for (;;) {
 		if ($i >= $sl)
@@ -232,7 +232,7 @@ function bdec_dict($s) {
 		return;
 	$sl = strlen($s);
 	$i = 1;
-	$v = array();
+	$v = [];
 	$ss = "d";
 	for (;;) {
 		if ($i >= $sl)

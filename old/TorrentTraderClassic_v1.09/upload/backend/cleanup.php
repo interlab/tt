@@ -81,7 +81,7 @@ while ($row=mysql_fetch_array($query)) {
 }
 // End Ratio Warn
 		$res = mysql_query("SELECT id FROM torrents");
-		$ar = array();
+		$ar = [];
 		while ($row = mysql_fetch_array($res)) {
 			$id = $row[0];
 			$ar[$id] = 1;
@@ -94,7 +94,7 @@ while ($row=mysql_fetch_array($query)) {
 		if (!$dp)
 			break;
 
-		$ar2 = array();
+		$ar2 = [];
 		while (($file = readdir($dp)) !== false) {
 			if (!preg_match('/^(\d+)\.torrent$/', $file, $m))
 				continue;
@@ -110,7 +110,7 @@ while ($row=mysql_fetch_array($query)) {
 		if (!count($ar2))
 			break;
 //DELETE OLD TORRENTS AND CLEAN PEERS TABLE
-		$delids = array();
+		$delids = [];
 		foreach (array_keys($ar) as $k) {
 			if (isset($ar2[$k]) && $ar2[$k])
 				continue;
@@ -123,7 +123,7 @@ while ($row=mysql_fetch_array($query)) {
 		}
 
 		$res = mysql_query("SELECT torrent FROM peers GROUP BY torrent");
-		$delids = array();
+		$delids = [];
 		while ($row = mysql_fetch_array($res)) {
 			$id = $row[0];
 			if (isset($ar[$id]) && $ar[$id])
@@ -134,7 +134,7 @@ while ($row=mysql_fetch_array($query)) {
 			mysql_query("DELETE FROM peers WHERE torrent IN (" . join(",", $delids) . ")");
 
 		$res = mysql_query("SELECT torrent FROM files GROUP BY torrent");
-		$delids = array();
+		$delids = [];
 		while ($row = mysql_fetch_array($res)) {
 			$id = $row[0];
 			if ($ar[$id])
@@ -237,7 +237,7 @@ autoinvites(10,10,100000,1.05,4);
 //END INVITES
 
 //UPDATE TORRENT STATS
-	$torrents = array();
+	$torrents = [];
 	$res = mysql_query("SELECT torrent, seeder, COUNT(*) AS c FROM peers GROUP BY torrent, seeder");
 	while ($row = mysql_fetch_assoc($res)) {
 		if ($row["seeder"] == "yes")
@@ -261,7 +261,7 @@ autoinvites(10,10,100000,1.05,4);
 			if (!isset($torr[$field]))
 				$torr[$field] = 0;
 		}
-		$update = array();
+		$update = [];
 		foreach ($fields as $field) {
 			if ($torr[$field] != $row[$field])
 				$update[] = "$field = " . $torr[$field];

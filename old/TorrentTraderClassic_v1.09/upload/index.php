@@ -193,8 +193,8 @@ if ($POLLON)
 
     	$tvotes = mysql_num_rows($res);
 
-    	$vs = array(); // array of
-    	$os = array();
+    	$vs = []; // array of
+    	$os = [];
 
     	// Count votes
     	while ($arr2 = mysql_fetch_row($res))

@@ -75,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_GET["take"] == 1) {
 
 stdhead();
 
-begin_frame("" . RECOVER_ACCOUNT . "", center);
+begin_frame($txt['RECOVER_ACCOUNT'], 'center');
 if ($kind != "0") {
 	show_error_msg("Notice","$kind: $msg",0);
 }
@@ -107,13 +107,13 @@ if (is_valid_id($_GET["id"]) && strlen($_GET["secret"]) == 32) {?>
 	</tr>
 </table>
 </form>
-<?} else { echo "" . USE_FORM_FOR_ACCOUNT_DETAILS . ""; ?>
+<?php } else { echo $txt['USE_FORM_FOR_ACCOUNT_DETAILS']; ?>
 
 <form method=post action='account-recover.php?take=1'>
 	<table border=0 cellspacing=0 cellpadding=5>
 		<tr>
-			<td class=rowhead><B><? echo "" . EMAIL_ADDRESS . "";?>:</B> </td>
-			<td><input type=text size=40 name=email>&nbsp;<input type=submit value='<? echo "" . SUBMIT . "";?>' class=btn></td>
+			<td class=rowhead><B><?= $txt['EMAIL_ADDRESS'] ?>:</B> </td>
+			<td><input type=text size=40 name=email>&nbsp;<input type=submit value='<?= $txt['SUBMIT'] ?>' class=btn></td>
 		</tr>
 	</table>
 </form>
@@ -122,4 +122,3 @@ if (is_valid_id($_GET["id"]) && strlen($_GET["secret"]) == 32) {?>
 }
 end_frame();
 stdfoot();
-?>

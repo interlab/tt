@@ -1,4 +1,4 @@
-<?
+<?php
 //
 // CSS and language updated 30.11.05
 //
@@ -8,13 +8,13 @@ loggedinorreturn();
 
 $id = (int)$_GET["id"];
 if (!is_valid_id($id))
-  bark("" . NFO_NOT_FOUND . "", "" . ID_OR_NFO_NOT_FOUND . "");
+  bark($txt['NFO_NOT_FOUND'], $txt['ID_OR_NFO_NOT_FOUND']);
 
 $r = mysql_query("SELECT name,nfo FROM torrents WHERE id=$id") or sqlerr();
 $a = mysql_fetch_assoc($r);
 
 if ((!$a) || ($a["nfo"] == ""))
-   bark("" . NFO_NOT_FOUND . "", "" . ID_OR_NFO_NOT_FOUND . "");
+   bark($txt['NFO_NOT_FOUND'], $txt['ID_OR_NFO_NOT_FOUND']);
 
 $nfo = htmlspecialchars($a["nfo"]);
 //-----------------------------------------------
@@ -63,7 +63,7 @@ $nfo = my_nfo_translate($nfo);
 
 stdhead("View NFO");
 
-begin_frame("" . NFO . ": <a href=torrents-details.php?id=$id>$a[name]</a>");
+begin_frame($txt['NFO'] . ': <a href="torrents-details.php?id=' . $id . '">' . $a['name'] . '</a>');
 
 begin_table();
 print("<tr><td class=alt2>\n");
@@ -73,4 +73,3 @@ end_table();
 end_frame();
 
 stdfoot();
-?>

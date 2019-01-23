@@ -6,38 +6,44 @@ ob_start("ob_gzhandler");
 require_once("backend/functions.php");
 dbconn(false);
 loggedinorreturn();
-if ($RATIO_WARNINGON && $CURUSER)
-{
+
+global $RATIO_WARNINGON, $CURUSER;
+
+if ($RATIO_WARNINGON && $CURUSER) {
     include("ratiowarn.php");
 }
 
-$searchstr = unesc($_GET["search"]);
+$searchstr = unesc($_GET["search"] ?? '');
 $cleansearchstr = searchfield($searchstr);
-if (empty($cleansearchstr))
-unset($cleansearchstr);
+if (empty($cleansearchstr)) {
+    unset($cleansearchstr);
+}
+
+$_GET['incldead'] = $_GET['incldead'] ?? '';
+$_GET['cat'] = $_GET['cat'] ?? '';
 
 ///////////////////////////MOD FOR SORTING///////////////////////////////////
-if ($_GET['sort'] && $_GET['type']) {
+if (isset($_GET['sort'], $_GET['type'])) {
 
 $column = '';
 $ascdesc = '';
 
 switch($_GET['sort']) {
- case '1': $column = "name"; break;
- case '2': $column = "nfo"; break;
- case '3': $column = "Comments"; break;
- case '4': $column = "size"; break;
- case '5': $column = "times_completed"; break;
- case '6': $column = "seeders"; break;
- case '7': $column = "leechers"; break;
- case '8': $column = "category"; break;
- default: $column = "id"; break;
+    case '1': $column = "name"; break;
+    case '2': $column = "nfo"; break;
+    case '3': $column = "Comments"; break;
+    case '4': $column = "size"; break;
+    case '5': $column = "times_completed"; break;
+    case '6': $column = "seeders"; break;
+    case '7': $column = "leechers"; break;
+    case '8': $column = "category"; break;
+    default: $column = "id"; break;
 }
 
 switch($_GET['type']) {
- case 'asc': $ascdesc = "ASC"; break;
- case 'desc': $ascdesc = "DESC"; break;
- default: $ascdesc = "DESC"; break;
+    case 'asc': $ascdesc = "ASC"; break;
+    case 'desc': $ascdesc = "DESC"; break;
+    default: $ascdesc = "DESC"; break;
 }
 
 $orderby = "ORDER BY torrents." . $column . " " . $ascdesc;
@@ -46,7 +52,7 @@ $pagerlink = "sort=" . $_GET['sort'] . "&type=" . $_GET['type'] . "&";
 } else {
 
 
-$pagerlink = "";
+$pagerlink = '';
 $orderby = "ORDER BY torrents.id DESC";
 
 }
@@ -54,12 +60,12 @@ $orderby = "ORDER BY torrents.id DESC";
 
 //$orderby = "ORDER BY torrents.id DESC";  //REMOVE FOR SORT MOD
 
-$addparam = "";
-$wherea = array();
+$addparam = '';
+$wherea = [];
 
 if ($_GET["incldead"] == 1) {
 	$addparam .= "incldead=1&amp;";
-	if (!isset($CURUSER) || get_user_class < UC_ADMINISTRATOR)
+	if (!isset($CURUSER) || get_user_class() < UC_ADMINISTRATOR)
 	$wherea[] = "banned != 'yes'";
 }
 else
@@ -76,10 +82,10 @@ $wherebase = $wherea;
 if (isset($cleansearchstr)) {
 	$wherea[] = "MATCH (search_text, ori_descr) AGAINST (" . sqlesc($searchstr) . ")";
 	$addparam .= "search=" . urlencode($searchstr) . "&amp;";
-	//$orderby = "";  //REMOVE FOR SORT MOD
+	//$orderby = '';  //REMOVE FOR SORT MOD
 }
 $where = implode(" AND ", $wherea);
-if ($where != "")
+if ($where != '')
 $where = "WHERE $where";
 
 $count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
@@ -102,7 +108,7 @@ if (!$count && isset($cleansearchstr)) {
 	}
 	if ($sc) {
 		$where = implode(" AND ", $wherea);
-		if ($where != "")
+		if ($where != '')
 		$where = "WHERE $where";
 		$count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
 	}
@@ -110,8 +116,8 @@ if (!$count && isset($cleansearchstr)) {
 
 if ($count) {
 //////////////////////////////////SORT MOD///////////////////////////////////////
-if ($addparam != "") { 
-	if ($pagerlink != "") {
+if ($addparam != '') { 
+	if ($pagerlink != '') {
 		if ($addparam{strlen($addparam)-1} != ";") { // & = &amp;
 			$addparam = $addparam . "&" . $pagerlink;
 		} else {
@@ -141,7 +147,7 @@ stdhead("Browse Torrents");
 
 $cats = genrelist();
 
-$catdropdown = "";
+$catdropdown = '';
 foreach ($cats as $cat) {
 	$catdropdown .= "<option value=\"" . $cat["id"] . "\"";
 	if ($cat["id"] == $_GET["cat"])
@@ -149,7 +155,7 @@ foreach ($cats as $cat) {
 	$catdropdown .= ">" . htmlspecialchars($cat["name"]) . "</option>\n";
 }
 
-begin_frame("" . SEARCH_TITLE . "",center);
+begin_frame($txt['SEARCH_TITLE'], 'center');
 
 ?><CENTER>
 <form method="get" action="torrents-search.php"><br />
@@ -161,7 +167,7 @@ begin_frame("" . SEARCH_TITLE . "",center);
 
 <?php
 $cats = genrelist();
-$catdropdown = "";
+$catdropdown = '';
 foreach ($cats as $cat) {
     $catdropdown .= "<option value=\"" . $cat["id"] . "\"";
     if ($cat["id"] == $_GET["cat"])
@@ -200,20 +206,19 @@ $deadchkbox .= " /> " . INC_DEAD . "\n";
 
 <?php
 if ($count) {
-		end_frame();
-		echo "<br /><br />\n";
-		begin_frame("" . SEARCH_RESULTS . "");
-		print($pagertop);
-		torrenttable($res);
-		print($pagerbottom);
+	end_frame();
+	echo '<br /><br />';
+    begin_frame($txt['SEARCH_RESULTS']);
+    print($pagertop);
+    torrenttable($res);
+    print($pagerbottom);
 }
 else {
 	if (isset($cleansearchstr)) {
-		bark2("" . NOTHING_FOUND . "", "" . NO_UPLOADS . "");
-	}
-	else {
-		bark2("" . NOTHING_FOUND . "", "" . NO_RESULTS . "");
-	}
+        bark2($txt['NOTHING_FOUND'], $txt['NO_UPLOADS']);
+    } else {
+        bark2($txt['NOTHING_FOUND'], $txt['NO_RESULTS']);
+    }
 }
 
 end_frame();

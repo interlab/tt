@@ -1,4 +1,4 @@
-<?
+<?php
 //
 // - Theme And Language Updated 25.Nov.05 - 1/2 DONE, NEED TO ADD ERRORS
 //
@@ -209,7 +209,7 @@ if (strlen($hexhash) != 40)
     
     
     
-    write_log("Torrent $id (".htmlspecialchars($torrent).") was uploaded by " . $CURUSER["username"]);
+    write_log("Torrent $id (".h($torrent).") was uploaded by " . $CURUSER["username"]);
 
 if (isset($_POST['request'])) {
 	if ($_POST['request'] > 0) {
@@ -352,7 +352,7 @@ $s = "<select name=\"type\">\n<option value=\"0\">" . CHOOSE_ONE . "</option>\n"
 
 $cats = genrelist();
 foreach ($cats as $row)
-	$s .= "<option value=\"" . $row["id"] . "\">" . htmlspecialchars($row["name"]) . "</option>\n";
+	$s .= "<option value=\"" . $row["id"] . "\">" . h($row["name"]) . "</option>\n";
 
 $s .= "</select>\n";
 tr("" . TTYPE . "", $s, 1);
@@ -364,7 +364,7 @@ if ($REQUESTSON){
 	if (mysql_num_rows($res) > 0) {
 		$request = "<select name=\"request\">\n<option value=\"0\">(Chose the request to be filled)</option>\n";
 		while($row = mysql_fetch_array($res)) {
-		$request .= "<option value=\"" . $row["id"] . "\">" . htmlspecialchars($row["request"]) . "</option>\n";
+		$request .= "<option value=\"" . $row["id"] . "\">" . h($row["request"]) . "</option>\n";
 	}
 		$request .= "</select>\n";
 		tr("If your upload is to fill a resquest, select it here", $request , 1);
@@ -373,12 +373,11 @@ if ($REQUESTSON){
 //end requests
 
 ?>
-<tr><td></td><td><input type="submit" value="<? print("" . UPLOADT . "\n"); ?>" /></td></tr>
+<tr><td></td><td><input type="submit" value="<?= $txt['UPLOADT'] ?>" /></td></tr>
 </table>
 </form>
-<?
+<?php
 
 end_frame();
 stdfoot();
 
-?>

@@ -11,7 +11,7 @@ loggedinorreturn();
 
 stdhead("Requests Page");
 
-begin_frame("" . MAKE_REQUEST . "");
+begin_frame($txt['MAKE_REQUEST']);
 
 
 print("<br>\n");
@@ -31,8 +31,7 @@ $num2 = mysql_num_rows($res2);
 in
 <select name="cat">
 <option value="0">(all types)</option>
-<?
-
+<?php
 
 $cats = genrelist();
 $catdropdown = "";
@@ -56,8 +55,8 @@ $deadchkbox .= " /> " . INC_DEAD . "\n";
 </form>
 </td></tr></table><BR><HR><BR>
 
-<? print("<br>\n");
-
+<br>
+<?php
 print("<form method=post action=takerequest.php><a name=add id=add></a>\n");
 print("<CENTER><table border=0 width=600 cellspacing=0 cellpadding=3>\n");
 print("<tr><td class=colhead align=center><B>" . MAKE_REQUEST . "</B></a></td><tr>\n");
@@ -66,7 +65,7 @@ print("<tr><td align=center><b>Title: </b><input type=text size=40 name=requestt
 
 <select name="category">
 <option value="0">(Select a Category)</option>
-<?
+<?php
 
 $res2 = mysql_query("SELECT id, name FROM categories  order by name");
 $num = mysql_num_rows($res2);
@@ -82,8 +81,8 @@ for ($i = 0; $i < $num; ++$i)
 <?= $catdropdown2 ?>
 </select>
 
-<? print("<br>\n");
-
+<?php
+print("<br>\n");
 print("<tr><td align=center>Additional Information (Optional)<br><textarea name=descr rows=7 cols=60></textarea>\n");
 print("<tr><td align=center><input type=submit value='" . SUBMIT . "' style='height: 22px'>\n");
 print("</form>\n");
@@ -92,4 +91,3 @@ print("</table></CENTER>\n");
 end_frame();
 
 stdfoot();
-?>

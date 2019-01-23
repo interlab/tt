@@ -120,28 +120,22 @@ return $msg;
 }
 
 //deleting msges
-if (isset($_GET['del']))
-{
-		//no sql injection
-		if (is_numeric($_GET['del']))
-		{
-		$query = "SELECT * FROM shoutbox WHERE msgid=".$_GET['del'] ;
-		$result = mysql_query($query);
-		}
-		else {echo "invalid msg id STOP TRYING TO INJECT SQL";exit;}
+if (isset($_GET['del'])) {
+    if (!is_numeric($_GET['del'])) {
+        echo 'invalid msg id STOP TRYING TO INJECT SQL';
+        exit;
+    }
 
-	$row = mysql_fetch_row($result);
-		
-		if ( (get_user_class() >= UC_JMODERATOR) || ($CURUSER['username'] == $row[1]) )
-		{	
-			$query = "DELETE FROM shoutbox WHERE msgid=".$_GET['del'] ;
-			mysql_query($query);	
-		}
+    $del = (int) $_GET['del'];
+    $username = DB::fetchColumn('SELECT user FROM shoutbox WHERE msgid = ' . $del);
 
-
+	if ((get_user_class() >= UC_JMODERATOR) || ($CURUSER['username'] === $username)) {	
+		$query = 'DELETE FROM shoutbox WHERE msgid = ' . $del;
+        DB::query($query);	
+	}
 }
 
-//adding msges
+// adding msges
 if (isset($_POST['message']) && $_POST['message'] !== '') {
 		
 	if (isset($CURUSER)) {

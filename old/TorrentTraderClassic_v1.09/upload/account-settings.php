@@ -7,18 +7,18 @@ dbconn(false);
 loggedinorreturn();
 
 if ($submit == "1") {
-  $set = array();
+  $set = [];
 
-  $updateset = array();
+  $updateset = [];
   $changedemail = $newsecret = 0;
 
   if ($chpassword != "") {
     if ($CURUSER["password"] != md5($originalpassword))
-        $message = "" . THATS_NOT_YOUR_ORIGNAL_PASS . "";
+        $message = $txt['THATS_NOT_YOUR_ORIGNAL_PASS'];
     if (strlen($chpassword) < 6)
-        $message = "" . PASS_TO_SHORT . "";
+        $message = $txt['PASS_TO_SHORT'];
     if ($chpassword != $passagain)
-        $message = "" . PASSWORDS_NOT_MATCH . "";
+        $message = $txt['PASSWORDS_NOT_MATCH'];
     $chpassword = md5($chpassword);
     $updateset[] = "password = " . sqlesc($chpassword);
     $newsecret = 1;
@@ -26,7 +26,7 @@ if ($submit == "1") {
 
   if ($email != $CURUSER["email"]) {
 	if (!validemail($email))
-		$message = "" . NOT_VAILD_EMAIL . "";
+		$message = $txt['NOT_VAILD_EMAIL'];
 	$changedemail = 1;
   }
 
@@ -120,38 +120,20 @@ EOD;
   die;
 }
 
+$messages = DB::fetchColumn("SELECT COUNT(*) FROM messages WHERE receiver=" . $CURUSER["id"]);
 
-$res = mysql_query("SELECT COUNT(*) FROM messages WHERE receiver=" . $CURUSER["id"]) or print(mysql_error());
-$arr = mysql_fetch_row($res);
-$messages = $arr[0];
-$res = mysql_query("SELECT COUNT(*) FROM messages WHERE receiver=" . $CURUSER["id"] . " and unread='yes'") or print(mysql_error());
-$arr = mysql_fetch_row($res);
-$unread = $arr[0];
+$unread = numUnreadUserMsg();
 
 stdhead("User CP");
-begin_frame("" . YOUR_SETTINGS . "");
+begin_frame($txt['YOUR_SETTINGS']);
 
 ?>
 <form method=post action=account-settings.php>
 <input type=hidden name=submit value=1>
 <table border="0" cellspacing=0 cellpadding="5" width="100%">
-<?
+<?php
 
-$ss_r = mysql_query("SELECT * from stylesheets") or die;
-$ss_sa = array();
-while ($ss_a = mysql_fetch_array($ss_r))
-{
-  $ss_id = $ss_a["id"];
-  $ss_name = $ss_a["name"];
-  $ss_sa[$ss_name] = $ss_id;
-}
-ksort($ss_sa);
-reset($ss_sa);
-while (list($ss_name, $ss_id) = each($ss_sa))
-{
-  if ($ss_id == $CURUSER["stylesheet"]) $ss = " selected"; else $ss = "";
-  $stylesheets .= "<option value=$ss_id$ss>$ss_name</option>\n";
-}
+$stylesheets = Html::getStylesheets();
 
 $countries = "<option value=0>----</option>\n";
 $ct_r = mysql_query("SELECT id,name from countries ORDER BY name") or die;
@@ -170,14 +152,14 @@ if ($CURUSER["tzoffset"] == $key) {
 
 
 $acceptpms = $CURUSER["acceptpms"] == "yes";
-tr("" . ACCOUNT_ACCEPTPM . "", "<input type=radio name=acceptpms" . ($acceptpms ? " checked" : "") .
+tr($txt['ACCOUNT_ACCEPTPM'], "<input type=radio name=acceptpms" . ($acceptpms ? " checked" : "") .
   " value=yes>From all <input type=radio name=acceptpms" .
-  ($acceptpms ? "" : " checked") . " value=no>" . ACCOUNT_PMSTAFFONLY . "",1);
+  ($acceptpms ? "" : " checked") . " value=no>" . $txt['ACCOUNT_PMSTAFFONLY'], 1);
 
-$gender = "<option value=Male" . ($CURUSER["gender"] == Male ? " selected" : "") . ">" . MALE . "</option>\n"
-	 ."<option value=Female" . ($CURUSER["gender"] == Female ? " selected" : "") . ">" . FEMALE . "</option>\n";
+$gender = "<option value=Male" . ($CURUSER["gender"] == Male ? " selected" : "") . ">" . $txt['MALE'] . "</option>\n"
+	 ."<option value=Female" . ($CURUSER["gender"] == Female ? " selected" : "") . ">" . $txt['FEMALE'] . "</option>\n";
 
-$torrentnotif = "<input type=checkbox checked>" . ACCOUNT_NOTIFY_WHEN_TORRENT_UPLOADED_IN . ":<br />";
+$torrentnotif = "<input type=checkbox checked>" . $txt['ACCOUNT_NOTIFY_WHEN_TORRENT_UPLOADED_IN'] . ":<br />";
 $r = mysql_query("SELECT id,name FROM categories ORDER by sort_index, name") or sqlerr();
 $i = 0;
 while ($a = mysql_fetch_assoc($r))
@@ -188,57 +170,58 @@ while ($a = mysql_fetch_assoc($r))
 }
 
 function priv($name, $descr) {
-	global $CURUSER;
+    global $CURUSER;
+
 	if ($CURUSER["privacy"] == $name)
 		return "<input type=\"radio\" name=\"privacy\" value=\"$name\" checked=\"checked\" /> $descr";
 	return "<input type=\"radio\" name=\"privacy\" value=\"$name\" /> $descr";
 }
 
-tr("" . ACCOUNT_PRIVACY_LV . "",  priv("normal", "" . NORMAL . "") . " " . priv("low", "" . LOW . "") . " " . priv("strong", "" . STRONG . " <br>(Stong level will hide your ratio and make your uploads anonymous)"), 1);
+tr($txt['ACCOUNT_PRIVACY_LV'],  priv("normal", $txt['NORMAL']) . " " . priv("low", $txt['LOW']) . " " . priv("strong", "" . STRONG . " <br>(Stong level will hide your ratio and make your uploads anonymous)"), 1);
 
 print("<tr><td align=right>PM on Comments</td><td align=left><input type=radio name=commentpm" . ($CURUSER["commentpm"] == "yes" ? " checked" : "") . " value=yes>yes<input type=radio name=commentpm" .  ($CURUSER["commentpm"] == "no" ? " checked" : "") . " value=no>no");
 
-tr("" . ACCOUNT_EMAIL_NOTIFICATION . "", "<input type=checkbox name=pmnotif" . (strpos($CURUSER['notifs'], "[pm]") !== false ? " checked" : "") .
-   " value=yes>" . ACCOUNT_PM_NOTIFY_ME . "<br />\n" .
+tr($txt['ACCOUNT_EMAIL_NOTIFICATION'], "<input type=checkbox name=pmnotif" . (strpos($CURUSER['notifs'], "[pm]") !== false ? " checked" : "") .
+   " value=yes>" . $txt['ACCOUNT_PM_NOTIFY_ME'] . "<br />\n" .
    $torrentnotif, 1);
 
 
-tr("" . THEME . "", "<select name=stylesheet>\n$stylesheets\n</select>",1);
-tr("" . CLIENT ."", "<input type=text size=20 maxlength=20 name=client value=\"" . htmlspecialchars($CURUSER["client"]) . "\" />",1);
-tr("" . AGE . "", "<input type=text size=4 maxlength=3 name=age value=\"" . htmlspecialchars($CURUSER["age"]) . "\" />",1);
-tr("" . GENDER . "", "<select size=1 name=gender>\n$gender\n</select>",1);
-tr("" . COUNTRY . "", "<select name=country>\n$countries\n</select>",1);
-tr("" . ACCOUNT_TIMEZONE . "", "<select name=tzoffset>\n$timezone\n</select><br />" . ACCOUNT_TIMEZONEMSG . "",1);
-tr("" . AVATAR_URL . "", "<input name=avatar size=50 value=\"" . htmlspecialchars($CURUSER["avatar"]) .
-  "\"><br />\n80x80 px",1);
-tr("" . CUSTOMTITLE . "", "<input name=title size=50 value=\"" . strip_tags($CURUSER["title"]) .
-  "\"><br />\n " . HTML_NOT_ALLOWED . "",1);
-tr("" . SIGNATURE . "", "<textarea name=signature cols=50 rows=10>" . htmlspecialchars($CURUSER["signature"]) .
-  "</textarea><br />\n " . HTML_NOT_ALLOWED . "",1);
-tr("" . EMAIL_ADDRESS . "", "<input type=\"text\" name=\"email\" size=50 value=\"" . htmlspecialchars($CURUSER["email"]) .
-  "\"><br />\n" . REPLY_TO_CONFIRM_EMAIL . "<br>",1);
+tr($txt['THEME'], "<select name=stylesheet>\n$stylesheets\n</select>",1);
+tr($txt['CLIENT'], "<input type=text size=20 maxlength=20 name=client value=\"" . h($CURUSER["client"]) . "\" />", 1);
+tr($txt['AGE'], "<input type=text size=4 maxlength=3 name=age value=\"" . h($CURUSER["age"]) . "\" />", 1);
+tr($txt['GENDER'], "<select size=1 name=gender>\n$gender\n</select>", 1);
+tr($txt['COUNTRY'], "<select name=country>\n$countries\n</select>", 1);
+tr($txt['ACCOUNT_TIMEZONE'], "<select name=tzoffset>\n$timezone\n</select><br />" . $txt['ACCOUNT_TIMEZONEMSG'], 1);
+tr($txt['AVATAR_URL'], "<input name=avatar size=50 value=\"" . h($CURUSER["avatar"]) .
+  "\"><br />\n80x80 px", 1);
+tr($txt['CUSTOMTITLE'], "<input name=title size=50 value=\"" . strip_tags($CURUSER["title"]) .
+  "\"><br />\n " . $txt['HTML_NOT_ALLOWED'], 1);
+tr($txt['SIGNATURE'], "<textarea name=signature cols=50 rows=10>" . h($CURUSER["signature"]) .
+  "</textarea><br />\n " . $txt['HTML_NOT_ALLOWED'] . "",1);
+tr($txt['EMAIL_ADDRESS'], "<input type=\"text\" name=\"email\" size=50 value=\"" . h($CURUSER["email"]) .
+  "\"><br />\n" . $txt['REPLY_TO_CONFIRM_EMAIL'] . "<br>",1);
 ?>
-<tr><td colspan="2" align="center"><input type="submit" value="<? echo "" . SUBMIT . "";?>" style='height: 25px'> <input type="reset" value="<? echo "" . REVERT . "";?>" style='height: 25px'></td></tr>
+<tr><td colspan="2" align="center"><input type="submit" value="<?= $txt['SUBMIT']
+?>" style='height: 25px'> <input type="reset" value="<?= $txt['REVERT'] ?>" style='height: 25px'></td></tr>
 </table>
 
-<? end_frame(); ?>
+<?php end_frame(); ?>
 
 <br /><br />
 
-<? begin_frame("" . CHANGE_YOUR_PASS . ""); ?>
+<?php begin_frame($txt['CHANGE_YOUR_PASS']); ?>
 
 <table border="0" cellspacing=0 cellpadding="5" width="100%">
-<?
-tr("" . CURRENT_PASSWORD . "", "<input type=\"password\" name=\"originalpassword\" size=\"50\" />", 1);
-tr("" . NEW_PASSWORD . "", "<input type=\"password\" name=\"chpassword\" size=\"50\" />", 1);
-tr("" . REPEAT . "", "<input type=\"password\" name=\"passagain\" size=\"50\" />", 1);
+<?php
+tr($txt['CURRENT_PASSWORD'], "<input type=\"password\" name=\"originalpassword\" size=\"50\" />", 1);
+tr($txt['NEW_PASSWORD'], "<input type=\"password\" name=\"chpassword\" size=\"50\" />", 1);
+tr($txt['REPEAT'], "<input type=\"password\" name=\"passagain\" size=\"50\" />", 1);
 ?>
-<tr><td colspan="2" align="center"><input type="submit" value="<? echo "" . SUBMIT . "";?>" style='height: 25px'> <input type="reset" value="<? echo "" . REVERT . "";?>" style='height: 25px'></td></tr>
+<tr><td colspan="2" align="center"><input type="submit" value="<? echo $txt['SUBMIT'];?>" style='height: 25px'> <input type="reset" value="<? echo $txt['REVERT'];?>" style='height: 25px'></td></tr>
 </table></form>
 
-<?
+<?php
 
 end_frame();
 stdfoot();
 
-?>
