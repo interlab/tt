@@ -1,0 +1,7 @@
+{
+    "require": {
+        "doctrine/dbal": "^2.9",
+        "symfony/yaml": "^4.2",
+        "symfony/var-dumper": "^4.2"
+    }
+}
