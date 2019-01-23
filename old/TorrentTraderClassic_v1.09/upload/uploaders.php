@@ -1,4 +1,4 @@
-<?
+<?php
 //
 // CSS and language updated 30.11.05
 //
@@ -113,4 +113,3 @@ echo "Not permitted staff Only.";
 
 stdfoot();
 
-?>

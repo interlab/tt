@@ -3,141 +3,208 @@
 // - Theme And Language Updated 26.Nov.05
 //
 ob_start();
-require "backend/functions.php";
+
+require 'backend/functions.php';
+
 dbconn();
-loggedinorreturn();
 
+loadLanguage();
 
-$search = trim($HTTP_GET_VARS['search']);
-$class = $HTTP_GET_VARS['class'];
-if ($class == '-' || !is_numeric($class))
-$class = '';
+isNotGuest();
 
-if ($search != '' || $class)
-{
-$query = "username LIKE " . sqlesc("%$search%") . " AND status='confirmed'";
-if ($search)
-$q = "search=" . h($search);
-}
-else
-{
-$letter = trim($_GET["letter"]);
-if (strlen($letter) > 1)
-die;
+global $SITEURL;
 
-  if ($letter == "" || strpos("abcdefghijklmnopqrstuvwxyz", $letter) === false)
-    $query = "status='confirmed'";
-  else
-      $query = "username LIKE '$letter%' AND status='confirmed'";
-  $q = "letter=$letter";
+$search = trim(($_GET['search'] ?? ''));
+$letter = strip_tags(trim(($_GET['letter'] ?? '')));
+$q = '';
+$class = $_GET['class'] ?? '';
+if ($class == '-' || !is_numeric($class)) {
+    $class = '';
 }
 
-if ($class!='')
-{
-$query .= " AND class=$class";
-$q .= ($q ? "&amp;" : "") . "class=$class";
+$queryparams = [];
+
+if ($search != '' || $class) {
+    $query = 'u.username LIKE ? AND u.status = ?';
+    $queryparams[] = '%'.$search.'%';
+    $queryparams[] = 'confirmed';
+    if ($search) {
+        $q = 'search='.h($search);
+    }
+} else {
+    if (strlen($letter) > 1) {
+        die;
+    }
+
+    if ($letter === '' || strpos('abcdefghijklmnopqrstuvwxyz', $letter) === false) {
+        $query = 'u.status = ?';
+        $queryparams[] = 'confirmed';
+    } else {
+        $query = 'u.username LIKE ? AND u.status = ?';
+        $queryparams[] = $letter.'%';
+        $queryparams[] = 'confirmed';
+    }
+    $q = 'letter='.$letter;
+}
+
+if ($class !== '') {
+    $query .= ' AND u.class = ?';
+    $queryparams[] = $class;
+    $q .= ($q ? "&amp;" : "")."class=$class";
 }
 
 stdhead($txt['USERS']);
+
+echo '
+<style>
+.td_user_name a {
+    font-size: 1.2em;
+    font-weight: bold;
+    white-space: nowrap;
+}
+</style>';
+
 begin_frame($txt['MEMBERS'], 'center');
-print("<br /><form method=get action=?>\n");
-print("" . $txt['SEARCH'] . ": <input type=text size=30 name=search>\n");
-print("<select name=class>\n");
-print("<option value='-'>(any class)</option>\n");
-for ($i = 0;;++$i)
-{
-	if ($c = get_user_class_name($i))
-	  print("<option value=$i" . ($class && $class == $i ? " selected" : "") . ">$c</option>\n");
-	else
-	  break;
-}
-print("</select>\n");
-print("<input type=submit value='" . $txt['SEARCH'] . "'>\n");
-print("</form>\n");
-
-print("<p>\n");
-
-print("<a href=extras-users.php><b>" . $txt['ALL'] . "</b></a> - \n");
-for ($i = 97; $i < 123; ++$i)
-{
-	$l = chr($i);
-	$L = chr($i - 32);
-	if ($l == $letter)
-    print("<b>$L</b>\n");
-	else
-    print("<a href=?letter=$l><b>$L</b></a>\n");
-}
-
-print("</p>\n");
-
-$page = $_GET['page'];
-$perpage = 100;
-
-$res = mysql_query("SELECT COUNT(*) FROM users WHERE $query") or sqlerr();
-$arr = mysql_fetch_row($res);
-$pages = floor($arr[0] / $perpage);
-if ($pages * $perpage < $arr[0])
-  ++$pages;
-
-if ($page < 1)
-  $page = 1;
-else
-  if ($page > $pages)
-    $page = $pages;
-
-for ($i = 1; $i <= $pages; ++$i)
-  if ($i == $page)
-    $pagemenu .= "$i\n";
-  else
-    $pagemenu .= "<a href=?$q&page=$i>$i</a>\n";
-
-if ($page == 1)
-  $browsemenu .= "";
-//  $browsemenu .= "[Prev]";
-else
-  $browsemenu .= "<a href=?$q&page=" . ($page - 1) . ">[Prev]</a>";
-
-$browsemenu .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-
-if ($page == $pages)
-  $browsemenu .= "";
-//  $browsemenu .= "[Next]";
-else
-  $browsemenu .= "<a href=?$q&page=" . ($page + 1) . ">[Next]</a>";
-
-$offset = ($page * $perpage) - $perpage;
-
-$res = mysql_query("SELECT * FROM users WHERE $query ORDER BY username LIMIT $offset,$perpage") or sqlerr();
-$num = mysql_num_rows($res);
-
-begin_table();
-print("<tr><td class=ttable_head align=left>" . $txt['USERNAME'] . "</td><td class=ttable_head>" . $txt['REGISTERED'] . "</td><td class=ttable_head>" . $txt['LAST_ACCESS'] . "</td><td class=ttable_head>" . $txt['RANK'] . "</td><td class=ttable_head>" . $txt['COUNTRY'] . "</td></tr>\n");
-for ($i = 0; $i < $num; ++$i)
-{
-  $arr = mysql_fetch_assoc($res);
-  if ($arr['country'] > 0)
-  {
-    $cres = mysql_query("SELECT name,flagpic FROM countries WHERE id=$arr[country]");
-    if (mysql_num_rows($cres) == 1)
-    {
-      $carr = mysql_fetch_assoc($cres);
-      $country = "<td align=\"center\" class=ttable_col1 style='padding: 0px' align='center'><img src=". $SITEURL ."/images/flag/$carr[flagpic] alt='$carr[name]' /></td>";
+print("<br /><form method=get action=?>".
+$txt['SEARCH'].": <input type=text size=30 name=search>
+<select name=class>
+<option value='-'>(any class)</option>\n");
+for ($i = 0;; ++$i) {
+    if ($c = get_user_class_name($i)) {
+        print("<option value=$i".($class && $class == $i ? " selected" : "").">$c</option>\n");
+    } else {
+        break;
     }
-  }
-  else
-    $country = "<td align=\"center\"  class=ttable_col1 style='padding: 0px' align='center'><img src=". $SITEURL ."/images/flag/unknown.gif alt=Unknown /></td>";
-  if ($arr['added'] == '0000-00-00 00:00:00')
-    $arr['added'] = '-';
-  if ($arr['last_access'] == '0000-00-00 00:00:00')
-    $arr['last_access'] = '-';
-  print("<tr><td class=ttable_col1 align=left><a href=account-details.php?id=$arr[id]>" .($arr["class"] > 1 ? "" : "")."<b>$arr[username]</b></a>" .($arr["donated"] > 0 ? "<img src=$SITEURL/images/star.gif border=0 alt='Donated'>" : "")."</td>" .
-  "<td align=\"center\" class=ttable_col2>$arr[added]</td><td align=\"center\" class=ttable_col1>$arr[last_access]</td>".
-    "<td class=ttable_col2 align=center>" . get_user_class_name($arr["class"]) . "</td>$country</tr>\n");
 }
-end_table();
+echo '</select>
+<input type="submit" value="'.$txt['SEARCH'].'">
+</form>
 
-print("<p>$pagemenu<br />$browsemenu</p>");
+<p>';
+
+echo '
+    <a href="'.$SITEURL.'/extras-users.php"><b>'.$txt['ALL'].'</b></a> - ';
+for ($i = 97; $i < 123; ++$i) {
+    $l = chr($i);
+    $L = chr($i - 32);
+    if ($l == $letter) {
+        print("<b>$L</b>\n");
+    } else {
+        print("<a href=?letter=$l><b>$L</b></a>\n");
+    }
+}
+
+echo '
+    </p>';
+
+$page = (int) ($_GET['page'] ?? 0);
+$perpage = 50;
+$pagemenu = '';
+$browsemenu = '';
+
+$total = (int) DB::fetchColumn('SELECT COUNT(*) FROM users AS u WHERE ' . $query, $queryparams);
+
+if ($total) {
+    $pages = floor($total / $perpage);
+    if ($pages * $perpage < $total) {
+        ++$pages;
+    }
+
+    if ($page < 1) {
+        $page = 1;
+    } elseif ($page > $pages) {
+        $page = $pages;
+    }
+
+    for ($i = 1; $i <= $pages; ++$i) {
+        if ($i == $page) {
+            $pagemenu .= "$i\n";
+        } else {
+            $pagemenu .= "<a href=?$q&page=$i>$i</a>\n";
+        }
+    }
+
+    if ($page == 1) {
+        $browsemenu .= '';
+    }
+    //  $browsemenu .= "[Prev]";
+    else {
+        $browsemenu .= '<a href="?'.$q.'&page='.($page - 1).'">[Prev]</a>';
+    }
+
+    $browsemenu .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+
+    if ($page == $pages) {
+        $browsemenu .= '';
+    }
+    //  $browsemenu .= "[Next]";
+    else {
+        $browsemenu .= '<a href="?'.$q.'&page='.($page + 1).'">[Next]</a>';
+    }
+
+    $offset = ($page * $perpage) - $perpage;
+
+    $sql = '
+        SELECT u.*, c.flagpic AS flag_pic, c.name AS flag_name
+        FROM users AS u
+            LEFT JOIN countries AS c ON (c.id = u.country)
+        WHERE ' . $query . '
+        ORDER BY u.username
+        LIMIT ' . $offset . ', ' . $perpage;
+
+    $res = DB::executeQuery($sql, $queryparams);
+
+    begin_table();
+    echo '
+    <tr>
+    <td class="ttable_head" align="left">'.$txt['AVATAR'].'</td>
+    <td class="ttable_head">'.$txt['USERNAME'].'</td>
+    <td class="ttable_head">'.$txt['REGISTERED'].'</td>
+    <td class="ttable_head">'.$txt['LAST_ACCESS'].'</td>
+    <td class="ttable_head">'.$txt['RANK'].'</td>
+    <td class="ttable_head">'.$txt['COUNTRY'].'</td>
+    </tr>';
+
+    while ($row = $res->fetch(\PDO::FETCH_OBJ)) {
+        if ($row->country > 0) {
+            $country = '
+    <td align="center" class="ttable_col2" style="padding: 0px;" align="center">
+        <img src="images/flag/'.$row->flag_pic.'" alt="'.$row->flag_name.'" />
+    </td>';
+        } else {
+            $country = '
+    <td align="center"  class="ttable_col1" style="padding: 0px" align="center">
+        <img src="images/flag/unknown.gif" alt="Unknown" />
+    </td>';
+        }
+        if ($row->added === '0000-00-00 00:00:00') {
+            $row->added = '-';
+        }
+        if ($row->last_access === '0000-00-00 00:00:00') {
+            $row->last_access = '-';
+        }
+
+        $avatar = $row->avatar === '' ? '' : '<img src="' . $row->avatar . '" width="60px" height="60px" />';
+
+        echo '
+        <tr>
+        <td class="ttable_col1" align="center" style="width: 64px; height: 64px;">
+        ', $avatar, '
+        </td>
+        <td align="center" class="ttable_col2 td_user_name">
+        <a href="', $SITEURL, '/account-details.php?id=', $row->id, '">', ($row->class > 1 ? '' : ''), '<b>', $row->username, '</b></a>',
+        ($row->donated > 0 ? '<img src="'.ST_IMG_URL.'/star.gif" border="0" alt="Donated">' : ''),
+        '</td>
+        <td align="center" class="ttable_col1">', $row->added, '</td>
+        <td align="center" class="ttable_col2">', $row->last_access, '</td>
+        <td class="ttable_col1" align="center">', get_user_class_name($row->class), '</td>
+        ', $country, '
+        </tr>';
+    }
+    end_table();
+
+    echo '<p>', $pagemenu, '<br />', $browsemenu, '</p>';
+}
+
 end_frame();
 stdfoot();
-die;
-
