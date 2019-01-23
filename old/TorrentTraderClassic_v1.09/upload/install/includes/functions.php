@@ -1,4 +1,4 @@
-<?
+<?php
    // =================================== //
   // TorrentTrader v1.05+ Installer v1.0 //
  //           by TorrentialStorm        //

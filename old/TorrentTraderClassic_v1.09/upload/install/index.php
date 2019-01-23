@@ -1,23 +1,40 @@
-<?
+<?php
    // =================================== //
   // TorrentTrader v1.06+ Installer v1.0 //
  //           by TorrentialStorm        //
 // =================================== //
 
-@set_magic_quotes_runtime(0);
+$installed = false;
+$PHP_SELF = '';
+
+
+if (PHP_MAJOR_VERSION < 7) {
+    die ('Your version not support. You will should be used php >= 7');
+}
 
 @session_start();
+
+$_SESSION['MYSQL_HOST'] = $_SESSION['MYSQL_HOST'] ?? '';
+$_SESSION['MYSQL_USER'] = $_SESSION['MYSQL_USER'] ?? '';
+$_SESSION['MYSQL_PASS'] = $_SESSION['MYSQL_PASS'] ?? '';
+$_SESSION['MYSQL_DB'] = $_SESSION['MYSQL_DB'] ?? '';
+
+
 require("includes/functions.php");
-if (empty($_POST['page'])) $_POST['page']='';
-$docroot = str_replace('/install','',str_replace('\\','/', getcwd()));
+if (empty($_POST['page']))
+    $_POST['page'] = '';
+
+$docroot = str_replace('/install', '', str_replace('\\', '/', getcwd()));
 require("includes/config.php");
+
 if ($installed) {
-head("Failed");
-begin_frame("Error");
-echo "<center><h1>The installer has already been completed.</h1><h3>If you need to run it again empty includes/config.php</h3></center>";
-end_frame();
-die;
+    head("Failed");
+    begin_frame("Error");
+    echo "<center><h1>The installer has already been completed.</h1><h3>If you need to run it again empty includes/config.php</h3></center>";
+    end_frame();
+    die;
 }
+
 switch($_POST['page']) {
         case 'environment':
             $phpver = phpversion();
@@ -109,55 +126,61 @@ EOD;
             $_SESSION['ROOT_PATH'] = $_POST['ROOT_PATH'];
 
             if ($message != '') {
-            $message .= "<BR><BR>Click 'Back' to try again.<BR><BR><form method=POST action=$PHP_SELF><input type=hidden value='sql-config' name='page'/><input type=submit value='Back' /></form>";
-            bark('Data missing',$message);
+                $message .= "<BR><BR>Click 'Back' to try again.<BR><BR>
+                <form method=POST action=$PHP_SELF>
+                <input type=hidden value='sql-config' name='page'/>
+                <input type=submit value='Back' />
+                </form>";
+                bark('Data missing',$message);
             }
             head("Verifying Database Settings");
-            begin_frame("");
-            if ($link = @mysql_connect($_SESSION['MYSQL_HOST'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'])) {
-                define (_MYSQL_VERSION, mysql_get_server_info());
-                if (!@mysql_select_db($_SESSION['MYSQL_DB']))
-                    echo <<<EOD
+            begin_frame('');
+
+            $conn = new mysqli($_POST['MYSQL_HOST'], $_POST['MYSQL_USER'], $_POST['MYSQL_PASS']);
+            if ($conn->connect_error) {
+                // die("Connection failed: " . $conn->connect_error);
+
+                echo '
+                    <h1>Database Settings</h1>
+                    <img src="images/no.gif"> Error connecting to database server
+                    <b>' . $_SESSION['MYSQL_HOST'] . '</b> using username <b>' . $_SESSION['MYSQL_USER'] . '</b> and
+                    password <b>' . $_SESSION['MYSQL_PASS'] . '</b> :<br>
+                    error ' . $conn->connect_error . '
+                    <BR><BR>Click \'Back\' and check your settings
+                    <form action="." method="post">
+                        <input type="hidden" name="page" value="sql-config">
+                        <input type="submit" value="Back">
+                     </form>';
+            } else {
+
+                if ( ! $conn->select_db($_SESSION['MYSQL_DB'])) {
+                    echo '
     <h1>Database Settings</h1>
-    <img src="images/no.gif"> Could not select database '{$_SESSION['MYSQL_DB']}'.<br>
+    <img src="images/no.gif"> Could not select database "' . $_SESSION['MYSQL_DB'] . '".<br>
     
     Click Continue to try to create the database. Or click Back to change your settings.<br>
     <br>
-    <form action='.' method='post'>
-      <input type='submit' name='submit' value='Back'>
+    <form action="." method="post">
+      <input type="submit" name="submit" value="Back">
     </form>
-    <form action='.' method='post'>
-      <input name='page' type='hidden' value='create-database'> <input type='submit'
-      name='submit' value='Continue'>
-    </form>
-EOD;
+    <form action="." method="post">
+      <input name="page" type="hidden" value="create-database"> <input type="submit"
+      name="submit" value="Continue">
+    </form>';
+                }
                 else {
-                    echo <<<EOD
+                    echo '
     <h1>Database Settings</h1>
     <img src="images/yes.gif"> Connection to database server established successfully.
-    <form action='.' method='post'>
-      <input name='page' type='hidden' value=
-      'write-database'> <input type='submit' name='submit' value='Continue'>
-    </form>
-EOD;
-                    mysql_close($link);
+    <form action="." method="post">
+      <input name="page" type="hidden" value="write-database"> <input type="submit" name="submit" value="Continue">
+    </form>';
                 }
-            }else{
-                echo <<<EOD
-    <h1>Database Settings</h1>
-    <img src="images/no.gif"> Error connecting to database server
-    <b>{$_SESSION['MYSQL_HOST']}</b> using username <b>{$_SESSION['MYSQL_USER']}</b> and
-    password <b>{$_SESSION['MYSQL_PASS']}</b> :<br>
-    
-EOD;
-                echo mysql_error()." (error ".mysql_errno().")";
-                echo "<BR><BR>Click 'Back' and check your settings";
-                echo "<form action='.' method='post'>
-                <input type='hidden' name='page' value='sql-config'>
-                <input type='submit' value='Back'>
-                </form>";
+
+                $conn->close();
             }
-        end_frame();
+
+            end_frame();
 
         break;
 
@@ -213,7 +236,7 @@ EOD;
 
                 foreach(explode("||", file_get_contents("./includes/database.sql")) as $query) {
                     $query = trim($query);
-                    if (!mysql_query($query)) $message .= "<img src='images/no.gif'>".mysql_error()."<BR>";
+                    if (!mysql_query($query)) $message .= "<img src='images/no.gif'>". mysql_error() ."<BR>";
                 }
                 mysql_close($link);
             }

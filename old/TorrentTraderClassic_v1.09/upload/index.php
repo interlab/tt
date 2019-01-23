@@ -35,14 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     stderr("Error", "Please select an option.");
 }
 
-function getmicrotime()
-{
-    list($usec, $sec) = explode(" ", microtime());
-    return ((float)$usec + (float)$sec);
-}
-
 $time_start = getmicrotime();
-
 
 $searchstr = unesc($_GET["search"]);
 $cleansearchstr = searchfield($searchstr);

@@ -13,7 +13,7 @@ $theme = "1";
 // Site Settings
 $SITENAME = "TorrentTrader Classic";
 $SITEEMAIL = "email@address.com";
-$SITEURL = "http://yoursite.com";
+$SITEURL = "http://tt.pmr";
 $SITE_ONLINE = true;
 $OFFLINEMSG = "Site is down for a little while";
 $UPLOADERSONLY = false;

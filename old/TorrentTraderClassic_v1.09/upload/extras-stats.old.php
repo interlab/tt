@@ -1,4 +1,4 @@
-<?
+<?php
 //
 // - Theme And Language Updated 28.Nov.05
 //
@@ -232,10 +232,6 @@ $guests = getguests();
 if (!$guests)
 	$guests = "0";
 
-function getmicrotime(){
-    list($usec, $sec) = explode(" ",microtime());
-    return ((float)$usec + (float)$sec);
-}
 $time_start = getmicrotime();
 //end here
 

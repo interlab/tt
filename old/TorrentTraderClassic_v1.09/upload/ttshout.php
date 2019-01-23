@@ -1,4 +1,4 @@
-<?
+<?php
 
 ///////////////////////////////////////////////////////////////
 //
@@ -24,59 +24,51 @@
 //feel free to modify/change or hack this to bits, or even rerelease it (modified signifcantly) under your name 
 //ASLONG AS I STILL HAVE CREDIT SOMEWHERE. ie. Bob's Shoutbox (based on PseudoX's code)
 
-?>
 
-
-
-
-<?
 include_once('backend/functions.php');
 include_once('backend/config.php');
 dbconn(false);
 $local_time = get_date_time(time());
 
+global $CURUSER;
+
 function CensorWords($msg)
 {
-global $CENSORWORDS;
-if ($CENSORWORDS)
-{
-$query = 'SELECT * FROM censor';
-$result = mysql_query($query);
-	while ($row = mysql_fetch_assoc($result))
-	{
-	$msg = str_replace($row['word'], $row['censor'], $msg);
+    global $CENSORWORDS;
+    
+    if ($CENSORWORDS) {
+        $query = 'SELECT * FROM censor';
+        $res = DB::query($query);
+        while ($row = $res->fetch()) {
+            $msg = str_replace($row['word'], $row['censor'], $msg);
+        }
+    }
 
-	}
-}
-return $msg;
-
+    return $msg;
 }
 
 function ReplaceSmilies($msg)
 {
-global $SITEURL;
-$query = 'SELECT * FROM shoutbox_emoticons';
-$result = mysql_query($query);
+    global $SITEURL;
 
-	while ($row = mysql_fetch_assoc($result))
-	{
-	$imagelink = '<img src="'.$GLOBALS['SITEURL'].'/images/shoutbox/'.$row['image'].'">';
-	$msg = str_replace($row['text'], $imagelink, $msg);
+    $query = 'SELECT * FROM shoutbox_emoticons';
+    $res = DB::query($query);
+	while ($row = $res->fetch()) {
+        $imagelink = '<img src="'.$GLOBALS['SITEURL'].'/images/shoutbox/'.$row['image'].'">';
+        $msg = str_replace($row['text'], $imagelink, $msg);
 	}
-	
+
 	return $msg;
 }
 
 function MakeSQLSafe($msg)
 {
+    // this will allow all punctuation in the message, and also prevent sql injection.
+    $msg = str_replace("'", '&#39;', $msg);
+    $msg = str_replace("--", '&#45;&#45;', $msg);
 
-//this will allow all punctuation in the message, and also prevent sql injection.
-
-$msg = str_replace("'", '&#39;', $msg);
-$msg = str_replace("--", '&#45;&#45;', $msg);
-
-return $msg;
-};
+    return $msg;
+}
 
 function MakeHTMLSafe($msg)
 {
@@ -150,43 +142,23 @@ if (isset($_GET['del']))
 }
 
 //adding msges
-if ($_POST['message'] > '')
-	{
+if (isset($_POST['message']) && $_POST['message'] !== '') {
 		
-		if (isset($CURUSER))
-		{
-		
-		//this will check to see if there has already been an identical message posted (preventing double posts)
-		
+	if (isset($CURUSER)) {
+		// this will check to see if there has already been an identical message posted (preventing double posts)
 		$query = "SELECT COUNT(*) FROM shoutbox WHERE message='".MakeSQLSafe($_POST['message'])."' AND user='{$CURUSER['username']}' AND NOW()-date < 30";
-		$result = mysql_query($query);
-
-		$row = mysql_fetch_row($result);
-		if ($row[0] == '0')
-		{
-		
-		//add the message if all is ok. (not a doublepost)
-		$query = "INSERT INTO shoutbox (msgid, user, message, date, userid) VALUES (NULL, '".$CURUSER['username']."', '".MakeSQLSafe($_POST['message'])."', '".$local_time."', '".$CURUSER['id']."')";
-		mysql_query($query);
-
-		}
+		$count = DB::fetchColumn($query);
+		if (!$count) {
+            // add the message if all is ok. (not a doublepost)
+            $query = "INSERT INTO shoutbox (msgid, user, message, date, userid) VALUES (NULL, '".$CURUSER['username']."', '".
+            MakeSQLSafe($_POST['message'])."', '".$local_time."', '".$CURUSER['id']."')";
+            DB::query($query);
 		}
 	}
+}
 
-//get the current theme
-
-  if ($CURUSER)
-  {
-    $ss_a = @mysql_fetch_array(@mysql_query("select uri from stylesheets where id=" . $CURUSER["stylesheet"]));
-    if ($ss_a) $ss_uri = $ss_a["uri"];
-  }
-  if (!$ss_uri)
-  {
-    ($r = mysql_query("SELECT uri FROM stylesheets WHERE id=1")) or die(mysql_error());
-    ($a = mysql_fetch_array($r)) or die(mysql_error());
-    $ss_uri = $a["uri"];
-  }
-
+    // get the current theme
+    $ss_uri = getThemeUri();
 
 ?>
 <HTML>
@@ -197,7 +169,7 @@ if ($_POST['message'] > '')
 <link rel="stylesheet" type="text/css" href="themes/<?=$ss_uri?>/ttshout.css" />
 </HEAD>
 
-<?
+<?php
 
 //when you post a message, if you uncomment this, the page will jump down to the shoutbox. it will also do it when you load the site.
 //   not really recommended
@@ -221,7 +193,7 @@ function ShowSmilies() {
 
 //-->
 </SCRIPT>
-<?
+<?php
 if(!isset($_GET['history']))
 { 
 echo '
@@ -235,22 +207,19 @@ echo '
 
 //page numbers
 
-$query = 'SELECT COUNT(*) FROM shoutbox';
-$result = mysql_query($query);
-$row = mysql_fetch_row($result);
+$count = DB::fetchColumn('SELECT COUNT(*) FROM shoutbox');
+
 echo '<div align="middle">Pages: ';
-$pages = round($row[0] / 100) + 1;
+$pages = round($count / 100) + 1;
 $i = 1;
-while ($pages > 0)
-{
-echo "<a href='".$SITEURL."/ttshout.php?history=1&page=".$i."'>[".$i."]</a>&nbsp;";
-$i++;
-$pages--;
+while ($pages > 0) {
+    echo "<a href='".$SITEURL."/ttshout.php?history=1&page=".$i."'>[".$i."]</a>&nbsp;";
+    $i++;
+    $pages--;
 }
 
-
 echo '
-</div></br><table border="0" background="#ffffff" style="width: 99%; table-layout:fixed">';
+    </div></br><table border="0" background="#ffffff" style="width: 99%; table-layout:fixed">';
 }
 
 if (isset($_GET['history']))
@@ -282,11 +251,10 @@ else
 	$query = 'SELECT * FROM shoutbox ORDER BY msgid DESC LIMIT 20';
 }
 //echo $query;
-$result = mysql_query($query);
+$res = DB::query($query);
 $alt = false;
 
-while ($row = mysql_fetch_assoc($result)) {
-
+while ($row = $res->fetch()) {
 
 //alternate the colours
 if ($alt)
@@ -326,7 +294,7 @@ echo	'</td></tr>';
 </div>
 <br>
 
-<?
+<?php
 
 //if the user is logged in, show the shoutbox, if not, dont.
 if(!isset($_GET['history']))

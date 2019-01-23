@@ -1,4 +1,5 @@
 <?php
+
 // If anyone wants the old stats page back, it's called extra-stats.old.php
 ob_start("ob_gzhandler");
 require_once("backend/functions.php");
@@ -43,7 +44,7 @@ function usertable($res, $frame_caption) {
 <td class=ttable_head align="center">Joined</td>
 
 </tr>
-<?
+<?php
     $num = 0;
     while ($a = mysql_fetch_assoc($res)) {
         ++$num;
@@ -85,7 +86,7 @@ function _torrenttable($res, $frame_caption) {
 <td class=ttable_head align="right">Peers</td>
 <td class=ttable_head align="right">Ratio</td>
 </tr>
-<?
+<?php
     $num = 0;
     while ($a = mysql_fetch_assoc($res)) {
         ++$num;
@@ -119,7 +120,7 @@ function countriestable($res, $frame_caption, $what) {
 <td class=ttable_head align="left">Country</td>
 <td class=ttable_head align="right"><?=$what?></td>
 </tr>
-<?
+<?php
     $num = 0;
     while ($a = mysql_fetch_assoc($res)) {
         ++$num;
@@ -218,10 +219,6 @@ $guests = getguests();
 if (!$guests)
 	$guests = "0";
 
-function getmicrotime(){
-    list($usec, $sec) = explode(" ",microtime());
-    return ((float)$usec + (float)$sec);
-}
 $time_start = getmicrotime();
 //end here
 
@@ -362,7 +359,7 @@ $totaldonated = $row["totaldon"];
 
         print("<table width=560><tr><td class=tabletitle align=left><b>User Info</b></td></tr></table>\n"); ?>
         <table width=560 class=tableb border=0 cellspacing=0 cellpadding=3>
-        <?
+        <?php
 print("<tr><td class=tableb>Registered Users</td><td class=tableb> $registered</td></tr>\n");
 print("<tr><td class=tableb> Pending users</td><td class=tableb> $unverified</td></tr>\n");
 print("<tr><td class=tableb> Male users</td><td class=tableb> $male</td></tr>\n");
@@ -375,7 +372,7 @@ print("<tr><td class=tableb> Total Donations</td><td class=tableb> $$totaldonate
 print("<tr><td class=tableb> Total upload</td><td class=tableb> ".mksize($totaluploaded)."</td></tr>\n");
         ?>
         </table> <br>
-        <?
+        <?php
         print("<table width=560><tr><td class=tabletitle align=left><b>Torrent Info</b></td></tr></table>\n"); ?>
         <table width=560 class=tableb border=0 cellspacing=0 cellpadding=3>
         <?
@@ -387,7 +384,7 @@ print("<tr><td class=tableb> Seeders</td><td class=tableb> $seeders</td></tr>\n"
 print("<tr><td class=tableb> Leechers</td><td class=tableb> $leechers</td></tr>\n");; ?>
         </table>
         <br>
-        <?
+        <?php
         print("<table width=560><tr><td class=tabletitle align=left><b>Monthly Registration Chart</b></td></tr></table>\n");
         echo '<table width=560 cellpadding=3><tr><td><b>'.(isset($month) ? 'Day':'Month').'</b></td><td><b>Users</b></td></tr>';
         $res = mysql_query('SELECT RPAD(added,'.(isset($month) ? '10':'7').',"") AS date,COUNT(RPAD(added,'.(isset($month) ? '10':'7').',"")) AS count FROM users '.(isset($month) ? 'WHERE status = confirmed AND added LIKE "'.$month.'-%" ':'').' GROUP BY date ORDER BY date DESC');
@@ -498,7 +495,7 @@ print("<tr><td class=tableb> Leechers</td><td class=tableb> $leechers</td></tr>\
     }
 
 }
-  end_frame();
+
+end_frame();
   
-  stdfoot();
-?>
+stdfoot();
