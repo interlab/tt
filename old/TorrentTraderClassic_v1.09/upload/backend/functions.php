@@ -31,9 +31,9 @@ require_once("cleanup.php");
 require_once("extras.php");
 
 define('ST_ROOT_DIR', dirname(__DIR__));
-require_once ST_ROOT_DIR . '/helper/DB.php';
-require_once ST_ROOT_DIR . '/helper/Yaml.php';
-require_once ST_ROOT_DIR . '/helper/Helper.php';
+require_once ST_ROOT_DIR . '/helpers/DB.php';
+require_once ST_ROOT_DIR . '/helpers/Yaml.php';
+require_once ST_ROOT_DIR . '/helpers/Helper.php';
 require_once ST_ROOT_DIR . '/libs/vendor/autoload.php';
 
 
@@ -55,6 +55,12 @@ if (!isset($HTTP_POST_VARS) && isset($_POST))
 function h($str)
 {
     return htmlspecialchars($str, ENT_COMPAT, 'utf-8', false);
+}
+
+function getmicrotime()
+{
+    [$usec, $sec] = explode(' ', microtime());
+    return ((float)$usec + (float)$sec);
 }
 
 // IP Validation
@@ -756,7 +762,17 @@ function loadLanguage()
     $st_load_lang = true;
 }
 
-function stdfoot() {
+function updateUserLastBrowse()
+{
+    global $CURUSER;
+
+    if ($CURUSER) {
+        DB::update('users', ['last_browse' => gmtime()], ['id' => $CURUSER['id']]);
+    }
+}
+
+function stdfoot()
+{
   require_once("themes/" . $GLOBALS['ss_uri'] . "/footer.php");
 }
 

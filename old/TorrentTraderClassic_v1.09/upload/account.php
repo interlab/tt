@@ -239,9 +239,7 @@ if ($action=="mytorrents")
 begin_frame("" . ACCOUNT_YOUR_TORRENTS . "\n", center);
 
 $where = "WHERE owner = " . $CURUSER["id"] ."";
-$res = mysql_query("SELECT COUNT(*) FROM torrents $where");
-$row = mysql_fetch_array($res);
-$count = $row[0];
+$count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
 
 if (!$count) {
 ?>

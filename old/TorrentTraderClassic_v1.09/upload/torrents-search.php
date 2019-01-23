@@ -82,10 +82,7 @@ $where = implode(" AND ", $wherea);
 if ($where != "")
 $where = "WHERE $where";
 
-$res = mysql_query("SELECT COUNT(*) FROM torrents $where")
-or die(mysql_error());
-$row = mysql_fetch_array($res);
-$count = $row[0];
+$count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
 
 if (!$count && isset($cleansearchstr)) {
 	$wherea = $wherebase;
@@ -107,9 +104,7 @@ if (!$count && isset($cleansearchstr)) {
 		$where = implode(" AND ", $wherea);
 		if ($where != "")
 		$where = "WHERE $where";
-		$res = mysql_query("SELECT COUNT(*) FROM torrents $where");
-		$row = mysql_fetch_array($res);
-		$count = $row[0];
+		$count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
 	}
 }
 

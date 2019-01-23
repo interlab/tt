@@ -93,18 +93,17 @@ if (!$count && isset($cleansearchstr)) {
 		$sc++;
 		if ($sc > 5)
 		break;
-		$ssa = array();
-		foreach (array("search_text", "ori_descr") as $sss)
-		$ssa[] = "$sss LIKE '%" . sqlwildcardesc($searchss) . "%'";
+		$ssa = [];
+		foreach (array("search_text", "ori_descr") as $sss) {
+            $ssa[] = "$sss LIKE '%" . sqlwildcardesc($searchss) . "%'";
+        }
 		$wherea[] = "(" . implode(" OR ", $ssa) . ")";
 	}
 	if ($sc) {
 		$where = implode(" AND ", $wherea);
 		if ($where != "")
 		$where = "WHERE $where";
-		$tor = mysql_query("SELECT COUNT(*) FROM torrents $where");
-		$row = mysql_fetch_array($tor);
-		$count = $row[0];
+		$count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
 	}
 }
 
@@ -124,12 +123,13 @@ stdhead();
 
 $cats = genrelist();
 
-$catdropdown = "";
+$catdropdown = '';
 foreach ($cats as $cat) {
 	$catdropdown .= "<option value=\"browse.php?cat=" . $cat["id"] . "\"";
-	if ($cat["id"] == $_GET["cat"])
-	$catdropdown .= " selected=\"selected\"";
-	$catdropdown .= ">" . htmlspecialchars($cat["name"]) . "</option>\n";
+	if ($cat["id"] == ($_GET["cat"] ?? '')) {
+        $catdropdown .= " selected=\"selected\"";
+    }
+	$catdropdown .= ">" . h($cat["name"]) . "</option>\n";
 }
 
 //Here we decide if the site notice/welcome text is on or off
@@ -319,36 +319,21 @@ $date=gmdate("D M Y H:i", time() + $CURUSER['tzoffset'] * 60);
 <tr>
 <td vAlign=top colspan="2" width=100%>
 <?php
-if (!$LOGGEDINONLY){
-	if ($count) {
-		torrenttable($tor);
-		print($pagerbottom);
-	} else {
-		if (isset($cleansearchstr)) {
-			bark2($txt['NOTHING_FOUND'], $txt['NO_UPLOADS']);
-		} else {
-			bark2($txt['NOTHING_FOUND'], $txt['NO_RESULTS']);
-		}
-	}
-}//end 
 
-if ($LOGGEDINONLY){
-	if (!$CURUSER){
-		echo "<BR><BR><b><CENTER>You Are Not Logged In<br>Only Members Can View Torrents Please Signup.</CENTER><BR><BR>";
-	}else{
-		if ($count) {
-				torrenttable($tor);
-				print($pagerbottom);
-		}else {
-			if (isset($cleansearchstr)) {
-				bark2($txt['NOTHING_FOUND'], $txt['NO_UPLOADS']);
-			}else{
-				bark2($txt['NOTHING_FOUND'], $txt['NO_RESULTS']);
-		}
-	}
-	}
-}//end 
-
+if ($LOGGEDINONLY && !$CURUSER) {
+    echo "<BR><BR><b><CENTER>You Are Not Logged In<br>Only Members Can View Torrents Please Signup.</CENTER><BR><BR>";
+} else {
+    if ($count) {
+        torrenttable($tor);
+        print($pagerbottom);
+    } else {
+        if (isset($cleansearchstr)) {
+            bark2($txt['NOTHING_FOUND'], $txt['NO_UPLOADS']);
+        } else {
+            bark2($txt['NOTHING_FOUND'], $txt['NO_RESULTS']);
+        }
+    }
+}
 
 ?>
 </td></tr></table>
@@ -372,12 +357,9 @@ if ($DISCLAIMERON) {
     end_frame();
 }
 
-//update users last browse time
-//REMOVE THIS IF YOUR LOAD IS HIGH.
-if (isset($CURUSER)) {
-    DB::update('users', ['last_browse' => gmtime()], ['id' => $CURUSER['id']]);
-}
+// REMOVE THIS IF YOUR LOAD IS HIGH
+updateUserLastBrowse();
 
 stdfoot();
 hit_end();
-?>
+
