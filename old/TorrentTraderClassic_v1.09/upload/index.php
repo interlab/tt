@@ -1,18 +1,20 @@
-<?
+<?php
 //
 // - Theme And Language Updated 25.Nov.05
 //
 ob_start("ob_gzhandler");
 require_once("backend/functions.php");
 dbconn(true);
+
+global $CURUSER, $RATIO_WARNINGON, $SHOUTBOX, $DISCLAIMERON;
+
 if ($RATIO_WARNINGON && $CURUSER)
 {
     include("ratiowarn.php");
 }
 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST")
-{
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $choice = (int) $_POST["choice"];
   if ($CURUSER && $choice > 0 && $choice < 256)
   {
@@ -33,10 +35,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     stderr("Error", "Please select an option.");
 }
 
-function getmicrotime(){
-    list($usec, $sec) = explode(" ",microtime());
+function getmicrotime()
+{
+    list($usec, $sec) = explode(" ", microtime());
     return ((float)$usec + (float)$sec);
-    }
+}
+
 $time_start = getmicrotime();
 
 
@@ -45,15 +49,10 @@ $cleansearchstr = searchfield($searchstr);
 if (empty($cleansearchstr))
 	unset($cleansearchstr);
 
-$searchstr = unesc($_GET["search"]);
-$cleansearchstr = searchfield($searchstr);
-if (empty($cleansearchstr))
-unset($cleansearchstr);
-
 $orderby = "ORDER BY torrents.id DESC";
 
-$addparam = "";
-$wherea = array();
+$addparam = '';
+$wherea = [];
 
 if ($_GET["incldead"] == 1) {
 	$addparam .= "incldead=1&amp;";
@@ -79,11 +78,9 @@ if (isset($cleansearchstr)) {
 $where = implode(" AND ", $wherea);
 if ($where != "")
 $where = "WHERE $where";
+$limit = 15;
 
-$tor = mysql_query("SELECT COUNT(*) FROM torrents $where")
-or die(mysql_error());
-$row = mysql_fetch_array($tor);
-$count = $row[0];
+$count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where . ' LIMIT ' . $limit);
 
 if (!$count && isset($cleansearchstr)) {
 	$wherea = $wherebase;
@@ -138,24 +135,24 @@ foreach ($cats as $cat) {
 //Here we decide if the site notice/welcome text is on or off
 if ($SITENOTICEON)
 {
-begin_frame("" . NOTICE . "", center);
-echo "<BR>$SITENOTICE<BR><BR>";
-end_frame();
+    begin_frame($txt['NOTICE'], 'center');
+    echo "<BR>$SITENOTICE<BR><BR>";
+    end_frame();
 }
 
 //NEWS BLOCK
 if ($NEWSON)
 {
-begin_frame("". SITENEWS . "", center);
-include "news.php";
-end_frame();
+    begin_frame($txt['SITENEWS'], 'center');
+    include "news.php";
+    end_frame();
 }
 
 if ($POLLON)
 {
-begin_frame("Poll", center);
-if ($CURUSER)
-{
+    begin_frame("Poll", 'center');
+    if ($CURUSER)
+    {
   // Get current poll
   $res = mysql_query("SELECT * FROM polls ORDER BY added DESC LIMIT 1") or sqlerr();
   if($pollok=(mysql_num_rows($res)))
@@ -266,35 +263,42 @@ if ($CURUSER)
     //end_table();
     }
 
-}else{
-    echo "You must log in to vote and view the poll";
+    } else {
+        echo "You must log in to vote and view the poll";
+    }
+    end_frame();
 }
+
+
+begin_frame($txt['TORRENT_CATEGORIES'], 'center');
+print "<B><font color=#FF6600>â€¢</font></B> <a href=browse.php>" . $txt['BROWSE_TORRENTS'] . "</a> ";
+print "<B><font color=#FF6600>â€¢</font></B> <a href=today.php>" . $txt['TODAYS_TORRENTS'] . "</a> ";
+print "<B><font color=#FF6600>â€¢</font></B> <a href=torrents-search.php>" . $txt['SEARCH'] . "</a><hr>";
+$bull = "<B><font color=#FF6600>&bull;</font></B>";
+
+    // DATE(NOW() - INTERVAL 27 DAY)
+    // AND UNIX_TIMESTAMP(" . get_dt_num() . ") - UNIX_TIMESTAMP(t.added) < 3600
+    $sql = '
+    SELECT c.id, c.name,
+        (SELECT COUNT(*) FROM torrents AS t
+        WHERE t.added > DATE(NOW() - INTERVAL 1 HOUR)
+            AND t.category = c.id
+        ) AS new_tor
+    FROM categories AS c
+    ORDER BY c.sort_index, c.id';
+    $res = DB::query($sql);
+    while (list($id, $name, $newcount) = $res->fetch(\PDO::FETCH_NUM)) {
+        if ($newcount > 0) {
+            echo $bull, ' <a href="/browse.php?cat=', $id, '">', $name, '</a> (', $newcount, ') ';
+        } else {
+            echo $bull, ' <a href="/browse.php?cat=', $id, '">', $name, '</a> ';
+        }
+    }
+    echo $bull, '<br><br>';
 end_frame();
-}
 
-begin_frame("" . TORRENT_CATEGORIES . "", center);
-print "<B><font color=#FF6600>•</font></B> <a href=browse.php>" . BROWSE_TORRENTS . "</a> ";
-print "<B><font color=#FF6600>•</font></B> <a href=today.php>" . TODAYS_TORRENTS . "</a> ";
-print "<B><font color=#FF6600>•</font></B> <a href=torrents-search.php>" . SEARCH . "</a><hr>";
 
-$rq = "SELECT id, name FROM categories ORDER BY sort_index, id";
-$resq = mysql_query($rq);
- while ($row = mysql_fetch_array($resq))
-{
- extract ($row);
-//comment out the get_row_count part if high server load
-
- $newcount = get_row_count("torrents", "WHERE UNIX_TIMESTAMP(" . get_dt_num() . ") - UNIX_TIMESTAMP(added) < 3600 AND category = '" . $id . "'");
-   if($newcount > 0){
-  echo "<B><font color=#FF6600>•</font></B> <a href=\"browse.php?cat=$id\">$name</a> ($newcount) \n";
-		}else{
-  echo "<B><font color=#FF6600>•</font></B> <a href=\"browse.php?cat=$id\">$name</a> \n";
-	}
-}
-print "<br><br>";
-end_frame();
-
-begin_frame("" . BROWSE_TORRENTS . "", center);
+begin_frame($txt['BROWSE_TORRENTS'], 'center');
 
 //$date=gmdate("D M Y H:i");
 $date=gmdate("D M Y H:i", time() + $CURUSER['tzoffset'] * 60);
@@ -307,23 +311,23 @@ $date=gmdate("D M Y H:i", time() + $CURUSER['tzoffset'] * 60);
 <form name="jump">
 <td style="border-style: none; border-width: medium" align="right">
 <select name="menu" onChange="location=document.jump.menu.options[document.jump.menu.selectedIndex].value;" value="GO" style="font-family: Verdana; font-size: 8pt; border: 1px solid #000000; background-color: #CCCCCC" size="1">
-<option value="#"><? print("" . CATEGORIES . "\n"); ?></option>
+<option value="#"><?= $txt['CATEGORIES'] ?></option>
 <?= $catdropdown ?>
-<option value=browse.php><? print("" . SHOWALL . "\n"); ?></option>
+<option value=browse.php><?= $txt['SHOWALL'] ?></option>
 </select></td></form>
 </tr>
 <tr>
 <td vAlign=top colspan="2" width=100%>
-<?
+<?php
 if (!$LOGGEDINONLY){
 	if ($count) {
-			torrenttable($tor);
-			print($pagerbottom);
-	}else {
+		torrenttable($tor);
+		print($pagerbottom);
+	} else {
 		if (isset($cleansearchstr)) {
-			bark2("" . NOTHING_FOUND . "", "" . NO_UPLOADS . "");
-		}else{
-			bark2("" . NOTHING_FOUND . "", "" . NO_RESULTS . "");
+			bark2($txt['NOTHING_FOUND'], $txt['NO_UPLOADS']);
+		} else {
+			bark2($txt['NOTHING_FOUND'], $txt['NO_RESULTS']);
 		}
 	}
 }//end 
@@ -337,9 +341,9 @@ if ($LOGGEDINONLY){
 				print($pagerbottom);
 		}else {
 			if (isset($cleansearchstr)) {
-				bark2("" . NOTHING_FOUND . "", "" . NO_UPLOADS . "");
+				bark2($txt['NOTHING_FOUND'], $txt['NO_UPLOADS']);
 			}else{
-				bark2("" . NOTHING_FOUND . "", "" . NO_RESULTS . "");
+				bark2($txt['NOTHING_FOUND'], $txt['NO_RESULTS']);
 		}
 	}
 	}
@@ -348,29 +352,31 @@ if ($LOGGEDINONLY){
 
 ?>
 </td></tr></table>
-<?
+<?php
 end_frame();
 
 //Here we decide if the shoutbox is on or off
 if ($SHOUTBOX)
 {
-begin_frame("" . SHOUTBOX . "", center);
-echo '<IFRAME name="shout_frame" src="'.$SITEURL.'/ttshout.php" frameborder="0" marginheight="0" marginwidth="0" width="95%" height="210" scrolling="no" align="middle"></IFRAME>';
-end_frame();
+    begin_frame($txt['SHOUTBOX'], 'center');
+    echo '<IFRAME name="shout_frame" src="'.$SITEURL.'/ttshout.php" frameborder="0" marginheight="0" marginwidth="0" width="95%" 
+    height="210" scrolling="no" align="middle"></IFRAME>';
+    end_frame();
 }
 
 
 //Here we decide if the block is on or off
-if ($DISCLAIMERON)
-{
-begin_frame("" . DISCLAIMER . ""); 
-echo file_get_contents("disclaimer.txt") ;
-end_frame();
+if ($DISCLAIMERON) {
+    begin_frame($txt['DISCLAIMER']); 
+    echo file_get_contents(ST_ROOT_DIR . '/disclaimer.txt');
+    end_frame();
 }
 
 //update users last browse time
 //REMOVE THIS IF YOUR LOAD IS HIGH.
-mysql_query("UPDATE users SET last_browse=".gmtime()." where id=".$CURUSER['id']);
+if (isset($CURUSER)) {
+    DB::update('users', ['last_browse' => gmtime()], ['id' => $CURUSER['id']]);
+}
 
 stdfoot();
 hit_end();

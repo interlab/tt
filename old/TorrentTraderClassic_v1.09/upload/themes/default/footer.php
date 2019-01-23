@@ -1,6 +1,6 @@
 	<BR><BR><BR>
 	<CENTER>
-<?
+<?php
 // Variables for Start Time 
 $mtime = microtime(); // Get Current Time 
 $mtime = explode (" ", $mtime); // Split Seconds and Microseconds   

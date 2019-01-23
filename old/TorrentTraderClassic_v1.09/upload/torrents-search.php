@@ -1,4 +1,4 @@
-<?
+<?php
 //
 // - Theme And Language Updated 25.Nov.05
 //
@@ -158,21 +158,20 @@ begin_frame("" . SEARCH_TITLE . "",center);
 
 ?><CENTER>
 <form method="get" action="torrents-search.php"><br />
-<? print("" . SEARCH . "\n"); ?>
-<input type="text" name="search" size="40" value="<?= htmlspecialchars($searchstr) ?>" />
-<? print("" . IN . "\n"); ?>
+<?= $txt['SEARCH'] ?>
+<input type="text" name="search" size="40" value="<?= h($searchstr) ?>" />
+<?= $txt['IN'] ?>
 <select name="cat">
 <option value="0">(All types)</option>
-<?
 
-
+<?php
 $cats = genrelist();
 $catdropdown = "";
 foreach ($cats as $cat) {
     $catdropdown .= "<option value=\"" . $cat["id"] . "\"";
     if ($cat["id"] == $_GET["cat"])
         $catdropdown .= " selected=\"selected\"";
-    $catdropdown .= ">" . htmlspecialchars($cat["name"]) . "</option>\n";
+    $catdropdown .= ">" . h($cat["name"]) . "</option>\n";
 }
 
 $deadchkbox = "<input type=\"checkbox\" name=\"incldead\" value=\"1\"";
@@ -184,25 +183,27 @@ $deadchkbox .= " /> " . INC_DEAD . "\n";
 <?= $catdropdown ?>
 </select>
 <?= $deadchkbox ?>
-<input type="submit" value="<? print("" . SEARCH . "\n"); ?>" />
+<input type="submit" value="<?= $txt['SEARCH'] ?>" />
 </form><br><hr><br>
-<? print("" . SHOW_ALL . "\n"); ?>
+<?= $txt['SHOW_ALL'] ?>
 <form method="get" action="torrents-search.php">
 <select name="cat">
 <option value="0">(Any type)</option>
 <?= $catdropdown ?>
 </select>
-<? /* = $deadchkbox */ ?>
+
+
+
 <select name=incldead>
 <option value="0">Active</option>
 <option value="1">Including dead</option>
 <option value="2">Only dead</option>
 </select>
-<input type="submit" class=btn value="<? print("" . DISPLAY . "\n"); ?>" style="margin-left: 10px"/>
+<input type="submit" class=btn value="<?= $txt['DISPLAY'] ?>" style="margin-left: 10px"/>
 </form>
 </CENTER>
-<?
 
+<?php
 if ($count) {
 		end_frame();
 		echo "<br /><br />\n";
@@ -219,7 +220,6 @@ else {
 		bark2("" . NOTHING_FOUND . "", "" . NO_RESULTS . "");
 	}
 }
-
 
 end_frame();
 stdfoot();

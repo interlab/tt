@@ -33,6 +33,7 @@ require_once("extras.php");
 define('ST_ROOT_DIR', dirname(__DIR__));
 require_once ST_ROOT_DIR . '/helper/DB.php';
 require_once ST_ROOT_DIR . '/helper/Yaml.php';
+require_once ST_ROOT_DIR . '/helper/Helper.php';
 require_once ST_ROOT_DIR . '/libs/vendor/autoload.php';
 
 
@@ -174,9 +175,9 @@ function userlogin()
     DB::update('users', [
             'last_access' => get_date_time(),
             'ip' => $ip,
-            'showext' => $showext,
-            'url' => getenv("REQUEST_URI"),
-            'useragent' => $_SERVER["HTTP_USER_AGENT"],
+            // 'showext' => $showext,
+            // 'url' => getenv("REQUEST_URI"),
+            // 'useragent' => $_SERVER["HTTP_USER_AGENT"],
         ],
         [ 'id' => $row["id"] ]
     );
@@ -367,27 +368,48 @@ function gmtime()
     return strtotime(get_date_time());
 }
 
+// @todo: md5 not recommended
+function logincookie($id, $password, $secret, $updatedb = 1, $expires = 0x7fffffff)
+{
+    $md5 = md5($secret.$password.$secret);
+    setcookie('uid', $id, $expires, '/');
+    setcookie('pass', $md5, $expires, '/');
 
-function logincookie($id, $password, $secret, $updatedb = 1, $expires = 0x7fffffff) {
-    $md5 = md5($secret . $password . $secret);
-    setcookie("uid", $id, $expires, "/");
-    setcookie("pass", $md5, $expires, "/");
-
-    if ($updatedb)
-        mysql_query("UPDATE users SET last_login = NOW() WHERE id = $id");
+    if ($updatedb) {
+        DB::query('
+    UPDATE users
+        SET last_login = NOW()
+    WHERE id = ' . $id);
+    }
 }
 
-function logoutcookie() {
-setcookie("uid", "null", time(), "/");
-setcookie("pass", "null", time(), "/");
+function logoutcookie()
+{
+    setcookie('uid', false, time(), '/');
+    setcookie('pass', false, time(), '/');
 }
 
-function loggedinorreturn() {
+function loggedinorreturn()
+{
     global $CURUSER;
-		if (!$CURUSER) {
-			header("Refresh: 0; url=account-login.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]));
-			exit();
-		}
+
+    if (!$CURUSER) {
+        header("Refresh: 0; url=account-login.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]));
+        exit();
+    }
+}
+
+function isNotGuest()
+{
+    global $CURUSER, $SITEURL;
+
+    // print_r($CURUSER);
+    // die('LOL');
+
+    if (!$CURUSER) {
+        header('Location: '.$SITEURL.'/account-login.php?returnto='.urlencode($_SERVER['REQUEST_URI']));
+        die();
+    }
 }
 
 function adminonly() {
@@ -1220,18 +1242,64 @@ function sqlerr($query = "") {
 	die;
 }
 
-function get_user_timezone($id) {
-  if ($CURUSER){
-	   $sql = "SELECT * FROM users WHERE id=$id LIMIT 1";
-       $query = mysql_query($sql);
-       if (mysql_num_rows($query) != "0") {
-			$kasutaja = mysql_fetch_array($query);
-			$timezone = $kasutaja["tzoffset"];
-			return "$timezone";
-		} else {
-         return "3";
-		} //Default timezone
-	}
+// @todo: check: ??? не используется?
+function get_user_timezone($id)
+{
+    global $CURUSER;
+
+    $id = (int) $id;
+    if ($CURUSER) {
+        $timezone = DB::fetchColumn('
+    SELECT tzoffset
+    FROM users
+    WHERE id = '.$id.'
+    LIMIT 1');
+
+        if ($timezone) {
+            return $timezone;
+        } else {
+            return 3;
+        } // Default timezone
+    }
+}
+
+function numUserMsg()
+{
+    global $CURUSER, $st;
+
+    if (isset($st['cache']['user_num_msg'])) {
+        return $st['cache']['user_num_msg'];
+    }
+
+    $id = (int) $CURUSER['id'];
+    $num = DB::fetchColumn('
+        SELECT COUNT(*)
+        FROM messages
+        WHERE receiver = ?
+        LIMIT 1',
+        [$id]
+    );
+    $st['cache']['user_num_msg'] = $num;
+
+    return $num;
+}
+
+function numUnreadUserMsg()
+{
+    global $CURUSER, $st;
+
+    if (isset($st['cache']['numUnreadMsg']))
+        return $st['cache']['numUnreadMsg'];
+
+    $id = (int) $CURUSER['id'];
+    $num = DB::fetchColumn('
+    SELECT COUNT(*)
+    FROM messages
+    WHERE receiver = '.$id.'
+        AND unread = ?', ['yes'], 0);
+    $st['cache']['numUnreadMsg'] = $num;
+
+    return $num;
 }
 
 // Returns the current time in GMT in MySQL compatible format.
@@ -1372,12 +1440,12 @@ function format_comment($text, $strip_html = true, $strip_slash = true)
 	return $s;
 }
 
-define (UC_USER, 0);
-define (UC_UPLOADER, 1);
-define (UC_VIP, 2);
-define (UC_JMODERATOR, 3);
-define (UC_MODERATOR, 4);
-define (UC_ADMINISTRATOR, 5);
+const UC_USER = 0;
+const UC_UPLOADER = 1;
+const UC_VIP = 2;
+const UC_JMODERATOR = 3;
+const UC_MODERATOR = 4;
+const UC_ADMINISTRATOR = 5;
 
 function get_user_class()
 {

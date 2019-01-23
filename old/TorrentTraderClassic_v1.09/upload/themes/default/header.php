@@ -126,9 +126,8 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
 		//end
 
 		// get unread messages
-		$res12 = mysql_query("SELECT COUNT(*) FROM messages WHERE receiver=" . $CURUSER["id"] . " and unread='yes'") or print(mysql_error());
-		$arr12 = mysql_fetch_row($res12);
-		$unreadmail = $arr12[0];
+        $nmessages = numUserMsg();
+		$unread = numUnreadUserMsg();
 		//end
 			?>
 
@@ -137,7 +136,7 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
             <?php
 
             if ($unread) {
-                print("<a href=\"account.php\"><b><font color=#FF0000>New PM" . ($messages != 1 ? "s" : "") . " ($unread)</b></a></font>");
+                echo '<a href="account.php"><b><font color=#FF0000>New PM' . ($nmessages != 1 ? 's' : '') . ' (' . $unread . ')</b></a></font>';
             } 
             } else {
 				echo "<a href=account-login.php><font color=#FF0000>". $txt['LOGIN'] . "</font></a> <B>:</B> <a href=account-signup.php><font color=#FF0000>". $txt['REGISTERNEW'] ."</font></a>";
@@ -196,38 +195,8 @@ begin_block($txt['LOGIN']);
 end_block();
 
 } else {
-
-$ss_r = mysql_query("SELECT * from stylesheets") or die;
-$ss_sa = array();
-while ($ss_a = mysql_fetch_array($ss_r))
-{
-  $ss_id = $ss_a["id"];
-  $ss_name = $ss_a["name"];
-  $ss_sa[$ss_name] = $ss_id;
-}
-ksort($ss_sa);
-reset($ss_sa);
-while (list($ss_name, $ss_id) = each($ss_sa))
-{
-  if ($ss_id == $CURUSER["stylesheet"]) $ss = " selected"; else $ss = "";
-  $stylesheets .= "<option value=$ss_id$ss>$ss_name</option>\n";
-}
-
-$lang_r = mysql_query("SELECT * from languages") or die;
-$lang_sa = array();
-while ($lang_a = mysql_fetch_array($lang_r))
-{
-  $lang_id = $lang_a["id"];
-  $lang_name = $lang_a["name"];
-  $lang_sa[$lang_name] = $lang_id;
-}
-ksort($lang_sa);
-reset($lang_sa);
-while (list($lang_name, $lang_id) = each($lang_sa))
-{
-  if ($lang_id == $CURUSER["language"]) $lang = " selected"; else $lang = "";
-  $languages .= "<option value=$lang_id$lang>$lang_name</option>\n";
-}
+    $styles = Helper::getStylesheets();
+    $langs = Helper::getLanguages();
 
 begin_block("$CURUSER[username]");
 ?>
@@ -235,9 +204,9 @@ begin_block("$CURUSER[username]");
 <tr><form method="post" action="take-theme.php"><td>
 <table border=0 cellspacing=0 cellpadding="6" width=100%>
 <tr><td align="center"><B><?= $txt['THEME'] ?> </B>
-	<select name=stylesheet style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0" size="1"><?=$stylesheets?></select></td></tr>
+	<select name=stylesheet style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0" size="1"><?= $styles ?></select></td></tr>
 <tr><td align="center"><B><?= $txt['LANG'] ?> </B>
-	<select name=language style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0" size="1"><?=$languages?></select></td></tr>
+	<select name=language style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0" size="1"><?= $langs ?></select></td></tr>
 <tr><td align="center">
 	<input type="submit" value="<?= $txt['APPLY'] ?>" style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0"></td></tr>
 </table></form></td></tr>
@@ -302,40 +271,33 @@ begin_block("". $txt['NAVIGATION'] ."");
  <?php
 end_block();
 
-
-if ($DONATEON)
-{
-begin_block($txt['DONATIONS'], 'center');
-$res9 = mysql_query("SELECT * FROM site_settings ") or sqlerr(__FILE__, __LINE__);
-$arr9 = mysql_fetch_assoc($res9);
-$mothlydonated = $arr9['donations'];
-$requireddonations = $arr9['requireddonations'];
-echo "<br><b>". $txt['TARGET'] .": </b><font color=\"red\">$" . $requireddonations . "</font><br><b>". $txt['DONATIONS'] .": </b><font color=\"green\">$" . $mothlydonated . "</font></center><br>";
-print "<div align=left><B><font color=#FF6600>&#187;</font></B> <a href=\"donate.php\">". $txt['DONATE'] ."</a><br>";
-end_block();
+if ($DONATEON) {
+    begin_block($txt['DONATIONS'], 'center');
+    $row = DB::fetchAssoc('SELECT donations, requireddonations FROM site_settings');
+    echo "<br><b>". $txt['TARGET'] .": </b><font color=\"red\">$" . $row['requireddonations'] . "</font><br><b>". $txt['DONATIONS'] .": </b><font color=\"green\">$" . $row['donations'] . "</font></center><br>";
+    print "<div align=left><B><font color=#FF6600>&#187;</font></B> <a href=\"donate.php\">". $txt['DONATE'] ."</a><br>";
+    end_block();
 }
 
-
-//start side banner
+// start side banner
 echo "<br><CENTER>";
-$contents = join ('', file ('sponsors.txt'));
-$s_cons = split("~",$contents);
+$contents = file_get_contents(ST_ROOT_DIR . '/sponsors.txt');
+$s_cons = preg_split('/~/', $contents);
 $bannerss = rand(0,(count($s_cons)-1));
-echo $s_cons[$bannerss];
-echo "</CENTER><br>";
-//end side banner
-
-
+echo $s_cons[$bannerss], '
+    </CENTER><br>';
+// end side banner
 ?>
             </TD>
           <TD vAlign=top>
 
 		  <!-- banner code starts here -->
 		   <br><CENTER><?php
-$content = join ('', file ('banners.txt'));
-$s_con = split("~",$content);
+$content = file_get_contents(ST_ROOT_DIR . '/banners.txt');
+$s_con = preg_split('/~/', $content);
 
 $banners = rand(0,(count($s_con)-1));
 echo $s_con[$banners];
 ?></CENTER><br>
 <!-- end banner code -->
+

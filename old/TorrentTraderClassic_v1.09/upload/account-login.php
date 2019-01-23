@@ -1,4 +1,4 @@
-<?
+<?php
 //
 // CSS and Language updated 30.11.05
 //
@@ -9,16 +9,22 @@ dbconn();
 unset($returnto);
 if (!empty($_GET["returnto"])) {
 	$returnto = $_GET["returnto"];
-	if (!$_GET["nowarn"]) {
+	if (!isset($_GET["nowarn"])) {
 		$message = "Sorry this page is only for members.";
 	}
 }
 
-if (mkglobal("username:password")) {
-	$password = md5($password);
+$user_name = $_POST['username'] ?? false;
+$user_password = $_POST['password'] ?? false;
 
-	$res = mysql_query("SELECT id, password, secret, enabled FROM users WHERE username = " . sqlesc($username) . " AND status = 'confirmed'");
-	$row = mysql_fetch_array($res);
+if ($user_name && $user_password) {
+    $password = md5($user_password);
+
+    $row = DB::fetchAssoc('
+    SELECT id, password, secret, enabled
+    FROM users
+    WHERE username = ?
+        AND status = ?', [$user_name, 'confirmed']);
 
 	if (!$row)
 		$message = "Username Incorrect";
@@ -43,31 +49,36 @@ logoutcookie();
 
 stdhead("Login");
 
-begin_frame("" . LOGIN . "");
+begin_frame($txt['LOGIN']);
 
-if ($message != "")
+if ($message != '') {
 	bark2("Access Denied", $message);
+}
 ?>
 
 <form method="post" action="account-login.php">
 	<div align="center">
 	<table border="0" cellpadding=5>
-		<tr><td><B><?echo "" . USERNAME . "";?>:</B></td><td align=left><input type="text" size=40 name="username" /></td></tr>
-		<tr><td><B><?echo "" . PASSWORD . "";?>:</B></td><td align=left><input type="password" size=40 name="password" /></td></tr>
-		<tr><td colspan="2" align="center"><input type="submit" value="<?echo "" . LOGIN . "";?>" class=btn><BR><BR><i><?echo "" . COOKIES . "";?></i></td></tr>
+		<tr><td><B><?= $txt['USERNAME'] ?>:</B></td><td align=left><input type="text" size=40 name="username" /></td></tr>
+		<tr><td><B><?= $txt['PASSWORD'] ?>:</B></td><td align=left><input type="password" size=40 name="password" /></td></tr>
+		<tr><td colspan="2" align="center"><input type="submit" value="<?= $txt['LOGIN'] ?>" class="btn"><BR><BR><i><?= $txt['COOKIES'] ?></i></td></tr>
 	</table>
 	</div>
-<?
+<?php
 
 if (isset($returnto))
-	print("<input type=\"hidden\" name=\"returnto\" value=\"" . htmlspecialchars($returnto) . "\" />\n");
+	echo '<input type="hidden" name="returnto" value="' . h($returnto) . '" />';
 
 ?>
 
 </form>
-<p align="center"><a href="account-signup.php"><?echo "" . REGISTERNEW . "";?></a> | <a href="account-recover.php"><?echo "" . RECOVER_ACCOUNT . "";?></a> | <a href="account-delete.php"><?echo "" . DELETE_ACCOUNT . "";?></a></p>
+<p align="center">
+    <a href="account-signup.php"><?= $txt['REGISTERNEW'] ?></a> | 
+    <a href="account-recover.php"><?= $txt['RECOVER_ACCOUNT'] ?></a> | <a href="account-delete.php"><?= $txt['DELETE_ACCOUNT'] ?></a>
+</p>
 
-<?
+<?php
 end_frame();
 stdfoot();
 ?>
+
