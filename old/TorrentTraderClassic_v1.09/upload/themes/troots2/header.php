@@ -399,28 +399,28 @@ if ($CURUSER)
 begin_block("" . NAVIGATION . "");
 ?>
 
-· <a href="index.php"><? print("" . HOME . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-search.php"><? print("" . SEARCH_TITLE . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-upload.php"><? print("" . UPLOADT . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-needseed.php"><? print("" . UNSEEDED . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="viewrequests.php"><? print("" . REQUESTED . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="today.php"><? print("" . TODAYS_TORRENTS . "\n"); ?></a><br /><br />
+Â· <a href="index.php"><? print("" . HOME . "\n"); ?></a><br />
+&nbsp;&nbsp;Â· <a href="torrents-search.php"><? print("" . SEARCH_TITLE . "\n"); ?></a><br />
+&nbsp;&nbsp;Â· <a href="torrents-upload.php"><? print("" . UPLOADT . "\n"); ?></a><br />
+&nbsp;&nbsp;Â· <a href="torrents-needseed.php"><? print("" . UNSEEDED . "\n"); ?></a><br />
+&nbsp;&nbsp;Â· <a href="viewrequests.php"><? print("" . REQUESTED . "\n"); ?></a><br />
+&nbsp;&nbsp;Â· <a href="today.php"><? print("" . TODAYS_TORRENTS . "\n"); ?></a><br /><br />
 				  <CENTER><a href="rssinfo.php"><img src="images/rss2.gif" border=0 alt="XML RSS Feed"></a></CENTER>
 				  <hr>
-· <a href="faq.php"><? print("" . FAQ . "\n"); ?></a><br />
-· <a href="extras-stats.php"><? print("" . TRACKER_STATISTICS . "\n"); ?></a><br />
-<?if ($FORUMS) {?>· <a href="forums.php"><? print("" . FORUMS . "\n"); ?></a><br /><?}?>
-<?if ($IRCCHAT) {?>· <a href="irc.php"><? print("" . CHAT . "\n"); ?></a><br /><?}?>
-· <a href="formats.php"><? print("" . FILE_FORMATS . "\n"); ?></a><br />
-· <a href="videoformats.php"><? print("" . MOVIE_FORMATS . "\n"); ?></a><br />
-· <a href="staff.php"><? print("" . STAFF . "\n"); ?></a><br />
-· <a href="rules.php"><? print("" . SITE_RULES . "\n"); ?></a><br />
-· <a href="extras-users.php"><? print("" . MEMBERS . "\n"); ?></a><br /><hr>
-· <a href="visitorsnow.php"><? print("" . ONLINE_USERS . "\n"); ?></a><br />
-· <a href="visitorstoday.php"><? print("" . VISITORS_TODAY . "\n"); ?></a><br />
+Â· <a href="faq.php"><? print("" . FAQ . "\n"); ?></a><br />
+Â· <a href="extras-stats.php"><? print("" . TRACKER_STATISTICS . "\n"); ?></a><br />
+<?if ($FORUMS) {?>Â· <a href="forums.php"><? print("" . FORUMS . "\n"); ?></a><br /><?}?>
+<?if ($IRCCHAT) {?>Â· <a href="irc.php"><? print("" . CHAT . "\n"); ?></a><br /><?}?>
+Â· <a href="formats.php"><? print("" . FILE_FORMATS . "\n"); ?></a><br />
+Â· <a href="videoformats.php"><? print("" . MOVIE_FORMATS . "\n"); ?></a><br />
+Â· <a href="staff.php"><? print("" . STAFF . "\n"); ?></a><br />
+Â· <a href="rules.php"><? print("" . SITE_RULES . "\n"); ?></a><br />
+Â· <a href="extras-users.php"><? print("" . MEMBERS . "\n"); ?></a><br /><hr>
+Â· <a href="visitorsnow.php"><? print("" . ONLINE_USERS . "\n"); ?></a><br />
+Â· <a href="visitorstoday.php"><? print("" . VISITORS_TODAY . "\n"); ?></a><br />
 
 <?if(get_user_class() > UC_VIP) {?><hr>
-· <a href="admin.php"><? print("" . STAFFCP . "\n"); ?></a><br /><?}?>
+Â· <a href="admin.php"><? print("" . STAFFCP . "\n"); ?></a><br /><?}?>
 <br />
 
  <?
@@ -429,7 +429,7 @@ end_block();
 
 if ($DONATEON)
 {
-begin_block("" . DONATIONS . "", center);
+begin_block("" . DONATIONS . "", 'center');
 $res9 = mysql_query("SELECT * FROM site_settings ") or sqlerr(__FILE__, __LINE__);
 $arr9 = mysql_fetch_assoc($res9);
 $mothlydonated = $arr9['donations'];

@@ -1,4 +1,4 @@
-<?
+<?php
 // started work on forums 16 Feb- FLASH
 
 //note to self, loook at showerror()
@@ -10,11 +10,11 @@
 $forumbanned = $CURUSER["forumbanned"];
 if ($forumbanned == "yes") {
 	stdhead("Banned");
-	begin_frame("Notice", center);
+	begin_frame("Notice", 'center');
 	echo '<BR><b>Unfortunately you have been banned from accessing the forums.  Please contact a member of staff if you do not know the reason.</b><BR><BR>';
 	end_frame();
 	stdfoot();
-}else{
+} else {
 
 //Here we decide if the forums is on or off
 if ($FORUMS)
@@ -78,7 +78,7 @@ function forumsqlerr($file = '', $line = '')//handle errors
 
 function showerror($heading = "Error", $text, $sort = "Error") {
   stdhead("$sort: $heading");
-  begin_frame("<font color=red>$sort: $heading</font>", center);
+  begin_frame("<font color=red>$sort: $heading</font>", 'center');
   echo $text;
   end_frame();
   stdfoot();
@@ -475,7 +475,7 @@ if ($action == "viewtopic") {
     $res = mysql_query("SELECT * FROM forum_posts WHERE topicid=$topicid ORDER BY id LIMIT $offset,$perpage") or forumsqlerr(__FILE__, __LINE__);
 
     stdhead("View Topic: $subject");
-    begin_frame("$forum &gt; $subject", center);
+    begin_frame("$forum &gt; $subject", 'center');
 	forumheader("<a href=forums.php?action=viewforum&forumid=$forumid>$forum</a> > $subject");
 	
 	print ("<table align=center cellpadding=0 cellspacing=5 width=100% border=0 ><tr><td>");
@@ -979,7 +979,7 @@ if ($action == "viewforum") {
 
     stdhead("Forum : $forumname");
     $numtopics = mysql_num_rows($topicsres);
-    begin_frame("$forumname", center);
+    begin_frame("$forumname", 'center');
 	forumheader("<a href=forums.php?action=viewforum&forumid=$forumid>$forumname</a>");
 	
 	print ("<table align=center cellpadding=0 cellspacing=5 width=95% border=0 ><tr><td><div align='right'><a href=forums.php?action=newtopic&forumid=$forumid><img src=". $themedir. "button_new_post.gif border=0></a></div></td></tr></table>");
@@ -1226,7 +1226,7 @@ if (isset($_GET["catchup"]))
 $forums_res = mysql_query("SELECT forumcats.id AS fcid, forumcats.name AS fcname, forum_forums.* FROM forum_forums LEFT JOIN forumcats ON forumcats.id = forum_forums.category ORDER BY forumcats.sort, forum_forums.sort, forum_forums.name") or forumsqlerr(__FILE__, __LINE__);
 
 stdhead("Forums");
-begin_frame("Forum Home", center);
+begin_frame("Forum Home", 'center');
 forumheader("Index");
 latestforumposts();
 
@@ -1327,7 +1327,7 @@ stdfoot();
 
 }ELSE{//HEY IF FORUMS ARE OFF, SHOW THIS...
 	stdhead("Forums");
-	begin_frame("Notice", center);
+	begin_frame("Notice", 'center');
 	echo '<BR>Unfortunately The Forums Are Not Currently Available<BR><BR>';
 	end_frame();
 	stdfoot();
@@ -1336,4 +1336,3 @@ stdfoot();
 }//end ban check
 
 
-?>

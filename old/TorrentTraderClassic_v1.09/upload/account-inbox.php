@@ -78,7 +78,7 @@ if ($deleteall=="yes") {
 }
 
 stdhead("Send message", false);
-begin_frame("Send a Message", center);
+begin_frame("Send a Message", 'center');
 if ($message)
   genbark("Failed", $message);
 ?>

@@ -18,7 +18,7 @@ if (!$row)
 
 stdhead("Edit Torrent \"" . $row["name"] . "\"");
 
-begin_frame("" . EDIT_TORRENT . "", center);
+begin_frame("" . EDIT_TORRENT . "", 'center');
 
 if (!isset($CURUSER) || ($CURUSER["id"] != $row["owner"] && get_user_class() < UC_JMODERATOR)) {
 	genbark("Can't edit this torrent", "<p>You're not the rightful owner, or you're not <a href=\"account-login.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;nowarn=1\">logged in</a> properly.</p>\n");
@@ -59,7 +59,7 @@ if (get_user_class() >= UC_JMODERATOR) {
 	print("</form></table>\n");
 	end_frame();
 	echo "<br /><br />";
-	begin_frame("" . DELETE_TORRENT . "", center);
+	begin_frame("" . DELETE_TORRENT . "", 'center');
 	print("<form method=\"post\" action=\"torrents-delete.php\">\n");
 	print("<input type=\"hidden\" name=\"id\" value=\"$id\">\n");
 	if (isset($_GET["returnto"]))

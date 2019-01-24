@@ -56,6 +56,8 @@ if ($user["status"] == "pending") {
     die('User is pending');
 }
 
+$_GET["ratings"] = $_GET["ratings"] ?? '';
+
 $num_torrents = DB::fetchColumn('
     SELECT COUNT(*)
     FROM torrents
@@ -126,12 +128,12 @@ if ($user['donated'] > 0)
 
 $country = DB::fetchColumn('SELECT name FROM countries WHERE id = ' . $user['country'] . ' LIMIT 1');
 
-$res = DB::query("SELECT torrent,uploaded,downloaded FROM peers WHERE userid=$id AND seeder='no'");
+$res = DB::query("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = $id AND seeder='no'");
 if ($res) {
     $leeching = maketable($res);
 }
 
-$res = DB::query("SELECT torrent,uploaded,downloaded FROM peers WHERE userid=$id AND seeder='yes' group by torrent");
+$res = DB::query("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = $id AND seeder='yes' group by torrent");
 if ($res) {
     $seeding = maketable($res);
 }
@@ -169,7 +171,8 @@ begin_frame("User Details for " . $user["username"] . "");
 <table width=100% border=0><tr><td width=50% valign=top>
 	<table width=100% border=0 cellpadding=0 cellspacing=0><tr><td width=100% valign=top>
 
-<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262><TR><TD width=100% valign=middle class=table_head height=30><b>Viewing Profile: <?=$user["username"]?> </b>
+<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
+<TR><TD width=100% valign=middle class=table_head height=30><b>Viewing Profile: <?=$user["username"]?> </b>
 [<a href="report.php?user=$<?= user[id] ?>">Report User</a>]</TD></TR>
 <TR><TD><DIV style="margin-left: 8pt">
 <!--  -->
@@ -312,35 +315,41 @@ if (get_user_class() >= UC_JMODERATOR && $user['invitees'] > 0 || $user["id"] ==
 //invite code end
 
 // rated torrents
-if (get_user_class() >= UC_JMODERATOR)
-{        
-if (!$_GET["ratings"])
-
-             print("<tr><td valign=top align=left>" . $txt['RATINGS'] . ": </td><td><a  href=\"account-details.php?id=$id&amp;ratings=1$keepget#ratings\">
+if (get_user_class() >= UC_JMODERATOR) {
+    if (!$_GET['ratings']) {
+        echo '<tr><td valign=top align=left>' . $txt['RATINGS'] . ': </td><td><a href="account-details.php?id=' . $id . '&amp;ratings=1#ratings">
                 [See Rated Torrents]</a>
-                </td></tr>");
-          else {
-			  print("<tr><td valign=top align=left>" . $txt['RATINGS'] . ": </td><td>&nbsp;</td></tr>");
+                </td></tr>';
+    } else {
+        echo '<tr><td valign=top align=left>' . $txt['RATINGS'] . ': </td><td>&nbsp;</td></tr>';
 
+        $s = '<tr><td valign=top align=left colspan=2><table border=0 cellspacing=0 cellpadding=2>';
 
-                $s = "<tr><td valign=top align=left colspan=2><table border=0 cellspacing=0 cellpadding=2>\n";
+        $res = DB::query('
+            SELECT r.torrent, r.rating, t.name
+            FROM ratings AS r
+                INNER JOIN torrents AS t ON (t.id = r.torrent)
+            WHERE user = ' . $id . '
+            ORDER BY user
+            LIMIT 100');
 
+        $s .= "<tr><td><B>User</B></td><td align=right><B>Rated This</B></td></tr>\n";
 
-                $subres = mysql_query("SELECT * FROM ratings WHERE user = $id ORDER BY user");
+        while ($row = $res->fetch()) {
+            $ratingid = $row["torrent"];
+            $sd = $row['name'];
+            $s .= '<tr><td><a href="torrents-details.php?id=' . $row['torrent'] . '">'
+                . $row['name'] . '</a></td><td align="right">' . $row['rating'] . '</td></tr>';
+        }
 
-$s.="<tr><td><B>User</B></td><td align=right><B>Rated This</B></td></tr>\n";
-                while ($subrow = mysql_fetch_array($subres)) {
-$ratingid=$subrow["torrent"];
-$sd=mysql_query("SELECT name FROM torrents WHERE id=$ratingid");
-$fetched_result = mysql_fetch_array($sd);
-$sd = $fetched_result['name'];
-            $s .= "<tr><td><a href=torrents-details.php?id=$ratingid>". $sd ."</a></td><td align=\"right\">" . $subrow["rating"] . "</td></tr>\n";
-                }
-                $s .= "</table></td></tr>\n";
-            print("<tr><td valign=top align=left>" .  $s . "<BR><a name=\"filelist\"></td>
-            <td><a href=\"account-details.php?id=$id$keepget\">[Hide list]</a></td></tr>");
-            }
-		}
+        $s .= '</table></td></tr>';
+
+        echo '<tr>
+                <td valign=top align=left>' . $s . '<BR><a name="filelist"></td>
+                <td><a href="account-details.php?id=' . $id . '">[Hide list]</a></td>
+             </tr>';
+    }
+}
 //end rated torrents
 
 ?>
@@ -365,24 +374,28 @@ echo "<br /><br />";
 
 if (get_user_class() >= UC_JMODERATOR && $CURUSER["class"] > $user["class"] || get_user_class() >= UC_ADMINISTRATOR )
 {
-  begin_frame("Moderator Options", 'center');
-  print("<form method=post action=modtask.php>\n");
-  print("<input type=hidden name='action' value='edituser'>\n");
-  print("<input type=hidden name='userid' value='$id'>\n");
-  print("<table border=0 cellspacing=0 cellpadding=3>\n");
-  print("<tr><td>Title</td><td align=left><input type=text size=60 name=title value=\"$user[title]\"></tr>\n");
-$avatar = h($user["avatar"]);
-  print("<tr><td>Signature</td><td align=left><textarea type=text cols=50 rows=10 name=signature>".h($user["signature"])."</textarea></tr>\n");
-$signature = h($user["signature"]);
-  print("<tr><td>Uploaded</td><td align=left><input type=text size=30 name=uploaded value=\"$user[uploaded]\">&nbsp;&nbsp;".mksize($user[uploaded])."</tr>\n");
-$uploaded = $user["uploaded"];
-  print("<tr><td>Downloaded</td><td align=left><input type=text size=30 name=downloaded value=\"$user[downloaded]\">&nbsp;&nbsp;".mksize($user[downloaded])."</tr>\n");
-$downloaded = $user["downloaded"];
-  print("<tr><td>Avatar URL</td><td align=left><input type=text size=60 name=avatar value=\"$avatar\"></tr>\n");
-  print("<tr><td>IP Address</td><td align=left><input type=text size=20 name=ip value=\"$ip\"></tr>\n");
-  print("<tr><td>Invites</td><td align=left><input type=text size=4 name=invites value=".$user["invites"]."></tr>\n");
+    begin_frame("Moderator Options", 'center');
+    $avatar = h($user["avatar"]);
+    $signature = h($user["signature"]);
+    $uploaded = $user["uploaded"];
+    $downloaded = $user["downloaded"];
 
-  print("<tr><td>Class</td><td align=left><select name=class>\n");
+?>
+    <form method=post action=modtask.php>
+    <input type=hidden name='action' value='edituser'>
+    <input type=hidden name='userid' value='<?= $id ?>'>
+    <table border=0 cellspacing=0 cellpadding=3>
+    <tr><td>Title</td><td align=left><input type=text size=60 name=title value="<?= $user['title'] ?>"></tr>
+    <tr><td>Signature</td><td align=left><textarea type=text cols=50 rows=10 name=signature><?= h($user["signature"]) ?></textarea></tr>
+    <tr><td>Uploaded</td>
+        <td align=left><input type=text size=30 name=uploaded value="<?= $user['uploaded'] ?>">&nbsp;&nbsp;<?= mksize($user['uploaded']) ?></tr>
+    <tr><td>Downloaded</td>
+        <td align=left><input type=text size=30 name=downloaded value="<?= $user['downloaded'] ?>">&nbsp;&nbsp;<?= mksize($user['downloaded']) ?></tr>
+    <tr><td>Avatar URL</td><td align=left><input type=text size=60 name=avatar value="<?= $avatar ?>"></tr>
+    <tr><td>IP Address</td><td align=left><input type=text size=20 name=ip value="<?= $ip ?>"></tr>
+    <tr><td>Invites</td><td align=left><input type=text size=4 name=invites value="<?= $user["invites"] ?>"></tr>
+    <tr><td>Class</td><td align=left><select name=class>
+<?php
  $maxclass = get_user_class();
   for ($i = 0; $i < $maxclass; ++$i)
   print("<option value=$i" . ($user["class"] == $i ? " selected" : "") . ">$prefix" . get_user_class_name($i) . "\n");
@@ -413,16 +426,17 @@ $downloaded = $user["downloaded"];
 
   echo "<br /><br />";
 
-begin_frame("IP Ban", center);
-	print("<table border=0 cellspacing=0 cellpadding=3>\n");
-	print("<form method=post action=admin.php?act=bans&do=add>\n");
-	print("<tr><td class=rowhead>First IP</td><td><input type=text name=first size=40 value=$user[ip]></td>\n");
-	print("<tr><td class=rowhead>Last IP</td><td><input type=text name=last size=40 value=$user[ip]></td>\n");
-	print("<tr><td class=rowhead>Comment</td><td><input type=text name=comment size=40></td>\n");
-	print("<tr><td colspan=2><input type=submit value='Okay' class=btn></td></tr>\n");
-	print("</form>\n</table>\n");
-	end_frame();
-
+    begin_frame("IP Ban", 'center');
+?>
+	<table border=0 cellspacing=0 cellpadding=3>
+	<form method=post action="admin.php?act=bans&do=add">
+	<tr><td class=rowhead>First IP</td><td><input type=text name=first size=40 value="<?= $user['ip'] ?>"></td>
+	<tr><td class=rowhead>Last IP</td><td><input type=text name=last size=40 value="<?= $user['ip'] ?>"></td>
+	<tr><td class=rowhead>Comment</td><td><input type=text name=comment size="40"></td>
+	<tr><td colspan=2><input type=submit value="Okay" class="btn"></td></tr>
+	</form></table>
+<?php
+    end_frame();
 }
 
 stdfoot();

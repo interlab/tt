@@ -7,7 +7,7 @@ dbconn(false);
 loggedinorreturn();
 stdhead();
 
-begin_frame("Recorded Downloads", center);
+begin_frame("Recorded Downloads", 'center');
 
 $id = $_GET["id"];
 $id = 0 + $id;

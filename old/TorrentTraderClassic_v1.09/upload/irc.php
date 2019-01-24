@@ -7,7 +7,7 @@ stdhead();
 include("pjirc/config.php");
 $self = $_SERVER['PHP_SELF'];
 
-begin_frame(" Chat ", center);
+begin_frame(" Chat ", 'center');
 ?>
 <html><head>
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">

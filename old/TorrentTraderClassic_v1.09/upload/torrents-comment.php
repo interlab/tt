@@ -19,7 +19,7 @@ if (!$torrow)
 
 stdhead("Add a comment to \"" . $torrow["name"] . "\"");
 
-begin_frame("Add a comment to \"" . htmlspecialchars($torrow["name"]) . "\"", center);
+begin_frame("Add a comment to \"" . htmlspecialchars($torrow["name"]) . "\"", 'center');
 ?>
 <p>
 Please type your comment here, please remember to obey the <a href=rules.php>Rules</a>.

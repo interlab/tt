@@ -227,7 +227,7 @@ stdhead("Top 10");
 ///////////////////////////////////////// PAGE LAYOUT //////////////////////////////
 
 if ($type == 4 || empty($type)) {
-  begin_frame($txt['STATS'], center);
+  begin_frame($txt['STATS'], 'center');
   
     $type = isset($_GET["type"]) ? 0 + $_GET["type"] : 0;
     if (!in_array($type,array(1,2,3,4)))

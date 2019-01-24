@@ -6,7 +6,7 @@
 require "backend/functions.php";
 dbconn(false);
 stdhead("RSS FEEDS");
-begin_frame("RSS FEEDS", center);
+begin_frame("RSS FEEDS", 'center');
 $rqt = "SELECT id, name FROM categories ORDER BY sort_index, id";
 $resqt = mysql_query($rqt);
  

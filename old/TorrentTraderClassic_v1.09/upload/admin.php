@@ -1,4 +1,5 @@
-<?
+<?php
+
 ob_start();
 require_once("backend/functions.php");
 
@@ -115,7 +116,7 @@ $qrt = MYSQL_QUERY("SELECT * FROM site_settings");
 	$rrt = MYSQL_FETCH_ARRAY($qrt);
 	adminonly();
 	adminmenu();
-	begin_frame("Donation Management", center);
+	begin_frame("Donation Management", 'center');
 	?>
 	<form action='admin.php' method='post'>
 	<input type='hidden' name='act' value='donations'>
@@ -171,7 +172,7 @@ if($act == "userdonations")
 {
 	adminonly();
 	adminmenu();
-	begin_frame("View Donations", center);
+	begin_frame("View Donations", 'center');
 	$res = mysql_query("SELECT * FROM users WHERE donated >'0' ORDER BY username") or sqlerr();
 $num = mysql_num_rows($res);
 print("<center><br><br><table border=1 width=95% cellspacing=0 cellpadding=1>\n");
@@ -231,7 +232,7 @@ if($act == "peerg")
 {
 	adminonly();
 	adminmenu();
-	begin_frame("Peer Guardian Importer", center);
+	begin_frame("Peer Guardian Importer", 'center');
 
 	// change the following to your  .p2p location
 	$f = fopen("hxxp://homepage.ntlworld.com/tim.leonard1/guarding.p2p", "r");
@@ -270,7 +271,7 @@ end_frame();
 if($act == "disabledaccounts")
 {
 	adminmenu();
-	begin_frame("Disabled Accounts", center);
+	begin_frame("Disabled Accounts", 'center');
 	$res = mysql_query("SELECT * FROM users WHERE enabled='no' ORDER BY username") or sqlerr();
 $num = mysql_num_rows($res);
 print("<center><br><br><table border=1 width=95% cellspacing=0 cellpadding=1>\n");
@@ -327,7 +328,7 @@ end_frame();
 if($act == "warneddaccounts")
 {
 	adminmenu();
-	begin_frame("Warned Accounts", center);
+	begin_frame("Warned Accounts", 'center');
 	$res = mysql_query("SELECT * FROM users WHERE enabled='yes' AND warned='yes' ORDER BY username") or sqlerr();
 $num = mysql_num_rows($res);
 print("<center><br><br><table border=1 width=95% cellspacing=0 cellpadding=1>\n");
@@ -521,7 +522,7 @@ if($do == "save_disclaimer")
 }
 
 	adminmenu();
-	begin_frame("Disclaimer Text Management", center);
+	begin_frame("Disclaimer Text Management", 'center');
 	echo "<br><br>\n";
 	echo "<form action='admin.php' method='post'>\n";
 	echo "<input type='hidden' name='sid' value='$sid'>\n";
@@ -599,7 +600,7 @@ if($act == "banner" && $do == "")
 {
 	adminonly();
 	adminmenu();
-	begin_frame("Top Banner Ads", center);
+	begin_frame("Top Banner Ads", 'center');
 	echo "Use the box below to edit the contents of&nbsp; banners.txt and sponsors.txt to control which banners are displayed on your site.<br />Each banner entry must be separated with a '~'. To increase the display rate of a banner enter its data multiple times.<br />To disable the banners, simply remove all data from both areas.\n";
 	echo "<form action='admin.php' method='post'>\n";
 	echo "<input type='hidden' name='sid' value='$sid'>\n";
@@ -613,7 +614,7 @@ if($act == "banner" && $do == "")
 	echo "</form>\n";
 	end_frame();
 
-	begin_frame("Side Sponsor Adverts", center);
+	begin_frame("Side Sponsor Adverts", 'center');
 	echo "Use the box below to edit the contents of&nbsp; sponsors.txt\n";
 	echo "<form action='admin.php' method='post'>\n";
 	echo "<input type='hidden' name='sid' value='$sid'>\n";
@@ -656,7 +657,7 @@ if($act == "settings")
 		adminonly();
 		adminmenu();	// show menu
 		//output
-        begin_frame("Site Settings", center);
+        begin_frame("Site Settings", 'center');
 		// page submitted, update
 		if ($do == 'save')
 		{
@@ -1516,9 +1517,9 @@ adminonly();
             echo "<b><u>Instructions for installation</u></b>: <br>
                 1. Start-up and run mIRC.<br>
                 2. Load the script in mIRC.<br>
-                &nbsp;&nbsp;• Tools -> Script Editor and select Remote<br>
-                &nbsp;&nbsp;• File -> Load and select tbs_ia.mrc It will give a warning. Answer yes and it will ask you chan and port.<br>
-                &nbsp;&nbsp;• File -> Save & Exit and connect to server and join the channel.<br>
+                &nbsp;&nbsp;â€¢ Tools -> Script Editor and select Remote<br>
+                &nbsp;&nbsp;â€¢ File -> Load and select tbs_ia.mrc It will give a warning. Answer yes and it will ask you chan and port.<br>
+                &nbsp;&nbsp;â€¢ File -> Save & Exit and connect to server and join the channel.<br>
                 3. Restart mIRC (VERY IMPORTANT!)";
                 echo "<br><br>";
                 
@@ -1562,7 +1563,7 @@ if($act == "news"){
 }
                adminmenu();        // show menu
                //output
-               begin_frame("News Settings", center);
+               begin_frame("News Settings", 'center');
                if ($_POST['submit'] != 'Update Settings') {
                                $query = 'SELECT * FROM news_options';
                $res = mysql_query($query) or die(mysql_error());
@@ -1628,7 +1629,7 @@ if($act == "news"){
                end_frame();
                print("</form>");
 
-               begin_frame("Add News", center);
+               begin_frame("Add News", 'center');
                $form = '
                        <form id="anews" name="anews" method="POST" action="' . $_SERVER['php_self'] . '?act=news">
                                <span style="font: bold 11px sans-serif; letter-spacing: 2px;">Title:</span><br><input type="text" name="title" id="title" size="50" maxlength="255" value="Title"><br><span style="font: bold 11px sans-serif; letter-spacing: 2px;">News Text:</span><br>
@@ -1660,7 +1661,7 @@ if($act == "news"){
                end_frame();
                print("</form>");
 
-               begin_frame("Edit News", center);
+               begin_frame("Edit News", 'center');
 
                if ($_POST['submit'] != 'Edit News' && $_POST['submit'] != 'Delete') {
                        // No Results
@@ -1750,7 +1751,7 @@ you can use the 'Disable Account' option which is found in the user's profile pa
 <?
 end_frame();
 
-begin_frame("Blocklist", center);
+begin_frame("Blocklist", 'center');
 
 $chk = mysql_query("SELECT * FROM bans") or sqlerr();
 if (mysql_num_rows($chk) == 0)
@@ -1810,7 +1811,7 @@ end_frame();
 
 if (get_user_class() >= UC_JMODERATOR)
 {
-	begin_frame("Add Ban", center);
+	begin_frame("Add Ban", 'center');
 	print("<table border=1 cellspacing=0 cellpadding=5>\n");
 	print("<form method=post action=admin.php?act=bans&do=add>\n");
 	print("<tr><td class=rowhead>First IP</td><td><input type=text name=first size=40></td>\n");
@@ -1860,7 +1861,7 @@ if ($class)
 
 stdhead("Users");
 adminmenu();
-begin_frame("" . MEMBERS . "", center);
+begin_frame("" . MEMBERS . "", 'center');
 print("<center><a href='admin.php?act=confirmreg'>Manual Confirm User Registration</a></center><br>\n");
 print("<center><a href='cheats.php'>Check For Possible Cheaters</a></center><br>\n");
 print("<br /><form method=get action=?>\n");
@@ -1976,7 +1977,7 @@ if($act == "deluser")
  $id = (int) $id;
  $res = mysql_query("DELETE FROM users WHERE id = ".$id." AND class < '1'");
  
- begin_frame("Delete User", center);
+ begin_frame("Delete User", 'center');
  if (mysql_affected_rows() > 0) {
  print("<b>User Nr: ".$id." deleted </b>");
  }else{
@@ -1996,7 +1997,7 @@ begin_frame("Info On This List", justify);
 <p align="justify">This page shows all users that have not clicked the ACTIVATION link in the signup email, they cannot access the site until they have clicked this link.  You should only manually confirm a user if they request it (via email, irc or other method), where they have lost or not received the email.  All PENDING users will be cleaned from the system every so often.</p>
 <?
 end_frame();
-begin_frame("Manual Registration Confirm", center);
+begin_frame("Manual Registration Confirm", 'center');
 begin_table();
 $perpage = 100;
 print("<tr><td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>Username</td><td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>Email Address</td><td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>Date Registered</td><td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>IP</td><td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>Status</td></tr>\n");
@@ -2050,7 +2051,7 @@ if($act == "editreg" && $id != "")
 if($act == "torrents")
 {
 	adminmenu(); 
-begin_frame("TORRENT MANAGEMENT", center);
+begin_frame("TORRENT MANAGEMENT", 'center');
 	?>
 <table align=center cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#D6D9DB" width="100%" border="1">
 <tr>
@@ -2081,7 +2082,7 @@ $resqq = mysql_query($rqq);
 if($act == "bannedtorrents")
 {
 	adminmenu(); 
-begin_frame("BANNED TORRENT MANAGEMENT", center);
+begin_frame("BANNED TORRENT MANAGEMENT", 'center');
 	?>
 <table align=center cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#D6D9DB" width="100%" border="1">
 <tr>
@@ -2112,7 +2113,7 @@ if($act == "msgspy")
 {
 	adminonly();
 adminmenu(); 
-begin_frame("Messages Spy", center);
+begin_frame("Messages Spy", 'center');
 //////////PAGER////////////
 $res2 = mysql_query("SELECT COUNT(*) FROM messages $where");
         $row = mysql_fetch_array($res2);
@@ -2170,7 +2171,7 @@ end_frame();
 if($act == "bannedtorrentsmanual")
 {
 	adminmenu(); 
-begin_frame("BANNED TORRENT MANUAL ADDED LIST", center);
+begin_frame("BANNED TORRENT MANUAL ADDED LIST", 'center');
 	?>
 AHA not yet matey...
 
@@ -2184,7 +2185,7 @@ if($act == "style")
 {
 	adminonly();
 	adminmenu();
-	begin_frame("Themes Management", center);
+	begin_frame("Themes Management", 'center');
 	?>
 	<b>Add A Theme: </b><a href='admin.php?act=add_theme'>CLICK HERE</a><br><br>
 	<b>Delete A Theme: </b><a href='admin.php?act=del_theme'>CLICK HERE</a><br><br>
@@ -2661,7 +2662,7 @@ if ($_POST['action'] == 'Delete Censor'){
   mysql_query($aquery);
   }
 
-begin_frame("Edit Censored Words", center);  
+begin_frame("Edit Censored Words", 'center');  
 /*------------------
 |HTML form for Word Censor
 ------------------*/
@@ -2710,7 +2711,7 @@ if($act == "rws-watched")
     $resrws = mysql_query("SELECT * FROM ratiowarn WHERE warned='no'");
 	$reqrws = mysql_fetch_assoc($resrws);
 	adminmenu();
-	begin_frame("Ratio Warn System - Watched Users", center);
+	begin_frame("Ratio Warn System - Watched Users", 'center');
     if ($reqrws < 1){
         echo "There are no users currently being watched for poor ratios.";
     }else{
@@ -2748,7 +2749,7 @@ if($act == "rws-warned")
     $resrws = mysql_query("SELECT * FROM ratiowarn WHERE warned='yes'");
 	$reqrws = mysql_fetch_assoc($resrws);
 	adminmenu();
-	begin_frame("Ratio Warn System - Warned Users", center);
+	begin_frame("Ratio Warn System - Warned Users", 'center');
     if ($reqrws < 1){
         echo "No users have been warned for maintaining poor ratios.";
     }else{

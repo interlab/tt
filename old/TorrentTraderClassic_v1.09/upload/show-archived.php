@@ -34,7 +34,7 @@ $resu = mysql_query($query) or die(mysql_error());
 while ($row = mysql_fetch_array($resu)){
 if ($row['comment'] == 'on'){
 if ($CURUSER){
- begin_frame("Add a comment to \"" . htmlspecialchars($torrow["title"]) . "\"", center);
+ begin_frame("Add a comment to \"" . htmlspecialchars($torrow["title"]) . "\"", 'center');
 ?>
 <p>
 

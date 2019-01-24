@@ -16,7 +16,7 @@ stdhead("Torrents Needing Seeds");
 /* * Modified & ported to TTClassic Beta 4 by Nightmare * */
 /* * Last Edited: TorrentialStorm 24/5/07@00:35         * */
 /* * ************************************************** * */
-begin_frame("". TORRENT_NEED_SEED ."", center);
+begin_frame("". TORRENT_NEED_SEED ."", 'center');
 $need_seeds = mysql_query("SELECT torrents.*, users.username FROM torrents LEFT JOIN users ON torrents.owner=users.id WHERE banned = 'no' AND leechers >= 5 AND seeders <= 1 ORDER BY seeders");
 
 if (mysql_num_rows($need_seeds) > 0) {
