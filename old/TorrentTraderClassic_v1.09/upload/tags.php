@@ -1,6 +1,14 @@
-<?
+<?php
+
 require "backend/functions.php";
 dbconn();
+stdhead("ББ-коды");
+
+// global $txt;
+
+$txt['TAG'] = 'ББ-коды';
+
+begin_frame($txt['TAG']);
 
 function insert_tag($name, $description, $syntax, $example, $remarks)
 {
@@ -18,16 +26,16 @@ function insert_tag($name, $description, $syntax, $example, $remarks)
 
 //stdhead("Tags");
 //begin_block("Tags");
-$test = $_POST["test"];
+$test = $_POST["test"] ?? '';
 ?>
 <font face="arial">
 <p>The forums supports a number of <i>BB tags</i> which you can embed to modify how your posts are displayed.</p>
 
 <form method=post action=?>
-<textarea class=upload name=test cols=60 rows=3><? print($test ? htmlspecialchars($test) : "")?></textarea>
+<textarea class=upload name=test cols=60 rows=3><?= ($test ? h($test) : "") ?></textarea>
 <input type=submit value="Test this code!" style='height: 23px; margin-left: 5px'>
 </form>
-<?
+<?php
 
 if ($test != "")
   print("<p><b>TEST PREVIEW:</b></b><hr>" . format_comment($test) . "<hr></p>\n");
@@ -92,7 +100,7 @@ insert_tag(
 	"Hyperlink (alt. 1)",
 	"Inserts a hyperlink.",
 	"[url]<i>URL</i>[/url]",
-	"[url]http://torrenttrader.com[/url]",
+	"[url]http://mail.ru/[/url]",
 	"This tag is superfluous; all URLs are automatically hyperlinked."
 );
 
@@ -100,7 +108,7 @@ insert_tag(
 	"Hyperlink (alt. 2)",
 	"Inserts a hyperlink.",
 	"[url=<i>URL</i>]<i>Link text</i>[/url]",
-	"[url=http://torrenttrader.com]torrenttrader[/url]",
+	"[url=http://narod.yandex.ru/]яндекс-народ[/url]",
 	"You do not have to use this tag unless you want to set the link text; all URLs are automatically hyperlinked."
 );
 
@@ -146,4 +154,6 @@ insert_tag(
 
 //end_block();
 //stdfoot();
-?>
+
+end_frame();
+stdfoot();

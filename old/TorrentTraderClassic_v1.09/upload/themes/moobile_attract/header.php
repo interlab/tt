@@ -171,7 +171,7 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
 			</TD>
 			<form method="get" action="torrents-search.php">
 			<TD><? print("" . SEARCH . "\n"); ?>: </STRONG><br>
-			<input type="text" name="search" size="30" value="<?= htmlspecialchars($searchstr) ?>" />
+			<input type="text" name="search" size="30" value="<?= h($searchstr) ?>" />
 <select name="cat">
 <option value="0">(All Categories)</option>
 <?
@@ -181,7 +181,7 @@ foreach ($cats as $cat) {
     $catdropdown .= "<option value=\"" . $cat["id"] . "\"";
     if ($cat["id"] == $_GET["cat"])
         $catdropdown .= " selected=\"selected\"";
-    $catdropdown .= ">" . htmlspecialchars($cat["name"]) . "</option>\n";
+    $catdropdown .= ">" . h($cat["name"]) . "</option>\n";
 }
 ?>
 <?= $catdropdown ?>

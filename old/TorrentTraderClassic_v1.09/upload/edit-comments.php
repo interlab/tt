@@ -23,7 +23,7 @@ begin_frame("Edit Comment");
 	print("<form method=\"post\" action=\"edit-comments.php?action=doedit&amp;cid=$commentid\">\n");
 	print("<input type=\"hidden\" name=\"returnto\" value=\"" . $_SERVER["HTTP_REFERER"] . "\" />\n");
 	print("<input type=\"hidden\" name=\"cid\" value=\"$commentid\" />\n");
-	print("<textarea name=\"text\" rows=\"10\" cols=\"60\">" . htmlspecialchars($arr["text"]) . "</textarea></p>\n");
+	print("<textarea name=\"text\" rows=\"10\" cols=\"60\">" . h($arr["text"]) . "</textarea></p>\n");
 	print("<p><input type=\"submit\" class=btn value=\"Submit Changes\" /></p></form></center>\n");
 
 end_frame();

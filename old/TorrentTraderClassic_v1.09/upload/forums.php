@@ -242,7 +242,7 @@ $res = mysql_query("SELECT name,minclassread FROM forum_forums WHERE id=$topicar
 $forum = mysql_fetch_assoc($res);
 
 if ($forum["minclassread"] == '0'){
-$forumname = "<a href=?action=viewforum&amp;forumid=$topicarr[forumid]><b>" . htmlspecialchars($forum["name"]) . "</b></a>";
+$forumname = "<a href=?action=viewforum&amp;forumid=$topicarr[forumid]><b>" . h($forum["name"]) . "</b></a>";
 
 $topicid = $topicarr["id"];
 $topic_title = stripslashes($topicarr["subject"]);
@@ -522,7 +522,7 @@ if ($action == "viewtopic") {
 				$nposts = "-";
 				$tposts = "-";
 			}else{
-				$avatar = htmlspecialchars($arr2["avatar"]);
+				$avatar = h($arr2["avatar"]);
 				$userdownloaded = mksize($arr2["downloaded"]);
 				$useruploaded = mksize($arr2["uploaded"]);
 				$privacylevel = $arr2["privacy"];
@@ -584,7 +584,7 @@ if ($action == "viewtopic") {
 			}
 		}
 
-		$quote = htmlspecialchars($arr["body"]);
+		$quote = h($arr["body"]);
 
 		$postcount1 = mysql_query("SELECT COUNT(forum_posts.userid) FROM forum_posts WHERE id=$posterid") or forumsqlerr();
 
@@ -684,7 +684,7 @@ if ($action == "viewtopic") {
       print("<form method=post action=forums.php?action=renametopic>\n");
       print("<input type=hidden name=topicid value=$topicid>\n");
       print("<input type=hidden name=returnto value=$HTTP_SERVER_VARS[REQUEST_URI]>\n");
-	  print("<tr><td class=embedded align=right>Rename topic:</td><td class=embedded><input type=text name=subject size=60 maxlength=$maxsubjectlength value=\"" . stripslashes(htmlspecialchars($subject)) . "\">\n");
+	  print("<tr><td class=embedded align=right>Rename topic:</td><td class=embedded><input type=text name=subject size=60 maxlength=$maxsubjectlength value=\"" . stripslashes(h($subject)) . "\">\n");
       print("<input type=submit value='Apply'></td></tr>");
       print("</form>\n");
       print("<form method=post action=forums.php?action=movetopic&topicid=$topicid>\n");
@@ -801,11 +801,11 @@ if ($action == "editpost") {
 
     begin_frame("Edit Post");
     print("<form name=Form method=post action=?action=editpost&postid=$postid>\n");
-    print("<input type=hidden name=returnto value=\"" . htmlspecialchars($HTTP_SERVER_VARS["HTTP_REFERER"]) . "\">\n");
+    print("<input type=hidden name=returnto value=\"" . h($HTTP_SERVER_VARS["HTTP_REFERER"]) . "\">\n");
     print("<center><table border=0 cellspacing=0 cellpadding=5>\n");
     print("<tr><td>\n");
 	quicktags();
-	print("</td><td style='padding: 0px'><textarea name=body cols=50 rows=20 >" . stripslashes(htmlspecialchars($arr["body"])) . "</textarea></td></tr>\n");
+	print("</td><td style='padding: 0px'><textarea name=body cols=50 rows=20 >" . stripslashes(h($arr["body"])) . "</textarea></td></tr>\n");
     print("<tr><td align=center colspan=2><input type=submit value='Submit Changes' class=btn></td></tr>\n");
     print("</table></center>\n");
     print("</form>\n");
@@ -1138,7 +1138,7 @@ if ($action == "viewunread") {
       }
       print("<tr><td align=left><table border=0 cellspacing=0 cellpadding=0><tr><td class=embedded>" .
        "<img src=". $GLOBALS['SITEURL'] ."/images/unlockednew.gif style='margin-right: 5px'></td><td class=embedded>" .
-       "<a href=forums.php?action=viewtopic&topicid=$topicid&page=last#last><b>" . stripslashes(htmlspecialchars($arr["subject"])) ."</b></a></td></tr></table></td><td align=left><a href=forums.php?action=viewforum&amp;forumid=$forumid><b>$forumname</b></a></td></tr>\n");
+       "<a href=forums.php?action=viewtopic&topicid=$topicid&page=last#last><b>" . stripslashes(h($arr["subject"])) ."</b></a></td></tr></table></td><td align=left><a href=forums.php?action=viewforum&amp;forumid=$forumid><b>$forumname</b></a></td></tr>\n");
     }
     if ($n > 0) {
       print("</table>\n");
@@ -1162,7 +1162,7 @@ if ($action == "search") {
 	$keywords = trim($HTTP_GET_VARS["keywords"]);
 	
 	if ($keywords != ""){
-		print("<p>Search Phrase: <b>" . htmlspecialchars($keywords) . "</b></p>\n");
+		print("<p>Search Phrase: <b>" . h($keywords) . "</b></p>\n");
 		$maxresults = 50;
 		$ekeywords = sqlesc($keywords);
 		$res = mysql_query("SELECT * FROM forum_posts WHERE MATCH (body) AGAINST ($ekeywords)") or forumsqlerr(__FILE__, __LINE__);
@@ -1196,7 +1196,7 @@ if ($action == "search") {
 				$user = mysql_fetch_assoc($res2);
 				if ($user["username"] == "")
 					$user["username"] = "Deluser";
-				print("<tr><td>$post[id]</td><td align=left><a href=forums.php?action=viewtopic&topicid=$post[topicid]#$post[id]><b>" . htmlspecialchars($topic["subject"]) . "</b></a></td><td align=left><a href=forums.php?action=viewforum&amp;forumid=$topic[forumid]><b>" . htmlspecialchars($forum["name"]) . "</b></a><td align=left><a href=account-details.php?id=$post[userid]><b>$user[username]</b></a><br />at $post[added]</tr>\n");
+				print("<tr><td>$post[id]</td><td align=left><a href=forums.php?action=viewtopic&topicid=$post[topicid]#$post[id]><b>" . h($topic["subject"]) . "</b></a></td><td align=left><a href=forums.php?action=viewforum&amp;forumid=$topic[forumid]><b>" . h($forum["name"]) . "</b></a><td align=left><a href=account-details.php?id=$post[userid]><b>$user[username]</b></a><br />at $post[added]</tr>\n");
 			}
 			print("</table></center></p>\n");
 			print("<p><b>Search again</b></p>\n");
@@ -1238,7 +1238,7 @@ $fcid = 0;
 
 while ($forums_arr = mysql_fetch_assoc($forums_res)){
 	if ($forums_arr['fcid'] != $fcid) {// add forum cat headers
-		print("<tr><td colspan=\"4\" class=\"forumcat\" align=center bgcolor=#E0F1FE><b><font size=\"2\">".htmlspecialchars($forums_arr['fcname'])."</font></b></td></tr>\n");
+		print("<tr><td colspan=\"4\" class=\"forumcat\" align=center bgcolor=#E0F1FE><b><font size=\"2\">".h($forums_arr['fcname'])."</font></b></td></tr>\n");
 
 		$fcid = $forums_arr['fcid'];
 	}
@@ -1251,9 +1251,9 @@ while ($forums_arr = mysql_fetch_assoc($forums_res)){
 
     $forumid = 0 + $forums_arr["id"];
 
-    $forumname = htmlspecialchars($forums_arr["name"]);
+    $forumname = h($forums_arr["name"]);
 
-    $forumdescription = htmlspecialchars($forums_arr["description"]);
+    $forumdescription = h($forums_arr["description"]);
     $topicids_res = mysql_query("SELECT id FROM forum_topics WHERE forumid=$forumid") or forumsqlerr(__FILE__, __LINE__);
 	$topiccount = number_format(mysql_num_rows($topicids_res));
     $postcount = 0;
@@ -1277,10 +1277,10 @@ while ($forums_arr = mysql_fetch_assoc($forums_res)){
 		$lasttopicid = $post_arr["topicid"];
 		$user_res = mysql_query("SELECT username FROM users WHERE id=$lastposterid") or forumsqlerr(__FILE__, __LINE__);
 		$user_arr = mysql_fetch_assoc($user_res);
-		$lastposter = htmlspecialchars($user_arr['username']);
+		$lastposter = h($user_arr['username']);
 		$topic_res = mysql_query("SELECT subject FROM forum_topics WHERE id=$lasttopicid") or forumsqlerr(__FILE__, __LINE__);
 		$topic_arr = mysql_fetch_assoc($topic_res);
-		$lasttopic = stripslashes(htmlspecialchars($topic_arr['subject']));
+		$lasttopic = stripslashes(h($topic_arr['subject']));
 		
 		//cut last topic
 		$latestleng = 10;

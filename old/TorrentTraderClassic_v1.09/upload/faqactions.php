@@ -19,8 +19,8 @@ elseif ($_GET[action] == "edit" && isset($_GET[id])) {
 
  $res = mysql_query("SELECT * FROM `faq` WHERE `id`='$_GET[id]' LIMIT 1");
  while ($arr = mysql_fetch_array($res, MYSQL_BOTH)) {
-  $arr[question] = stripslashes(htmlspecialchars($arr[question]));
-  $arr[answer] = stripslashes(htmlspecialchars($arr[answer]));
+  $arr[question] = stripslashes(h($arr[question]));
+  $arr[answer] = stripslashes(h($arr[answer]));
   if ($arr[type] == "item") {
    print("<form method=\"post\" action=\"faqactions.php?action=edititem\">");
    print("<table border=\"1\" cellspacing=\"0\" cellpadding=\"10\" align=\"center\">\n");

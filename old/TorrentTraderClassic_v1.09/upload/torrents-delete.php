@@ -38,7 +38,7 @@ stdhead("Torrent deleted!");
 begin_frame();
 
 if (isset($_POST["returnto"]))
-	$ret = "<BR><BR><a href=\"" . htmlspecialchars($_POST["returnto"]) . "\">Back</a><BR>";
+	$ret = "<BR><BR><a href=\"" . h($_POST["returnto"]) . "\">Back</a><BR>";
 else
 	$ret = "<BR><BR><a href=\"./\">Back to index</a><BR>";
 

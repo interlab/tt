@@ -23,11 +23,12 @@ if ($UPLOADERSONLY)
 }
 //end
 
+$message = '';
+$descr = '';
 
+ini_set("upload_max_filesize", $max_torrent_size);
 
-ini_set("upload_max_filesize",$max_torrent_size);
-
-if($MAX_FILE_SIZE) {
+if (!empty($_POST['MAX_FILE_SIZE'])) {
   require_once("backend/benc.php");
 
   foreach(explode(":","descr:type:name") as $v) {
@@ -310,13 +311,13 @@ EOD;
     To seed the file, open the .TORRENT file you just uploaded and open it in your favourite BitTorrent Client.<br>
     Have your client save to the same file that you have just created the torrent. It will then check for completion and begin to seed.<br><br>
     To download a copy of the .torrent file you just uploaded so you can seed - <a href=\"download.php?id=$id&name=$fname\">CLICK HERE</a> -
-    ", Success);
+    ", 'SUCESS');
     
   }
 }
 
 stdhead("Upload");
-begin_frame("" . UPLOAD_RULES . "");
+begin_frame($txt['UPLOAD_RULES']);
 ?>
 <br />
 <ol>
@@ -327,45 +328,45 @@ possible.</li>
 <li>Do not re-release material that is still active.</li>
 </ol>
 
-<?
+<?php
 end_frame();
 
-begin_frame("" . UPLOAD . "");
+begin_frame($txt['UPLOAD']);
 $max_torrent_size_nice = mksize($max_torrent_size);
 $max_nfo_size_nice = mksize($max_nfo_size);
 
-if ($message != "")
-  bark2("" . UPLOAD_FAILED . "", $message);
+if ($message != '')
+  bark2($txt['UPLOAD_FAILED'], $message);
 ?>
 <form enctype="multipart/form-data" action="torrents-upload.php" method="post">
-<input type="hidden" name="MAX_FILE_SIZE" value="<?=$max_torrent_size?>" />
+<input type="hidden" name="MAX_FILE_SIZE" value="<?= $max_torrent_size ?>" />
 <table border="0" cellspacing="0" cellpadding="6" align="center">
-<?
-tr("" . ANNOUNCE . "", "$announce_urls[0]\n", 1);
-tr("" . TORRENT_FILE . "", "<input type=file name=file size=50 value=" . $_FILES['file']['name'] . "><br />" . MAX_SIZE_T . " $max_torrent_size_nice\n", 1);
-tr("" . NFO . "", "<input type=file name=nfo size=50 value=" . $_FILES['nfo']['name'] . "><br />" . MAX_SIZE_N . " $max_nfo_size_nice\n", 1);
-tr("" . TNAME . "", "<input type=text name=name size=60 value=" . $_POST['name'] . ">\n", 1);
-tr("" . TDESC . "", "<textarea name=descr rows=7 cols=45>$descr</textarea>" .
-  "<br />" . NO_HTML . "", 1);
+<?php
+tr($txt['ANNOUNCE'], $announce_urls[0], 1);
+tr($txt['TORRENT_FILE'], '<input type="file" name="file" size=50 value=""><br />' . $txt['MAX_SIZE_T'] . ' ' . $max_torrent_size_nice, 1);
+tr($txt['NFO'], '<input type=file name=nfo size=50 value=""><br />' . $txt['MAX_SIZE_N'] . ' ' . $max_nfo_size_nice, 1);
+tr($txt['TNAME'], '<input type=text name=name size=60 value=' . ($_POST['name'] ?? '') . ">", 1);
+tr($txt['TDESC'], '<textarea name=descr rows=7 cols=45>' . $descr . '</textarea>' .
+    '<br />' . $txt['NO_HTML'], 1);
 
-$s = "<select name=\"type\">\n<option value=\"0\">" . CHOOSE_ONE . "</option>\n";
+$s = "<select name=\"type\">\n<option value=\"0\">" . $txt['CHOOSE_ONE'] . "</option>\n";
 
 $cats = genrelist();
 foreach ($cats as $row)
 	$s .= "<option value=\"" . $row["id"] . "\">" . h($row["name"]) . "</option>\n";
 
 $s .= "</select>\n";
-tr("" . TTYPE . "", $s, 1);
+tr($txt['TTYPE'], $s, 1);
 
 //Request filled?
 if ($REQUESTSON){
 	$sql_request = "SELECT `id`, `request` FROM requests ORDER BY `request` ASC";
-	$res = mysql_query($sql_request) or sqlerr(__FILE__, __LINE__);
-	if (mysql_num_rows($res) > 0) {
+	$res = DB::query($sql_request);
+	if ($res) {
 		$request = "<select name=\"request\">\n<option value=\"0\">(Chose the request to be filled)</option>\n";
-		while($row = mysql_fetch_array($res)) {
-		$request .= "<option value=\"" . $row["id"] . "\">" . h($row["request"]) . "</option>\n";
-	}
+		while($row = $res->fetch()) {
+            $request .= "<option value=\"" . $row["id"] . "\">" . h($row["request"]) . "</option>\n";
+        }
 		$request .= "</select>\n";
 		tr("If your upload is to fill a resquest, select it here", $request , 1);
 	}

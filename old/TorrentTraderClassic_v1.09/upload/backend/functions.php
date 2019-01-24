@@ -292,7 +292,7 @@ function tr($x,$y,$noesc=0) {
     if ($noesc)
         $a = $y;
     else {
-        $a = htmlspecialchars($y);
+        $a = h($y);
         $a = str_replace("\n", "<br />\n", $a);
     }
     print("<tr><td class=\"heading\" valign=\"top\" align=\"right\">$x</td><td valign=\"top\" align=left>$a</td></tr>\n");
@@ -340,7 +340,7 @@ function urlparse($m) {
 function parsedescr($d, $html) {
     if (!$html)
     {
-      $d = htmlspecialchars($d);
+      $d = h($d);
       $d = str_replace("\n", "\n<br />", $d);
     }
     return $d;
@@ -348,8 +348,8 @@ function parsedescr($d, $html) {
 
 function genbark($x,$y) {
     stdhead($y);
-    begin_frame("<font color=red>Error - ". htmlspecialchars($y) ."</font>", center);
-    print("<p>" . htmlspecialchars($x) . "</p>\n");
+    begin_frame("<font color=red>Error - ". h($y) ."</font>", 'center');
+    print("<p>" . h($x) . "</p>\n");
     end_frame();
     stdfoot();
     exit();
@@ -567,7 +567,7 @@ function commenttable($rows) {
     foreach ($rows as $row)
     {
 print("<br>\n");
-	$postername = htmlspecialchars($row["username"]);
+	$postername = h($row["username"]);
  if ($postername == "") {
         $postername = "Deluser";
 		$title = "Deleted Account";
@@ -588,10 +588,10 @@ print("<br>\n");
 
 
 
-      $avatar = htmlspecialchars($row["avatar"]);
+      $avatar = h($row["avatar"]);
 	  $userdownloaded = mksize($row["downloaded"]);
 	  $useruploaded = mksize($row["uploaded"]);
-	  $title =  htmlspecialchars($row["title"]);
+	  $title =  h($row["title"]);
 	  $privacylevel = $row["privacy"];
 	  $usersignature = stripslashes(format_comment($row["signature"]));
 }
@@ -738,17 +738,17 @@ function loadLanguage()
     }
 
     if ($CURUSER) {
-        $lang_uri = DB::fetchAssoc("
+        $lang_uri = DB::fetchColumn("
     SELECT uri
     FROM languages
-    WHERE id = ".$CURUSER["language"])["uri"];
+    WHERE id = ".$CURUSER["language"]);
     }
 
     if (! isset($lang_uri)) {
-        $lang_uri = DB::fetchAssoc('
+        $lang_uri = DB::fetchColumn('
     SELECT uri
     FROM languages
-    WHERE id = 1')["uri"];
+    WHERE id = 1');
     }
 
     // dump($lang_uri, ST_ROOT_DIR . '/languages/' . $lang_uri);
@@ -958,8 +958,8 @@ if ($MEMBERSONLY_WAIT){
 
 		// MODIFICATION TO DISPLAY ONLY x FIRST CHARACTERS IN TORRENT NAME !
 
-$smallname =substr(htmlspecialchars($row["name"]) , 0, $MAXDISPLAYLENGTH);
-if ($smallname != htmlspecialchars($row["name"])) { $smallname .= '...' ; }
+$smallname =substr(h($row["name"]) , 0, $MAXDISPLAYLENGTH);
+if ($smallname != h($row["name"])) { $smallname .= '...' ; }
 
 $last_browse = $CURUSER["last_browse"];
 $time_now = gmtime();
@@ -984,7 +984,7 @@ if (sql_timestamp_to_unix_timestamp($row["added"]) >= $last_browse){
 		if ($variant == "index"){
 			print("<td class=ttable_col1 align=center><a href=\"download.php?id=$id&name=" . rawurlencode($row["filename"]) . "\"><img src=" . $GLOBALS['SITEURL'] . "/images/icon_download.gif border=0 alt=\"Download .torrent\"></a></td>");
 
-			$nfo = htmlspecialchars($row["nfo"]);
+			$nfo = h($row["nfo"]);
 			if (!$nfo) {
 				print("<td class=ttable_col1 align=center>-</td>");
 			}else{
@@ -1102,7 +1102,7 @@ End of modification
 			if($row["privacy"] == "strong" && get_user_class() < UC_JMODERATOR AND $CURUSER["id"] != $row["owner"]){
 			print("</tr><tr><td><b>Added By:</b></td><td>Anonymous</td></tr><tr><td><b>Comments</b></td>\n");
 			}else{
-			print("</tr><tr><td><b>Added By:</b></td><td><a href=account-details.php?id=" . $row["owner"] . ">" . (isset($row["username"]) ? htmlspecialchars($row["username"]) : "<i>(unknown)</i>") . "</a></td></tr><tr><td><b>Comments</b></td>\n");
+			print("</tr><tr><td><b>Added By:</b></td><td><a href=account-details.php?id=" . $row["owner"] . ">" . (isset($row["username"]) ? h($row["username"]) : "<i>(unknown)</i>") . "</a></td></tr><tr><td><b>Comments</b></td>\n");
 			}
 		print("<td>There are <b><a href=\"torrents-details.php?id=$id#startcomments\">" . $row["comments"] . "</a></b> comments for this file.\n");
 		print("</td>\n");
@@ -1198,19 +1198,20 @@ function hash_where($name, $hash) {
 // Set this to the line break character sequence of your system
 $linebreak = "\r\n";
 
-function get_row_count($table, $suffix = "")
+function get_row_count($table, $suffix = '')
 {
-  if ($suffix)
-    $suffix = " $suffix";
-  ($r = mysql_query("SELECT COUNT(*) FROM $table$suffix")) or die(mysql_error());
-  ($a = mysql_fetch_row($r)) or die(mysql_error());
-  return $a[0];
+    $suffix = !empty($suffix) ? ' '.$suffix : '';
+    $num = DB::fetchColumn('
+    SELECT COUNT(*)
+    FROM '.$table.$suffix, [], 0);
+
+    return $num;
 }
 
 function show_error_msg($title, $message, $wrapper = "1") {
     if ($wrapper)
 		stdhead($title);
-		begin_frame("<font color=red>". htmlspecialchars($title) ."</font>");
+		begin_frame("<font color=red>". h($title) ."</font>");
 		echo "<p><CENTER><B>$message</B></CENTER></p>";
 		end_frame();
 
@@ -1223,7 +1224,7 @@ function show_error_msg($title, $message, $wrapper = "1") {
 
 function stderr($heading = "", $text, $sort = "") {
   stdhead("$sort: $heading"); 
-  begin_frame("<font color=red>$sort: $heading</font>", center);
+  begin_frame("<font color=red>$sort: $heading</font>", 'center');
   echo $text;
   end_frame();
   stdfoot();
@@ -1232,7 +1233,7 @@ function stderr($heading = "", $text, $sort = "") {
 
 function bark($heading = "Error", $text, $sort = "Error") {
   stdhead("$sort: $heading");
-  begin_frame("<font color=red>$sort: $heading</font>", center);
+  begin_frame("<font color=red>$sort: $heading</font>", 'center');
   echo $text;
   end_frame();
   stdfoot();
@@ -1356,7 +1357,7 @@ function format_comment($text, $strip_html = true, $strip_slash = true)
 	$s = $text;
 
 	if ($strip_html)
-		$s = htmlspecialchars($s);
+		$s = h($s);
 
 	if ($strip_slash)
 		$s = stripslashes($s);
@@ -1445,13 +1446,13 @@ function format_comment($text, $strip_html = true, $strip_slash = true)
 	// Maintain spacing
 	$s = str_replace("  ", " &nbsp;", $s);
 
-	reset($smilies);
-	while (list($code, $url) = each($smilies))
+    foreach ($smilies as $code => $url) {
 		$s = str_replace($code, "<img border=0 src=" . $GLOBALS['SITEURL'] . "/images/smilies/$url>", $s);
+    }
 
-	reset($privatesmilies);
-	while (list($code, $url) = each($privatesmilies))
+    foreach ($smilies as $code => $url) {
 		$s = str_replace($code, "<img border=0 src=" . $GLOBALS['SITEURL'] . "/images/smilies/$url>", $s);
+    }
 
 	return $s;
 }

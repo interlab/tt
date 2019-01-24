@@ -163,6 +163,7 @@ ACCOUNT_PRIVACY_LV: 'Privacy level'
 ACCOUNT_EMAIL_NOTIFICATION: 'E-mail Notification'
 WIDTH_SHOULD_BE: 'Width should be 150 pixels (will be resized if necessary)'
 REPLY_TO_CONFIRM_EMAIL: 'You will need to reply to the confirmation email'
+PROFILE_UPDATED: 'Profile updated!'
 
 # Private Message System
 MESSAGE_SENT: 'Message Sent'

@@ -182,7 +182,7 @@ if ($una["privacy"] == "strong" && get_user_class() < UC_JMODERATOR AND $CURUSER
 		$s .= "<td class=table_col1>" . sprintf("%.2f%%", 100 * (1 - ($e["to_go"] / $torrent["size"]))) . "</td>\n";
 		$s .= "<td class=table_col2>" . mkprettytime($now - $e["st"]) . "</td>\n";
 		$s .= "<td class=table_col1>" . mkprettytime($now - $e["la"]) . "</td>\n";
-		$s .= "<td class=table_col2 align=right>" . htmlspecialchars(getagent($e["client"],$e["peer_id"])) . "</td>\n";
+		$s .= "<td class=table_col2 align=right>" . h(getagent($e["client"],$e["peer_id"])) . "</td>\n";
 		$s .= "</tr>\n";
 	}
 	$s .= "</table>\n";
@@ -250,10 +250,10 @@ if (!$row || ($row["banned"] == "yes" && !$moderator)){
 		elseif ($_GET["edited"]) {
 			bark2("Success", "Edited OK!");
 			if (isset($_GET["returnto"]))
-				print("<p><b>Go back to <a href=\"" . htmlspecialchars($_GET["returnto"]) . "\">previous page</a>.</b></p>\n");
+				print("<p><b>Go back to <a href=\"" . h($_GET["returnto"]) . "\">previous page</a>.</b></p>\n");
 		}
 		elseif (isset($_GET["searched"])) {
-			bark2("Success", "Your search for \"" . htmlspecialchars($_GET["searched"]) . "\" gave a single result:");
+			bark2("Success", "Your search for \"" . h($_GET["searched"]) . "\" gave a single result:");
 		}
 		elseif ($_GET["rated"])
 			bark2("Success", "" . RATING_THANK . "");
@@ -352,9 +352,9 @@ echo "<TR><TD width=70% align=left valign=top><table width=100% cellspacing=0 ce
 
 print("<tr><td align=left colspan=2><b>" . TDESC . ":</b><br>" .  format_comment($row['descr']) . "</td></tr>");
 
-print("<tr><td align=left><b>" . NAME . ":</b></td><td>" . htmlspecialchars($row["name"]) . "</td></tr>");
+print("<tr><td align=left><b>" . NAME . ":</b></td><td>" . h($row["name"]) . "</td></tr>");
 
-print("<tr><td align=left><b>" . TORRENT . ":</b></td><td><a href=\"download.php?id=$id&name=" . rawurlencode($row["filename"]) . "\">" . htmlspecialchars($row["filename"]) . "</a></td></tr>");
+print("<tr><td align=left><b>" . TORRENT . ":</b></td><td><a href=\"download.php?id=$id&name=" . rawurlencode($row["filename"]) . "\">" . h($row["filename"]) . "</a></td></tr>");
 
 print("<tr><td align=left><b>" . TTYPE . ":</b></td><td>" . $row["cat_name"] . "</td></tr>");
 
@@ -418,7 +418,7 @@ if (get_user_class() >= UC_JMODERATOR) {
     print("<tr><td><form method=\"post\" action=\"torrents-delete.php\">\n");
     print("<input type=\"hidden\" name=\"id\" value=\"$id\">\n");
     if (isset($_GET["returnto"]))
-        print("<input type=\"hidden\" name=\"returnto\" value=\"" . htmlspecialchars($_GET["returnto"]) . "\" />\n");
+        print("<input type=\"hidden\" name=\"returnto\" value=\"" . h($_GET["returnto"]) . "\" />\n");
     print("<B>" . REASON_FOR_DELETE . ":</B> <input type=text size=33 name=reason> <input type=submit value='" . DELETE_IT . "' style='height: 25px'>\n");
     print("</form>\n");
     print("</p>\n");
@@ -536,7 +536,7 @@ echo "</table>";
 echo "<BR><BR>";
 
 //DISPLAY NFO BLOCK
-$nfo = htmlspecialchars($row["nfo"]);
+$nfo = h($row["nfo"]);
 //-----------------------------------------------
 function my_nfo_translate($nfo)
 {

@@ -94,7 +94,7 @@ $cats = genrelist();
 $catdropdown = "";
 foreach ($cats as $cat) {
    $catdropdown .= "<option value=\"" . $cat["id"] . "\"";
-   $catdropdown .= ">" . htmlspecialchars($cat["name"]) . "</option>\n";
+   $catdropdown .= ">" . h($cat["name"]) . "</option>\n";
 }
 
 ?>
@@ -154,7 +154,7 @@ $filled = "<a href=reqdetails.php?id=$arr[id]><font color=red><b>No</b></font></
 $filledbydata  = "<i>nobody</i>";
 }
 
-print("<tr><td class=table_col1 align=left><a href=reqdetails.php?id=$arr[id]><b>".htmlspecialchars($arr[request])."</b></a></td>" .
+print("<tr><td class=table_col1 align=left><a href=reqdetails.php?id=$arr[id]><b>".h($arr[request])."</b></a></td>" .
 "<td class=table_col2 align=center>$arr[cat]</td><td align=center class=table_col1>$arr[added]</td>$addedby<td class=table_col2>$filled</td><td class=table_col1>$filledbydata</td><td class=table_col2><a href=votesview.php?requestid=$arr[id]><b>$arr[hits]</b></a></td>");
 if (($CURUSER[id] == $arr[userid]) || get_user_class() > UC_JMODERATOR){
  print("<td class=table_col1><input type=\"checkbox\" name=\"delreq[]\" value=\"" . $arr[id] . "\" /></td>");

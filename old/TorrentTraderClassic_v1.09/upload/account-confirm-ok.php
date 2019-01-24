@@ -11,9 +11,9 @@ if ($type == "signup" && mkglobal("email")) {
 	stdhead($txt['ACCOUNT_USER_SIGNUP']);
         begin_frame($txt['ACCOUNT_SIGNUP_SUCCESS']);
 		if (!$ACONFIRM) {
-			print("" . ACCOUNT_CONFIRM_SENT_TO_ADDY . " (" . htmlspecialchars($email) . "). " . ACCOUNT_CONFIRM_SENT_TO_ADDY_REST . " <br/ >");
+			print("" . ACCOUNT_CONFIRM_SENT_TO_ADDY . " (" . h($email) . "). " . ACCOUNT_CONFIRM_SENT_TO_ADDY_REST . " <br/ >");
 		} else {
-			print("" . ACCOUNT_CONFIRM_SENT_TO_ADDY . " (" . htmlspecialchars($email) . "). An admin needs to approve your account before you can use it <br/ >");
+			print("" . ACCOUNT_CONFIRM_SENT_TO_ADDY . " (" . h($email) . "). An admin needs to approve your account before you can use it <br/ >");
 		}
 	end_frame();
 }
@@ -28,7 +28,7 @@ elseif ($type == "confirmed") {
 elseif ($type == "invite" && mkglobal("email")) {
 stdhead("User invite");
      Begin_frame();
-		Print("<CENTER>Invite successful!</CENTER><br><BR>A confirmation email has been sent to the address you specified (" . htmlspecialchars($email) . "). They need to read and respond to this email before they can use their account. If they don't do this, the new account will be deleted automatically after a few days.");
+		Print("<CENTER>Invite successful!</CENTER><br><BR>A confirmation email has been sent to the address you specified (" . h($email) . "). They need to read and respond to this email before they can use their account. If they don't do this, the new account will be deleted automatically after a few days.");
 	End_frame();
 stdfoot();
 }//end invite code

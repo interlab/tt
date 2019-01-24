@@ -119,7 +119,7 @@ function head($title='') {
      header("Content-Type: text/html; charset=iso-8859-1");
      header("Cache-Control: no-cache, must-revalidate");
      header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-     $title = "TorrentTrader Installer ..::.. " . htmlspecialchars($title);
+     $title = "TorrentTrader Installer ..::.. " . h($title);
 
 echo <<<EOD
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">

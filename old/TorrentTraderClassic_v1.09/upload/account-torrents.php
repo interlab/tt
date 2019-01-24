@@ -25,7 +25,7 @@ function maketable($res)
      else
        $ratio = "---";
        
-   $ret .= "<tr><td><a href=torrents-details.php?id=$arr[torrent]&amp;hit=1><b>" . htmlspecialchars($arr2[name]) . "</b></a></td><td align=center>" . mksize($arr2["size"]) . "</td><td align=center>" . mksize($arr["uploaded"]) . "</td><td align=center>" . mksize($arr["downloaded"]) . "</td><td align=center>$ratio</td></tr>\n";
+   $ret .= "<tr><td><a href=torrents-details.php?id=$arr[torrent]&amp;hit=1><b>" . h($arr2[name]) . "</b></a></td><td align=center>" . mksize($arr2["size"]) . "</td><td align=center>" . mksize($arr["uploaded"]) . "</td><td align=center>" . mksize($arr["downloaded"]) . "</td><td align=center>$ratio</td></tr>\n";
  }
  $ret .= "</table>\n";
  return $ret;
@@ -51,8 +51,8 @@ if (mysql_num_rows($r) > 0)
    "<tr><td class=colhead>File Name</td><td class=colhead>Seeders</td><td class=colhead>Leechers</td></tr>\n";
  while ($a = mysql_fetch_assoc($r))
  {
-   $smallname =substr(htmlspecialchars($a["name"]) , 0, 100);
-   if ($smallname != htmlspecialchars($a["name"])){
+   $smallname =substr(h($a["name"]) , 0, 100);
+   if ($smallname != h($a["name"])){
        $smallname .= '...';
    }
      $torrents .= "<tr><td><a href=torrents-details.php?id=" . $a["id"] . "&hit=1><b>" . $smallname . "</b></a></td>" .
@@ -102,8 +102,8 @@ $ratio = number_format($tor["uploaded"] / $tor["downloaded"], 2);
 }
 $torrent2 = mysql_query("SELECT * FROM torrents WHERE id = ".$tor["torrent"]." ");
 $tor2 = mysql_fetch_array($torrent2);
-   $smallname =substr(htmlspecialchars($tor2["name"]) , 0, 60);
-   if ($smallname != htmlspecialchars($tor2["name"])){
+   $smallname =substr(h($tor2["name"]) , 0, 60);
+   if ($smallname != h($tor2["name"])){
        $smallname .= '...';
    }
 $finished .= "<tr><td><b><a href='torrents-details.php?id=".$tor["torrent"]."'>".$smallname."</a></b></td>" .

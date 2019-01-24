@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_GET["take"] == 1) {
 
 	  		$res2 = mysql_query("UPDATE `users` SET `secret` = ".sqlesc($sec)." WHERE `email`= ". sqlesc($email) ." LIMIT 1");
 
-	  		$msg = "The account details have been mailed to <b>". htmlspecialchars($email) ."</b>.<br />Please allow a few minutes for the mail to arrive.";
+	  		$msg = "The account details have been mailed to <b>". h($email) ."</b>.<br />Please allow a few minutes for the mail to arrive.";
 
 	  		$kind = "Success";
 		}

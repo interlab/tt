@@ -27,7 +27,7 @@ $num2 = mysql_num_rows($res2);
 <table border=0 width=100% cellspacing=0 cellpadding=3>
 <tr><td class=colhead align=left><? print("" . SEARCH . " " . TORRENT . ""); ?></td></tr>
 <tr><td align=left><form method="get" action=torrents-search.php>
-<input type="text" name="<? print("" . SEARCH . "\n"); ?>" size="40" value="<?= htmlspecialchars($searchstr) ?>" />
+<input type="text" name="<? print("" . SEARCH . "\n"); ?>" size="40" value="<?= h($searchstr) ?>" />
 in
 <select name="cat">
 <option value="0">(all types)</option>
@@ -39,7 +39,7 @@ foreach ($cats as $cat) {
    $catdropdown .= "<option value=\"" . $cat["id"] . "\"";
    if ($cat["id"] == (int)$_GET["cat"])
        $catdropdown .= " selected=\"selected\"";
-   $catdropdown .= ">" . htmlspecialchars($cat["name"]) . "</option>\n";
+   $catdropdown .= ">" . h($cat["name"]) . "</option>\n";
 }
 
 $deadchkbox = "<input type=\"checkbox\" name=\"incldead\" value=\"1\"";
@@ -74,7 +74,7 @@ for ($i = 0; $i < $num; ++$i)
    {
  $cats2 = mysql_fetch_assoc($res2);  
      $catdropdown2 .= "<option value=\"" . $cats2["id"] . "\"";
-     $catdropdown2 .= ">" . htmlspecialchars($cats2["name"]) . "</option>\n";
+     $catdropdown2 .= ">" . h($cats2["name"]) . "</option>\n";
    }
 
 ?>

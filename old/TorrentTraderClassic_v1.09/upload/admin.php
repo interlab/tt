@@ -1838,7 +1838,7 @@ if ($class == '-' || !is_valid_id($class))
 if ($search != '' || $class)
 {
  $query = "username LIKE " . sqlesc("%$search%") . " AND status='confirmed'";
- $q = 'search=' . htmlspecialchars($search);
+ $q = 'search=' . h($search);
 }
 else
 {
