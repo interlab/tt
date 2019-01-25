@@ -20,7 +20,8 @@ if ($forumbanned == "yes") {
 if ($FORUMS)
 {
 //define the clickable smilies
-function quicktags(){
+function quicktags()
+{
 	echo "<center><table border=0 cellpadding=0 cellspacing=0><tr>";
 	echo "<td width=26><a href=\"javascript:Smilies(':)')\"><img src=images/smilies/smile1.gif border=0 alt=':)'></a></td>";
 	echo "<td width=26><a href=\"javascript:Smilies(';)')\"><img src=images/smilies/wink.gif border=0 alt=';)'></a></td>";
@@ -42,7 +43,8 @@ function quicktags(){
 }
 
 //define the clickable tags
-function quickbb(){
+function quickbb()
+{
 	echo "<center><table border=0 cellpadding=0 cellspacing=2><tr>";
 	echo "<tr>";
 	echo "<td width=22><a href=\"javascript:Smilies('[b] [/b]')\"><img src=./images/bbcode/bbcode_bold.gif border=0 alt='Bold'></a></td>";
@@ -54,18 +56,29 @@ function quickbb(){
 	echo "</tr></table>";
 }
 
-$res = mysql_query("SELECT uri FROM stylesheets WHERE id=$CURUSER[stylesheet]");
-$GLOBALS['ss_uri'] = mysql_result($res, 0);
-$themedir = "themes/".$GLOBALS['ss_uri']."/forums/";
 
-//setup the forum head aread
-function forumheader($location){
-echo "<table align=center cellpadding=0 cellspacing=0 style='border-collapse: collapse' bordercolor=#646262 width=100% border=1><tr><td><table  width='100%' cellspacing='5' border=0 bgcolor=#E0F1FE ><tr><td><a href='forums.php'>Welcome to our Forums</a></td><td align='right'><img src='images/atb_help.gif' border='0' alt='' />&nbsp;<a href='faq.php'>FAQ</a>&nbsp; &nbsp;&nbsp;<img src='images/atb_search.gif' border='0' alt='' />&nbsp;<a href='forums.php?action=search'>Search</a></td></tr></table><table width='100%' cellspacing='5' border=0 bgcolor=#E0F1FE><tr><td><strong>&nbsp;</td><td align='right'><b>Controls</a></b> &middot; <a href='forums.php?action=viewunread'>View New Posts</a> &middot; <a href='?catchup'>Mark All Read</a></td></tr></table></td></tr></table><br />";
-print ("<table align=center cellpadding=0 cellspacing=5 style='border-collapse: collapse' bordercolor=#646262 width=100% border=1 bgcolor=#E0F1FE><tr><td><div align='left'>You are in: &nbsp;<a href='forums.php'>Forums</a> > $location</b></div></td></tr></table><br />");
+$themedir = "themes/".getThemeUri()."/forums/";
+
+// setup the forum head aread
+function forumheader($location)
+{
+?>
+    <table align=center cellpadding=0 cellspacing=0 style='border-collapse: collapse' bordercolor=#646262 width=100% border=1>
+    <tr><td><table  width='100%' cellspacing='5' border=0 bgcolor=#E0F1FE >
+        <tr>
+        <td><a href='forums.php'>Welcome to our Forums</a></td>
+        <td align='right'><img src='images/atb_help.gif' border='0' alt='' />&nbsp;<a href='faq.php'>FAQ</a>&nbsp; &nbsp;&nbsp;
+            <img src='images/atb_search.gif' border='0' alt='' />&nbsp;<a href='forums.php?action=search'>Search</a></td></tr></table>
+            <table width='100%' cellspacing='5' border=0 bgcolor=#E0F1FE><tr><td><strong>&nbsp;</td>
+            <td align='right'><b>Controls</a></b> &middot; <a href='forums.php?action=viewunread'>View New Posts</a> &middot; 
+            <a href='?catchup'>Mark All Read</a></td></tr></table></td></tr></table><br />
+    <table align=center cellpadding=0 cellspacing=5 style='border-collapse: collapse' bordercolor=#646262 width=100% border=1 bgcolor=#E0F1FE>
+    <tr><td><div align='left'>You are in: &nbsp;<a href='forums.php'>Forums</a> > <?= $location ?></b></div></td></tr>
+    </table><br />
+<?php
 }
 
-
-$action = strip_tags($HTTP_GET_VARS["action"]);
+$action = strip_tags($_GET["action"] ?? '');
 
 //Handle SQL Errors
 function forumsqlerr($file = '', $line = '')//handle errors
@@ -123,14 +136,16 @@ function get_topic_forum($topicid) {
 }
 
 // Returns the ID of the last post of a forum
-function update_topic_last_post($topicid) {
+function update_topic_last_post($topicid)
+{
     $res = mysql_query("SELECT id FROM forum_posts WHERE topicid=$topicid ORDER BY id DESC LIMIT 1") or forumsqlerr(__FILE__, __LINE__);
     $arr = mysql_fetch_row($res) or die("No post found");
     $postid = $arr[0];
     mysql_query("UPDATE forum_topics SET lastpost=$postid WHERE id=$topicid") or forumsqlerr(__FILE__, __LINE__);
 }
 
-function get_forum_last_post($forumid)  {
+function get_forum_last_post($forumid)
+{
     $res = mysql_query("SELECT lastpost FROM forum_topics WHERE forumid=$forumid ORDER BY lastpost DESC LIMIT 1") or forumsqlerr(__FILE__, __LINE__);
     $arr = mysql_fetch_row($res);
     $postid = $arr[0];
@@ -141,7 +156,8 @@ function get_forum_last_post($forumid)  {
 }
 
 //Top forum posts
-function forumpostertable($res, $frame_caption) {
+function forumpostertable($res, $frame_caption)
+{
 	print("$frame_caption<br><table width=160 border=0><tr><td>\n");
 	print("<table align=center cellpadding=1 cellspacing=0 style='border-collapse: collapse' bordercolor=#646262 width=100% border=1 >");
 	?>
@@ -150,7 +166,7 @@ function forumpostertable($res, $frame_caption) {
 	<td width="130" align=left><font size=1 face=Verdana><b>User</b></td>
 	<td width="10" align=right><font size=1 face=Verdana><b>Posts</b></td>
 	</tr>
-	<?
+	<?php
     $num = 0;
     while ($a = mysql_fetch_assoc($res))
     {
@@ -222,82 +238,77 @@ function insert_compose_frame($id, $newtopic = true) {
 }
 
 //LASTEST FORUM POSTS
-function latestforumposts() {
-print("<b>Latest Topics</b><br>");
-print("<table align=center cellpadding=1 cellspacing=0 style='border-collapse: collapse' bordercolor=#646262 width=100% border=1 ><tr>".
-"<td bgcolor=#E0F1FE align=left  width=100%><b>Topic Title</b></td>". 
-"<td bgcolor=#E0F1FE align=center width=47><b>Replies</b></td>".
-"<td bgcolor=#E0F1FE align=center width=47><b>Views</b></td>".
-"<td bgcolor=#E0F1FE align=center width=85><b>Author</b></td>".
-"<td bgcolor=#E0F1FE align=right width=85><b>Last Post</b></td>".
-"</tr>");
+function latestforumposts()
+{
+    print("<b>Latest Topics</b><br>");
+    print("<table align=center cellpadding=1 cellspacing=0 style='border-collapse: collapse' bordercolor=#646262 width=100% border=1 ><tr>".
+    "<td bgcolor=#E0F1FE align=left  width=100%><b>Topic Title</b></td>". 
+    "<td bgcolor=#E0F1FE align=center width=47><b>Replies</b></td>".
+    "<td bgcolor=#E0F1FE align=center width=47><b>Views</b></td>".
+    "<td bgcolor=#E0F1FE align=center width=85><b>Author</b></td>".
+    "<td bgcolor=#E0F1FE align=right width=85><b>Last Post</b></td>".
+    "</tr>");
 
 
-/// HERE GOES THE QUERY TO RETRIEVE DATA FROM THE DATABASE AND WE START LOOPING ///
-$for = mysql_query("SELECT * FROM forum_topics ORDER BY lastpost DESC LIMIT 5");
+    /// HERE GOES THE QUERY TO RETRIEVE DATA FROM THE DATABASE AND WE START LOOPING ///
+    $for = DB::query("SELECT * FROM forum_topics ORDER BY lastpost DESC LIMIT 5");
 
-while ($topicarr = mysql_fetch_assoc($for)) {
-// Set minclass
-$res = mysql_query("SELECT name,minclassread FROM forum_forums WHERE id=$topicarr[forumid]") or sqlerr();
-$forum = mysql_fetch_assoc($res);
+    while ($topicarr = $for->fetch()) {
+        // Set minclass
+        $forum = DB::fetchAssoc('SELECT name, minclassread FROM forum_forums WHERE id = ' . $topicarr['forumid']);
 
-if ($forum["minclassread"] == '0'){
-$forumname = "<a href=?action=viewforum&amp;forumid=$topicarr[forumid]><b>" . h($forum["name"]) . "</b></a>";
+        if ($forum["minclassread"] == '0') {
+            $forumname = "<a href=?action=viewforum&amp;forumid=$topicarr[forumid]><b>" . h($forum["name"]) . "</b></a>";
 
-$topicid = $topicarr["id"];
-$topic_title = stripslashes($topicarr["subject"]);
-$topic_userid = $topicarr["userid"];
-// Topic Views
-$views = $topicarr["views"];
-// End
+            $topicid = $topicarr["id"];
+            $topic_title = stripslashes($topicarr["subject"]);
+            $topic_userid = $topicarr["userid"];
+            
+            // Topic Views
+            $views = $topicarr["views"];
+            // End
 
-/// GETTING TOTAL NUMBER OF POSTS ///
-$res = mysql_query("SELECT COUNT(*) FROM forum_posts WHERE topicid=$topicid") or sqlerr(__FILE__, __LINE__);
-$arr = mysql_fetch_row($res);
-$posts = $arr[0];
-$replies = max(0, $posts - 1);
+            /// GETTING TOTAL NUMBER OF POSTS ///
+            $posts = DB::fetchColumn("SELECT COUNT(*) FROM forum_posts WHERE topicid = " . $topicid);
+            $replies = max(0, $posts - 1);
 
-/// GETTING USERID AND DATE OF LAST POST ///   
-$res = mysql_query("SELECT * FROM forum_posts WHERE topicid=$topicid ORDER BY id DESC LIMIT 1") or sqlerr(__FILE__, __LINE__);
-$arr = mysql_fetch_assoc($res);
-$postid = 0 + $arr["id"];
-$userid = 0 + $arr["userid"];
-$added = "<nobr>" . $arr["added"] . "</nobr>";
+            /// GETTING USERID AND DATE OF LAST POST ///
+            $arr = DB::fetchAssoc("SELECT * FROM forum_posts WHERE topicid=$topicid ORDER BY id DESC LIMIT 1");
+            $postid = 0 + $arr["id"];
+            $userid = 0 + $arr["userid"];
+            $added = "<nobr>" . $arr["added"] . "</nobr>";
 
-/// GET NAME OF LAST POSTER ///
-$res = mysql_query("SELECT id, username FROM users WHERE id=$userid") or sqlerr(__FILE__, __LINE__);
-if (mysql_num_rows($res) == 1) {
-$arr = mysql_fetch_assoc($res);
-$username = "<a href=account-details.php?id=$userid>$arr[username]</a>";
-}
-else
-$username = "Unknown[$topic_userid]";
+            /// GET NAME OF LAST POSTER ///
+            $username = DB::fetchColumn("SELECT id, username FROM users WHERE id = $userid LIMIT 1");
+            if ($username) {
+                $username = '<a href="account-details.php?id=' . $topic_userid . '">' . $username . '</a>';
+            }
+            else
+                $username = 'Unknown[' . $topic_userid . ']';
 
-/// GET NAME OF THE AUTHOR ///
-$res = mysql_query("SELECT username FROM users WHERE id=$topic_userid") or sqlerr(__FILE__, __LINE__);
-if (mysql_num_rows($res) == 1) {
-$arr = mysql_fetch_assoc($res);
-$author = "<a href=account-details.php?id=$topic_userid>$arr[username]</a>";
-}
-else
-$author = "Unknown[$topic_userid]";
+            /// GET NAME OF THE AUTHOR ///
+            $username = DB::fetchColumn("SELECT username FROM users WHERE id = $topic_userid LIMIT 1");
+            if ($username) {
+                $author = '<a href="account-details.php?id=' . $topic_userid . '">' . $username . '</a>';
+            }
+            else
+                $author = 'Unknown[' . $topic_userid . ']';
 
-/// GETTING THE LAST INFO AND MAKE THE TABLE ROWS ///
-$r = mysql_query("SELECT lastpostread FROM forum_readposts WHERE userid=$userid AND topicid=$topicid") or sqlerr(__FILE__, __LINE__);
-$a = mysql_fetch_row($r);
-$new = !$a || $postid > $a[0];
-$subject = "<a href=forums.php?action=viewtopic&topicid=$topicid><b>" . stripslashes(encodehtml($topicarr["subject"])) . "</b></a>";
+            /// GETTING THE LAST INFO AND MAKE THE TABLE ROWS ///
+            $a = DB::fetchColumn("SELECT lastpostread FROM forum_readposts WHERE userid=$userid AND topicid=$topicid");
+            $new = !$a || $postid > $a[0];
+            $subject = "<a href=forums.php?action=viewtopic&topicid=$topicid><b>" . stripslashes(encodehtml($topicarr["subject"])) . "</b></a>";
 
-print("<tr class=alt1><td style='padding-right: 5px'>$subject</td>".
-"<td class=alt2 align=center>$replies</td>" .
-"<td class=alt1 align=center>$views</td>" .
-"<td class=alt1 align=center>$author</td>" .
-"<td class=alt2 align=right><nobr><small>by&nbsp;$username<br>$added</small></nobr></td>");
+            print("<tr class=alt1><td style='padding-right: 5px'>$subject</td>".
+            "<td class=alt2 align=center>$replies</td>" .
+            "<td class=alt1 align=center>$views</td>" .
+            "<td class=alt1 align=center>$author</td>" .
+            "<td class=alt2 align=right><nobr><small>by&nbsp;$username<br>$added</small></nobr></td>");
 
-print("</tr>");
-} // while
-}
-print("</table><br>");
+            print("</tr>");
+        } // while
+    }
+    print("</table><br>");
 } // end function
 
 //Global variables
@@ -1223,7 +1234,11 @@ if (isset($_GET["catchup"]))
 	catch_up();
 
 ///////////////////////////////////////////////////////// Action: SHOW MAIN FORUM INDEX
-$forums_res = mysql_query("SELECT forumcats.id AS fcid, forumcats.name AS fcname, forum_forums.* FROM forum_forums LEFT JOIN forumcats ON forumcats.id = forum_forums.category ORDER BY forumcats.sort, forum_forums.sort, forum_forums.name") or forumsqlerr(__FILE__, __LINE__);
+$forums_res = DB::query("
+    SELECT forumcats.id AS fcid, forumcats.name AS fcname, forum_forums.*
+    FROM forum_forums
+        LEFT JOIN forumcats ON forumcats.id = forum_forums.category
+    ORDER BY forumcats.sort, forum_forums.sort, forum_forums.name");
 
 stdhead("Forums");
 begin_frame("Forum Home", 'center');
@@ -1236,7 +1251,7 @@ print("<tr><td align=left width=100% bgcolor=#E0F1FE><b> Forum </b></td><td  wid
 
 $fcid = 0;
 
-while ($forums_arr = mysql_fetch_assoc($forums_res)){
+while ($forums_arr = $forums_res->fetch()) {
 	if ($forums_arr['fcid'] != $fcid) {// add forum cat headers
 		print("<tr><td colspan=\"4\" class=\"forumcat\" align=center bgcolor=#E0F1FE><b><font size=\"2\">".h($forums_arr['fcname'])."</font></b></td></tr>\n");
 
@@ -1254,15 +1269,14 @@ while ($forums_arr = mysql_fetch_assoc($forums_res)){
     $forumname = h($forums_arr["name"]);
 
     $forumdescription = h($forums_arr["description"]);
-    $topicids_res = mysql_query("SELECT id FROM forum_topics WHERE forumid=$forumid") or forumsqlerr(__FILE__, __LINE__);
-	$topiccount = number_format(mysql_num_rows($topicids_res));
+    $topicids_res = DB::query("SELECT id FROM forum_topics WHERE forumid = $forumid");
+	$topiccount = 0;
     $postcount = 0;
-		while ($topicids_arr = mysql_fetch_assoc($topicids_res)) {
-			$topicid = $topicids_arr['id'];
-			$postcount_res = mysql_query("SELECT COUNT(*) FROM forum_posts WHERE topicid=$topicid") or forumsqlerr(__FILE__, __LINE__);
-			$postcount_arr = mysql_fetch_row($postcount_res);
-			$postcount += $postcount_arr[0];
-		}
+    while ($topicids_arr = $topicids_res->fetch()) {
+        $topiccount += 1;
+        $postcount += DB::fetchColumn('SELECT COUNT(*) FROM forum_posts WHERE topicid = ' . $topicids_arr['id']);
+    }
+    $topiccount = number_format($topiccount);
     $postcount = number_format($postcount);
 
     // Find last post ID
@@ -1312,8 +1326,14 @@ print("<td ><img src=". $themedir ."folder.gif style='margin-left: 10px; margin-
 print("<td ><img src=". $themedir ."folder_locked.gif style='margin-left: 10px; margin-right: 5px'></td><td >Locked topic</td>\n");
 print("</tr></table></p>\n");
 
-//Top posters
-$r = mysql_query("SELECT users.id, users.username, COUNT(forum_posts.userid) as num FROM forum_posts LEFT JOIN users ON users.id = forum_posts.userid GROUP BY userid ORDER BY num DESC LIMIT 10") or forumsqlerr();
+// Top posters
+$r = DB::query("
+    SELECT users.id, users.username, COUNT(forum_posts.userid) as num
+    FROM forum_posts
+        LEFT JOIN users ON users.id = forum_posts.userid
+    GROUP BY userid
+    ORDER BY num DESC
+    LIMIT 10");
 forumpostertable($r, "Top 10 Posters</font>");
 
 //topic count and post counts
@@ -1325,7 +1345,7 @@ insert_quick_jump_menu();
 end_frame();
 stdfoot();
 
-}ELSE{//HEY IF FORUMS ARE OFF, SHOW THIS...
+} ELSE {//HEY IF FORUMS ARE OFF, SHOW THIS...
 	stdhead("Forums");
 	begin_frame("Notice", 'center');
 	echo '<BR>Unfortunately The Forums Are Not Currently Available<BR><BR>';

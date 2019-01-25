@@ -1,5 +1,8 @@
-<?
-if (eregi("admin-functions.php", $_SERVER['REQUEST_URI'])) die;
+<?php
+
+if (preg_match('~admin-functions\.php~', $_SERVER['REQUEST_URI']))
+    die;
+
 require_once("./themes/" . $GLOBALS['ss_uri'] . "/block.php");
 
 function autolink($al_url, $al_msg)	// create autolink
@@ -13,38 +16,41 @@ function autolink($al_url, $al_msg)	// create autolink
 	exit;
 }
 
-function adminmenu()// create navi-menu
+// create navi-menu
+function adminmenu()
 {
-	global $sid;
-	global $PHP_SELF;
+	global $sid, $PHP_SELF;
 
-//count pending accounts
-$res = mysql_query("SELECT COUNT(*) FROM users WHERE status='pending'") or print(mysql_error());
-$arr12 = mysql_fetch_row($res);
-$pusers = $arr12[0];
+    // count pending accounts
+    $pusers = DB::fetchColumn('SELECT COUNT(*) FROM users WHERE status = ?', ['pending']);
 
-//Get Last Cleanup
-$res = mysql_query("SELECT value_u FROM avps WHERE arg = 'lastcleantime'");
-$row = mysql_fetch_array($res);
-	if (!$row) $lastclean="never done...";
-		else{
-	$row[0]=time()-$row[0]; $days=intval($row[0] / 86400);$row[0]-=$days*86400;
-	$hours=intval($row[0] / 3600); $row[0]-=$hours*3600; $mins=intval($row[0] / 60);
-	$secs=$row[0]-($mins*60);
-	$lastclean = "$days days, $hours hrs, $mins minutes, $secs seconds ago.";
-		}
-begin_frame("Admin Menu");
-print "<CENTER><b>Users Awaiting Validation: <a href=admin.php?act=confirmreg>".$pusers."</a></b><BR><a href=cheats.php>Check For Possible Cheaters</a><BR><BR>";
+    // Get Last Cleanup
+    $row = DB::fetchColumn('SELECT value_u FROM avps WHERE arg = ? LIMIT 1', ['lastcleantime']);
+    if (!$row)
+        $lastclean = "never done...";
+    else {
+        $row[0] = time()-$row[0]; $days=intval($row[0] / 86400);$row[0]-=$days*86400;
+        $hours = intval($row[0] / 3600); $row[0]-=$hours*3600; $mins=intval($row[0] / 60);
+        $secs = $row[0]-($mins*60);
+        $lastclean = "$days days, $hours hrs, $mins minutes, $secs seconds ago.";
+    }
 
-print "Last cleanup performed: ".$lastclean." - <a href=".$GLOBALS['SITEURL']."/backend/force-cleanup.php>[FORCE CLEAN]</a><br><br>[A] Admin Only - [S] Super Moderator Only<br></CENTER>\n";
+    begin_frame("Admin Menu");
+    print "<CENTER><b>Users Awaiting Validation: <a href=admin.php?act=confirmreg>".
+        $pusers."</a></b><BR><a href=cheats.php>Check For Possible Cheaters</a><BR><BR>";
 
-$file = @file_get_contents('http://www.torrenttrader.org/version.php');
+    print "Last cleanup performed: ".$lastclean." - <a href=".$GLOBALS['SITEURL'].
+        "/backend/force-cleanup.php>[FORCE CLEAN]</a><br><br>[A] Admin Only - [S] Super Moderator Only<br></CENTER>\n";
 
-if ($GLOBALS['ttversion'] >= $file){
-	echo "<BR><center><b>You have the latest Version of TorrentTrader Installed: v".$file."</b></center><BR><BR>";
-}else{
-	echo "<BR><center><b><font color=red>NEW Version of TorrentTrader now available: v".$file." you have v".$ttversion."<BR> Please visit <a href=http://www.torrenttrader.org>TorrentTrader.org</a> to upgrade.</font></b></center><BR><BR>";
-}
+    // $file = @file_get_contents('http://www.torrenttrader.org/version.php');
+    $file = '1.09';
+
+    if ($GLOBALS['ttversion'] >= $file) {
+        echo "<BR><center><b>You have the latest Version of TorrentTrader Installed: v".$file."</b></center><BR><BR>";
+    } else {
+        echo "<BR><center><b><font color=red>NEW Version of TorrentTrader now available: v".$file." you have v".
+            $ttversion."<BR> Please visit <a href=http://www.torrenttrader.org>TorrentTrader.org</a> to upgrade.</font></b></center><BR><BR>";
+    }
 
 ?>
 <table border="0" width="100%" cellspacing="0" cellpadding="0">
@@ -116,7 +122,8 @@ if ($GLOBALS['ttversion'] >= $file){
 </tr>
 </table>
 
-	<?
-	end_frame();
+<?php
+
+end_frame();
 }
-?>
+

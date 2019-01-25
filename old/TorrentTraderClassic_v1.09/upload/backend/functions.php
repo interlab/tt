@@ -439,8 +439,10 @@ function modonly() {
     }
 }
 
-function jmodonly() {
+function jmodonly()
+{
     global $CURUSER;
+
     if (get_user_class() < UC_JMODERATOR) {
         stderr("ACCESS DENIED", "Sorry this page is only for Moderators.");
         exit();

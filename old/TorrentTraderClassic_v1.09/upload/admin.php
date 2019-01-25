@@ -10,7 +10,9 @@ jmodonly();
 stdhead("Staff CP");
 require_once("backend/admin-functions.php");
 
-if ($act=="")
+$act = $_REQUEST['act'] ?? '';
+
+if (empty($act))
 {
 adminmenu(); 
 begin_frame("Reported Items To Be Dealt With");
@@ -26,10 +28,8 @@ $where = " WHERE type = 'forum'";
 else
 $where = "";
 
-$res = mysql_query("SELECT count(id) FROM reports $where") or die(mysql_error());
-$row = mysql_fetch_array($res);
 
-$count = $row[0];
+$count = DB::fetchColumn('SELECT count(id) FROM reports ' . $where);
 $perpage = 25;
 list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, $_SERVER["PHP_SELF"] . "?type=" . $_GET["type"] . "&" );
 
@@ -43,9 +43,18 @@ if (get_user_class() >= UC_MODERATOR)
  printf("<td class=table_head align=center>Delete</td>");
 print("</tr>");
 print("<form method=post action=takedelreport.php>");
-$res = mysql_query("SELECT reports.id, reports.dealtwith,reports.dealtby, reports.addedby, reports.votedfor,reports.votedfor_xtra, reports.reason, reports.type, users.username, reports.complete FROM reports INNER JOIN users on reports.addedby = users.id $where AND complete = '0' ORDER BY id desc $limit");
 
-while ($arr = mysql_fetch_assoc($res))
+$res = DB::executeQuery('
+    SELECT reports.id, reports.dealtwith, reports.dealtby, reports.addedby, reports.votedfor, reports.votedfor_xtra,
+        reports.reason, reports.type, users.username, reports.complete
+    FROM reports
+        INNER JOIN users on reports.addedby = users.id
+    ' . $where . '
+        AND complete = ?
+    ORDER BY id desc
+    ' . $limit, [0]);
+
+while ($arr = $res->fetch())
 {
 if ($arr[dealtwith])
 {
