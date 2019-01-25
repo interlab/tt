@@ -1,4 +1,5 @@
-<?
+<?php
+
 require('backend/functions.php');
 require('backend/config.php');
 ?>
@@ -11,12 +12,10 @@ require('backend/config.php');
 
 function InsertSmilie(texttoins)
 {
-window.opener.document.ttshoutform.message.value = window.opener.document.ttshoutform.message.value+' '+texttoins+' ';
-window.opener.document.ttshoutform.message.focus();
-window.close();
+    window.opener.document.ttshoutform.message.value = window.opener.document.ttshoutform.message.value+' '+texttoins+' ';
+    window.opener.document.ttshoutform.message.focus();
+    window.close();
 }
-
-
 
 //-->
 </SCRIPT>
@@ -24,20 +23,17 @@ window.close();
 </HEAD>
 
 <BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#FF0000" VLINK="#800000" ALINK="#FF00FF">
-<?
+<?php
 dbconn(false);
 
 $query = 'SELECT * FROM shoutbox_emoticons GROUP BY image';
+$res = DB::query($query);
 
-$result = mysql_query($query);
-$alt = false;
-
-while ($row = mysql_fetch_assoc($result)) {
-
-echo "
-<img src='".$GLOBALS['SITEURL']."/images/shoutbox/".$row['image']."' onClick=\"InsertSmilie('".$row['text']."');\">";
-
+while ($row = $res->fetch()) {
+    echo '
+        <img src="'.$GLOBALS['SITEURL'].'/images/shoutbox/'.$row['image'].'" onClick="InsertSmilie(\''.$row['text'].'\');">';
 }
 ?>
+
 </BODY>
 </HTML>
