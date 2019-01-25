@@ -1,0 +1,13 @@
+
+# https://httpd.apache.org/docs/2.4/rewrite/flags.html
+
+# https://www.askapache.com/htaccess/
+
+# RewriteCond %{REQUEST_FILENAME} -f
+# RewriteCond %{REQUEST_FILENAME} -f
+# RewriteRule ^(.+)\.pdf$  /cgi-bin/pdf.php?file=$1 [L,NC,QSA]
+
+RewriteRule ^(lambada\.php)$  /controllers/$1 [L,NC]
+RewriteRule ^(videoformats\.php)$  /controllers/$1 [L,NC]
+RewriteRule ^(faq\.php)$  /controllers/$1 [L,NC]
+RewriteRule ^(formats\.php)$  /controllers/$1 [L,NC]

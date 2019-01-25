@@ -28,8 +28,8 @@ echo $pagertop;
 
 ?>
 <form method="post" action="takedelreq.php">
-<tr><td class="colhead" align="left"><?echo "" . REQUESTS . "";?></td><td class="colhead" align="left"><?echo "" . DATE_ADDED . "";?></td><td class="colhead" align="left"><?echo "" . ADDED_BY . "";?></td><td class="colhead"><?echo "" . TTYPE . "";?></td><td class="colhead"><?echo "" . FILLED . "";?></td><td class="colhead"><?echo "" . ACCOUNT_DELETE . "";?></td></tr>
-<?
+<tr><td class="colhead" align="left"><?php echo "" . REQUESTS . "";?></td><td class="colhead" align="left"><?php echo "" . DATE_ADDED . "";?></td><td class="colhead" align="left"><?php echo "" . ADDED_BY . "";?></td><td class="colhead"><?php echo "" . TTYPE . "";?></td><td class="colhead"><?php echo "" . FILLED . "";?></td><td class="colhead"><?php echo "" . ACCOUNT_DELETE . "";?></td></tr>
+<?php 
 
 $res=mysql_query("SELECT users.username, requests.filled, requests.filledby, requests.id, requests.userid, requests.request, requests.added, categories.name as cat FROM requests inner join categories on requests.cat = categories.id inner join users on requests.userid = users.id order by requests.request $limit") or print(mysql_error());
 // ------------------
@@ -53,7 +53,7 @@ echo "<tr><td align=\"left\"><b>" . $arr[request] . "</b></td><td align=\"left\"
 ?>
 <tr><td colspan="5" align="right"><input type="submit" value="Apply" /></td></tr>
 </form></center>
-<?
+<?php 
 // ------------------
    end_table();
 
@@ -62,4 +62,3 @@ echo $pagerbottom;
 // ===================================
 
 stdfoot();
-?>

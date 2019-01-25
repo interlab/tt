@@ -1,4 +1,4 @@
-<?
+<?php 
 //
 // CSS Updated 29.11.05
 //
@@ -17,9 +17,9 @@ Here you will find instructions on using our RSS Feeds. It is possible to retrei
 <td class=table_head>Link To</td><td class=table_head>Category</td><td class=table_head>Result</td>
 </tr>
 <tr>
-<td class=table_col1><a href="<? echo "$SITEURL/rss.php";?>"><? echo "$SITEURL/rss.php";?></a></td><td class=table_col2><b><CENTER>All</CENTER></b></td><td class=table_col1>This will give the last 15 torrents uploaded</td>
+<td class=table_col1><a href="<?php echo "$SITEURL/rss.php";?>"><?php echo "$SITEURL/rss.php";?></a></td><td class=table_col2><b><CENTER>All</CENTER></b></td><td class=table_col1>This will give the last 15 torrents uploaded</td>
 </tr>
-<?
+<?php 
 while ($row = mysql_fetch_array($resqt))
 {
  extract ($row);
@@ -28,7 +28,6 @@ while ($row = mysql_fetch_array($resqt))
 ?>
 </table>
 <br><br><br>
-<?
+<?php 
 end_frame();
 stdfoot();
-?>

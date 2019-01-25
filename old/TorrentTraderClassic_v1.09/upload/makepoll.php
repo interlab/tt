@@ -1,4 +1,4 @@
-<?
+<?php 
 require "backend/functions.php";
 dbconn();
 loggedinorreturn();
@@ -132,6 +132,6 @@ print("<p><font color=red><center>*</font> required</center></p>");
 <input type=hidden name=returnto value=<?=$_GET["returnto"]?>>
 </form>
 <br>
-<? end_frame();
+<?php end_frame();
 stdfoot();
-?>
+

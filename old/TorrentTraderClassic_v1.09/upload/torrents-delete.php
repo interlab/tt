@@ -1,38 +1,38 @@
-<?
+<?php 
 //
 // CSS and language updated 30.11.05
 //
 require_once("backend/functions.php");
 
 if (!mkglobal("id"))
-	genbark("missing form data");
+    genbark("missing form data");
 
 $id = 0 + $id;
 if (!$id)
-	die();
+    die();
 
 dbconn();
 loggedinorreturn();
 
-$res = mysql_query("SELECT name,owner,seeders FROM torrents WHERE id = $id");
+$res = mysql_query("SELECT name ,owner, seeders FROM torrents WHERE id = $id");
 $row = mysql_fetch_array($res);
 if (!$row)
-	die();
+    die();
 
 if ($CURUSER["id"] != $row["owner"] && get_user_class() < UC_MODERATOR){
-bark("Error", "" . CANT_EDIT_TORRENT . "");
-die;
+    bark("Error", "" . CANT_EDIT_TORRENT . "");
+    die;
 }
 
 $reason = trim($_POST["reason"]);
 if (!$reason){
-bark("Error", "" . REASON_FOR_DELETE . "");
-die;
+    bark("Error", $txt['REASON_FOR_DELETE']);
+    die;
 }
 
 deletetorrent($id);
 
-write_log("Torrent $id ($row[name]) was deleted by $CURUSER[username] ($reason)\n");
+write_log('Torrent ' . $id . ' (' . $row['name'] . ') was deleted by ' . $CURUSER['username'] . ' (' . $reason . ')');
 
 stdhead("Torrent deleted!");
 begin_frame();
@@ -44,11 +44,10 @@ else
 
 ?>
 
-<? echo "" . TORRENT_DELETED . "";?>
+<?= $txt['TORRENT_DELETED']'; ?>
 <BR><p><?= $ret ?></p></br>
 
-<?
+<?php 
 end_frame();
 
 stdfoot();
-?>

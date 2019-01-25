@@ -1,4 +1,4 @@
-<?
+<?php 
 
 require "backend/functions.php";
 dbconn(false);
@@ -39,7 +39,7 @@ if($page == ""): ?>
 		<table width="80%">
 			<tr>
 				<td align=right class="medium">Nickname:&nbsp;</td>
-				<td><? echo $CURUSER["username"]?>-WEB</td>
+				<td><?php echo $CURUSER["username"]?>-WEB</td>
 			</tr><tr>
 				<td align=right class="medium">Smileys:&nbsp;</td>
 				<td>
@@ -227,9 +227,8 @@ if(isset($warning_smiley) && $warning_smiley): ?>
 
 </body></html>
 
-<?
+<?php 
 end_frame();
 
 stdfoot();
-?>
-    
+

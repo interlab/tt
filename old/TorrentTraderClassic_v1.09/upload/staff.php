@@ -1,4 +1,4 @@
-<?
+<?php 
 //
 // - Theme And Language Updated 26.Nov.05
 //
@@ -39,7 +39,7 @@ stdhead("Staff");
 <BR><BR>
 <br>
 <table width=725 cellspacing=0 align=center>
-<? if (get_user_class() >= UC_JMODERATOR) { 
+<?php if (get_user_class() >= UC_JMODERATOR) { 
 ?>
 <tr>
 	<td colspan=14><b>Administrators</b><font color="#FF0000"> [HIDDEN FROM PUBLIC]</font></td>
@@ -53,7 +53,7 @@ stdhead("Staff");
 <tr>
 	<td colspan=14>&nbsp;</td>
 </tr>
-<?
+<?php 
 } 
 ?>
 
@@ -78,7 +78,7 @@ stdhead("Staff");
 <tr height=15>
 	<?=$staff_table[UC_JMODERATOR]?>
 </tr>
-<? if (get_user_class() >= UC_JMODERATOR) { 
+<?php if (get_user_class() >= UC_JMODERATOR) { 
 ?>
 <tr>
 	<td colspan=14>&nbsp;</td>
@@ -121,14 +121,12 @@ stdhead("Staff");
     <td width="25"></td>
     <td width="35"></td>
 </tr>
-<?
+<?php 
 } 
 ?>
 
 </table>
-<?
+<?php 
 end_frame();
 
-
-	stdfoot();
-?>
+stdfoot();

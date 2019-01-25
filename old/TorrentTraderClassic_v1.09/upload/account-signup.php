@@ -170,7 +170,7 @@ if ($message != "")
 			</tr>
 			<tr>
 				<td>Signup Time:</td>
-				<td><b><? print date("D dS M, Y h:i a"); ?></b></td>
+				<td><b><?php  print date("D dS M, Y h:i a"); ?></b></td>
 			</tr>
 			<tr>
 				<td align="middle" colSpan="2">
@@ -180,9 +180,8 @@ if ($message != "")
 	</table>
 </form>
 
-<?
+<?php 
 
 end_frame();
 stdfoot();
 
-?>

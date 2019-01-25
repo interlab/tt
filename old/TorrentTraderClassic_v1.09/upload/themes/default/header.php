@@ -101,7 +101,7 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
 <TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
 	<TR>
 <!-- THIS IS THE TOP LOGO AREA 3 CELLS -->
-		<TD WIDTH=497><a href="index.php"><IMG SRC="themes/default/images/template1_01.jpg" WIDTH=497 HEIGHT=80 border=0 ALT="<? echo $SITENAME  ?> logo" ></a></TD>
+		<TD WIDTH=497><a href="index.php"><IMG SRC="themes/default/images/template1_01.jpg" WIDTH=497 HEIGHT=80 border=0 ALT="<?= $SITENAME  ?> logo" ></a></TD>
 		<TD ROWSPAN=3 WIDTH=141><IMG SRC="themes/default/images/template1_02.jpg" WIDTH=141 HEIGHT=132 ALT=""></TD>
 		<TD ROWSPAN=3 WIDTH=100%><IMG SRC="themes/default/images/template1_03.jpg" WIDTH=100% HEIGHT=132 ALT=""></TD>
 <!-- END TOP LOGO AREA -->	
@@ -212,7 +212,7 @@ begin_block("$CURUSER[username]");
 </table></form></td></tr>
 <tr>
 <td align="center"><a href="account.php"><?= $txt['ACCOUNT'] ?></a> <br> <?php if (get_user_class() > UC_VIP) {
-print("<a href=admin.php>". $txt['STAFFCP'] ."</a>"); }?></font></tr>
+print("<a href=admin.php>". $txt['STAFFCP'] ."</a>"); }?></tr>
 
 </table>
 

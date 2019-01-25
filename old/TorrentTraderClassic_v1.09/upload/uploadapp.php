@@ -1,4 +1,4 @@
-<?
+<?php 
 
 require_once("backend/functions.php");
 dbconn(false);
@@ -13,7 +13,7 @@ require_once("backend/admin-functions.php");
 CURSOR: help;
 TEXT-DECORATION: none
 }
-</STYLE><?
+</STYLE><?php 
 
 if ($_POST["form"]=="") {
  if($CURUSER["class"]<UC_MODERATOR)
@@ -71,7 +71,7 @@ begin_frame("Uploaders Application");
 <Center><BR><BR><b>Please use the application form below to apply for the right to UPLOAD torrents to this tracker<br>once you have submitted please await our staff vote.<br><BR>You will receive a PM once the voting has completed.<BR><BR></b></center>
  <form action="uploadapp.php" method="post" enctype="multipart/form-data" name="uploadapp" id="uploadapp">
  <center><table border=1 style='border-collapse: collapse' bordercolor=#646262 cellpadding=4>
-<?
+<?php 
 
 if ($CURUSER["downloaded"] > 0)
 $ratio = $CURUSER['uploaded'] / $CURUSER['downloaded'];
@@ -114,7 +114,7 @@ No</p>
 <input name="form" type="hidden" value="1">
 <center><input type="submit" name="Submit" value="Send Application"><center>
 </form><br><BR>
-<?
+<?php 
 end_frame();
 
 } else if ($form==1) {
@@ -122,7 +122,7 @@ end_frame();
 begin_frame("Uploaders Application Request");
 $qry="INSERT INTO uploadapp (userid,applied,grpacct,grpname,grpdes,content,comment,seeding,othergrps,seedtime) ".
  "VALUES (". $_POST["user"].", ".
-  implode(",",array_map("sqlesc",array(
+  implode(",",array_map("sqlesc", array(
     get_date_time(),
    $_POST["groupacct"],
    $_POST["groupname"],
@@ -240,7 +240,7 @@ else {
  <td><span title=" Does User acknowledge minimal seeding times?" class=popup">Seeder<br>Time</span></td>
  <td>Voting Poll</td>
  </tr>
-<?  
+<?php 
  while($row=mysql_fetch_array($res))
  {
    $resu=mysql_query("SELECT * FROM users where id = ".$row["userid"])  or sqlerr(__FILE__, __LINE__);
@@ -295,7 +295,7 @@ else {
  <td colspan="5"><input name="newcomments" type="text" value="" maxlength="80"><br><input type="submit" name="addcomment" value="Add Comment"></td>
    </form>
  </tr>
-<?  
+<?php 
   }
   print("</table>");
  }
@@ -305,4 +305,3 @@ end_frame();
 }    
 //end_frame();
 stdfoot();
-?>

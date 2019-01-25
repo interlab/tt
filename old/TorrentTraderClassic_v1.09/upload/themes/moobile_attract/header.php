@@ -122,12 +122,12 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
 <TBODY>
 <TR>
 <TD align=middle width="100%">
-          <A class=navi0 href=index.php><? print("" . HOME . "\n"); ?></a> | 
-          <?if ($FORUMS) {?><a class=navi0 href=forums.php><? print("" . FORUMS . "\n"); ?></a> | <?}?>
-          <?if ($IRCCHAT) {?><a class=navi0 href=irc.php><? print("" . CHAT . "\n"); ?></a> | <?}?>
-          <a class=navi0 href=torrents-search.php><? print("" . SEARCH . "\n"); ?></a> | 
-          <a class=navi0 href=torrents-upload.php><? print("" . UPLOADT . "\n"); ?></a> | 
-          <a class=navi0 href=faq.php><? print("" . FAQ . "\n"); ?></a>
+          <A class=navi0 href=index.php><?= $txt['HOME'] ?></a> | 
+          <?php if ($FORUMS) {?><a class=navi0 href=forums.php><?= $txt['FORUMS'] ?></a> | <?php } ?>
+          <?php if ($IRCCHAT) {?><a class=navi0 href=irc.php><?= $txt['CHAT'] ?></a> | <?php }?>
+          <a class=navi0 href=torrents-search.php><?= $txt['SEARCH'] ?></a> | 
+          <a class=navi0 href=torrents-upload.php><?= $txt['UPLOADT'] ?></a> | 
+          <a class=navi0 href=faq.php><?= $txt['FAQ'] ?></a>
 </TD>
 </TR>
 </TBODY>
@@ -139,7 +139,7 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
         <TR>
           <TD align=middle width="45%">
 			<p align="left">
-			<? if ($CURUSER) {
+			<?php  if ($CURUSER) {
 				print $CURUSER[username]; 
 				echo "(<a href=account-logout.php><font color=#ffffff><b>Logout</b></font></a>)";
 
@@ -161,20 +161,20 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
 		//end
 			?>
 
-			&nbsp;&#8595;&nbsp;<font color=red><? print mksize($CURUSER[downloaded]);?></font> - <b>&#8593;&nbsp;</b><font color=green><? print mksize($CURUSER[uploaded]);?></font> - <? print("" . RATIO . "\n"); ?>: <? print $userratio; ?> &nbsp;<?if ($unread) {	print("<a href=\"account.php\"><b><font color=#FF0000>New PM" . ($messages != 1 ? "s" : "") . " ($unread)</b></a></font>");}?>
+			&nbsp;&#8595;&nbsp;<font color=red><?php  print mksize($CURUSER[downloaded]);?></font> - <b>&#8593;&nbsp;</b><font color=green><?php  print mksize($CURUSER[uploaded]);?></font> - <?= $txt['RATIO'] ?>: <?php  print $userratio; ?> &nbsp;<?php if ($unread) {	print("<a href=\"account.php\"><b><font color=#FF0000>New PM" . ($messages != 1 ? "s" : "") . " ($unread)</b></a></font>");}?>
 
-			<?
+			<?php 
 			}else{
 				echo "<a href=account-login.php><font color=#FF0000>". LOGIN . "</font></a> <B>:</B> <a href=account-signup.php><font color=#FF0000>" . REGISTERNEW . "</font></a>";
 			}
 			?>
 			</TD>
 			<form method="get" action="torrents-search.php">
-			<TD><? print("" . SEARCH . "\n"); ?>: </STRONG><br>
+			<TD><?= $txt['SEARCH'] ?>: </STRONG><br>
 			<input type="text" name="search" size="30" value="<?= h($searchstr) ?>" />
 <select name="cat">
 <option value="0">(All Categories)</option>
-<?
+<?php 
 $cats = genrelist();
 $catdropdown = "";
 foreach ($cats as $cat) {
@@ -193,7 +193,7 @@ foreach ($cats as $cat) {
 	<tr>
 		<td colspan="2" align=center>
 <!-- banner code starts here -->
-		   <CENTER><?
+		   <CENTER><?php 
 $content = join ('', file ('banners.txt'));
 $s_con = split("~",$content);
 
@@ -205,12 +205,12 @@ echo $s_con[$banners];
 	</tr>
 	<tr>
 		<td width="21%" valign=top align=center>
-<?
+<?php
 if (!$CURUSER)
 
 {
 
-begin_block("" . Login . "");
+begin_block($txt['LOGIN']);
 ?>
 <table border=0 width=100% cellspacing=0 cellpadding=0>
 	<tr>
@@ -218,9 +218,9 @@ begin_block("" . Login . "");
 		<div align=center>
 		<table border=0 cellpadding=5">
 			<tr><td>
-				<p align=center><font face=Verdana size=1><b><? print("" . USER . "\n"); ?>:</b></font></td><td align=left>
+				<p align=center><font face=Verdana size=1><b><?= $txt['USER'] ?>:</b></font></td><td align=left>
 				<input type=text size=10 name=username style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px; background-color: #C0C0C0" /></td></tr>
-			<tr><td><font face=Verdana size=1><b><? print("" . PASS . "\n"); ?>:</b></font></td><td align=left>
+			<tr><td><font face=Verdana size=1><b><?= $txt['PASS'] ?>:</b></font></td><td align=left>
 				<input type=password size=10 name=password style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px; background-color: #C0C0C0" /></td></tr>
 			<tr><td>&nbsp;</td><td align=left>
 				<input type=submit value=Verify style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px"></td></tr>
@@ -228,63 +228,34 @@ begin_block("" . Login . "");
 		</td></form>
 	</tr>
 	<tr>
-<td align="center"><a href="account-delete.php"><?echo "" . DELETE_ACCOUNT . "";?></a><br><a href="account-recover.php"><?echo "" . RECOVER_ACCOUNT . "";?></a></td> </tr>
+<td align="center"><a href="account-delete.php"><?= $txt['DELETE_ACCOUNT'] ?></a><br><a href="account-recover.php"><?= $txt['RECOVER_ACCOUNT'] ?></a></td></tr>
 	</table>
-<?
+<?php
 end_block();
 
 } else {
 
-$ss_r = mysql_query("SELECT * from stylesheets") or die;
-$ss_sa = array();
-while ($ss_a = mysql_fetch_array($ss_r))
-{
-  $ss_id = $ss_a["id"];
-  $ss_name = $ss_a["name"];
-  $ss_sa[$ss_name] = $ss_id;
-}
-ksort($ss_sa);
-reset($ss_sa);
-while (list($ss_name, $ss_id) = each($ss_sa))
-{
-  if ($ss_id == $CURUSER["stylesheet"]) $ss = " selected"; else $ss = "";
-  $stylesheets .= "<option value=$ss_id$ss>$ss_name</option>\n";
-}
+    $styles = Helper::getStylesheets();
+    $langs = Helper::getLanguages();
 
-$lang_r = mysql_query("SELECT * from languages") or die;
-$lang_sa = array();
-while ($lang_a = mysql_fetch_array($lang_r))
-{
-  $lang_id = $lang_a["id"];
-  $lang_name = $lang_a["name"];
-  $lang_sa[$lang_name] = $lang_id;
-}
-ksort($lang_sa);
-reset($lang_sa);
-while (list($lang_name, $lang_id) = each($lang_sa))
-{
-  if ($lang_id == $CURUSER["language"]) $lang = " selected"; else $lang = "";
-  $languages .= "<option value=$lang_id$lang>$lang_name</option>\n";
-}
-
-begin_block("$CURUSER[username]");
+begin_block($CURUSER['username']);
 ?>
 <table border="0" width="100%" cellspacing="0" cellpadding="0">
 <tr><form method="post" action="take-theme.php"><td>
 <table border=0 cellspacing=0 cellpadding="6" width=100%>
-<tr><td align="center"><B><? print("" . THEME . ""); ?> </B>
-	<select name=stylesheet style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0" size="1"><?=$stylesheets?></select></td></tr>
-<tr><td align="center"><B><? print("" . LANG . ""); ?> </B>
-	<select name=language style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0" size="1"><?=$languages?></select></td></tr>
+<tr><td align="center"><B><?= $txt['THEME'] ?> </B>
+	<select name=stylesheet style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0" size="1"><?= $styles ?></select></td></tr>
+<tr><td align="center"><B><?= $txt['LANG'] ?> </B>
+	<select name=language style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0" size="1"><?= $langs ?></select></td></tr>
 <tr><td align="center">
-	<input type="submit" value="<? print("" . APPLY . ""); ?>" style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0"></td></tr>
+	<input type="submit" value="<?= $txt['APPLY'] ?>" style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0"></td></tr>
 </table></form></td></tr>
 <tr>
-<td align="center"><a href="account.php"><? print("" . ACCOUNT . "\n"); ?></a> <br> <? if (get_user_class() > UC_VIP) {
-print("<a href=admin.php>" . STAFFCP . "</a>");}?></font></tr>
+<td align="center"><a href="account.php"><?= $txt['ACCOUNT'] ?></a> <br> <?php if (get_user_class() > UC_VIP) {
+print("<a href=admin.php>" . $txt['STAFFCP'] . "</a>"); }?></font></tr>
 
 </table>
-<?
+<?php
 end_block();
 
 }
@@ -292,56 +263,56 @@ end_block();
 // invite block
 if ($CURUSER)
 {
-	if ($INVITEONLY){
-		$invites = $CURUSER["invites"];
-		begin_block("" . INVITES . "");
-		?>
-		<table border="0" width="100%" cellspacing="0" cellpadding="0">
-		<tr><td align="center"><? print("" . YOUHAVE . "\n"); ?> <?=$invites?> <? print("" . INVITES . "\n"); ?><br></td></tr>
-		<?if ($invites > 0 ){?>
-		<tr><td align="center"><a href=invite.php><? print("" . SENDANINVITE . "\n"); ?></a><br></td></tr>
-		<?}?>
-		</table>
-		<?
-		end_block();
-	}
+    if ($INVITEONLY) {
+        $invites = $CURUSER["invites"];
+        begin_block($txt['INVITES']);
+        ?>
+        <table border="0" width="100%" cellspacing="0" cellpadding="0">
+        <tr><td align="center"><?= $txt['YOUHAVE'] ?> <?= $invites ?> <?= $txt['INVITES'] ?><br></td></tr>
+        <?php if ($invites > 0 ){ ?>
+        <tr><td align="center"><a href=invite.php><?= $txt['SENDANINVITE'] ?></a><br></td></tr>
+        <?php } ?>
+        </table>
+        <?php
+        end_block();
+    }
 }
-//end invite block
+// end invite block
 
-begin_block("" . NAVIGATION . "");
+begin_block($txt['NAVIGATION']);
 ?>
 
-· <a href="index.php"><? print("" . HOME . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-search.php"><? print("" . SEARCH_TITLE . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-upload.php"><? print("" . UPLOADT . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-needseed.php"><? print("" . UNSEEDED . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="viewrequests.php"><? print("" . REQUESTED . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="today.php"><? print("" . TODAYS_TORRENTS . "\n"); ?></a><br /><br />
+· <a href="index.php"><?= $txt['HOME'] ?></a><br />
+&nbsp;&nbsp;· <a href="torrents-search.php"><?= $txt['SEARCH_TITLE'] ?></a><br />
+&nbsp;&nbsp;· <a href="torrents-upload.php"><?= $txt['UPLOADT'] ?></a><br />
+&nbsp;&nbsp;· <a href="torrents-needseed.php"><?= $txt['UNSEEDED'] ?></a><br />
+&nbsp;&nbsp;· <a href="viewrequests.php"><?= $txt['REQUESTED'] ?></a><br />
+&nbsp;&nbsp;· <a href="today.php"><?= $txt['TODAYS_TORRENTS'] ?></a><br /><br />
 				  <CENTER><a href="rssinfo.php"><img src="images/rss2.gif" border=0 alt="XML RSS Feed"></a></CENTER>
 				  <hr>
-· <a href="faq.php"><? print("" . FAQ . "\n"); ?></a><br />
-· <a href="extras-stats.php"><? print("" . TRACKER_STATISTICS . "\n"); ?></a><br />
-<?if ($FORUMS) {?>· <a href="forums.php"><? print("" . FORUMS . "\n"); ?></a><br /><?}?>
-<?if ($IRCCHAT) {?>· <a href="irc.php"><? print("" . CHAT . "\n"); ?></a><br /><?}?>
-· <a href="formats.php"><? print("" . FILE_FORMATS . "\n"); ?></a><br />
-· <a href="videoformats.php"><? print("" . MOVIE_FORMATS . "\n"); ?></a><br />
-· <a href="staff.php"><? print("" . STAFF . "\n"); ?></a><br />
-· <a href="rules.php"><? print("" . SITE_RULES . "\n"); ?></a><br />
-· <a href="extras-users.php"><? print("" . MEMBERS . "\n"); ?></a><br /><hr>
-· <a href="visitorsnow.php"><? print("" . ONLINE_USERS . "\n"); ?></a><br />
-· <a href="visitorstoday.php"><? print("" . VISITORS_TODAY . "\n"); ?></a><br />
+· <a href="faq.php"><?= $txt['FAQ'] ?></a><br />
+· <a href="extras-stats.php"><?= $txt['TRACKER_STATISTICS'] ?></a><br />
+<?php if ($FORUMS) {?>· <a href="forums.php"><?= $txt['FORUMS'] ?></a><br /><?php }?>
+<?php if ($IRCCHAT) {?>· <a href="irc.php"><?= $txt['CHAT'] ?></a><br /><?php }?>
+· <a href="formats.php"><?= $txt['FILE_FORMATS'] ?></a><br />
+· <a href="videoformats.php"><?= $txt['MOVIE_FORMATS'] ?></a><br />
+· <a href="staff.php"><?= $txt['STAFF'] ?></a><br />
+· <a href="rules.php"><?= $txt['SITE_RULES'] ?></a><br />
+· <a href="extras-users.php"><?= $txt['MEMBERS'] ?></a><br /><hr>
+· <a href="visitorsnow.php"><?= $txt['ONLINE_USERS'] ?></a><br />
+· <a href="visitorstoday.php"><?= $txt['VISITORS_TODAY'] ?></a><br />
 
-<?if(get_user_class() > UC_VIP) {?><hr>
-· <a href="admin.php"><? print("" . STAFFCP . "\n"); ?></a><br /><?}?>
+<?php if(get_user_class() > UC_VIP) {?><hr>
+· <a href="admin.php"><?= $txt['STAFFCP'] ?></a><br /><?php }?>
 <br />
 
- <?
+<?php 
 end_block();
 
 
 if ($DONATEON)
 {
-begin_block("" . DONATIONS . "", 'center');
+begin_block($txt['DONATIONS'], 'center');
 $res9 = mysql_query("SELECT * FROM site_settings ") or sqlerr(__FILE__, __LINE__);
 $arr9 = mysql_fetch_assoc($res9);
 $mothlydonated = $arr9['donations'];

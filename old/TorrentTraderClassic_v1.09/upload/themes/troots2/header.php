@@ -151,7 +151,7 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
                       <TD width="100%" height="100%"></TD></TR></TBODY></TABLE></TD>
                 <TD style="PADDING-TOP: 2px">
                   <DIV class=blueheader 
-                  style="PADDING-RIGHT: 2px; PADDING-LEFT: 5px"><? if ($CURUSER) { print"$CURUSER[username]"; }else{?>Login <?}?></DIV></TD>
+                  style="PADDING-RIGHT: 2px; PADDING-LEFT: 5px"><?php  if ($CURUSER) { print"$CURUSER[username]"; }else{?>Login <?php }?></DIV></TD>
                 <TD style="PADDING-TOP: 10px" width="100%">
                   <TABLE height=8 cellSpacing=0 cellPadding=0 width="100%">
                     <TBODY>
@@ -181,26 +181,26 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
                 background="themes/troots2/images/tab_red1.jpg" 
                 bgColor=#dd1212 height=34>
                   <DIV style="PADDING-LEFT: 20px">
-					<a href=index.php><span style="color: #FFFFFF"><? print("" . HOME . "\n"); ?></span></a></DIV></TD>
+					<a href=index.php><span style="color: #FFFFFF"><?= $txt['HOME'] ?></span></a></DIV></TD>
                 <TD class=mainnavigation style="VERTICAL-ALIGN: middle" width=116 background="themes/troots2/images/tab_blue1.jpg" bgColor=#3f89c3 height=34>
-				<a href=torrents-search.php><? print("" . SEARCH . "\n"); ?></a></TD>
+				<a href=torrents-search.php><?= $txt['SEARCH'] ?></a></TD>
                 <TD class=mainnavigation style="VERTICAL-ALIGN: middle" 
                 width=115 
                 background="themes/troots2/images/tab_blue2.jpg" 
                 bgColor=#3f89c3 height=34>
-				<a href=torrents-upload.php><? print("" . UPLOADT . "\n"); ?></a></TD>
+				<a href=torrents-upload.php><?= $txt['UPLOADT'] ?></a></TD>
                 <TD class=mainnavigation style="VERTICAL-ALIGN: middle" 
                 width=115 
                 background="themes/troots2/images/tab_blue2.jpg" 
                 bgColor=#3f89c3 height=34>
-				<a href=faq.php><? print("" . FAQ . "\n"); ?></a></TD></TR></TBODY></TABLE></TD>
+				<a href=faq.php><?= $txt['FAQ'] ?></a></TD></TR></TBODY></TABLE></TD>
           <TD class=topright style="VERTICAL-ALIGN: middle" width=310 
             height=34><TABLE cellSpacing=0 cellPadding=0 width="100%" 
               border=0><TBODY>
               <TR>
-			<? if ($CURUSER) {?>
+			<?php if ($CURUSER) {?>
 <TD style="VERTICAL-ALIGN: middle; TEXT-ALIGN: center">
-<?
+<?php
 		// ger user ratio
 		if ($CURUSER["downloaded"] > 0){
 				$userratio = number_format($CURUSER["uploaded"] / $CURUSER["downloaded"], 2);
@@ -219,10 +219,10 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
 		//end
 			?>
 
-			&nbsp;&#8595;&nbsp;<font color=red><? print mksize($CURUSER[downloaded]);?></font> - <b>&#8593;&nbsp;</b><font color=green><? print mksize($CURUSER[uploaded]);?></font> - <? print("" . RATIO . "\n"); ?>: <? print $userratio; ?> &nbsp;<?if ($unread) {	print("<a href=\"account.php\"><b><font color=#FF0000>New PM" . ($messages != 1 ? "s" : "") . " ($unread)</b></a></font></TD></TR>");}?>
+			&nbsp;&#8595;&nbsp;<font color=red><?php  print mksize($CURUSER[downloaded]);?></font> - <b>&#8593;&nbsp;</b><font color=green><?php  print mksize($CURUSER[uploaded]);?></font> - <?= $txt['RATIO'] ?>: <?php  print $userratio; ?> &nbsp;<?php if ($unread) {	print("<a href=\"account.php\"><b><font color=#FF0000>New PM" . ($messages != 1 ? "s" : "") . " ($unread)</b></a></font></TD></TR>");}?>
 
-			<?
-			}else{
+			<?php
+			} else {
 				echo "<div align=center><b><a style='color: red' href=account-login.php>". LOGIN . "</a> : <a style='color: red' href=account-signup.php>" . REGISTERNEW . "</a></B></div></TD></TR>";
 			}
 			?>
@@ -237,14 +237,14 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
                 <TD width=28 height=39><IMG height=39 src="themes/troots2/images/red_block.gif" width=28></TD>
                 <TD style="VERTICAL-ALIGN: middle" width=752>
 <NOBR>
-<?if ($FORUMS) {?><A style="TEXT-DECORATION: none" href=forums.php><? print("" . FORUMS . "\n"); ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle><?}?>
-<?if ($IRCCHAT) {?><A style="TEXT-DECORATION: none" href=irc.php><? print("" . CHAT . "\n"); ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle><?}?>
-<A style="TEXT-DECORATION: none" href="torrents-needseed.php"><? print("" . UNSEEDED . "\n"); ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
-<A style="TEXT-DECORATION: none" href="viewrequests.php"><? print("" . REQUESTED . "\n"); ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
-<A style="TEXT-DECORATION: none" href="today.php"><? print("" . TODAYS_TORRENTS . "\n"); ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
-<A style="TEXT-DECORATION: none" href="formats.php"><? print("" . FILE_FORMATS . "\n"); ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
-<A style="TEXT-DECORATION: none" href="videoformats.php"><? print("" . MOVIE_FORMATS . "\n"); ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
-<A style="TEXT-DECORATION: none" href="rules.php"><? print("" . SITE_RULES . "\n"); ?></A>
+<?php if ($FORUMS) {?><A style="TEXT-DECORATION: none" href=forums.php><?= $txt['FORUMS'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle><?php }?>
+<?php if ($IRCCHAT) {?><A style="TEXT-DECORATION: none" href=irc.php><?= $txt['CHAT'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle><?php }?>
+<A style="TEXT-DECORATION: none" href="torrents-needseed.php"><?= $txt['UNSEEDED'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
+<A style="TEXT-DECORATION: none" href="viewrequests.php"><?= $txt['REQUESTED'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
+<A style="TEXT-DECORATION: none" href="today.php"><?= $txt['TODAYS_TORRENTS'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
+<A style="TEXT-DECORATION: none" href="formats.php"><?= $txt['FILE_FORMATS'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
+<A style="TEXT-DECORATION: none" href="videoformats.php"><?= $txt['MOVIE_FORMATS'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
+<A style="TEXT-DECORATION: none" href="rules.php"><?= $txt['SITE_RULES'] ?></A>
 </NOBR>
 </TD>
 
@@ -255,13 +255,13 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
               <TBODY>
               <TR>
 <TD class=bluenav style="BACKGROUND-POSITION: right top; PADDING-LEFT: 13px; FONT-SIZE: 11px; VERTICAL-ALIGN: middle; COLOR: #ffffff; BACKGROUND-REPEAT: no-repeat" width="100%" background="themes/troots2/images/blue_block.gif" height=34>
-<? if (!$CURUSER) { ?>
+<?php  if (!$CURUSER) { ?>
 <form method=post action=account-login.php>
 <input onfocus="this.value=''" type=text size=10 value="User Name" name=username style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px">
 <input onfocus="this.value=''" type=password size=10 value="ibfrules" name=password style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px">
 <input type=submit value=Verify style="font-family: Verdana; font-size: 8pt; border-style: solid; border-width: 0px">
 </TD></form>
-<?}else{
+<?php }else{
 $ss_r = mysql_query("SELECT * from stylesheets") or die;
 $ss_sa = array();
 while ($ss_a = mysql_fetch_array($ss_r))
@@ -293,14 +293,14 @@ while (list($lang_name, $lang_id) = each($lang_sa))
   if ($lang_id == $CURUSER["language"]) $lang = " selected"; else $lang = "";
   $languages .= "<option value=$lang_id$lang>$lang_name</option>\n";
 }?><form method="post" action="take-theme.php">
-<font size=1><? print("" . THEME . ""); ?>:</font> <select name=stylesheet style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px"><?=$stylesheets?></select>
-<font size=1><? print("" . LANG . ""); ?>:</font> <select name=language style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px"><?=$languages?></select>
-<input type="submit" value="<? print("" . APPLY . ""); ?>" style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px"><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
-<A style="TEXT-DECORATION: none" href="account.php"><? print("" . ACCOUNT . "\n"); ?></a><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
-<?if(get_user_class() > UC_VIP) {?><A style="TEXT-DECORATION: none" href="admin.php"><? print("" . STAFFCP . "\n"); ?></a><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle><?}?>
+<font size=1><?= $txt['THEME'] ?>:</font> <select name=stylesheet style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px"><?=$stylesheets?></select>
+<font size=1><?= $txt['LANG'] ?>:</font> <select name=language style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px"><?=$languages?></select>
+<input type="submit" value="<?= $txt['APPLY'] ?>" style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px"><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
+<A style="TEXT-DECORATION: none" href="account.php"><?= $txt['ACCOUNT'] ?></a><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
+<?php if(get_user_class() > UC_VIP) {?><A style="TEXT-DECORATION: none" href="admin.php"><?= $txt['STAFFCP'] ?></a><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle><?php }?>
 <A style="TEXT-DECORATION: none" href=account-logout.php>Logout</a>
 </TD>
-<?}?>
+<?php }?>
 </TR></TBODY></TABLE></TD></TR>
         </TBODY></TABLE></TD></TR>
   <TR>
@@ -320,12 +320,12 @@ while (list($lang_name, $lang_id) = each($lang_sa))
               <TBODY>
               <TR>
                 <TD style="PADDING-LEFT: 5px" vAlign=top width="170">
-<?
+<?php
 if (!$CURUSER)
 
 {
 
-begin_block("" . Login . "");
+begin_block($txt['LOGIN']);
 ?>
 <table border=0 width=100% cellspacing=0 cellpadding=0>
 	<tr>
@@ -333,9 +333,9 @@ begin_block("" . Login . "");
 		<div align=center>
 		<table border=0 cellpadding=5">
 			<tr><td>
-				<p align=center><font face=Verdana size=1><b><? print("" . USER . "\n"); ?>:</b></font></td><td align=left>
+				<p align=center><font face=Verdana size=1><b><?= $txt['USER'] ?>:</b></font></td><td align=left>
 				<input type=text size=10 name=username style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px; background-color: #C0C0C0" /></td></tr>
-			<tr><td><font face=Verdana size=1><b><? print("" . PASS . "\n"); ?>:</b></font></td><td align=left>
+			<tr><td><font face=Verdana size=1><b><?= $txt['PASS'] ?>:</b></font></td><td align=left>
 				<input type=password size=10 name=password style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px; background-color: #C0C0C0" /></td></tr>
 			<tr><td>&nbsp;</td><td align=left>
 				<input type=submit value=Verify style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px"></td></tr>
@@ -343,9 +343,9 @@ begin_block("" . Login . "");
 		</td></form>
 	</tr>
 	<tr>
-<td align="center"><a href="account-delete.php"><?echo "" . DELETE_ACCOUNT . "";?></a><br><a href="account-recover.php"><?echo "" . RECOVER_ACCOUNT . "";?></a></td> </tr>
+<td align="center"><a href="account-delete.php"><?php echo "" . DELETE_ACCOUNT . "";?></a><br><a href="account-recover.php"><?php echo "" . RECOVER_ACCOUNT . "";?></a></td> </tr>
 	</table>
-<?
+<?php
 end_block();
 
 } else {
@@ -359,20 +359,20 @@ begin_block("$CURUSER[username]");
 <table border="0" width="100%" cellspacing="0" cellpadding="0">
 <tr><td>
 <table border=0 cellspacing=0 cellpadding="6" width=100%>
-<tr><td align="center"><? print ("<img src=\"$avatar\" border=\"0\" width=\"80\" height=\"80\">");?></td></tr>
+<tr><td align="center"><?php  print ("<img src=\"$avatar\" border=\"0\" width=\"80\" height=\"80\">");?></td></tr>
 <tr><td align="center">
-		<? print("" . DOWNLOADED . "\n"); ?>: <font color=red><? print mksize($CURUSER[downloaded]);?></font><br>
-		<? print("" . UPLOADED . "\n"); ?>: <font color=green><? print mksize($CURUSER[uploaded]);?></font><br>
-		<? print("" . RATIO . "\n"); ?>: <? print $userratio; ?><br>
+		<?= $txt['DOWNLOADED'] ?>: <font color=red><?php  print mksize($CURUSER[downloaded]);?></font><br>
+		<?= $txt['UPLOADED'] ?>: <font color=green><?php  print mksize($CURUSER[uploaded]);?></font><br>
+		<?= $txt['RATIO'] ?>: <?php  print $userratio; ?><br>
 </td></tr>
 <tr><td align="center"></td></tr>
 </table></form></td></tr>
 <tr>
-<td align="center"><a href="account.php"><? print("" . ACCOUNT . "\n"); ?></a> <br> <? if (get_user_class() > UC_VIP) {
+<td align="center"><a href="account.php"><?= $txt['ACCOUNT'] ?></a> <br> <?php if (get_user_class() > UC_VIP) {
 print("<a href=admin.php>" . STAFFCP . "</a>");}?></font></tr>
 
 </table>
-<?
+<?php
 end_block();
 
 }
@@ -385,12 +385,12 @@ if ($CURUSER)
 		begin_block("" . INVITES . "");
 		?>
 		<table border="0" width="100%" cellspacing="0" cellpadding="0">
-		<tr><td align="center"><? print("" . YOUHAVE . "\n"); ?> <?=$invites?> <? print("" . INVITES . "\n"); ?><br></td></tr>
-		<?if ($invites > 0 ){?>
-		<tr><td align="center"><a href=invite.php><? print("" . SENDANINVITE . "\n"); ?></a><br></td></tr>
-		<?}?>
+		<tr><td align="center"><?= $txt['YOUHAVE'] ?> <?=$invites?> <?= $txt['INVITES'] ?><br></td></tr>
+		<?php if ($invites > 0 ){?>
+		<tr><td align="center"><a href=invite.php><?= $txt['SENDANINVITE'] ?></a><br></td></tr>
+		<?php }?>
 		</table>
-		<?
+		<?php
 		end_block();
 	}
 }
@@ -399,31 +399,31 @@ if ($CURUSER)
 begin_block("" . NAVIGATION . "");
 ?>
 
-· <a href="index.php"><? print("" . HOME . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-search.php"><? print("" . SEARCH_TITLE . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-upload.php"><? print("" . UPLOADT . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-needseed.php"><? print("" . UNSEEDED . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="viewrequests.php"><? print("" . REQUESTED . "\n"); ?></a><br />
-&nbsp;&nbsp;· <a href="today.php"><? print("" . TODAYS_TORRENTS . "\n"); ?></a><br /><br />
+· <a href="index.php"><?= $txt['HOME'] ?></a><br />
+&nbsp;&nbsp;· <a href="torrents-search.php"><?= $txt['SEARCH_TITLE'] ?></a><br />
+&nbsp;&nbsp;· <a href="torrents-upload.php"><?= $txt['UPLOADT'] ?></a><br />
+&nbsp;&nbsp;· <a href="torrents-needseed.php"><?= $txt['UNSEEDED'] ?></a><br />
+&nbsp;&nbsp;· <a href="viewrequests.php"><?= $txt['REQUESTED'] ?></a><br />
+&nbsp;&nbsp;· <a href="today.php"><?= $txt['TODAYS_TORRENTS'] ?></a><br /><br />
 				  <CENTER><a href="rssinfo.php"><img src="images/rss2.gif" border=0 alt="XML RSS Feed"></a></CENTER>
 				  <hr>
-· <a href="faq.php"><? print("" . FAQ . "\n"); ?></a><br />
-· <a href="extras-stats.php"><? print("" . TRACKER_STATISTICS . "\n"); ?></a><br />
-<?if ($FORUMS) {?>· <a href="forums.php"><? print("" . FORUMS . "\n"); ?></a><br /><?}?>
-<?if ($IRCCHAT) {?>· <a href="irc.php"><? print("" . CHAT . "\n"); ?></a><br /><?}?>
-· <a href="formats.php"><? print("" . FILE_FORMATS . "\n"); ?></a><br />
-· <a href="videoformats.php"><? print("" . MOVIE_FORMATS . "\n"); ?></a><br />
-· <a href="staff.php"><? print("" . STAFF . "\n"); ?></a><br />
-· <a href="rules.php"><? print("" . SITE_RULES . "\n"); ?></a><br />
-· <a href="extras-users.php"><? print("" . MEMBERS . "\n"); ?></a><br /><hr>
-· <a href="visitorsnow.php"><? print("" . ONLINE_USERS . "\n"); ?></a><br />
-· <a href="visitorstoday.php"><? print("" . VISITORS_TODAY . "\n"); ?></a><br />
+· <a href="faq.php"><?= $txt['FAQ'] ?></a><br />
+· <a href="extras-stats.php"><?= $txt['TRACKER_STATISTICS'] ?></a><br />
+<?php if ($FORUMS) {?>· <a href="forums.php"><?= $txt['FORUMS'] ?></a><br /><?php }?>
+<?php if ($IRCCHAT) {?>· <a href="irc.php"><?= $txt['CHAT'] ?></a><br /><?php }?>
+· <a href="formats.php"><?= $txt['FILE_FORMATS'] ?></a><br />
+· <a href="videoformats.php"><?= $txt['MOVIE_FORMATS'] ?></a><br />
+· <a href="staff.php"><?= $txt['STAFF'] ?></a><br />
+· <a href="rules.php"><?= $txt['SITE_RULES'] ?></a><br />
+· <a href="extras-users.php"><?= $txt['MEMBERS'] ?></a><br /><hr>
+· <a href="visitorsnow.php"><?= $txt['ONLINE_USERS'] ?></a><br />
+· <a href="visitorstoday.php"><?= $txt['VISITORS_TODAY'] ?></a><br />
 
-<?if(get_user_class() > UC_VIP) {?><hr>
-· <a href="admin.php"><? print("" . STAFFCP . "\n"); ?></a><br /><?}?>
+<?php if(get_user_class() > UC_VIP) {?><hr>
+· <a href="admin.php"><?= $txt['STAFFCP'] ?></a><br /><?php }?>
 <br />
 
- <?
+ <?php
 end_block();
 
 
@@ -454,7 +454,7 @@ echo "</CENTER><br>";
                 <TD vAlign=top>
 <!-- banner code starts here -->
 <br><CENTER>
-<?
+<?php
 $content = join ('', file ('banners.txt'));
 $s_con = split("~",$content);
 $banners = rand(0,(count($s_con)-1));

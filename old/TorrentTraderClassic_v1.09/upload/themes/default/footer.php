@@ -26,4 +26,6 @@ echo "<BR>Powered by TorrentTrader Classic v{$GLOBALS['ttversion']}<br><a href=h
 	</TR>
 	</TABLE><br><br>
 	<br><br>
-	</BODY></HTML>
+
+</body>
+</html>

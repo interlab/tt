@@ -1,4 +1,4 @@
-<?
+<?php
 require "backend/functions.php";
 dbconn();
 loggedinorreturn();
@@ -87,20 +87,20 @@ if ($message)
 <table border=0 cellspacing=0 cellpadding=5>
   <tr>
 	<td valign=top>Receiver:</td>
-	<td><? if (!$receiver) { ?><input type=text name=receiver /><? } else { ?><input type=hidden name=receiver value="<?=$receiver?>"?><B><?=$receiver?></B><? } ?></td>
+	<td><?php if (!$receiver) { ?><input type=text name=receiver /><?php } else { ?><input type=hidden name=receiver value="<?=$receiver?>"?><B><?=$receiver?></B><?php } ?></td>
   </tr>
   <tr>
 	<td valign=top>Message:</td>
 	<td><textarea name=msg cols=60 rows=12><?=stripslashes($body)?></textarea></td>
   </tr>
-<? if ($replyto) { ?>
+<?php if ($replyto) { ?>
   <tr>
 	<td align=center colspan=2>
       <input type=checkbox name='delete' value='yes' checked>Delete message you are replying to
 	  <input type=hidden name=origmsg value="<?=$replyto?>">
  	</td>
   </tr>
-<? } ?>
+<?php } ?>
   <tr>
   	<td align=center colspan=2>
   	  <input type=submit value="Send it!" class=btn>
@@ -109,7 +109,6 @@ if ($message)
 </table>
 </form>
 
-<?
+<?php
 end_frame();
 stdfoot();
-?>

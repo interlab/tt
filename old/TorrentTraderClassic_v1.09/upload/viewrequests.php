@@ -11,10 +11,10 @@ loggedinorreturn();
 stdhead("Requests Page");
 
 
-begin_frame("" . REQUESTS . "");
+begin_frame($txt['REQUESTS']);
 if($REQUESTSON){
 
-print("<a href=requests.php>Add New Request</a> | <a href=viewrequests.php?requestorid=$CURUSER[id]>View my requests</a>");
+print("<a href=requests.php>Add New Request</a> | <a href=viewrequests.php?requestorid=" . $CURUSER['id'] . ">View my requests</a>");
 
 
 $categ = (int)$_GET["category"];
@@ -73,22 +73,22 @@ $res = mysql_query("SELECT users.downloaded, users.uploaded, users.username, use
 $num = mysql_num_rows($res);
 
 print("<br><br><CENTER><form method=get action=viewrequests.php>");
-print("" . SEARCH . ": <input type=text size=30 name=search>");
-print("<input type=submit align=center value=" . SEARCH . " style='height: 22px'>\n");
+print("" . $txt['SEARCH'] . ": <input type=text size=30 name=search>");
+print("<input type=submit align=center value=" . $txt['SEARCH'] . " style='height: 22px'>\n");
 print("</form></CENTER><br>");
 
 echo $pagertop;
 
 echo "<Table border=0 width=100% cellspacing=0 cellpadding=0><TR><TD width=50% align=left valign=bottom>";
 
-print("<p>" . SORT_BY . " <a href=" . $_SERVER[PHP_SELF] . "?category=" . $_GET[category] . "&filter=" . $_GET[filter] . "&sort=votes>" . VOTES . "</a>, <a href=". $_SERVER[PHP_SELF] ."?category=" . $_GET[category] . "&filter=" . $_GET[filter] . "&sort=request>Request Name</a>, or <a href=" . $_SERVER[PHP_SELF] ."?category=" . $_GET[category] . "&filter=" . $_GET[filter] . "&sort=added>" . DATE_ADDED . "</a>.</p>");
+print("<p>" . $txt['SORT_BY'] . " <a href=" . $_SERVER[PHP_SELF] . "?category=" . $_GET[category] . "&filter=" . $_GET[filter] . "&sort=votes>" . $txt['VOTES'] . "</a>, <a href=". $_SERVER[PHP_SELF] ."?category=" . $_GET[category] . "&filter=" . $_GET[filter] . "&sort=request>Request Name</a>, or <a href=" . $_SERVER[PHP_SELF] ."?category=" . $_GET[category] . "&filter=" . $_GET[filter] . "&sort=added>" . $txt['DATE_ADDED'] . "</a>.</p>");
 
 print("<form method=get action=viewrequests.php>");
 ?>
 </td><td width=100% align=right valign=bottom>
 <select name="category">
-<option value="0"><? print("" . SHOW_ALL . "\n"); ?></option>
-<?
+<option value="0"><?php  print("" . $txt['SHOW_ALL'] . "\n"); ?></option>
+<?php 
 
 $cats = genrelist();
 $catdropdown = "";
@@ -100,13 +100,13 @@ foreach ($cats as $cat) {
 ?>
 <?= $catdropdown ?>
 </select>
-<?
-print("<input type=submit align=center value=" . DISPLAY . " style='height: 22px'>\n");
+<?php 
+print("<input type=submit align=center value=" . $txt['DISPLAY'] . " style='height: 22px'>\n");
 print("</form></td></tr></table>");
 
 print("<form method=post action=takedelreq.php>");
 print("<table width=100% cellspacing=0 cellpadding=3 class=table_table>\n");
-print("<tr><td class=table_head align=left>" . REQUESTS . "</td><td class=table_head align=center>" . TYPE . "</td><td class=table_head align=center width=150>" . DATE_ADDED . "</td><td class=table_head align=center>" . ADDED_BY . "</td><td class=table_head align=center>" . FILLED . "</td><td class=table_head align=center>" . FILLED_BY . "</td><td class=table_head align=center>" . VOTES . "</td><td class=table_head align=center>" . DEL . "</td></tr>\n");
+print("<tr><td class=table_head align=left>" . $txt['REQUESTS'] . "</td><td class=table_head align=center>" . $txt['TYPE'] . "</td><td class=table_head align=center width=150>" . $txt['DATE_ADDED'] . "</td><td class=table_head align=center>" . $txt['ADDED_BY'] . "</td><td class=table_head align=center>" . $txt['FILLED'] . "</td><td class=table_head align=center>" . $txt['FILLED_BY'] . "</td><td class=table_head align=center>" . $txt['VOTES'] . "</td><td class=table_head align=center>" . $txt['DEL'] . "</td></tr>\n");
 for ($i = 0; $i < $num; ++$i)
 {
 
@@ -167,16 +167,14 @@ print("</tr>\n");
 
 print("</table>\n");
 
-print("<p align=right><input type=submit value=" . DO_DELETE . "></p>");
+print("<p align=right><input type=submit value=" . $txt['DO_DELETE'] . "></p>");
 print("</form>");
 
 echo $pagerbottom;
 }else{
-echo "" . REQUESTS_OFFLINE . "";
+echo $txt['REQUESTS_OFFLINE'];
 }
 end_frame();
 
 stdfoot();
 die;
-
-?>

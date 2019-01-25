@@ -18,26 +18,26 @@ begin_frame("STATISTICS");
 		<CENTER>
 	
 		<a href='statistics.php?act=stats&code=reg'>Registration Stats</a>
-		• <a href='statistics.php?act=stats&code=rate'>Rating Stats</a>
-		• <a href='statistics.php?act=stats&code=post'>Forum Post Stats</a>
-		• <a href='statistics.php?act=stats&code=msg'>Personal Message</a>
-		• <a href='statistics.php?act=stats&code=torr'>Torrents Stats</a>
+		â€¢ <a href='statistics.php?act=stats&code=rate'>Rating Stats</a>
+		â€¢ <a href='statistics.php?act=stats&code=post'>Forum Post Stats</a>
+		â€¢ <a href='statistics.php?act=stats&code=msg'>Personal Message</a>
+		â€¢ <a href='statistics.php?act=stats&code=torr'>Torrents Stats</a>
 		<br>
 		<a href='statistics.php?act=stats&code=rqst'>Requests Stats</a>		
-		• <a href='statistics.php?act=stats&code=bans'>Bans Stats</a>
-		• <a href='statistics.php?act=stats&code=comm'>Comments Stats</a>
+		â€¢ <a href='statistics.php?act=stats&code=bans'>Bans Stats</a>
+		â€¢ <a href='statistics.php?act=stats&code=comm'>Comments Stats</a>
 
 		<!-- <a href='statistics.php?act=stats&code=new'>News Stats</a><a href='statistics.php?act=stats&code=poll'>Poll Stats</a> -->
 
 
 		<br><br>
 		
-<?		
+<?php 
 
-	if(!isset($_GET['act']) && !isset($_POST['act'])) {
-		echo "<BR><BR><BR><BR><BR>";//Do nothing!
-		}
-	
+if(!isset($_GET['act']) && !isset($_POST['act'])) {
+    echo "<BR><BR><BR><BR><BR>"; // Do nothing!
+}
+
 	//--------------------------------------------------------------------
 	
 	function start_form($hiddens="", $name='theAdminForm', $js="") {
@@ -672,4 +672,3 @@ begin_frame("STATISTICS");
 echo "</CENTER>";
 end_frame();
 stdfoot();
-?>

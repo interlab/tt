@@ -1,4 +1,5 @@
-<? 
+<?php
+
 require_once("backend/functions.php"); 
 
 dbconn(); 

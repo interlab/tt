@@ -1,7 +1,9 @@
-<?
+<?php
+
 //
 // - Theme And Language Updated 25.Nov.05
 //
+
 ob_start("ob_gzhandler");
 require "backend/functions.php";
 
@@ -25,9 +27,9 @@ $num2 = mysql_num_rows($res2);
 
 
 <table border=0 width=100% cellspacing=0 cellpadding=3>
-<tr><td class=colhead align=left><? print("" . SEARCH . " " . TORRENT . ""); ?></td></tr>
+<tr><td class=colhead align=left><?= $txt['SEARCH'] . ' ' . $txt['TORRENT'] ?></td></tr>
 <tr><td align=left><form method="get" action=torrents-search.php>
-<input type="text" name="<? print("" . SEARCH . "\n"); ?>" size="40" value="<?= h($searchstr) ?>" />
+<input type="text" name="<?= $txt['SEARCH'] ?>" size="40" value="<?= h($searchstr) ?>" />
 in
 <select name="cat">
 <option value="0">(all types)</option>
@@ -45,13 +47,13 @@ foreach ($cats as $cat) {
 $deadchkbox = "<input type=\"checkbox\" name=\"incldead\" value=\"1\"";
 if ($_GET["incldead"])
    $deadchkbox .= " checked=\"checked\"";
-$deadchkbox .= " /> " . INC_DEAD . "\n";
+$deadchkbox .= " /> " . $txt['INC_DEAD'] . "\n";
 
 ?>
 <?= $catdropdown ?>
 </select>
 <?= $deadchkbox ?>
-<input type="submit" value="<? print("" . SEARCH . "\n"); ?>"  />
+<input type="submit" value="<?= $txt['SEARCH'] ?>"  />
 </form>
 </td></tr></table><BR><HR><BR>
 
@@ -59,7 +61,7 @@ $deadchkbox .= " /> " . INC_DEAD . "\n";
 <?php
 print("<form method=post action=takerequest.php><a name=add id=add></a>\n");
 print("<CENTER><table border=0 width=600 cellspacing=0 cellpadding=3>\n");
-print("<tr><td class=colhead align=center><B>" . MAKE_REQUEST . "</B></a></td><tr>\n");
+print("<tr><td class=colhead align=center><B>" . $txt['MAKE_REQUEST'] . "</B></a></td><tr>\n");
 print("<tr><td align=center><b>Title: </b><input type=text size=40 name=requesttitle>");
 ?>
 
@@ -84,7 +86,7 @@ for ($i = 0; $i < $num; ++$i)
 <?php
 print("<br>\n");
 print("<tr><td align=center>Additional Information (Optional)<br><textarea name=descr rows=7 cols=60></textarea>\n");
-print("<tr><td align=center><input type=submit value='" . SUBMIT . "' style='height: 22px'>\n");
+print("<tr><td align=center><input type=submit value='" . $txt['SUBMIT'] . "' style='height: 22px'>\n");
 print("</form>\n");
 print("</table></CENTER>\n");
 

@@ -126,12 +126,11 @@ This system check is designed for unix based servers, windows based servers may 
 </td>
 </tr><tr>
 <td>Document Root<br><I><font size=1>(Use this for your PATHS in config.php)</font></I></td>
-	<td align="left" valign="top"><?echo $_SERVER['DOCUMENT_ROOT'];?></td>
+	<td align="left" valign="top"><?php echo $_SERVER['DOCUMENT_ROOT'];?></td>
 </tr>
 
 </table>
 
-			
 <p>These settings are recommended for PHP in order to ensure full compatibility with TorrentTrader!.</p>					
 <p>However, TorrentTrader! will still operate if your settings do not quite match the recommended</p>
 

@@ -148,7 +148,7 @@ ACCOUNT_CONFIRM_SENT_TO_ADDY_REST: "<br/ ><br/ >You need to read and respond to 
 ACCOUNT_ACTIVATED: '<p>Your account has been activated!<br />You have been automatically logged in. You can now continue to the'
 ACCOUNT_ACTIVATED_REST: '<b>main page</b></a> and start using your account.</p>'
 ACCOUNT_BEFOR_USING: '<p>Before you start using '
-ACCOUNT_BEFOR_USING_REST: 'we urge you to read the <a href=\"faq.php\"><b>FAQ</b></a>.</p>'
+ACCOUNT_BEFOR_USING_REST: 'we urge you to read the <a href="faq.php"><b>FAQ</b></a>.</p>'
 ACCOUNT_SIGNUP_CONFIRMATION: 'Signup confirmation'
 ACCOUNT_SUCCESS_CONFIRMED: 'Account successfully confirmed!'
 # ACCOUNT_ACTIVATED: '<p>Your account has been activated!<br />However, it appears that you could not be logged in automatically.<br />A possible reason is that you disabled cookies in your browser. You have to enable cookies to use your account.<br />Please do that and then <a href=\"login.php\">log in</a> and try again.</p>'
@@ -189,6 +189,9 @@ FOR_BEST_RESULTS: 'For best visual result, please install the <a href=linedraw.e
 
 # Others
 COOKIES: 'Cookies MUST be enabled for you to login.'
+
+# Faq
+CONTENTS: 'Contents'
 
 # Phrases
 WELCOME_NEW: 'Welcome to our newest member'

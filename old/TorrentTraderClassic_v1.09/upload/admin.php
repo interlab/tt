@@ -129,7 +129,7 @@ $qrt = MYSQL_QUERY("SELECT * FROM site_settings");
     <textarea name='ed_donatepage' cols="50" rows="8"><?php echo $rrt[donatepage]; ?></textarea><br>
 	<input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
 	</form>
-	<?
+	<?php 
 
 end_frame();
 }
@@ -143,7 +143,7 @@ begin_frame("Tracker Load");
 ?>
 <table width=100% border=0 cellspacing=0 cellpadding=10><tr><td align=center>
 <table class=interiortable border=0 width=402><tr><td style='padding: 0px; background-repeat: repeat-x'>
-<? $percent = min(100, round(exec('ps ax | grep -c apache') / 256 * 30 ));
+<?php  $percent = min(100, round(exec('ps ax | grep -c apache') / 256 * 30 ));
 echo "<br>Our Tracker Load: ($percent %)(these stats are an approximation)<table class=interiortable border=0 width=400><tr><td style='padding: 0px; background-image: url(images/loadbarbg.gif); background-repeat: repeat-x'>";
 
    if ($percent <= 70) $pic = "images/loadbargreen.gif";
@@ -490,13 +490,13 @@ modonly();
     <b>Manual Backup Database: </b><a href='backup-database.php'>CLICK HERE</a><br>
 	<i>(To set a automatic backup set a CRON task on backup-database.php)</i><BR>
 	<br>
-	<?
+	<?php 
 	end_frame();
 	begin_frame("Backup History");
 	?>
 	<center><table width="500" cellpadding="1" cellspacing="0" border="2">
 	<tr><b><td><b>DATE</b></TD><td><b>DAY</b></TD><td><b>FILENAME</b></TD></tr>
-	<?
+	<?php 
 		//print the news titles, with links to the edit page 
 		$getbackuphist = mysql_query("select * from dbbackup ORDER BY id DESC"); 
 		while($backupr=mysql_fetch_array($getbackuphist)){ 
@@ -575,7 +575,7 @@ if($do == "add_lang")
 	<input type='submit' value=' Add ' style='background:#eeeeee'>
 	</form>
 	<p>
-	<?
+	<?php 
 	//get lang's from db
 	$result = MYSQL_QUERY("SELECT * FROM languages ORDER BY id");
 	//show them
@@ -771,7 +771,7 @@ if($act == "settings")
                 if (ini_get("magic_quotes_gpc")) $SITENOTICE_new = stripslashes($SITENOTICE_new);
 
 			$config_settings_data = <<<EOD
-<?
+<?php 
 
 // MySQL Settings (please change these to reflect your MYSQL settings, all other settings can be changed via adminCP)
 \$mysql_host = "$mysql_host_new";
@@ -1000,8 +1000,8 @@ EOD;
 		<td align='left'>
 		<font size="1" face="Verdana">
 		<select name='SITE_ONLINE_new'>
-		<option value='true'  <? if($SITE_ONLINE == true)  echo "selected"; ?>>ONLINE
-		<option value='false' <? if($SITE_ONLINE == false) echo "selected"; ?>>OFFLINE
+		<option value='true'  <?php  if($SITE_ONLINE == true)  echo "selected"; ?>>ONLINE
+		<option value='false' <?php  if($SITE_ONLINE == false) echo "selected"; ?>>OFFLINE
 		</select></font></td>
 		</tr>
 		<tr>
@@ -1015,9 +1015,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='MEMBERSONLY_new' value='ON1' <? if($MEMBERSONLY == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='MEMBERSONLY_new' value='ON1' <?php if($MEMBERSONLY == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='MEMBERSONLY_new' value='OFF1'<? if($MEMBERSONLY == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='MEMBERSONLY_new' value='OFF1'<?php if($MEMBERSONLY == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1026,9 +1026,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='INVITEONLY_new' value='ON1' <? if($INVITEONLY == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='INVITEONLY_new' value='ON1' <?php if($INVITEONLY == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='INVITEONLY_new' value='OFF1'<? if($INVITEONLY == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='INVITEONLY_new' value='OFF1'<?php if($INVITEONLY == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1037,9 +1037,9 @@ EOD;
  <td align='left'>
  <font face="Verdana"><b>
  <font size="1">YES</font></b><font size="1">
- <input style='border:0;background:#eeeeee' type='radio' name='ACONFIRM_new' value='ON1' <? if($ACONFIRM == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ <input style='border:0;background:#eeeeee' type='radio' name='ACONFIRM_new' value='ON1' <?php if($ACONFIRM == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <b>NO</b>
- <input style='border:0;background:#eeeeee' type='radio' name='ACONFIRM_new' value='OFF1'<? if($ACONFIRM == false) echo "checked"; ?>>
+ <input style='border:0;background:#eeeeee' type='radio' name='ACONFIRM_new' value='OFF1'<?php if($ACONFIRM == false) echo "checked"; ?>>
  </font></font> <font size="1" face="Verdana">&nbsp;
  </font></td>
  </tr>
@@ -1048,9 +1048,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='WELCOMEPMON_new' value='ON1' <? if($WELCOMEPMON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='WELCOMEPMON_new' value='ON1' <?php if($WELCOMEPMON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='WELCOMEPMON_new' value='OFF1'<? if($WELCOMEPMON == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='WELCOMEPMON_new' value='OFF1'<?php if($WELCOMEPMON == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1065,9 +1065,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='LOGGEDINONLY_new' value='ON1' <? if($LOGGEDINONLY == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='LOGGEDINONLY_new' value='ON1' <?php if($LOGGEDINONLY == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='LOGGEDINONLY_new' value='OFF1'<? if($LOGGEDINONLY == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='LOGGEDINONLY_new' value='OFF1'<?php if($LOGGEDINONLY == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1076,9 +1076,9 @@ EOD;
 		 <td align='left'>
 		 <font face="Verdana"><b>
 		 <font size="1">YES</font></b><font size="1">
-		 <input style='border:0;background:#eeeeee' type='radio' name='CENSORWORDS_new' value='ON1' <? if($CENSORWORDS == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		 <input style='border:0;background:#eeeeee' type='radio' name='CENSORWORDS_new' value='ON1' <?php if($CENSORWORDS == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			  <b>NO</b>
-		 <input style='border:0;background:#eeeeee' type='radio' name='CENSORWORDS_new' value='OFF1'<? if($CENSORWORDS == false) echo "checked"; ?>>
+		 <input style='border:0;background:#eeeeee' type='radio' name='CENSORWORDS_new' value='OFF1'<?php if($CENSORWORDS == false) echo "checked"; ?>>
 		 </font></font> <font size="1" face="Verdana">&nbsp;
 		 </font></td>
 		 </tr>
@@ -1087,9 +1087,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='MEMBERSONLY_WAIT_new' value='ON1' <? if($MEMBERSONLY_WAIT == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='MEMBERSONLY_WAIT_new' value='ON1' <?php if($MEMBERSONLY_WAIT == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='MEMBERSONLY_WAIT_new' value='OFF1'<? if($MEMBERSONLY_WAIT == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='MEMBERSONLY_WAIT_new' value='OFF1'<?php if($MEMBERSONLY_WAIT == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1113,9 +1113,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='RATIO_WARNINGON_new' value='ON1' <? if($RATIO_WARNINGON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='RATIO_WARNINGON_new' value='ON1' <?php if($RATIO_WARNINGON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='RATIO_WARNINGON_new' value='OFF1'<? if($RATIO_WARNINGON == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='RATIO_WARNINGON_new' value='OFF1'<?php if($RATIO_WARNINGON == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1135,9 +1135,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='DHT_new' value='ON1' <? if($DHT == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='DHT_new' value='ON1' <?php if($DHT == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='DHT_new' value='OFF1'<? if($DHT == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='DHT_new' value='OFF1'<?php if($DHT == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1147,9 +1147,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='POLLON_new' value='ON1' <? if($POLLON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='POLLON_new' value='ON1' <?php if($POLLON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='POLLON_new' value='OFF1'<? if($POLLON == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='POLLON_new' value='OFF1'<?php if($POLLON == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1159,9 +1159,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='FORUMS_new' value='ON1' <? if($FORUMS == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='FORUMS_new' value='ON1' <?php if($FORUMS == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='FORUMS_new' value='OFF1'<? if($FORUMS == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='FORUMS_new' value='OFF1'<?php if($FORUMS == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1170,9 +1170,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='UPLOADERSONLY_new' value='ON1' <? if($UPLOADERSONLY == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='UPLOADERSONLY_new' value='ON1' <?php if($UPLOADERSONLY == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='UPLOADERSONLY_new' value='OFF1'<? if($UPLOADERSONLY == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='UPLOADERSONLY_new' value='OFF1'<?php if($UPLOADERSONLY == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1183,9 +1183,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='IRCCHAT_new' value='ON1' <? if($IRCCHAT == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='IRCCHAT_new' value='ON1' <?php if($IRCCHAT == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='IRCCHAT_new' value='OFF1'<? if($IRCCHAT == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='IRCCHAT_new' value='OFF1'<?php if($IRCCHAT == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1236,9 +1236,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='SITENOTICEON_new' value='ON1' <? if($SITENOTICEON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='SITENOTICEON_new' value='ON1' <?php if($SITENOTICEON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='SITENOTICEON_new' value='OFF1'<? if($SITENOTICEON == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='SITENOTICEON_new' value='OFF1'<?php if($SITENOTICEON == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1253,9 +1253,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='SHOUTBOX_new' value='ON1' <? if($SHOUTBOX == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='SHOUTBOX_new' value='ON1' <?php if($SHOUTBOX == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='SHOUTBOX_new' value='OFF1'<? if($SHOUTBOX == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='SHOUTBOX_new' value='OFF1'<?php if($SHOUTBOX == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1265,9 +1265,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='REMOVALSON_new' value='ON1' <? if($REMOVALSON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='REMOVALSON_new' value='ON1' <?php if($REMOVALSON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='REMOVALSON_new' value='OFF1'<? if($REMOVALSON == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='REMOVALSON_new' value='OFF1'<?php if($REMOVALSON == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1277,9 +1277,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='NEWSON_new' value='ON1' <? if($NEWSON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='NEWSON_new' value='ON1' <?php if($NEWSON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='NEWSON_new' value='OFF1'<? if($NEWSON == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='NEWSON_new' value='OFF1'<?php if($NEWSON == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1289,9 +1289,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='DONATEON_new' value='ON1' <? if($DONATEON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='DONATEON_new' value='ON1' <?php if($DONATEON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='DONATEON_new' value='OFF1'<? if($DONATEON == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='DONATEON_new' value='OFF1'<?php if($DONATEON == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1300,9 +1300,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='DISCLAIMERON_new' value='ON1' <? if($DISCLAIMERON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='DISCLAIMERON_new' value='ON1' <?php if($DISCLAIMERON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='DISCLAIMERON_new' value='OFF1'<? if($DISCLAIMERON == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='DISCLAIMERON_new' value='OFF1'<?php if($DISCLAIMERON == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1311,9 +1311,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='REQUESTSON_new' value='ON1' <? if($REQUESTSON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='REQUESTSON_new' value='ON1' <?php if($REQUESTSON == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='REQUESTSON_new' value='OFF1'<? if($REQUESTSON == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='REQUESTSON_new' value='OFF1'<?php if($REQUESTSON == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1331,9 +1331,9 @@ EOD;
 		<td align='left'>
 		<font face="Verdana"><b>
 		<font size="1">YES</font></b><font size="1">
-		<input style='border:0;background:#eeeeee' type='radio' name='IRCANNOUNCE_new' value='ON1' <? if($IRCANNOUNCE == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<input style='border:0;background:#eeeeee' type='radio' name='IRCANNOUNCE_new' value='ON1' <?php if($IRCANNOUNCE == true)  echo "checked"; checked ?>>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 				   <b>NO</b>
-		<input style='border:0;background:#eeeeee' type='radio' name='IRCANNOUNCE_new' value='OFF1'<? if($IRCANNOUNCE == false) echo "checked"; ?>>
+		<input style='border:0;background:#eeeeee' type='radio' name='IRCANNOUNCE_new' value='OFF1'<?php if($IRCANNOUNCE == false) echo "checked"; ?>>
 		</font></font> <font size="1" face="Verdana">&nbsp;
 		</font></td>
 		</tr>
@@ -1416,7 +1416,7 @@ EOD;
 			<input type='reset' value='Reset'></font></td>
 		</tr>
 
-		<? // print errors if appeared
+		<?php // print errors if appeared
 		if($error_fp != "")
 		{
 		echo "<tr>\n";
@@ -1428,7 +1428,7 @@ EOD;
 		</table></div>
 
 
-		<?
+		<?php 
 		end_frame();
 		print("</form>");
 	}
@@ -1574,12 +1574,12 @@ if($act == "news"){
                <B>Max News In Index:</b>
                <input type='text' name='maxdisplay' value='<?=$row['max_display']?>' maxlength='2' size='2'>
                <br><B>Enable News Comments: </b>
-               <input type="checkbox" name="comments"<? if($row['comment'] == "on"){echo" CHECKED";}?>>
+               <input type="checkbox" name="comments"<?php if($row['comment'] == "on"){echo" CHECKED";}?>>
                <br><B>Enable News Archiving: </b>
-               <input type="checkbox" name="archive"<? if($row['archive'] == "on"){echo" CHECKED";}?>>
+               <input type="checkbox" name="archive"<?php if($row['archive'] == "on"){echo" CHECKED";}?>>
                <br><br>----------------------Scrolling Options--------------------------<br>
                <br><B>Enable News Scrolling: </b>
-               <input type="checkbox" name="scrolling"<? if($row['scrolling'] == "on"){echo" CHECKED";}?>>
+               <input type="checkbox" name="scrolling"<?php if($row['scrolling'] == "on"){echo" CHECKED";}?>>
                <br><B>Scroll Speed (1-10 1=slowest):</b>
                <input type='text' name='sspeed' value='<?=$row['sspeed']?>' maxlength='2' size='2'>
                <br><B>Title Size:</b>
@@ -1589,7 +1589,7 @@ if($act == "news"){
                <br><B>Posted by colour:</b>
                <input type='text' name='subc' value='<?=$row['subc']?>' maxlength='15' size='15'>
                <br><br><input type="submit" name="submit" value="Update Settings">
-               <?
+               <?php 
              //  if($scrolling == "on")
                }
                }else{
@@ -1605,12 +1605,12 @@ if($act == "news"){
                <B>Max News In Index:</b>
                <input type='text' name='maxdisplay' value='<?=$row['max_display']?>' maxlength='2' size='2'>
                <br><B>Enable News Comments: </b>
-               <input type="checkbox" name="comments"<? if($row['comment'] == "on"){echo" CHECKED";}?>>
+               <input type="checkbox" name="comments"<?php if($row['comment'] == "on"){echo" CHECKED";}?>>
                <br><B>Enable News Archiving: </b>
-               <input type="checkbox" name="archive"<? if($row['archive'] == "on"){echo" CHECKED";}?>>
+               <input type="checkbox" name="archive"<?php if($row['archive'] == "on"){echo" CHECKED";}?>>
                <br><br>----------------------Scrolling Options--------------------------<br>
                <br><B>Enable News Scrolling: </b>
-               <input type="checkbox" name="scrolling"<? if($row['scrolling'] == "on"){echo" CHECKED";}?>>
+               <input type="checkbox" name="scrolling"<?php if($row['scrolling'] == "on"){echo" CHECKED";}?>>
                <br><B>Scroll Speed (1-10 1=slowest):</b>
                <input type='text' name='sspeed' value='<?=$row['sspeed']?>' maxlength='2' size='2'>
                <br><B>Title Size:</b>
@@ -1620,7 +1620,7 @@ if($act == "news"){
                <br><B>Posted by colour:</b>
                <input type='text' name='subc' value='<?=$row['subc']?>' maxlength='15' size='15'>
                <br><br><input type="submit" name="submit" value="Update Settings">
-                             <? }
+                             <?php }
                                } else {
                                        echo 'ERROR: ' . mysql_error();
                                }
@@ -1703,7 +1703,7 @@ if($act == "news"){
                        <input type="submit" name="submit" value="Edit News"> <input type="submit" name="submit" value="Delete">
                        </form>
                        </div>
-                      <?
+                      <?php 
                            }
 
                               end_frame();
@@ -1748,7 +1748,7 @@ begin_frame("Blocklist", justify);
 ?>
 <p align="justify">This page allows you to prevent individual users or groups of users from accessing your tracker by placing a block on thier IP or IP range. If you wish to temporarily disable an account, but still wish a user to be able to view your tracker,
 you can use the 'Disable Account' option which is found in the user's profile page.</p>
-<?
+<?php 
 end_frame();
 
 begin_frame("Blocklist", 'center');
@@ -1995,7 +1995,7 @@ adminmenu();
 begin_frame("Info On This List", justify);
 ?>
 <p align="justify">This page shows all users that have not clicked the ACTIVATION link in the signup email, they cannot access the site until they have clicked this link.  You should only manually confirm a user if they request it (via email, irc or other method), where they have lost or not received the email.  All PENDING users will be cleaned from the system every so often.</p>
-<?
+<?php 
 end_frame();
 begin_frame("Manual Registration Confirm", 'center');
 begin_table();
@@ -2036,13 +2036,13 @@ if($act == "editreg" && $id != "")
 	Name: <?=$ee[username]?><br />
 	Surrent Status: <?=$ee[status]?><br>
 	<select name='ed_status'>
-		<option value='pending' <? if($status == "pending") echo "selected"; ?>>pending
-		<option value='confirmed' <? if($status == "confirmed") echo "selected"; ?>>confirmed
+		<option value='pending' <?php if($status == "pending") echo "selected"; ?>>pending
+		<option value='confirmed' <?php if($status == "confirmed") echo "selected"; ?>>confirmed
 		</select>
 	<!--<input type='text' value='<?=$ee[status]?>' size='30' maxlength='30' name='ed_status'><br />-->
 	<input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
 	</form>
-	<?
+	<?php 
 		end_frame();
 }
 #======================================================================#
@@ -2063,7 +2063,7 @@ begin_frame("TORRENT MANAGEMENT", 'center');
 <td class=alt3 align=center><font size=1 face=Verdana color=white>External?</td>
 <td class=alt3 align=center><font size=1 face=Verdana color=white>Edit?</td>
 </tr>
-<?
+<?php 
 $rqq = "SELECT * FROM torrents ORDER BY name";
 $resqq = mysql_query($rqq);
  while ($row = mysql_fetch_array($resqq))
@@ -2094,7 +2094,7 @@ begin_frame("BANNED TORRENT MANAGEMENT", 'center');
 <td class=alt3 align=center><font size=1 face=Verdana color=white>External?</td>
 <td class=alt3 align=center><font size=1 face=Verdana color=white>Edit?</td>
 </tr>
-<?
+<?php 
 $rqqw = "SELECT * FROM torrents WHERE banned='yes' ORDER BY name";
 $resqqw = mysql_query($rqqw);
  while ($row = mysql_fetch_array($resqqw))
@@ -2127,7 +2127,7 @@ $res = mysql_query("SELECT * FROM messages ORDER BY id DESC $limit") or sqlerr(_
   ///////////////////////////////////////
 ?>
 <form method="post" action="<?=$GLOBALS['SITEURL']?>/take-deletepm.php">
-<?
+<?php 
 ///////////////////////////////////////
   print("<tr><td class=table_head align=left>Sender</td><td class=table_head align=left>Receiver</td><td class=table_head align=left>Text</td><td class=table_head align=left>Date</td><td class=table_head>Delete</td></tr>\n");
   while ($arr = mysql_fetch_assoc($res))
@@ -2158,9 +2158,9 @@ print("</table>");
 <input type="submit" value="Delete!" />
 </form>
 <!------------------------------------------------->
-<A href="admin.php?act=msgspy&page=<? echo $_GET[page];?>action=<? echo $_GET[action]; ?>&box=<? echo $_GET[box]; ?>&check=yes">Select All</A>
+<A href="admin.php?act=msgspy&page=<?php echo $_GET[page];?>action=<?php echo $_GET[action]; ?>&box=<?php echo $_GET[box]; ?>&check=yes">Select All</A>
 <!------------------------------------------------->
-<?
+<?php 
 print($pagerbottom);
 
 end_frame();
@@ -2175,7 +2175,7 @@ begin_frame("BANNED TORRENT MANUAL ADDED LIST", 'center');
 	?>
 AHA not yet matey...
 
-<?
+<?php 
 	end_frame();
 }
 #======================================================================#
@@ -2194,7 +2194,7 @@ if($act == "style")
 	<table width='60%'>
 	<tr>
 	<TD><b>Theme Name</b></td><TD><b>Folder Name</b></td><TD><b>ID</b></td></tr>
-	<?
+	<?php 
 	// LIST THEME
 	$querya = MYSQL_QUERY("SELECT * FROM stylesheets ORDER BY name");
 	$allthemes = MYSQL_NUM_ROWS($querya);
@@ -2252,12 +2252,12 @@ if($act == "add_theme" || $error_ac != "")
 	<input type='reset' value='Reset'>
 	</td>
 	</tr>
-	<?
+	<?php 
 	if($error_ac != "") echo "<tr><td colspan='2' align='center' style='background:#eeeeee;border:2px red solid'><b>COULD NOT ADD NEW THEME:</b><br />$error_ac</tr></td>\n";
 	?>
 	</table>
 		<br>Please note: All themes must be uploaded to the /themes/ folder.  Please make sure all folder names are EXACT.
-	<?
+	<?php 
 		end_frame();
 }
 
@@ -2290,7 +2290,7 @@ if($do == "edtheme" && $id != "")
 	<input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
 	</form>
 	<br>Please note: All themes must be uploaded to the /themes/ folder.  Please make sure all folder names are EXACT.
-	<?
+	<?php 
 		end_frame();
 }
 
@@ -2323,7 +2323,7 @@ if($act == "del_theme" || $error_ac != "")
 	<input type='submit' value='   Delete   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
 	</form><br>
 	<b>NOTE: DELETING A THEME DOES NOT REMOVE THE THEME FROM THE SERVER, IT ONLY REMOVES IT FROM BEING SELECTABLE</b>
-	<?
+	<?php 
 		end_frame();
 }
 
@@ -2436,7 +2436,7 @@ MYSQL_FREE_RESULT($query);
 <tr>
 <td>Forum Category:</td>
 <td align='right'><select name='new_forum_cat'>
-<?
+<?php 
 foreach ($forumcat as $row)
 echo "<option value={$row['id']}>{$row['name']}</option>";
 ?>
@@ -2467,7 +2467,7 @@ echo "<option value={$row['id']}>{$row['name']}</option>";
 <input type='reset' value='Reset'>
 </td>
 </tr>
-<?
+<?php 
 if($error_ac != "") echo "<tr><td colspan='2' align='center' style='background:#eeeeee;border:2px red solid'><b>COULD  NOT ADD NEW forum:</b><br />$error_ac</tr></td>\n";
 ?>
 </table>
@@ -2475,7 +2475,7 @@ if($error_ac != "") echo "<tr><td colspan='2' align='center' style='background:#
 <p>
 <table align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2' style='border: 1px solid black'>
 <h5>Current Forums:</h5>
-<?
+<?php 
 // get forum from db
 echo "<tr><td width='60'><font size='2'><b>ID</b></td><td width='120'>NAME</td><td  width='250'>DESC</td><td width='45'>SORT</td><td width='45'>CATEGORY</td><td width='18'>EDIT</td><td width='18'>DEL</td></font>\n";
 $query = MYSQL_QUERY("SELECT * FROM forum_forums ORDER BY sort, name");
@@ -2496,7 +2496,7 @@ echo "</table>\n";
 ?>
 <BR><table align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2' style='border: 1px solid black'>
 <h5>Current Forum Categories:</h5>
-<?
+<?php 
 // get forum from db
 echo "<tr><td width='60'><font size='2'><b>ID</b></td><td width='120'>NAME</td><td  width='18'>SORT</td><td width='18'>EDIT</td><td width='18'>DEL</td></font>\n";
 
@@ -2534,7 +2534,7 @@ echo "</table>\n";
 </tr>
 </table>
 </form>
-<?
+<?php 
         end_frame();
 }
 //edit forum
@@ -2558,7 +2558,7 @@ MYSQL_FREE_RESULT($q);
       <td align='right'><textarea cols='50' rows='5' name='changed_forum_desc'><?=$r[description]?></textarea></td></tr>
       <tr><td>New Category:</td>
       <td align='right'><select name='changed_forum_cat'>
-<?
+<?php 
 $query = MYSQL_QUERY("SELECT * FROM forumcats ORDER BY sort, name");
 while ($row=mysql_fetch_array($query))
 echo "<option value={$row['id']}>{$row['name']}</option>";
@@ -2586,7 +2586,7 @@ MYSQL_FREE_RESULT($query);
       <tr><td><input type="submit" class="button" value="Change"></td></tr>
       </form>
       </table>
-<?
+<?php 
     end_frame();
 }
 
@@ -2603,7 +2603,7 @@ $v = MYSQL_FETCH_ARRAY($t);
       Really delete the Forum <?="<b>$v[name] with ID$v[id] ???</b>"?>
       <input type="submit" name="delcat" class="button" value="Delete">
       </form>
-<?
+<?php 
           end_frame();
 }
 
@@ -2620,7 +2620,7 @@ $v = MYSQL_FETCH_ARRAY($t);
       Really delete the Forum category<?="<b>$v[name] with ID$v[id] ???</b> All Sub Forums will now be invisible"?>
       <input type="submit" name="delcat" class="button" value="Delete">
       </form>
-<?
+<?php 
           end_frame();
 }
 
@@ -2642,7 +2642,7 @@ $r = MYSQL_FETCH_ARRAY($q);
       <input type="submit" class="button" value="Change"></td></tr>
       </form>
       </table>
-<?
+<?php 
     end_frame();
 }
 
@@ -2686,16 +2686,15 @@ Client Agent Ban Settings<br /></font><font size="1" face="Times New Roman">
 <form id="Delete Censor" name="Delete Censor" method="POST" action="./admin.php?act=censor">
 <tr>
 <td bgcolor='#eeeeee'><font face="Verdana" size="1">Remove Censor For: <select name="censor">
-<?
+<?php
 /*-------------
 |Get the words currently censored
 -------------*/
 $select = "SELECT word FROM censor ORDER BY word";
 $sres = mysql_query($select);
-while ($srow = mysql_fetch_array($sres))
-{
-        echo "<option>" . $srow[0] . "</option>\n";
-        }
+while ($srow = mysql_fetch_array($sres)) {
+    echo "<option>" . $srow[0] . "</option>\n";
+}
 echo'</select></font></td></tr><tr><td bgcolor="#eeeeee" align="left">
 <font size="1" face="Verdana"><input type="submit" name="action" value="Delete Censor"></font></td>
 </tr></form></table><br>';
