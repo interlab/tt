@@ -33,7 +33,8 @@ $orderby = "ORDER BY torrents.id DESC";
 $addparam = '';
 $wherea = [];
 $wherecatina = [];
-$wherecatin = "";
+$wherecatin = '';
+
 $_GET["incldead"] = $_GET["incldead"] ?? '';
 $_GET['sort'] = $_GET['sort'] ?? '';
 $_GET['type'] = $_GET['type'] ?? '';
@@ -42,65 +43,57 @@ $category = (int) ($_GET["cat"] ?? 0);
 
 $all = $_GET["all"] ?? '';
 
-if (!$all)
-if (!$_GET && $CURUSER["notifs"])
-{
-  $all = True;
-  foreach ($cats as $cat)
-  {
-    $all &= $cat[id];
-    if (strpos($CURUSER["notifs"], "[cat" . $cat[id] . "]") !== False)
-    {
-      $wherecatina[] = $cat[id];
-      $addparam .= "c$cat[id]=1&amp;";
-    }
-  }
+if (!$all && (!$_GET && $CURUSER["notifs"])) { // todo: check logik
+        $all = true;
+        foreach ($cats as $cat) {
+            $all &= $cat['id'];
+            if (strpos($CURUSER["notifs"], "[cat" . $cat[id] . "]") !== False) {
+                $wherecatina[] = (int) $cat['id'];
+                $addparam .= "c$cat[id]=1&amp;";
+            }
+        }
+
 }
-elseif ($category)
-{
-  if (!is_valid_id($category))
-    stderr("Error", "Invalid category ID $category.");
-  $wherecatina[] = $category;
-  $addparam .= "cat=$category&amp;";
-}
-else
-{
-  $all = True;
-  foreach ($cats as $cat)
-  {
-    $all &= $_GET["c$cat[id]"];
-    if ($_GET["c$cat[id]"])
-    {
-      $wherecatina[] = $cat[id];
-      $addparam .= "c$cat[id]=1&amp;";
+elseif ($category) {
+    if (!is_valid_id($category)) {
+        stderr("Error", "Invalid category ID $category.");
     }
-  }
+    $wherecatina[] = $category;
+    $addparam .= "cat=$category&amp;";
+}
+else {
+    $all = true;
+    foreach ($cats as $cat) {
+        if (isset($_GET["c$cat[id]"])) {
+            $all = false;
+            $wherecatina[] = (int) $cat['id'];
+            $addparam .= "c$cat[id]=1&amp;";
+        }
+    }
 }
 
-if ($all)
-{
-$wherecatina = [];
- $addparam = "";
+if ($all) {
+    $wherecatina = [];
+    $addparam = '';
 }
 
 if (count($wherecatina) > 1)
-$wherecatin = implode(",",$wherecatina);
+    $wherecatin = implode(',', $wherecatina);
 elseif (count($wherecatina) == 1)
-$wherea[] = "category = $wherecatina[0]";
+    $wherea[] = 'category = ' . $wherecatina[0];
 
 $wherebase = $wherea;
 
 if ($_GET["incldead"] == 2)
-$wherea[] = "visible = 'no'";
+    $wherea[] = "visible = 'no'";
 else
-$wherea[] = "visible = 'yes'";
+    $wherea[] = "visible = 'yes'";
 
-if (isset($cleansearchstr))
-{
-$wherea[] = "MATCH (search_text, ori_descr) AGAINST (" . sqlesc($searchstr) . ")";
-//$wherea[] = "0";
-$addparam .= "search=" . urlencode($searchstr) . "&amp;";
-$orderby = "";
+if (isset($cleansearchstr)) {
+    $wherea[] = "MATCH (search_text, ori_descr) AGAINST (" . sqlesc($searchstr) . ")";
+    //$wherea[] = "0";
+    $addparam .= "search=" . urlencode($searchstr) . "&amp;";
+    $orderby = "";
 }
 
 $where = implode(" AND ", $wherea);
@@ -110,6 +103,8 @@ if ($wherecatin)
 if ($where != "")
     $where = "WHERE $where";
 
+// dump($where);
+
 $count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
 
 if (!$count && isset($cleansearchstr)) {
@@ -118,11 +113,13 @@ if (!$count && isset($cleansearchstr)) {
     $searcha = explode(" ", $cleansearchstr);
     $sc = 0;
     foreach ($searcha as $searchss) {
-        if (strlen($searchss) <= 1)
+        if (strlen($searchss) <= 1) {
             continue;
+        }
         $sc++;
-        if ($sc > 5)
+        if ($sc > 5) {
             break;
+        }
         $ssa = [];
         foreach (array("search_text", "ori_descr") as $sss)
             $ssa[] = "$sss LIKE '%" . sqlwildcardesc($searchss) . "%'";
@@ -154,11 +151,8 @@ if ($count) {
     $where 
     $orderby 
     $limit";
-    $res = mysql_query($query) or die(mysql_error());
+    $res = DB::query($query);
 }
-else
-unset($res);
-
 
 if (isset($cleansearchstr))
     stdhead("Search results for \"$searchstr\"");

@@ -5,7 +5,7 @@
 - MySQL 5.7
 
 ## Links
-- torrenttrader.org
+- http://www.torrenttrader.org/
 - https://sourceforge.net/projects/torrenttrader/
 
 ## License

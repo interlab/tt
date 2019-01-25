@@ -645,7 +645,8 @@ else
     end_frame();
 }
 
-function searchfield($s) {
+function searchfield($s)
+{
     return preg_replace(array('/[^a-z0-9]/si', '/^\s*/s', '/\s*$/s', '/\s+/s'), array(" ", "", "", " "), $s);
 }
 
@@ -1324,6 +1325,11 @@ function numUnreadUserMsg()
     $st['cache']['numUnreadMsg'] = $num;
 
     return $num;
+}
+
+function getDonations()
+{
+    return DB::fetchAssoc('SELECT donations, requireddonations FROM site_settings LIMIT 1');
 }
 
 // Returns the current time in GMT in MySQL compatible format.

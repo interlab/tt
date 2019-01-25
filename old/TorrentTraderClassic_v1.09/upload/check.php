@@ -1,21 +1,34 @@
 <?php
 
-if ($_GET["changechmod"] == 1){
+if (!empty($_GET["changechmod"])){
 	dochmod();
 }
 	
 	
-function dochmod () {
-error_reporting(0);
-echo "<font face=arial>";
-$conf = chmod($_SERVER['DOCUMENT_ROOT'] . "/backend/config.php", 0666);
-	if(!$conf){ echo "/backend/config.php - Error setting permissions<br>"; } else { echo "/backend/config.php - Success! CHMOD CHANGED<br>"; } 
+function dochmod()
+{
+    error_reporting(0);
+    echo "<font face=arial>";
+    $conf = chmod($_SERVER['DOCUMENT_ROOT'] . "/backend/config.php", 0666);
+	if(!$conf) {
+        echo "/backend/config.php - Error setting permissions<br>";
+    } else {
+        echo "/backend/config.php - Success! CHMOD CHANGED<br>";
+    } 
 
-$oconf = chmod($_SERVER['DOCUMENT_ROOT'] . "/backend/oldconfig.php", 0666);
-	if(!$oconf){ echo "/backend/oldconfig.php - Error setting permissions<br>"; } else { echo "/backend/oldconfig.php - Success! CHMOD CHANGED<br>"; } 
+    $oconf = chmod($_SERVER['DOCUMENT_ROOT'] . "/backend/oldconfig.php", 0666);
+	if (!$oconf) {
+        echo "/backend/oldconfig.php - Error setting permissions<br>";
+    } else {
+        echo "/backend/oldconfig.php - Success! CHMOD CHANGED<br>";
+    } 
 
-$banners = chmod($_SERVER['DOCUMENT_ROOT'] . "/banners.txt", 0666);
-	if(!$banners){ echo "banners.txt - Error setting permissions<br>"; } else { echo "banners.txt - Success! CHMOD CHANGED<br>"; } 
+    $banners = chmod($_SERVER['DOCUMENT_ROOT'] . "/banners.txt", 0666);
+	if (!$banners) {
+        echo "banners.txt - Error setting permissions<br>";
+    } else {
+        echo "banners.txt - Success! CHMOD CHANGED<br>";
+    } 
 
 $sponsors = chmod($_SERVER['DOCUMENT_ROOT'] . "/sponsors.txt", 0666);
 	if(!$banners){ echo "sponsors.txt - Error setting permissions<br>"; } else { echo "sponsors.txt - Success! CHMOD CHANGED<br>"; } 
@@ -198,6 +211,5 @@ If you see "Unwriteable" you need to change the permissions on the file or direc
 </body>
 </html>
 	<?php
-}//end func
+} // end func
 
-?>

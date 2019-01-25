@@ -139,34 +139,35 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
         <TR>
           <TD align=middle width="45%">
 			<p align="left">
-			<?php  if ($CURUSER) {
-				print $CURUSER[username]; 
-				echo "(<a href=account-logout.php><font color=#ffffff><b>Logout</b></font></a>)";
+			<?php
+    if ($CURUSER) {
+		print $CURUSER['username']; 
+		echo "(<a href=account-logout.php><font color=#ffffff><b>Logout</b></font></a>)";
 
 		// ger user ratio
 		if ($CURUSER["downloaded"] > 0){
-				$userratio = number_format($CURUSER["uploaded"] / $CURUSER["downloaded"], 2);
-		}else{
-				if ($CURUSER["uploaded"] > 0)
-					$userratio = "Inf.";
-				else
-					$userratio = "NA";
+			$userratio = number_format($CURUSER["uploaded"] / $CURUSER["downloaded"], 2);
+		} else {
+            $userratio = $CURUSER["uploaded"] > 0 ? "Inf." : "NA";
 		}
 		//end
 
 		// get unread messages
-		$res12 = mysql_query("SELECT COUNT(*) FROM messages WHERE receiver=" . $CURUSER["id"] . " and unread='yes'") or print(mysql_error());
-		$arr12 = mysql_fetch_row($res12);
-		$unreadmail = $arr12[0];
+		$nmessages = numUserMsg();
+		$unread = numUnreadUserMsg();
 		//end
 			?>
-
-			&nbsp;&#8595;&nbsp;<font color=red><?php  print mksize($CURUSER[downloaded]);?></font> - <b>&#8593;&nbsp;</b><font color=green><?php  print mksize($CURUSER[uploaded]);?></font> - <?= $txt['RATIO'] ?>: <?php  print $userratio; ?> &nbsp;<?php if ($unread) {	print("<a href=\"account.php\"><b><font color=#FF0000>New PM" . ($messages != 1 ? "s" : "") . " ($unread)</b></a></font>");}?>
+			&nbsp;&#8595;&nbsp;<font color=red><?= mksize($CURUSER['downloaded']) ?></font> - <b>&#8593;&nbsp;</b>
+            <font color=green><?= mksize($CURUSER['uploaded']) ?></font> - <?= $txt['RATIO'] ?>: <?= $userratio ?> 
+            &nbsp;<?php if ($unread) {
+                print("<a href=\"account.php\"><b><font color=#FF0000>New PM" . ($nmessages != 1 ? "s" : "") . " ($unread)</b></a></font>");
+            }?>
 
 			<?php 
-			}else{
-				echo "<a href=account-login.php><font color=#FF0000>". LOGIN . "</font></a> <B>:</B> <a href=account-signup.php><font color=#FF0000>" . REGISTERNEW . "</font></a>";
-			}
+    } else {
+        echo "<a href=account-login.php><font color=#FF0000>". $txt['LOGIN'] . "</font></a> <B>:</B> " .
+            "<a href=account-signup.php><font color=#FF0000>" . $txt['REGISTERNEW'] . "</font></a>";
+    }
 			?>
 			</TD>
 			<form method="get" action="torrents-search.php">
@@ -194,9 +195,8 @@ foreach ($cats as $cat) {
 		<td colspan="2" align=center>
 <!-- banner code starts here -->
 		   <CENTER><?php 
-$content = join ('', file ('banners.txt'));
-$s_con = split("~",$content);
-
+$content = file_get_contents(ST_ROOT_DIR . '/banners.txt');
+$s_con = preg_split('/~/', $content);
 $banners = rand(0,(count($s_con)-1));
 echo $s_con[$banners];
 ?></CENTER>
@@ -310,26 +310,23 @@ begin_block($txt['NAVIGATION']);
 end_block();
 
 
-if ($DONATEON)
-{
-begin_block($txt['DONATIONS'], 'center');
-$res9 = mysql_query("SELECT * FROM site_settings ") or sqlerr(__FILE__, __LINE__);
-$arr9 = mysql_fetch_assoc($res9);
-$mothlydonated = $arr9['donations'];
-$requireddonations = $arr9['requireddonations'];
-echo "<br><b>" . TARGET . ": </b><font color=\"red\">$" . $requireddonations . "</font><br><b>" . DONATIONS . ": </b><font color=\"green\">$" . $mothlydonated . "</font></center><br>";
-print "<div align=left><B><font color=#FF6600>&#187;</font></B> <a href=\"donate.php\">" . DONATE . "</a><br>";
-end_block();
+if ($DONATEON) {
+    begin_block($txt['DONATIONS'], 'center');
+    $row = getDonations();
+    echo "<br><b>" . $txt['TARGET'] . ": </b><font color=\"red\">$" . $row['requireddonations'] . "</font><br><b>" .
+        $txt['DONATIONS'] . ": </b><font color=\"green\">$" . $row['donations'] . "</font></center><br>
+        <div align=left><B><font color=#FF6600>&#187;</font></B> <a href=\"donate.php\">" . $txt['DONATE'] . "</a><br>";
+    end_block();
 }
 
 
 //start side banner
 echo "<br><CENTER>";
-$contents = join ('', file ('sponsors.txt'));
-$s_cons = split("~",$contents);
+$contents = file_get_contents(ST_ROOT_DIR . '/sponsors.txt');
+$s_cons = preg_split('/~/', $contents);
 $bannerss = rand(0,(count($s_cons)-1));
-echo $s_cons[$bannerss];
-echo "</CENTER><br>";
+echo $s_cons[$bannerss], '
+    </CENTER><br>';
 //end side banner
 
 

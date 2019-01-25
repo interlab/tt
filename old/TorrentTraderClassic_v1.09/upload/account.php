@@ -179,47 +179,50 @@ print("<a href=account.php?action=mytorrents><b>".$txt['VIEW_MYTORRENT']."</b></
 <?php
 end_frame();
 
-/*
+
+// del this block
 //PRIVATE MESSAGES FRAME STARTS HERE
 begin_frame($txt['ACCOUNT_YOUR_MESSAGES']."\n");
 
-$res = mysql_query("SELECT * , UNIX_TIMESTAMP(added) as utadded FROM messages WHERE receiver=" . $CURUSER["id"] . " ORDER BY added DESC") or die("barf!");
-if (mysql_num_rows($res) == 0)
+$res = DB::fetchAll("SELECT * , UNIX_TIMESTAMP(added) as utadded FROM messages WHERE receiver=" . $CURUSER["id"] . " ORDER BY added DESC");
+if (!count($res)) {
 	print("<br /><p align=center><b>".$txt['ACCOUNT_YOU_HAVE']."<font color=\"#CC0000\"><b> 0 </b></font>".$txt['ACCOUNT_MESSAGES']."</b></p>\n");
+}
+else {
+    foreach ($res as $arr) {
+        if (is_valid_id($arr["sender"])) {
+            // todo: subquery 
+            $arr2 = DB::fetchAssoc('SELECT username FROM users WHERE id = ' . $arr["sender"]);
+            $sender = "<a href=account-details.php?id=" . $arr["sender"] . ">" . $arr2["username"] . "</a>";
+        }
+        else {
+            $sender = "System";
+        }
 
-else
+        print ("<p align='right'><a href='account-inbox.php?deleteall=yes'>Delete ALL messages</a></p>");
 
-while ($arr = mysql_fetch_assoc($res))
-{
-	if (is_valid_id($arr["sender"]))
-    	{
-      		$res2 = mysql_query("SELECT username FROM users WHERE id=" . $arr["sender"]) or sqlerr();
-		$arr2 = mysql_fetch_assoc($res2);
-		$sender = "<a href=account-details.php?id=" . $arr["sender"] . ">" . $arr2["username"] . "</a>";
-	}
-    	else
-		$sender = "System";
+        print("<table border=0 width=100% cellspacing=0 cellpadding=2><tr><td bgcolor=#CCCCCC><img border=0 src=images/envelope.gif></td><td width=80% bgcolor=#ADACAC>\n");
+        print($txt['FROM']." <b>$sender</b> ".$txt['AT']."\n" . get_date_time($arr["utadded"] , $CURUSER['tzoffset'] ) . " GMT\n");
+        if ($arr["unread"] === "yes") {
+            print("<b>(".$txt['ACCOUNT_NEW'].")</b>");
+            DB::update('messages', ['unread' => 'no'], ['id' => $arr["id"]]);
+        }
 
-	print ("<p align='right'><a href='account-inbox.php?deleteall=yes'>Delete ALL messages</a></p>");
+        print("</td><td bgcolor=#ADACAC width=20% align=right>");
+        if ($arr["sender"] != "0") {
+            print("<a href=account-inbox.php?receiver=". $arr2["username"] ."&replyto=". $arr["id"].">".$txt['ACCOUNT_REPLY']."</a> | ");
+        }
 
-	print("<table border=0 width=100% cellspacing=0 cellpadding=2><tr><td bgcolor=#CCCCCC><img border=0 src=images/envelope.gif></td><td width=80% bgcolor=#ADACAC>\n");
-	print($txt['FROM']." <b>$sender</b> ".$txt['AT']."\n" . get_date_time($arr["utadded"] , $CURUSER[tzoffset] ) . " GMT\n");
-	if ($arr["unread"] == "yes")
-	{
-		print("<b>(".$txt['ACCOUNT_NEW'].")</b>");
-		mysql_query("UPDATE messages SET unread='false' WHERE id=" . $arr["id"]) or die("arghh");
-   	}
-    	print("</td><td bgcolor=#ADACAC width=20% align=right>");
-        if ($arr["sender"] != "0") { print("<a href=account-inbox.php?receiver=". $arr2["username"] ."&replyto=". $arr["id"].">".$txt['ACCOUNT_REPLY']."</a> | "); }
         print("<a href=account-inbox.php?deleteid=" . $arr["id"] . ">".$txt['ACCOUNT_DELETE']."</a></td></tr><tr><td colspan=3>\n");
-	print(format_comment($arr["msg"]));
-	print("<br />\n"
-	    	."<br /></td></tr></table>\n");
+        print(format_comment($arr["msg"]));
+        print("<br />\n" . "<br /></td></tr></table>\n");
+    }
 }
 print("<p align=\"center\"><a href=account-inbox.php>".$txt['ACCOUNT_SEND_MSG']."</a></p>\n");
 
 end_frame();
-*/
+// del this end
+
 
 //MY TORRENTS PAGE STARTS HERE
 if (isset($_GET['action']) && $_GET['action'] === "mytorrents") {

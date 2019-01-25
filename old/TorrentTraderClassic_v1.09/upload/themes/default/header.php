@@ -17,21 +17,18 @@ document.Form.body.focus();
 
 <script>
 
-var myimages= new Array();
-function preloadimages(){
-for (i=0;i<preloadimages.arguments.length;i++){
-myimages[i]=new Image()
-myimages[i].src=preloadimages.arguments[i]
+var myimages = new Array();
+function preloadimages() {
+    for (i = 0; i < preloadimages.arguments.length; i++) {
+        myimages[i] = new Image();
+        myimages[i].src=preloadimages.arguments[i]
+    }
 }
-}
 
-preloadimages("images/space.gif")
+preloadimages("images/space.gif");
 
-</script>
 
-<script>
-
-var g_nExpando=0;
+var g_nExpando = 0;
 // To make the cross clickable in every browser
 function putItemInState(n,bState)
 {
@@ -55,7 +52,6 @@ function putItemInState(n,bState)
 }
 
 
-
 function expand(nItem)
 {
     putItemInState(nItem,'toggle');
@@ -74,9 +70,6 @@ function expandAll()
         putItemInState(i,bState);
 }
 
-</script>
-
-<script>
 
 var tns6=document.getElementById&&!document.all
 var ie=document.all
@@ -116,12 +109,9 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
 
 		// ger user ratio
 		if ($CURUSER["downloaded"] > 0){
-				$userratio = number_format($CURUSER["uploaded"] / $CURUSER["downloaded"], 2);
+			$userratio = number_format($CURUSER["uploaded"] / $CURUSER["downloaded"], 2);
 		} else {
-				if ($CURUSER["uploaded"] > 0)
-					$userratio = "Inf.";
-				else
-					$userratio = "NA";
+			$userratio = $CURUSER["uploaded"] > 0 ? "Inf." : "NA";
 		}
 		//end
 
@@ -139,7 +129,8 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
                 echo '<a href="account.php"><b><font color=#FF0000>New PM' . ($nmessages != 1 ? 's' : '') . ' (' . $unread . ')</b></a></font>';
             } 
             } else {
-				echo "<a href=account-login.php><font color=#FF0000>". $txt['LOGIN'] . "</font></a> <B>:</B> <a href=account-signup.php><font color=#FF0000>". $txt['REGISTERNEW'] ."</font></a>";
+				echo "<a href=account-login.php><font color=#FF0000>". $txt['LOGIN'] .
+                    "</font></a> <B>:</B> <a href=account-signup.php><font color=#FF0000>". $txt['REGISTERNEW'] ."</font></a>";
 			}
 			?>
 			</FONT></TD>
@@ -241,7 +232,7 @@ if ($CURUSER)
 }
 //end invite block
 
-begin_block("". $txt['NAVIGATION'] ."");
+begin_block($txt['NAVIGATION']);
 ?>
 
 · <a href="index.php"><?= $txt['HOME'] ?></a><br />
@@ -273,9 +264,10 @@ end_block();
 
 if ($DONATEON) {
     begin_block($txt['DONATIONS'], 'center');
-    $row = DB::fetchAssoc('SELECT donations, requireddonations FROM site_settings');
-    echo "<br><b>". $txt['TARGET'] .": </b><font color=\"red\">$" . $row['requireddonations'] . "</font><br><b>". $txt['DONATIONS'] .": </b><font color=\"green\">$" . $row['donations'] . "</font></center><br>";
-    print "<div align=left><B><font color=#FF6600>&#187;</font></B> <a href=\"donate.php\">". $txt['DONATE'] ."</a><br>";
+    $row = getDonations();
+    echo "<br><b>". $txt['TARGET'] .": </b><font color=\"red\">$" . $row['requireddonations'] . "</font><br><b>".
+        $txt['DONATIONS'] . ": </b><font color=\"green\">$" . $row['donations'] . "</font></center><br>
+        <div align=left><B><font color=#FF6600>&#187;</font></B> <a href=\"donate.php\">". $txt['DONATE'] ."</a><br>";
     end_block();
 }
 
@@ -291,11 +283,10 @@ echo $s_cons[$bannerss], '
             </TD>
           <TD vAlign=top>
 
-		  <!-- banner code starts here -->
-		   <br><CENTER><?php
+<!-- banner code starts here -->
+<br><CENTER><?php
 $content = file_get_contents(ST_ROOT_DIR . '/banners.txt');
 $s_con = preg_split('/~/', $content);
-
 $banners = rand(0,(count($s_con)-1));
 echo $s_con[$banners];
 ?></CENTER><br>

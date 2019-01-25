@@ -151,7 +151,7 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
                       <TD width="100%" height="100%"></TD></TR></TBODY></TABLE></TD>
                 <TD style="PADDING-TOP: 2px">
                   <DIV class=blueheader 
-                  style="PADDING-RIGHT: 2px; PADDING-LEFT: 5px"><?php  if ($CURUSER) { print"$CURUSER[username]"; }else{?>Login <?php }?></DIV></TD>
+                  style="PADDING-RIGHT: 2px; PADDING-LEFT: 5px"><?php  if ($CURUSER) { print "$CURUSER[username]"; } else { ?>Login <?php }?></DIV></TD>
                 <TD style="PADDING-TOP: 10px" width="100%">
                   <TABLE height=8 cellSpacing=0 cellPadding=0 width="100%">
                     <TBODY>
@@ -203,27 +203,28 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
 <?php
 		// ger user ratio
 		if ($CURUSER["downloaded"] > 0){
-				$userratio = number_format($CURUSER["uploaded"] / $CURUSER["downloaded"], 2);
-		}else{
-				if ($CURUSER["uploaded"] > 0)
-					$userratio = "Inf.";
-				else
-					$userratio = "NA";
+			$userratio = number_format($CURUSER["uploaded"] / $CURUSER["downloaded"], 2);
+		} else {
+			$userratio = $CURUSER["uploaded"] > 0 ? "Inf." : "NA";
 		}
 		//end
 
 		// get unread messages
-		$res12 = mysql_query("SELECT COUNT(*) FROM messages WHERE receiver=" . $CURUSER["id"] . " and unread='yes'") or print(mysql_error());
-		$arr12 = mysql_fetch_row($res12);
-		$unreadmail = $arr12[0];
+		$nmessages = numUserMsg();
+		$unread = numUnreadUserMsg();
 		//end
 			?>
 
-			&nbsp;&#8595;&nbsp;<font color=red><?php  print mksize($CURUSER[downloaded]);?></font> - <b>&#8593;&nbsp;</b><font color=green><?php  print mksize($CURUSER[uploaded]);?></font> - <?= $txt['RATIO'] ?>: <?php  print $userratio; ?> &nbsp;<?php if ($unread) {	print("<a href=\"account.php\"><b><font color=#FF0000>New PM" . ($messages != 1 ? "s" : "") . " ($unread)</b></a></font></TD></TR>");}?>
+			&nbsp;&#8595;&nbsp;<font color=red><?= mksize($CURUSER['downloaded']) ?></font> - <b>&#8593;&nbsp;</b><font color=green><?php 
+                print mksize($CURUSER['uploaded']); ?></font> - <?= $txt['RATIO'] ?>: <?php
+                print $userratio; ?> &nbsp;<?php if ($unread) {	print("<a href=\"account.php\"><b><font color=#FF0000>New PM" .
+                ($nmessages != 1 ? "s" : "") . " ($unread)</b></a></font></TD></TR>");
+                }?>
 
 			<?php
 			} else {
-				echo "<div align=center><b><a style='color: red' href=account-login.php>". LOGIN . "</a> : <a style='color: red' href=account-signup.php>" . REGISTERNEW . "</a></B></div></TD></TR>";
+				echo "<div align=center><b><a style='color: red' href=account-login.php>". $txt['LOGIN'] .
+                    "</a> : <a style='color: red' href=account-signup.php>" . $txt['REGISTERNEW'] . "</a></B></div></TD></TR>";
 			}
 			?>
 </TBODY></TABLE></TD></TR>
@@ -261,43 +262,17 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
 <input onfocus="this.value=''" type=password size=10 value="ibfrules" name=password style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px">
 <input type=submit value=Verify style="font-family: Verdana; font-size: 8pt; border-style: solid; border-width: 0px">
 </TD></form>
-<?php }else{
-$ss_r = mysql_query("SELECT * from stylesheets") or die;
-$ss_sa = array();
-while ($ss_a = mysql_fetch_array($ss_r))
-{
-  $ss_id = $ss_a["id"];
-  $ss_name = $ss_a["name"];
-  $ss_sa[$ss_name] = $ss_id;
-}
-ksort($ss_sa);
-reset($ss_sa);
-while (list($ss_name, $ss_id) = each($ss_sa))
-{
-  if ($ss_id == $CURUSER["stylesheet"]) $ss = " selected"; else $ss = "";
-  $stylesheets .= "<option value=$ss_id$ss>$ss_name</option>\n";
-}
+<?php } else {
 
-$lang_r = mysql_query("SELECT * from languages") or die;
-$lang_sa = array();
-while ($lang_a = mysql_fetch_array($lang_r))
-{
-  $lang_id = $lang_a["id"];
-  $lang_name = $lang_a["name"];
-  $lang_sa[$lang_name] = $lang_id;
-}
-ksort($lang_sa);
-reset($lang_sa);
-while (list($lang_name, $lang_id) = each($lang_sa))
-{
-  if ($lang_id == $CURUSER["language"]) $lang = " selected"; else $lang = "";
-  $languages .= "<option value=$lang_id$lang>$lang_name</option>\n";
-}?><form method="post" action="take-theme.php">
-<font size=1><?= $txt['THEME'] ?>:</font> <select name=stylesheet style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px"><?=$stylesheets?></select>
-<font size=1><?= $txt['LANG'] ?>:</font> <select name=language style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px"><?=$languages?></select>
+$styles = Helper::getStylesheets();
+$langs = Helper::getLanguages();
+
+?><form method="post" action="take-theme.php">
+<font size=1><?= $txt['THEME'] ?>:</font> <select name=stylesheet style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px"><?= $styles ?></select>
+<font size=1><?= $txt['LANG'] ?>:</font> <select name=language style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px"><?= $langs ?></select>
 <input type="submit" value="<?= $txt['APPLY'] ?>" style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 0px"><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
 <A style="TEXT-DECORATION: none" href="account.php"><?= $txt['ACCOUNT'] ?></a><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
-<?php if(get_user_class() > UC_VIP) {?><A style="TEXT-DECORATION: none" href="admin.php"><?= $txt['STAFFCP'] ?></a><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle><?php }?>
+<?php if (get_user_class() > UC_VIP) {?><a style="TEXT-DECORATION: none;" href="admin.php"><?= $txt['STAFFCP'] ?></a><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle><?php }?>
 <A style="TEXT-DECORATION: none" href=account-logout.php>Logout</a>
 </TD>
 <?php }?>
@@ -343,7 +318,8 @@ begin_block($txt['LOGIN']);
 		</td></form>
 	</tr>
 	<tr>
-<td align="center"><a href="account-delete.php"><?php echo "" . DELETE_ACCOUNT . "";?></a><br><a href="account-recover.php"><?php echo "" . RECOVER_ACCOUNT . "";?></a></td> </tr>
+<td align="center"><a href="account-delete.php"><?= $txt['DELETE_ACCOUNT'] ?></a>
+    <br><a href="account-recover.php"><?= $txt['RECOVER_ACCOUNT'] ?></a></td></tr>
 	</table>
 <?php
 end_block();
@@ -359,17 +335,17 @@ begin_block("$CURUSER[username]");
 <table border="0" width="100%" cellspacing="0" cellpadding="0">
 <tr><td>
 <table border=0 cellspacing=0 cellpadding="6" width=100%>
-<tr><td align="center"><?php  print ("<img src=\"$avatar\" border=\"0\" width=\"80\" height=\"80\">");?></td></tr>
+<tr><td align="center"><?= '<img src="'.$avatar.'" border="0" width="80" height="80">' ?></td></tr>
 <tr><td align="center">
-		<?= $txt['DOWNLOADED'] ?>: <font color=red><?php  print mksize($CURUSER[downloaded]);?></font><br>
-		<?= $txt['UPLOADED'] ?>: <font color=green><?php  print mksize($CURUSER[uploaded]);?></font><br>
-		<?= $txt['RATIO'] ?>: <?php  print $userratio; ?><br>
+		<?= $txt['DOWNLOADED'] ?>: <font color=red><?= mksize($CURUSER['downloaded']) ?></font><br>
+		<?= $txt['UPLOADED'] ?>: <font color=green><?= mksize($CURUSER['uploaded']) ?></font><br>
+		<?= $txt['RATIO'] ?>: <?= $userratio ?><br>
 </td></tr>
 <tr><td align="center"></td></tr>
 </table></form></td></tr>
 <tr>
 <td align="center"><a href="account.php"><?= $txt['ACCOUNT'] ?></a> <br> <?php if (get_user_class() > UC_VIP) {
-print("<a href=admin.php>" . STAFFCP . "</a>");}?></font></tr>
+print("<a href=admin.php>" . $txt['STAFFCP'] . "</a>");}?></font></tr>
 
 </table>
 <?php
@@ -382,7 +358,7 @@ if ($CURUSER)
 {
 	if ($INVITEONLY){
 		$invites = $CURUSER["invites"];
-		begin_block("" . INVITES . "");
+		begin_block($txt['INVITES']);
 		?>
 		<table border="0" width="100%" cellspacing="0" cellpadding="0">
 		<tr><td align="center"><?= $txt['YOUHAVE'] ?> <?=$invites?> <?= $txt['INVITES'] ?><br></td></tr>
@@ -396,7 +372,7 @@ if ($CURUSER)
 }
 //end invite block
 
-begin_block("" . NAVIGATION . "");
+begin_block($txt['NAVIGATION']);
 ?>
 
 · <a href="index.php"><?= $txt['HOME'] ?></a><br />
@@ -426,26 +402,22 @@ begin_block("" . NAVIGATION . "");
  <?php
 end_block();
 
-
-if ($DONATEON)
-{
-begin_block("" . DONATIONS . "", 'center');
-$res9 = mysql_query("SELECT * FROM site_settings ") or sqlerr(__FILE__, __LINE__);
-$arr9 = mysql_fetch_assoc($res9);
-$mothlydonated = $arr9['donations'];
-$requireddonations = $arr9['requireddonations'];
-echo "<br><b>" . TARGET . ": </b><font color=\"red\">$" . $requireddonations . "</font><br><b>" . DONATIONS . ": </b><font color=\"green\">$" . $mothlydonated . "</font></center><br>";
-print "<div align=left><B><font color=#FF6600>&#187;</font></B> <a href=\"donate.php\">" . DONATE . "</a><br>";
-end_block();
+if ($DONATEON) {
+    begin_block($txt['DONATIONS'], 'center');
+    $row = getDonations();
+    echo "<br><b>". $txt['TARGET'] .": </b><font color=\"red\">$" . $row['requireddonations'] . "</font><br><b>".
+        $txt['DONATIONS'] . ": </b><font color=\"green\">$" . $row['donations'] . "</font></center><br>
+        <div align=left><B><font color=#FF6600>&#187;</font></B> <a href=\"donate.php\">". $txt['DONATE'] ."</a><br>";
+    end_block();
 }
 
 //start side banner
 echo "<br><CENTER>";
-$contents = join ('', file ('sponsors.txt'));
-$s_cons = split("~",$contents);
+$contents = file_get_contents(ST_ROOT_DIR . '/sponsors.txt');
+$s_cons = preg_split('/~/', $contents);
 $bannerss = rand(0,(count($s_cons)-1));
-echo $s_cons[$bannerss];
-echo "</CENTER><br>";
+echo $s_cons[$bannerss], '
+    </CENTER><br>';
 //end side banner
 
 
@@ -453,12 +425,10 @@ echo "</CENTER><br>";
                 </TD>
                 <TD vAlign=top>
 <!-- banner code starts here -->
-<br><CENTER>
-<?php
-$content = join ('', file ('banners.txt'));
-$s_con = split("~",$content);
+<br><CENTER><?php
+$content = file_get_contents(ST_ROOT_DIR . '/banners.txt');
+$s_con = preg_split('/~/', $content);
 $banners = rand(0,(count($s_con)-1));
 echo $s_con[$banners];
-?>
-</CENTER><br>
+?></CENTER><br>
 <!-- end banner code -->
