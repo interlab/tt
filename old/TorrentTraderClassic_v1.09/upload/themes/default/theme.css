@@ -134,7 +134,7 @@ background: #CBCAC5;
 
 /* ************** Define BEGIN_FRAME() Style  ************** */
 .frame_top_left {
-background: url("images/frame_top_left.gif"); width: 9; height: 24;
+background: url("images/frame_top_left.gif"); width: 9px; height: 24px;
 }
 
 .frame_top {

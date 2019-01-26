@@ -17,7 +17,20 @@ function begin_frame($caption = "-", $align = "justify")
             ."\t</tr>\n"
             ."\t<tr>\n"
             ."\t\t<TD class=frame_middle_left><span class=space></span></TD>\n"
-            ."\t\t<TD class=frame_middle width=100% align=$align valign=top><br>");
+            ."\t\t<TD class=frame_middle width=100% align=$align valign=top><br>
+            ");
+}
+
+function begin_frame1($caption = "-", $align = "justify")
+{
+    echo '<br />
+        <div class="tt-frame" style="width: 95%; margin: 0 auto; padding: 0;">
+        <div style="background-image: url(\'themes/default/images/frame_top.gif\'); border-radius: 8px 8px 0 0;'.
+            ' border-right: solid #9a9a9a 1px; border-left:solid #9a9a9a 1px; height: 24px;">
+            <div align="center" style="line-height: 24px;"><b>'.$caption.'</b></div>
+        </div>
+        <div style="background-color: white; border: 1px #9a9a9a solid; border-top: none; border-bottom: none; padding: 0px 8px;">
+        <br>';
 }
 
 // ATTACH FRAME
@@ -27,6 +40,13 @@ function attach_frame($padding = 0)
 }
 
 // END FRAME
+function end_frame1()
+{
+    echo '</div><div style="height: 10px; background-image: url(\'themes/default/images/frame_bottom.jpg\');'.
+        'background-color: white; border: 1px #9a9a9a solid; border-top: none; border-bottom: none; border-radius: 0 0 6px 6px;"></div>
+        </div>';
+}
+
 function end_frame()
 {
     print("\t\t</td>\n"

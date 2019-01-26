@@ -78,7 +78,7 @@ if (!empty($_GET['message'])) {
     bark2("Editting Failed", $_GET['message']);
 } elseif (!empty($_GET['edited'])) {
     if (!empty($_GET['mailsent'])) {
-        bark2('Success', $txt['PROFILE_UPDATED'] . '!<br />Confirmation email has been sent!');
+        bark2('Success', $txt['PROFILE_UPDATED'] . '!<br>Confirmation email has been sent!');
     } else {
         bark2('Success', $txt['PROFILE_UPDATED'] . '!');
     }
@@ -158,7 +158,7 @@ if($arr_rws['warned'] == 'yes'){
 <td>&nbsp;</td>
 </tr>
 </table>
-<br />
+<br>
 <FORM METHOD="LINK" ACTION="account-settings.php">
 <input type="submit" value="<?= $txt['ACCOUNT_ADJUST_SETTINGS'] ?>" style="font-family: Verdana; font-size: 7pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0">
 </FORM>
@@ -182,13 +182,18 @@ end_frame();
 
 // del this block
 //PRIVATE MESSAGES FRAME STARTS HERE
-begin_frame($txt['ACCOUNT_YOUR_MESSAGES']."\n");
+begin_frame($txt['ACCOUNT_YOUR_MESSAGES']);
 
-$res = DB::fetchAll("SELECT * , UNIX_TIMESTAMP(added) as utadded FROM messages WHERE receiver=" . $CURUSER["id"] . " ORDER BY added DESC");
-if (!count($res)) {
-	print("<br /><p align=center><b>".$txt['ACCOUNT_YOU_HAVE']."<font color=\"#CC0000\"><b> 0 </b></font>".$txt['ACCOUNT_MESSAGES']."</b></p>\n");
-}
-else {
+$res = DB::fetchAll('
+    SELECT * , UNIX_TIMESTAMP(added) as utadded
+    FROM messages
+    WHERE receiver=' . $CURUSER['id'] . '
+    ORDER BY added DESC');
+if (empty($res)) {
+	echo '<br><p align=center><b>'.$txt['ACCOUNT_YOU_HAVE'].
+        '<font color="#CC0000"><b> 0 </b></font>'.$txt['ACCOUNT_MESSAGES'].
+        '</b></p>';
+} else {
     foreach ($res as $arr) {
         if (is_valid_id($arr["sender"])) {
             // todo: subquery 
@@ -215,7 +220,7 @@ else {
 
         print("<a href=account-inbox.php?deleteid=" . $arr["id"] . ">".$txt['ACCOUNT_DELETE']."</a></td></tr><tr><td colspan=3>\n");
         print(format_comment($arr["msg"]));
-        print("<br />\n" . "<br /></td></tr></table>\n");
+        print("<br>\n" . "<br></td></tr></table>\n");
     }
 }
 print("<p align=\"center\"><a href=account-inbox.php>".$txt['ACCOUNT_SEND_MSG']."</a></p>\n");
@@ -233,8 +238,8 @@ $count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
 
 if (!$count) {
 ?>
-<b><font color="#CC0000"><?= $txt['ACCOUNT_NO_UPLOADS_FOUND'] ?></font></b><br />
-<?= $txt['WHEN_YOU'] ?> <a href="torrents-upload.php"><?= $txt['UPLOAD'] ?></a><?= $txt['ACCOUNT_A_TORRENT_FILE'] ?>.<br />
+<b><font color="#CC0000"><?= $txt['ACCOUNT_NO_UPLOADS_FOUND'] ?></font></b><br>
+<?= $txt['WHEN_YOU'] ?> <a href="torrents-upload.php"><?= $txt['UPLOAD'] ?></a><?= $txt['ACCOUNT_A_TORRENT_FILE'] ?>.<br>
 <?php
 }
 else {

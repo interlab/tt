@@ -17,7 +17,7 @@ function maketable($res)
         "</td><td class=table_head align=center>" . $txt['UPLOADED'] . "</td>\n" .
         "<td class=table_head align=center>" . $txt['DOWNLOADED'] . "</td><td class=table_head align=center>" .
         $txt['RATIO'] . "</td></tr>\n";
-    while ($arr = $res->fetch()) {
+    foreach ($res as $arr) {
         // @todo: вложенный запрос
         $arr2 = DB::fetchAssoc('
             SELECT name, size
@@ -128,12 +128,14 @@ if ($user['donated'] > 0)
 
 $country = DB::fetchColumn('SELECT name FROM countries WHERE id = ' . $user['country'] . ' LIMIT 1');
 
-$res = DB::query("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = $id AND seeder='no'");
+$leeching = null;
+$res = DB::fetchAll("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = $id AND seeder='no'");
 if ($res) {
     $leeching = maketable($res);
 }
 
-$res = DB::query("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = $id AND seeder='yes' group by torrent");
+$seeding = null;
+$res = DB::fetchAll("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = $id AND seeder='yes' group by torrent");
 if ($res) {
     $seeding = maketable($res);
 }
@@ -362,11 +364,11 @@ if (get_user_class() >= UC_JMODERATOR) {
 </td></tr></table><BR>
 <?php
 if ($torrents)
-  print("<B>" . $txt['UPLOADED_TORRENTS'] . ":</B><BR>$torrents<BR><BR>");
+    print("<B>" . $txt['UPLOADED_TORRENTS'] . ":</B><BR>$torrents<BR><BR>");
 if ($seeding)
-  print("<B>" . $txt['CURRENTLY_SEEDING'] . ":</B><BR>$seeding<BR><BR>");
+    print("<B>" . $txt['CURRENTLY_SEEDING'] . ":</B><BR>$seeding<BR><BR>");
 if ($leeching)
-  print("<B>" . $txt['CURRENTLY_LEECHING'] . ":</B><br>$leeching<BR><BR>");
+    print("<B>" . $txt['CURRENTLY_LEECHING'] . ":</B><br>$leeching<BR><BR>");
 end_frame();
 
 
