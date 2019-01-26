@@ -358,18 +358,17 @@ foreach ($cats as $row)
 $s .= "</select>\n";
 tr($txt['TTYPE'], $s, 1);
 
-//Request filled?
-if ($REQUESTSON){
-	$sql_request = "SELECT `id`, `request` FROM requests ORDER BY `request` ASC";
-	$res = DB::query($sql_request);
-	if ($res) {
-		$request = "<select name=\"request\">\n<option value=\"0\">(Chose the request to be filled)</option>\n";
-		while($row = $res->fetch()) {
+// Request filled?
+if ($REQUESTSON) {
+    $res = DB::fetchAll('SELECT `id`, `request` FROM requests ORDER BY `request` ASC');
+    if ($res) {
+	$request = "<select name=\"request\">\n<option value=\"0\">(Chose the request to be filled)</option>\n";
+	foreach ($res as $row) {
             $request .= "<option value=\"" . $row["id"] . "\">" . h($row["request"]) . "</option>\n";
         }
-		$request .= "</select>\n";
-		tr("If your upload is to fill a resquest, select it here", $request , 1);
-	}
+	$request .= "</select>\n";
+	tr("If your upload is to fill a resquest, select it here", $request , 1);
+    }
 }
 //end requests
 

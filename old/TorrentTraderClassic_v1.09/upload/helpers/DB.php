@@ -12,7 +12,7 @@ class DB
 
         // dump($args);
         // dump('Вход', $args);
-        $methods = ['executeQuery', 'fetchAssoc', 'fetchArray', 'fetchColumn', 'fetchAll'];
+        $methods = ['executeQuery', 'executeUpdate', 'fetchAssoc', 'fetchArray', 'fetchColumn', 'fetchAll'];
         if (count($args) > 1 && in_array($name, $methods)) {
             $sql = array_shift($args);
 

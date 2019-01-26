@@ -114,7 +114,7 @@ function adminmenu()
 <tr><td colspan=5> </td></tr>
 <!-- needs imgs -->
 <TR>
-    <td width=%20 align=center><a href='admin-category.php'><img src="images/admin/categories.gif" border=0 width=32 height=32><br>Categories</a> [S]</td>
+    <td width=%20 align=center><a href='admin-category.php'><img src="images/admin/categories.gif" border=0 width=32 height=32><br>Categories</a> [A]</td>
     <td width=%20 align=center><a href='admin.php?act=torrents'><img src="images/admin/torrents.gif" border=0 width=32 height=32><br>Torrent Management</a></td>
     <td width=%20 align=center><a href='admin.php?act=bannedtorrents'><img src="images/admin/bannedtorrents.gif" border=0 width=32 height=32><br>Banned Torrents</a></td>
     <td width=%20 align=center><a href='trackers.php'><img src="images/admin/external.gif" border=0 width=32 height=32><br>External Trackers</a></td>

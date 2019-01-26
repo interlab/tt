@@ -459,15 +459,17 @@ function deletetorrent($id) {
 	@unlink("$nfo_dir/$id.nfo");
 }
 
-function pager($rpp, $count, $href, $opts = []) {
+function pager($rpp, $count, $href, $opts = [])
+{
     $pages = ceil($count / $rpp);
 
-    if (!$opts["lastpagedefault"])
+    if (empty($opts["lastpagedefault"])) {
         $pagedefault = 0;
-    else {
+    } else {
         $pagedefault = floor(($count - 1) / $rpp);
-        if ($pagedefault < 0)
+        if ($pagedefault < 0) {
             $pagedefault = 0;
+        }
     }
 
     if (isset($_GET["page"])) {
@@ -475,10 +477,11 @@ function pager($rpp, $count, $href, $opts = []) {
         if ($page < 0)
             $page = $pagedefault;
     }
-    else
+    else {
         $page = $pagedefault;
+    }
 
-    $pager = "";
+    $pager = '';
 
     $mp = $pages - 1;
     $as = "<b>&lt;&lt;&nbsp;Prev</b>";
@@ -535,7 +538,7 @@ function pager($rpp, $count, $href, $opts = []) {
 
     $start = $page * $rpp;
 
-    return array($pagertop, $pagerbottom, "LIMIT $start,$rpp");
+    return array($pagertop, $pagerbottom, "LIMIT $start, $rpp");
 }
 
 function downloaderdata($res) {
@@ -1239,7 +1242,8 @@ function stderr($heading = "", $text, $sort = "") {
   die;
 }
 
-function bark($heading = "Error", $text, $sort = "Error") {
+function bark($heading = "Error", $text, $sort = "Error")
+{
   stdhead("$sort: $heading");
   begin_frame("<font color=red>$sort: $heading</font>", 'center');
   echo $text;
@@ -1528,9 +1532,10 @@ function begin_table()
   //-------- Inserts a smilies frame
   //         (move to globals)
 
+  /*
   function insert_smilies_frame()
   {
-    global $smilies;
+      global $smilies;
 
     begin_frame("Smilies", true);
 
@@ -1538,14 +1543,15 @@ function begin_table()
 
     print("<tr><td class=colhead>Type...</td><td class=colhead>To make a...</td></tr>\n");
 
-    while (list($code, $url) = each($smilies))
-      print("<tr><td>$code</td><td><img src=" . $GLOBALS['SITEURL'] . "/images/smilies/$url></td>\n");
-
+    foreach ($smilies as $code => $url) {
+        print("<tr><td>$code</td><td><img src=" . $GLOBALS['SITEURL'] . "/images/smilies/$url></td>\n");
+    }
 
     end_table();
 
     end_frame();
   }
+  */
 
 
 function sql_timestamp_to_unix_timestamp($s)

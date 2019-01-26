@@ -49,7 +49,7 @@ function maketable($res)
 $id = (int)$_GET["id"];
 
 if (!is_valid_id($id))
-  bark("Can't show details", "Bad ID.");
+    bark("Can't show details", "Bad ID.");
 
 $user = DB::fetchAssoc('SELECT * FROM users WHERE id = ' . $id . ' LIMIT 1');
 if ($user["status"] == "pending") {

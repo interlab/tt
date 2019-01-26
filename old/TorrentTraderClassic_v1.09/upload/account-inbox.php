@@ -67,9 +67,8 @@ if (!empty($replyto)) {
     $msga = DB::fetchAssoc('SELECT * FROM messages WHERE id = '.intval($replyto));
     if ($msga["receiver"] != $CURUSER["id"])
         bark("Failed", "Weird things going on with your ID!");
-    $res = mysql_query("SELECT username FROM users WHERE id=" . $msga["sender"]) or sqlerr();
-    $usra = mysql_fetch_assoc($res);
-    $body = "\n\n\n-------- ".$usra["username"]." wrote: --------\n".format_comment($msga["msg"])."\n";
+    $usra = DB::fetchAssoc("SELECT username FROM users WHERE id = " . $msga["sender"]);
+    $body = "\n\n\n-------- ".$usra["username"]." wrote: --------\n" . $msga["msg"]."\n";
 }
 
 // todo: вроде бы не используется нигде
@@ -100,6 +99,7 @@ begin_frame("Send a Message", 'center');
 if (!empty($message)) {
     genbark("Failed", $message);
 }
+
 ?>
 
 <form method=post action=account-inbox.php>

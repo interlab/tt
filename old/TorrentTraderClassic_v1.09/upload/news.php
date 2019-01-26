@@ -19,8 +19,7 @@ function toggle(nome) {
 
 $opts = DB::fetchAssoc('SELECT max_display, comment FROM news_options');
 
-
-$res = DB::query('
+$res = DB::fetchAll('
     SELECT news.id, news.title, news.text, news.user, news.date, news.comments,
         users.username
     FROM news, users
@@ -31,13 +30,10 @@ $res = DB::query('
 
 $nid_pedido = false; // ???
 if ($res) {
-    if (!$nid_pedido)
-        $mostrar = '';
-    else
-        $mostrar = 'none';
-	$img = 'noncross';
+    $mostrar = !$nid_pedido ? '' : 'none';
+    $img = 'noncross';
 
-	while ($n = $res->fetch(\PDO::FETCH_ASSOC)) {
+    foreach ($res as $n) {
         $nid = $n['id'];
         if ($nid_pedido == $nid)
             $mostrar = '';
@@ -47,12 +43,12 @@ if ($res) {
         $text = $n['text'];
         $username = $n['username'];
         echo '
-			<a id="', $nid, '"></a>
-			<a style="cursor: hand;" onClick="toggle(\'n', $nid, '\');">
-    <img id="n', $nid, 'img" src="/images/', $img, '.gif">
-    <strong> ', $title, '</strong></a> (By ', $username, '</a> at <em>', $date, '</em>)</a>
-			<div id="n', $nid, '" style="display:', $mostrar, '">
-			<table align="center" width="95%"><tr><td >', stripslashes($text), '';
+            <a id="', $nid, '"></a>
+            <a style="cursor: hand;" onClick="toggle(\'n', $nid, '\');">
+<img id="n', $nid, 'img" src="/images/', $img, '.gif">
+<strong> ', $title, '</strong></a> (By ', $username, '</a> at <em>', $date, '</em>)</a>
+            <div id="n', $nid, '" style="display:', $mostrar, '">
+            <table align="center" width="95%"><tr><td >', stripslashes($text), '';
 
         if ($opts['comment'] == 'on') {
             echo '
@@ -64,8 +60,7 @@ if ($res) {
 
         $mostrar = 'none';
         $img = 'cross';
-	   }
-
+    }
 } else {
 	echo "<center><font color=red>Нет новостей!</font></center>";
 }
@@ -77,5 +72,4 @@ echo '
 </table>
 
 <a href=news-archive.php>View Archive</a>';
-
 

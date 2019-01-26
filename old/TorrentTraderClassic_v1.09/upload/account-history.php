@@ -1,79 +1,67 @@
-<?
+<?php
+
 ob_start("ob_gzhandler"); 
 require "backend/functions.php";
+
 dbconn(false);
 loggedinorreturn();
 
-$userid = (int)$_GET["id"];
+$userid = (int) ($_GET["id"] ?? 0);
 
-if (!is_valid_id($userid))
+if (!is_valid_id($userid)) {
 	bark("Error", "Invalid ID");
+}
 
-//jmodonly();
+// jmodonly();
 
-$page = $_GET["page"];
-
-$action = $_GET["action"];
-
-//-------- Global variables
-
+$page = (int) ($_GET["page"] ?? 0);
+$action = $_GET["action"] ?? '';
 $perpage = 25;
 
-//-------- Action: View posts
+//-------- Action: View posts - forum
 
-if ($action == "viewposts")
-{
-	$select_is = "COUNT(DISTINCT p.id)";
-
-	$from_is = "forum_posts AS p JOIN forum_topics as t ON p.id = t.id
-	                JOIN forum_forums AS f ON t.forumid = f.id";
-
-	$where_is = "p.userid = $userid AND f.minclassread <= " . $CURUSER['class'];
-
-	$order_is = "p.id DESC";
-
-	$query = "SELECT $select_is FROM $from_is WHERE $where_is";
-
-	$res = mysql_query($query) or sqlerr(__FILE__, __LINE__);
-
-	$arr = mysql_fetch_row($res) or bark("Error", "No posts found");
-
-	$postcount = $arr[0];
+if ($action == "viewposts") {
+	$query = '
+        SELECT COUNT(*)
+        FROM forum_posts AS p
+            JOIN forum_topics as t ON p.topicid = t.id
+	        JOIN forum_forums AS f ON t.forumid = f.id
+        WHERE p.userid = ' . $userid . '
+            AND f.minclassread <= ' . $CURUSER['class'];
+	$postcount = DB::fetchColumn($query);
+    if (! $postcount) {
+        bark("Error", "No posts found");
+    }
 
 	//------ Make page menu
-
 	list($pagertop, $pagerbottom, $limit) = pager($perpage, $postcount, $_SERVER["PHP_SELF"] . "?action=viewposts&id=$userid&");
 
 	//------ Get user data
-
-	$res = mysql_query("SELECT username, donated, warned FROM users WHERE id=$userid") or sqlerr(__FILE__, __LINE__);
-
-	if (mysql_num_rows($res) == 1)
-	{
-  	$arr = mysql_fetch_assoc($res);
-
-	  $subject = "<a href=account-details.php?id=$userid><b>$arr[username]</b></a>".
-	  	($arr["donated"] > 1 ? "<img src=images/star.gif alt='Donor' style='margin-left: 4pt'>" : "") .
-	  	($arr["warned"] == "yes" ? "<img src=images/warned.gif alt='Warned' style='margin-left: 4pt'>" : "");
+	$arr = DB::fetchAssoc('SELECT username, donated, warned FROM users WHERE id = ' . $userid);
+	if (empty($arr)) {
+        $subject = "unknown[$userid]";
+    } else {
+        $subject = "<a href=account-details.php?id=$userid><b>$arr[username]</b></a>".
+            ($arr["donated"] > 1 ? "<img src=images/star.gif alt='Donor' style='margin-left: 4pt'>" : "") .
+            ($arr["warned"] == "yes" ? "<img src=images/warned.gif alt='Warned' style='margin-left: 4pt'>" : "");
 	}
-	else
-	    $subject = "unknown[$userid]";
 
 	//------ Get posts
-
- 	$from_is = "forum_posts AS p JOIN forum_topics as t ON p.topicid = t.id
-             JOIN forum_forums AS f ON t.forumid = f.id LEFT JOIN forum_readposts as r
-             ON p.topicid = r.topicid AND p.userid = r.userid";
-
-	$select_is = "f.id AS f_id, f.name, t.id AS t_id, t.subject, t.lastpost, r.lastpostread, p.*";
-
-	$query = "SELECT $select_is FROM $from_is WHERE $where_is " .
-	         "ORDER BY $order_is $limit";
-
-	$res = mysql_query($query) or sqlerr(__FILE__, __LINE__);
-
-	if (mysql_num_rows($res) == 0)
+	$query = '
+        SELECT f.id AS f_id, f.name, t.id AS t_id, t.subject, t.lastpost, r.lastpostread, p.*
+        FROM forum_posts AS p
+            JOIN forum_topics as t ON p.topicid = t.id
+            JOIN forum_forums AS f ON t.forumid = f.id
+            LEFT JOIN forum_readposts as r ON p.topicid = r.topicid
+                AND p.userid = r.userid
+        WHERE p.userid = ' . $userid . '
+            AND f.minclassread <= ' . $CURUSER['class'] . '
+        ORDER BY p.id DESC
+        ' . $limit;
+	$res = DB::fetchAll($query);
+	if (empty($res)) {
 	    bark("Error", "No posts found");
+    }
 
 	stdhead("Posts history");
 
@@ -85,10 +73,10 @@ if ($action == "viewposts")
 
 	begin_frame("Post history for $subject");
 
-	if ($postcount > $perpage) echo $pagertop;
+	if ($postcount > $perpage)
+        echo $pagertop;
 
-	while ($arr = mysql_fetch_assoc($res))
-	{
+	foreach ($res as $arr) {
 	    $postid = $arr["id"];
 
 	    $posterid = $arr["userid"];
@@ -119,13 +107,11 @@ if ($action == "viewposts")
 
 	    $body = format_comment($arr["body"]);
 
-	    if (is_valid_id($arr['editedby']))
-	    {
-        	$subres = mysql_query("SELECT username FROM users WHERE id=$arr[editedby]");
-	        if (mysql_num_rows($subres) == 1)
-	        {
-	            $subrow = mysql_fetch_assoc($subres);
-	            $body .= "<p><font size=1 class=small>Last edited by <a href=userdetails.php?id=$arr[editedby]><b>$subrow[username]</b></a> at $arr[editedat] GMT</font></p>\n";
+	    if (is_valid_id($arr['editedby'])) {
+        	$subrow = DB::fetchAssoc('SELECT username FROM users WHERE id = ' . $arr['editedby'] . ' LIMIT 1');
+	        if ($subrow) {
+	            $body .= "<p><font size=1 class=small>Last edited by <a href=userdetails.php?id=$arr[editedby]><b>".
+                    "$subrow[username]</b></a> at $arr[editedat] GMT</font></p>\n";
 	        }
 	    }
 
@@ -134,23 +120,17 @@ if ($action == "viewposts")
 	    end_table();
 	}
 
-if ($postcount > $perpage) echo $pagerbottom;
+    if ($postcount > $perpage)
+        echo $pagerbottom;
 
 	end_frame();
 
-
-//	if ($postcount > $perpage) echo $pagerbottom;
-
 	stdfoot();
-
-	die;
 }
 
 //-------- Action: View comments
 
-if ($action == "viewcomments")
-{
-	$select_is = "COUNT(*)";
+elseif ($action === "viewcomments") {
 
 	// LEFT due to orphan comments
 	$from_is = "comments AS c LEFT JOIN torrents as t
@@ -159,13 +139,16 @@ if ($action == "viewcomments")
 	$where_is = "c.user = $userid";
 	$order_is = "c.id DESC";
 
-	$query = "SELECT $select_is FROM $from_is WHERE $where_is ORDER BY $order_is";
-
-	$res = mysql_query($query) or sqlerr(__FILE__, __LINE__);
-
-	$arr = mysql_fetch_row($res) or bark("Error", "No comments found");
-
-	$commentcount = $arr[0];
+	$query = '
+        SELECT COUNT(*)
+        FROM comments AS c
+            LEFT JOIN torrents as t ON c.torrent = t.id
+        WHERE c.user = ' . $userid . '
+        ORDER BY c.id DESC';
+	$commentcount = DB::fetchColumn($query);
+	if (!$commentcount) {
+        bark("Error", "No comments found");
+    }
 
 	//------ Make page menu
 
@@ -257,16 +240,16 @@ if ($action == "viewcomments")
 
 	stdfoot();
 
-	die;
 }
 
 //-------- Handle unknown action
 
-if ($action != "")
+elseif ($action != '') {
 	bark("History Error", "Unknown action '$action'.");
+}
 
 //-------- Any other case
+else {
+    bark("History Error", "Invalid or no query.");
+}
 
-bark("History Error", "Invalid or no query.");
-
-?>
