@@ -2,47 +2,47 @@
 //
 // - Theme And Language Updated 25.Nov.05
 //
-ob_start("ob_gzhandler");
-require_once("backend/functions.php");
+ob_start('ob_gzhandler');
+require_once('backend/functions.php');
 dbconn(true);
 
 global $CURUSER, $RATIO_WARNINGON, $SHOUTBOX, $DISCLAIMERON;
 
 if ($RATIO_WARNINGON && $CURUSER)
 {
-    include("ratiowarn.php");
+    include('ratiowarn.php');
 }
 
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $choice = (int) $_POST["choice"];
-  if ($CURUSER && $choice > 0 && $choice < 256)
-  {
-    $res = mysql_query("SELECT * FROM polls ORDER BY added DESC LIMIT 1") or sqlerr();
-    $arr = mysql_fetch_assoc($res) or die("No poll");
-    $pollid = $arr["id"];
-    $userid = $CURUSER["id"];
-    $res = mysql_query("SELECT * FROM pollanswers WHERE pollid=$pollid && userid=$userid") or sqlerr();
-    $arr = mysql_fetch_assoc($res);
-    if ($arr) die("Dupe vote");
-    mysql_query("INSERT INTO pollanswers VALUES(0, $pollid, $userid, $choice)") or sqlerr();
-    if (mysql_affected_rows() != 1)
-      stderr("Error", "An error occured. Your vote has not been counted.");
-    header("Location: $SITEURL/");
-    die;
-  }
-  else
-    stderr("Error", "Please select an option.");
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $choice = (int) ($_POST['choice'] ?? 0);
+    if ($CURUSER && $choice > 0 && $choice < 256) {
+        $arr = DB::fetchAssoc('SELECT * FROM polls ORDER BY added DESC LIMIT 1');
+        if (!$arr)
+            die('No poll');
+        $pollid = $arr['id'];
+        $userid = $CURUSER['id'];
+        $arr = DB::fetchAssoc('SELECT * FROM pollanswers WHERE pollid = ? AND userid = ? LIMIT 1', [$pollid, $userid]);
+        if ($arr)
+            die('Dupe vote');
+        $res = DB::updateQuery('INSERT INTO pollanswers VALUES(?, ?, ?, ?)', [0, $pollid, $userid, $choice]);
+        if (!$res)
+            stderr('Error', 'An error occured. Your vote has not been counted.');
+        header('Location: ' . $SITEURL . '/');
+        die;
+    } else {
+        stderr('Error', 'Please select an option.');
+    }
 }
 
 $time_start = getmicrotime();
 
-$searchstr = unesc($_GET["search"]);
+$searchstr = unesc($_GET['search']);
 $cleansearchstr = searchfield($searchstr);
 if (empty($cleansearchstr))
 	unset($cleansearchstr);
 
-$orderby = "ORDER BY torrents.id DESC";
+$orderby = "ORDER BY t.id DESC";
 
 $addparam = '';
 $wherea = [];
@@ -50,13 +50,12 @@ $wherea = [];
 if ($_GET["incldead"] == 1) {
 	$addparam .= "incldead=1&amp;";
 	if (!isset($CURUSER) || get_user_class < UC_ADMINISTRATOR)
-	$wherea[] = "banned != 'yes'";
+        $wherea[] = "banned != 'yes'";
 }
+elseif ($_GET["incldead"] == 2)
+    $wherea[] = "visible = 'no'";
 else
-if ($_GET["incldead"] == 2)
-$wherea[] = "visible = 'no'";
-else
-$wherea[] = "visible = 'yes'";
+    $wherea[] = "visible = 'yes'";
 
 if ($_GET["cat"]) {
 	$wherea[] = "category = " . sqlesc($_GET["cat"]);
@@ -70,10 +69,10 @@ if (isset($cleansearchstr)) {
 }
 $where = implode(" AND ", $wherea);
 if ($where != "")
-$where = "WHERE $where";
+    $where = "WHERE $where";
 $limit = 15;
 
-$count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where . ' LIMIT ' . $limit);
+$count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where . ' LIMIT 1');
 
 if (!$count && isset($cleansearchstr)) {
 	$wherea = $wherebase;
@@ -85,7 +84,7 @@ if (!$count && isset($cleansearchstr)) {
 		continue;
 		$sc++;
 		if ($sc > 5)
-		break;
+            break;
 		$ssa = [];
 		foreach (array("search_text", "ori_descr") as $sss) {
             $ssa[] = "$sss LIKE '%" . sqlwildcardesc($searchss) . "%'";
@@ -95,7 +94,7 @@ if (!$count && isset($cleansearchstr)) {
 	if ($sc) {
 		$where = implode(" AND ", $wherea);
 		if ($where != "")
-		$where = "WHERE $where";
+            $where = "WHERE $where";
 		$count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
 	}
 }
@@ -103,14 +102,22 @@ if (!$count && isset($cleansearchstr)) {
 if ($count) {
 	list($pagertop, $pagerbottom, $limit) = pager(25, $count, "browse.php?" . $addparam);
 
-	$query = "SELECT torrents.id, torrents.category, torrents.leechers, torrents.nfo, torrents.seeders, torrents.name, torrents.times_completed, torrents.size,torrents.added, torrents.comments,torrents.numfiles,torrents.filename,torrents.owner,IF(torrents.nfo <> '', 1, 0) as nfoav," .
-
-	"IF(torrents.numratings < $minvotes, NULL, ROUND(torrents.ratingsum / torrents.numratings, 1)) AS rating, categories.name AS cat_name, categories.image AS cat_pic, users.username, users.privacy FROM torrents LEFT JOIN categories ON category = categories.id LEFT JOIN users ON torrents.owner = users.id $where $orderby $limit";
-	$tor = mysql_query($query)
-	or die(mysql_error());
+	$query = '
+        SELECT t.id, t.category, t.leechers, t.nfo, t.seeders, t.name, t.times_completed,
+            t.size, t.added, t.comments,t.numfiles, t.filename,t.owner, IF(t.nfo <> \'\', 1, 0) as nfoav,
+            IF(t.numratings < $minvotes, NULL, ROUND(t.ratingsum / t.numratings, 1)) AS rating,
+            c.name AS cat_name, c.image AS cat_pic, u.username, u.privacy
+        FROM torrents AS t
+            LEFT JOIN categories AS c ON t.category = c.id
+            LEFT JOIN users AS u ON t.owner = u.id
+        ' . $where . '
+        ' . $orderby . '
+        ' . $limit;
+	$tor = DB::query($query);
 }
-else
-unset($tor);
+else {
+    unset($tor);
+}
 
 stdhead();
 

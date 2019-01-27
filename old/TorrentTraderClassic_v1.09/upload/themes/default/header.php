@@ -86,6 +86,12 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
 
 </script>
 
+<?php
+global $st;
+
+echo isset($st['js_files']) ? $st['js_files'] : '';
+?>
+
 </head>
 
 <BODY LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0" align="center">
@@ -126,7 +132,7 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
             <?php
 
             if ($unread) {
-                echo '<a href="account.php"><b><font color=#FF0000>New PM' . ($nmessages != 1 ? 's' : '') . ' (' . $unread . ')</b></a></font>';
+                echo '<a href="account-messages.php"><b><font color=#FF0000>New PM' . ($nmessages != 1 ? 's' : '') . ' (' . $unread . ')</b></a></font>';
             } 
             } else {
 				echo "<a href=account-login.php><font color=#FF0000>". $txt['LOGIN'] .
@@ -180,7 +186,10 @@ begin_block($txt['LOGIN']);
 		</td></form>
 	</tr>
 	<tr>
-<td align="center"><a href="account-delete.php"><?= $txt['DELETE_ACCOUNT'] ?></a><br><a href="account-recover.php"><?= $txt['RECOVER_ACCOUNT'] ?></a></td> </tr>
+<td align="center">
+    <a href="account-delete.php"><?= $txt['DELETE_ACCOUNT'] ?></a><br>
+    <a href="account-recover.php"><?= $txt['RECOVER_ACCOUNT'] ?></a>
+</td></tr>
 	</table>
 <?php
 end_block();
@@ -189,8 +198,20 @@ end_block();
     $styles = Helper::getStylesheets();
     $langs = Helper::getLanguages();
 
-begin_block("$CURUSER[username]");
+begin_block($CURUSER['username']);
 ?>
+
+<div align="center" class="avat_m">
+<?php
+$avatar = $CURUSER["avatar"];
+$uname = $CURUSER['username'];
+if (!$avatar) {
+    $avatar = 'images/default_avatar.gif';
+}
+echo '<img src="' . $avatar . '" alt="' . $uname . '" name="' . $uname . '" title="' . $uname . '" border="0" />';
+?>
+</div>
+
 <table border="0" width="100%" cellspacing="0" cellpadding="0">
 <tr><form method="post" action="take-theme.php"><td>
 <table border=0 cellspacing=0 cellpadding="6" width=100%>
@@ -202,8 +223,12 @@ begin_block("$CURUSER[username]");
 	<input type="submit" value="<?= $txt['APPLY'] ?>" style="font-family: Verdana; font-size: 8pt; color: #000000; border: 1px solid #808080; background-color: #C0C0C0"></td></tr>
 </table></form></td></tr>
 <tr>
-<td align="center"><a href="account.php"><?= $txt['ACCOUNT'] ?></a> <br> <?php if (get_user_class() > UC_VIP) {
-print("<a href=admin.php>". $txt['STAFFCP'] ."</a>"); }?></tr>
+<td align="center"><a href="account.php"><img src="images/110/account_icon.gif" border="0" height="10" hspace="5" width="10"><?= $txt['ACCOUNT'] ?></a><br>
+<a href="account-details.php?id=<?= $CURUSER['id'] ?>"><img src="images/110/profile_icon.gif" border=0 height=10 hspace=5 width=10><?= $txt['PROFILE'] ?></a><br>
+<a href="account-messages.php"><img src="images/110/mail_icon.gif" border=0 height=10 hspace=5 width=10><?= $txt['PM'] ?>: <?= $nmessages ?></a><br>
+<?php if (get_user_class() > UC_VIP) {
+    print("<a href=admin.php>". $txt['STAFFCP'] ."</a>");
+} ?></tr>
 
 </table>
 

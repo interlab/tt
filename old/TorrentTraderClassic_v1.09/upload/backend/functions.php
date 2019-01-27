@@ -68,6 +68,16 @@ function getmicrotime()
     return ((float)$usec + (float)$sec);
 }
 
+function addJsFile($file)
+{
+    global $st;
+
+    $file = '
+    <script type="text/javascript" src="'. ST_JS_URL .'/'.$file.'"></script>';
+
+    $st['js_files'] = ($st['js_files'] ?? '') . $file;
+}
+
 // IP Validation
 function validip($ip)
 {
@@ -798,16 +808,18 @@ function get_percent_completed_image($p) {
  return "<img src=\"" . $GLOBALS['SITEURL'] . "/images/bar_left.gif\" />" . $progress ."<img src=\"" . $GLOBALS['SITEURL'] . "/images/bar_right.gif\" />";
 }
 
-function torrenttable($res, $variant = "index") {
+function torrenttable($res, $variant = "index")
+{
 //
 // The parts commented out in this section can be used to display different columns in your torrent tables
 // Please only modify the section below if you understand PHP/MYSQL
 //
-	global $CURUSER, $MEMBERSONLY_WAIT, $MAXDISPLAYLENGTH, $WAITA, $WAITB, $WAITC, $WAITD, $GIGSA, $GIGSB, $GIGSC, $GIGSD, $RATIOA, $RATIOB, $RATIOC, $RATIOD;	
-	//ratio wait code
-		if ($CURUSER["class"] < UC_VIP && $CURUSER['donated'] == 0 )
-			 {
-		  $gigs = $CURUSER["uploaded"] / (1024*1024*1024);
+	global $CURUSER, $MEMBERSONLY_WAIT, $MAXDISPLAYLENGTH, $WAITA, $WAITB, $WAITC, $WAITD;
+    global $GIGSA, $GIGSB, $GIGSC, $GIGSD, $RATIOA, $RATIOB, $RATIOC, $RATIOD;	
+	
+    //ratio wait code
+	if ($CURUSER["class"] < UC_VIP && $CURUSER['donated'] == 0) {
+		$gigs = $CURUSER["uploaded"] / (1024*1024*1024);
 		$ratio = (($CURUSER["downloaded"] > 0) ? ($CURUSER["uploaded"] / $CURUSER["downloaded"]) : 0);
 		  if ($ratio < 0 || $gigs < 0) $wait = $WAITA;
 		  elseif ($ratio < $RATIOA || $gigs < $GIGSA) $wait = $WAITA;
@@ -827,34 +839,34 @@ function torrenttable($res, $variant = "index") {
 <?php
 $count_get = 0;
 foreach ($_GET as $get_name => $get_value) {
-if ($get_name != "sort" && $get_name != "type") {
- if ($count_get > 0) {
-  $oldlink = $oldlink . "&" . $get_name . "=" . $get_value;
- } else {
-  $oldlink = $oldlink . $get_name . "=" . $get_value;
- }
- $count_get++;
-}
+    if ($get_name != "sort" && $get_name != "type") {
+        if ($count_get > 0) {
+            $oldlink = $oldlink . "&" . $get_name . "=" . $get_value;
+        } else {
+            $oldlink = $oldlink . $get_name . "=" . $get_value;
+        }
+        $count_get++;
+    }
 }
 
 if ($count_get > 0) {
-$oldlink = $oldlink . "&";
+    $oldlink = $oldlink . "&";
 }
 
 if ($_GET['sort'] == "1") {
-if ($_GET['type'] == "desc") {
- $link1 = "asc";
-} else {
- $link1 = "desc";
-}
+    if ($_GET['type'] == "desc") {
+        $link1 = "asc";
+    } else {
+        $link1 = "desc";
+    }
 }
 
 if ($_GET['sort'] == "2") {
-if ($_GET['type'] == "desc") {
- $link2 = "asc";
-} else {
- $link2 = "desc";
-}
+    if ($_GET['type'] == "desc") {
+        $link2 = "asc";
+    } else {
+        $link2 = "desc";
+    }
 }
 
 if ($_GET['sort'] == "3") {
@@ -950,7 +962,7 @@ if ($MEMBERSONLY_WAIT){
 <?php
 	print("</tr>\n");
 
-	while ($row = mysql_fetch_assoc($res)) {
+	while ($row = $res->fetch()) {
 		$id = $row["id"];
 		print("<tr>\n");
 

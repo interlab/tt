@@ -11,12 +11,17 @@ $replyto = $_REQUEST['replyto'] ?? '';
 $deleteid = $_REQUEST['deleteid'] ?? '';
 $deleteall = $_REQUEST['deleteall'] ?? '';
 $body = $_REQUEST['body'] ?? '';
-$receiver = $_REQUEST['receiver'] ?? '';
+$receiver = (int) ($_REQUEST['receiver'] ?? 0);
+$savesent = (int) ($_REQUEST['savesent'] ?? -1);
 
 if (!empty($msg) && !empty($receiver)) {
     $msg = trim($msg);
 
-    $user = DB::fetchAssoc('SELECT id, acceptpms, notifs, email, UNIX_TIMESTAMP(last_access) as la FROM users WHERE username = ?', [$receiver]);
+    $user = DB::fetchAssoc('
+        SELECT id, acceptpms, notifs, email, UNIX_TIMESTAMP(last_access) as la
+        FROM users
+        WHERE id = ?
+        LIMIT 1', [$receiver]);
     if (empty($user)) {
         $message = "Username not found.";
     }
@@ -25,8 +30,8 @@ if (!empty($msg) && !empty($receiver)) {
         $message = "PM Rejected";
   
     if (empty($message)) {
-        DB::executeQuery('INSERT INTO messages (poster, sender, receiver, added, msg) VALUES (?, ?, ?, ?, ?)',
-            [$CURUSER["id"], $CURUSER["id"], $user["id"], get_date_time(), $msg]);
+        DB::executeQuery('INSERT INTO messages (poster, sender, receiver, added, msg, deleted_by_sender) VALUES (?, ?, ?, ?, ?, ?)',
+            [$CURUSER["id"], $CURUSER["id"], $user["id"], get_date_time(), $msg, $savesent > -1 ? 0 : 1]);
 
         if (strpos($user['notifs'], '[pm]') !== false) {
             if (gmtime() - $user["la"] >= 300) {
@@ -51,17 +56,19 @@ EOD;
             && $_REQUEST['delete'] === 'yes'
         ) {
             $_REQUEST['origmsg'] = (int) $_REQUEST['origmsg'];
-            DB::query('DELETE FROM messages WHERE id = ' . $_REQUEST['origmsg']);
+            DB::executeUpdate('DELETE FROM messages WHERE id = ' . $_REQUEST['origmsg']);
         }
 
         bark("Message Sent", "Message was sent successfully!", $txt['SUCCESS']);
     }
 }
 
-//if ($receiver) {
-//  $res = mysql_query("SELECT * FROM users WHERE username='$receiver'") or die(mysql_error());
-//  $user = mysql_fetch_assoc($res);
-//}
+if (!$msg && $receiver) {
+    $user = DB::fetchAssoc("
+        SELECT *
+        FROM users
+        WHERE id = ".$receiver);
+}
 
 if (!empty($replyto)) {
     $msga = DB::fetchAssoc('SELECT * FROM messages WHERE id = '.intval($replyto));
@@ -76,7 +83,7 @@ if (!empty($deleteid)) {
     if (!is_numeric($deleteid) || $deleteid < 1 || floor($deleteid) != $deleteid)
         bark("Failed", "The ID is invalid!");
     // make sure message is owned by CURUSER
-    $arr = DB::fecthAssoc("SELECT receiver FROM messages WHERE id = " . $deleteid);
+    $arr = DB::fetchAssoc("SELECT receiver FROM messages WHERE id = " . $deleteid);
     if (empty($arr)) {
         die("Bad message ID");
     }
@@ -107,7 +114,7 @@ if (!empty($message)) {
   <tr>
 	<td valign=top>Receiver:</td>
 	<td><?php if (!$receiver) { ?><input type=text name=receiver /><?php } else {
-        ?><input type=hidden name=receiver value="<?=$receiver?>"?><B><?=$receiver?></B><?php } ?></td>
+        ?><input type=hidden name=receiver value="<?= $receiver ?>"?><B><?= $user['username'] ?></B><?php } ?></td>
   </tr>
   <tr>
 	<td valign=top>Message:</td>
@@ -115,12 +122,20 @@ if (!empty($message)) {
   </tr>
 <?php if ($replyto) { ?>
   <tr>
-	<td align=center colspan=2>
+    <td></td>
+	<td align=left>
       <input type=checkbox name='delete' value='yes' checked>Delete message you are replying to
-	  <input type=hidden name=origmsg value="<?=$replyto?>">
+	  <input type=hidden name=origmsg value="<?= $replyto ?>">
  	</td>
   </tr>
 <?php } ?>
+  <tr>
+	<td></td>
+	<td align=left>
+      <input type="hidden" name='savesent' value='0'>
+      <label><input type="checkbox" name='savesent' value='1' checked>Сохранить в отправленных</label>
+ 	</td>
+  </tr>
   <tr>
   	<td align=center colspan=2>
   	  <input type=submit value="Send it!" class=btn>

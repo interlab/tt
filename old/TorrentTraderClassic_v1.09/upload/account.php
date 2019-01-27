@@ -179,7 +179,7 @@ print("<a href=account.php?action=mytorrents><b>".$txt['VIEW_MYTORRENT']."</b></
 <?php
 end_frame();
 
-
+/*
 // del this block
 //PRIVATE MESSAGES FRAME STARTS HERE
 begin_frame($txt['ACCOUNT_YOUR_MESSAGES']);
@@ -197,7 +197,7 @@ if (empty($res)) {
     foreach ($res as $arr) {
         if (is_valid_id($arr["sender"])) {
             // todo: subquery 
-            $arr2 = DB::fetchAssoc('SELECT username FROM users WHERE id = ' . $arr["sender"]);
+            $arr2 = DB::fetchAssoc('SELECT id AS user_id, username FROM users WHERE id = ' . $arr["sender"]);
             $sender = "<a href=account-details.php?id=" . $arr["sender"] . ">" . $arr2["username"] . "</a>";
         }
         else {
@@ -215,7 +215,7 @@ if (empty($res)) {
 
         print("</td><td bgcolor=#ADACAC width=20% align=right>");
         if ($arr["sender"] != "0") {
-            print("<a href=account-inbox.php?receiver=". $arr2["username"] ."&replyto=". $arr["id"].">".$txt['ACCOUNT_REPLY']."</a> | ");
+            print("<a href=account-inbox.php?receiver=". $arr2["user_id"] ."&replyto=". $arr["id"].">".$txt['ACCOUNT_REPLY']."</a> | ");
         }
 
         print("<a href=account-inbox.php?deleteid=" . $arr["id"] . ">".$txt['ACCOUNT_DELETE']."</a></td></tr><tr><td colspan=3>\n");
@@ -227,6 +227,7 @@ print("<p align=\"center\"><a href=account-inbox.php>".$txt['ACCOUNT_SEND_MSG'].
 
 end_frame();
 // del this end
+*/
 
 
 //MY TORRENTS PAGE STARTS HERE

@@ -4,21 +4,21 @@ require_once("backend/functions.php");
 dbconn();
 
 //Here we decide if the invite system is needed
-if ($INVITEONLY)
-{
-stdhead("Invite only");
-begin_frame("Invite only");
-print("<br><br><center>Sorry this site has disabled user registration, the only way to register is via a invite from a existing member.<br><br></center>");
-end_frame();
-stdfoot();
-exit;
+if ($INVITEONLY) {
+    stdhead("Invite only");
+    begin_frame("Invite only");
+    print("<br><br><center>Sorry this site has disabled user registration, the only way to register is via a invite from a existing member.<br><br></center>");
+    end_frame();
+    stdfoot();
+    exit;
 }
 //end invite only check
 
-$r = mysql_query("SELECT COUNT(*) FROM users") or sqlerr();
-$a = mysql_fetch_row($r);
-if ($a[0] >= $maxsiteusers)
-  bark("Sorry...", "The site is full!<br />The limit of $maxusers users have been reached.<br />HOWEVER, user accounts expires all the time so please check back again later!");
+$message = $_REQUEST['message'] ?? '';
+
+$a = DB::fetchColumn("SELECT COUNT(*) FROM users");
+if ($a >= $maxsiteusers)
+    bark("Sorry...", "The site is full!<br />The limit of $maxusers users have been reached.<br />HOWEVER, user accounts expires all the time so please check back again later!");
 
 $nuIP = getip();
 $dom = @gethostbyaddr($nuIP);
@@ -39,73 +39,80 @@ $country = preg_replace('/([\x00-\x08][\x0b-\x0c][\x0e-\x20])/', '', $country);
 
 
 if ($wantusername != "") {
-  $message == "";
-  function validusername($username) {
-    $allowedchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    for ($i = 0; $i < strlen($username); ++$i)
-      if (strpos($allowedchars, $username[$i]) === false)
-        return false;
-      return true;
-  }
-
-  if (empty($wantpassword) || empty($email))
-	$message = "Don't leave any required field blank.";
-  if (strlen($wantusername) > 12)
-	$message = "Sorry, username is too long (max is 12 chars)";
-  if ($wantpassword != $passagain)
-	$message = "The passwords didn't match! Must've typoed. Try again.";
-  if (strlen($wantpassword) < 6)
-	$message = "Sorry, password is too short (min is 6 chars)";
-  if (strlen($wantpassword) > 40)
-	$message = "Sorry, password is too long (max is 40 chars)";
-  if ($wantpassword == $wantusername)
- 	$message = "Sorry, password cannot be same as user name.";
-  if (!validemail($email))
-	$message = "That doesn't look like a valid email address.";
-  if (!validusername($wantusername))
-	$message = "Invalid username.";
-do {
-  // check if email addy is already in use
-  $a = (@mysql_fetch_row(@mysql_query("select count(*) from users where email='$email'"))) or die(mysql_error());
-  if ($a[0] != 0)
-    $message = "The e-mail address $email is already in use.";
-   //check username isnt in use
-  $a = (@mysql_fetch_row(@mysql_query("select count(*) from users where username='$wantusername'"))) or die(mysql_error());
-  if ($a[0] != 0)
-    $message = "The username $wantusername is already in use."; 
-  $secret = mksecret();
-  $wantpassword = md5($wantpassword);
-if (!empty($message))
-	break;
-
-    $ret = mysql_query("INSERT INTO users (username, password, secret, email, status, added, age, country, gender, client) VALUES (" .
-	  implode(",", array_map("sqlesc", array($wantusername, $wantpassword, $secret, $email, 'pending'))) .
-		",'" . get_date_time() . "','$age','$country','$gender','$client')");
-
-    if (!$ret) {
-      $message = "Mysql Error!";
-      if (mysql_errno() == 1062)
-        $message = "Username already exists!";
+    $message == "";
+    function validusername($username)
+    {
+        $allowedchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for ($i = 0; $i < strlen($username); ++$i)
+            if (strpos($allowedchars, $username[$i]) === false)
+                return false;
+      
+        return true;
     }
-    $id = mysql_insert_id();
-    //write_log("User account $id ($wantusername) was created");
 
-    $psecret = md5($secret);
-    $thishost = $_SERVER["HTTP_HOST"];
-    $thisdomain = preg_replace('/^www\./is', "", $thishost);
-//NO ADMIN CONFIRM
-if ($ACONFIRM) {
-	$body = "Your account at $SITENAME has been created.\n\nYou will have to wait for the approval of an admin before you can use your new account.\n\n$SITENAME Admin";
-} else {//ADMIN CONFIRM
-	$body = "Your account at $SITENAME has been : APPROVED\n\nTo confirm your user registration, you have to follow this link:\n\n	$SITEURL/account-confirm.php?id=$id&secret=$psecret\n\nAfter you do this, you will be able to use your new account.\n\n	If you fail to do this, your account will be deleted within a few days.\n\n$SITENAME Admin";
-}
+    if (empty($wantpassword) || empty($email))
+        $message = "Don't leave any required field blank.";
+    if (strlen($wantusername) > 12)
+        $message = "Sorry, username is too long (max is 12 chars)";
+    if ($wantpassword != $passagain)
+        $message = "The passwords didn't match! Must've typoed. Try again.";
+    if (strlen($wantpassword) < 6)
+        $message = "Sorry, password is too short (min is 6 chars)";
+    if (strlen($wantpassword) > 40)
+        $message = "Sorry, password is too long (max is 40 chars)";
+    if ($wantpassword == $wantusername)
+        $message = "Sorry, password cannot be same as user name.";
+    if (!validemail($email))
+        $message = "That doesn't look like a valid email address.";
+    if (!validusername($wantusername))
+        $message = "Invalid username.";
 
-    ini_set("sendmail_from", ""); // Null envelope (Return-Path: <>)
-    mail($email, "Your $SITENAME User Account", $body, "From: $SITENAME <$SITEEMAIL>");
+    do {
+        // check if email addy is already in use
+        $a = (@mysql_fetch_row(@mysql_query("select count(*) from users where email='$email'"))) or die(mysql_error());
+        if ($a[0] != 0)
+            $message = "The e-mail address $email is already in use.";
+   
+        //check username isnt in use
+        $a = (@mysql_fetch_row(@mysql_query("select count(*) from users where username='$wantusername'"))) or die(mysql_error());
+        if ($a[0] != 0)
+            $message = "The username $wantusername is already in use."; 
+  
+        $secret = mksecret();
+        $wantpassword = md5($wantpassword);
+        
+        if (!empty($message))
+            break;
 
-    header("Refresh: 0; url=account-confirm-ok.php?type=signup&email=" . urlencode($email));
-    die;
-  } while(0);
+        $ret = mysql_query("INSERT INTO users (username, password, secret, email, status, added, age, country, gender, client) VALUES (" .
+            implode(",", array_map("sqlesc", array($wantusername, $wantpassword, $secret, $email, 'pending'))) .
+            ",'" . get_date_time() . "','$age','$country','$gender','$client')");
+
+        if (!$ret) {
+            $message = "Mysql Error!";
+        if (mysql_errno() == 1062)
+            $message = "Username already exists!";
+        }
+        $id = mysql_insert_id();
+        //write_log("User account $id ($wantusername) was created");
+
+        $psecret = md5($secret);
+        $thishost = $_SERVER["HTTP_HOST"];
+        $thisdomain = preg_replace('/^www\./is', "", $thishost);
+
+        //NO ADMIN CONFIRM
+        if ($ACONFIRM) {
+            $body = "Your account at $SITENAME has been created.\n\nYou will have to wait for the approval of an admin before you can use your new account.\n\n$SITENAME Admin";
+        } else {//ADMIN CONFIRM
+            $body = "Your account at $SITENAME has been : APPROVED\n\nTo confirm your user registration, you have to follow this link:\n\n	$SITEURL/account-confirm.php?id=$id&secret=$psecret\n\nAfter you do this, you will be able to use your new account.\n\n	If you fail to do this, your account will be deleted within a few days.\n\n$SITENAME Admin";
+        }
+
+        ini_set("sendmail_from", ""); // Null envelope (Return-Path: <>)
+        mail($email, "Your $SITENAME User Account", $body, "From: $SITENAME <$SITEEMAIL>");
+
+        header("Refresh: 0; url=account-confirm-ok.php?type=signup&email=" . urlencode($email));
+        die;
+    } while(0);
 }
 
 stdhead("Signup");
@@ -144,15 +151,15 @@ if ($message != "")
 					<select name="country" size="1">
 						<?php
 						$countries = "<option value=\"0\">---- None selected ----</option>\n";
-						$ct_r = mysql_query("SELECT id,name,domain from countries ORDER BY name") or die;
-						while ($ct_a = mysql_fetch_array($ct_r)) {
-						  $countries .= "\t\t\t\t\t\t<option value=\"$ct_a[id]\"";
-						  if ($dom == $ct_a["domain"])
-						    $countries .= " SELECTED";
-						  $countries .= ">$ct_a[name]</option>\n";
+						$res = DB::query("SELECT id, name, domain from countries ORDER BY name") or die;
+						while ($ct_a = $res->fetch()) {
+                            $countries .= "\t\t\t\t\t\t<option value=\"$ct_a[id]\"";
+                            if ($dom == $ct_a["domain"])
+                                $countries .= " SELECTED";
+                            $countries .= ">$ct_a[name]</option>\n";
 						}
 						?>
-						<?=$countries ?>
+						<?= $countries ?>
 					</select>
 				</td>
 			</tr>

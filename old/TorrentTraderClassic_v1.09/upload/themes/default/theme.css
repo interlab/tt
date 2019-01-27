@@ -209,3 +209,47 @@ background-image: url("images/block_bottom.gif");  width: 100%;  height: 23px;
 .block_bottomr {
 background-image: url("images/block_bottom_right.gif"); width: 15px; height: 23px;
 }
+
+/* begin css tabs */
+
+ul#tabnav {
+    text-align: left;
+    margin: 1em 0 1em 0;
+    font-weight: bold;
+    border-bottom: 1px solid #6E8DC2;
+    list-style-type: none;
+    padding: 3px 10px 3px 10px;
+}
+
+ul#tabnav li {
+    display: inline;
+}
+
+ul#tabnav li.selected {
+    border-bottom: 1px solid #FFFFFF;
+    background-color: #FFFFFF;
+}
+
+ul#tabnav li.selected a {
+    background-color: #FFFFFF;
+    color: #000;
+    position: relative;
+    top: 1px;
+    padding-top: 4px;
+}
+
+ul#tabnav li a {
+    padding: 3px 4px;
+    border: 1px solid #6E8DC2;
+    background-color: #ECECEC;
+    color: #666;
+    margin-right: 0px;
+    text-decoration: none;
+    border-bottom: none;
+}
+
+ul#tabnav a:hover {
+    background: #fff;
+}
+
+/* end css tabs */

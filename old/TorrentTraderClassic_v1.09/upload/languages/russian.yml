@@ -13,6 +13,7 @@ MOVIE_FORMATS: 'Видео форматы'
 UPLOAD: 'Добавить торрент'
 SHOUTBOX: 'Чат'
 YOUR_PROFILE: 'Мой профиль'
+PROFILE: 'Профиль'
 STAFFCP: 'Админ панель'
 STAFF: 'Руководство'
 SITENEWS: 'Новости'
@@ -184,9 +185,9 @@ FOR_BEST_RESULTS: 'Для лучшего визуального результа
 # Others
 COOKIES: 'Cookies должны быть включены для авторизации.'
 
-# Faq
 CONTENTS: 'Содержание'
 SUCCESS: 'Успешно'
+PM: 'ЛС'
 
 # Phrases
 WELCOME_NEW: 'Приветствуем нашего последнего новичка:'

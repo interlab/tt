@@ -1,10 +1,9 @@
-<?
+<?php
 
 /*
 
 Basic knowledge of how bencoding works is assumed. Details can be found
 at <http://bitconjurer.org/BitTorrent/protocol.html>.
-
 
 
 How to use these functions:
@@ -18,9 +17,7 @@ the case of "list" and "dictionary", the values of the contained array
 are agaib "objects".
 
 
-
 Description of the functions:
-
 
 
 string benc($obj);
@@ -43,8 +40,6 @@ benc(array(type => "dictionary", value => array(
 	spam => array(type => "string", value => "eggs"),
 )))
 					returns "d3:cow3:moo4:spam4:eggse"
-
-
 
 
 object bdec($str);
@@ -105,9 +100,6 @@ Array
     [strlen] => 29
     [string] => d4:spaml11:spiced pork3:hamee
 )
-
-
-
 
 
 object bdec_file($filename, $maxsize);
@@ -258,4 +250,3 @@ function bdec_dict($s) {
 	return array(type => "dictionary", value => $v, strlen => strlen($ss), string => $ss);
 }
 
-?>
