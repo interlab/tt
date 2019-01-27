@@ -581,79 +581,80 @@ function downloaderdata($res) {
     return array($rows, $peerdata);
 }
 
-function commenttable($rows) {
+function commenttable($rows)
+{
     begin_frame();
     $count = 0;
     foreach ($rows as $row)
     {
-print("<br>\n");
-	$postername = h($row["username"]);
- if ($postername == "") {
-        $postername = "Deluser";
-		$title = "Deleted Account";
-		$privacylevel = "strong";
-        $avatar = "";
-		$usersignature = "";
-		$userdownloaded = "";
-	   $useruploaded = "";
-      }else {
-	$res4 = mysql_query("SELECT COUNT(*) FROM forum_posts WHERE userid=" . $row["user"] . "") or sqlerr();
-	$arr33 = mysql_fetch_row($res4);
-	$forumposts = $arr33[0];
+        print("<br>\n");
+        $postername = h($row["username"]);
+        if ($postername == "") {
+            $postername = "Deluser";
+            $title = "Deleted Account";
+            $privacylevel = "strong";
+            $avatar = "";
+            $usersignature = "";
+            $userdownloaded = "";
+            $useruploaded = "";
+        } else {
+            $forumposts = DB::fetchColumn('SELECT COUNT(*) FROM forum_posts WHERE userid = ' . $row["user"]);
+            $commentposts = DB::fetchColumn("SELECT COUNT(*) FROM comments WHERE user=" . $row["user"]);
+            $commentid = $row["id"];
 
-	$res44 = mysql_query("SELECT COUNT(*) FROM comments WHERE user=" . $row["user"] . "") or sqlerr();
-	$arr333 = mysql_fetch_row($res44);
-	$commentposts = $arr333[0];
-	$commentid = $row["id"];
+            $avatar = h($row["avatar"]);
+            $userdownloaded = mksize($row["downloaded"]);
+            $useruploaded = mksize($row["uploaded"]);
+            $title =  h($row["title"]);
+            $privacylevel = $row["privacy"];
+            $usersignature = stripslashes(format_comment($row["signature"]));
+        }
+        if ($row["downloaded"] > 0) {
+            $userratio = number_format($row["uploaded"] / $row["downloaded"], 2);
+        }
+        elseif ($row["uploaded"] > 0)
+            $userratio = "Inf.";
+        else
+            $userratio = "---";
 
-
-
-      $avatar = h($row["avatar"]);
-	  $userdownloaded = mksize($row["downloaded"]);
-	  $useruploaded = mksize($row["uploaded"]);
-	  $title =  h($row["title"]);
-	  $privacylevel = $row["privacy"];
-	  $usersignature = stripslashes(format_comment($row["signature"]));
-}
-if ($row["downloaded"] > 0)
-    {
-      $userratio = number_format($row["uploaded"] / $row["downloaded"], 2);
-    }
-else
-      if ($row["uploaded"] > 0)
-        $userratio = "Inf.";
-      else
-        $userratio = "---";
-
-      if (!$avatar)
-        $avatar = "images/default_avatar.gif";
-      begin_table(true);
+        if (!$avatar)
+            $avatar = "images/default_avatar.gif";
+        begin_table(true);
         print("<tr valign=top>\n");
 
-			if (get_user_class() >= UC_JMODERATOR){
-				print("<td></td><TD>Posted: " . $row["added"] . " - <a href=edit-comments.php?cid=" . $row["id"] . ">[Edit]</a>- <a href=edit-comments.php?action=delete&cid=" . $row["id"] . ">[Delete]</a></td></tr><tr valign=top>\n");
-			}else{
+		if (get_user_class() >= UC_JMODERATOR) {
+			print("<td></td><TD>Posted: " . $row["added"] . " - <a href=edit-comments.php?cid=" .
+                $row["id"] . ">[Edit]</a>- <a href=edit-comments.php?action=delete&cid=" . $row["id"] .
+                ">[Delete]</a></td></tr><tr valign=top>\n");
+		} else {
 				print("<td></td><TD>Posted: " . $row["added"] . "</td></tr><tr valign=top>\n");
-			}
+		}
 
-	if ($privacylevel == "strong"){
-			if (get_user_class() >= UC_JMODERATOR){
-				print("<td valign=top width=150 align=left><center><b>$postername</b><br><i>$title</i></center><br><font color=green>Uploaded: $useruploaded<br>Downloaded: $userdownloaded</font><br>Forum Posts: $forumposts<br>Comments Posted: $commentposts<br><font color=green>Ratio: $userratio</font><br><br><center><img width=80 height=80 src=$avatar></center><br></td>\n");
-			}else{
-				print("<td valign=top width=150 align=left><center><b>$postername</b><br><i>$title</i></center><br>Forum Posts: $forumposts<br>Comments Posted: $commentposts<br><br><center><img width=80 height=80 src=$avatar></center><br></td>\n");
+        if ($privacylevel == "strong") {
+			if (get_user_class() >= UC_JMODERATOR) {
+				print("<td valign=top width=150 align=left><center><b>$postername</b><br><i>$title</i></center><br>
+                    <font color=green>Uploaded: $useruploaded<br>Downloaded: $userdownloaded</font><br>Forum Posts: $forumposts
+                    <br>Comments Posted: $commentposts<br><font color=green>Ratio: $userratio</font><br><br>
+                    <center><img width=80 height=80 src=$avatar></center><br></td>\n");
+            } else {
+                print("<td valign=top width=150 align=left><center><b>$postername</b><br><i>$title</i></center>
+                    <br>Forum Posts: $forumposts<br>Comments Posted: $commentposts<br><br>
+                    <center><img width=80 height=80 src=$avatar></center><br></td>\n");
 			}
-		}else{
-		 print("<td valign=top width=150 align=left><center><b>$postername</b><br><i>$title</i></center><br>Uploaded: $useruploaded<br>Downloaded: $userdownloaded<br>Forum Posts: $forumposts<br>Comments Posted: $commentposts<br>Ratio: $userratio<br><br><center><img width=80 height=80 src=$avatar></center><br></td>\n");
-	}
+		} else {
+            print("<td valign=top width=150 align=left><center><b>$postername</b><br><i>$title</i></center>
+                <br>Uploaded: $useruploaded<br>Downloaded: $userdownloaded<br>Forum Posts: $forumposts<br>Comments Posted: $commentposts
+                <br>Ratio: $userratio<br><br><center><img width=80 height=80 src=$avatar></center><br></td>\n");
+        }
 
         print("<td class=text>" . format_comment($row["text"]) . "<br><br>");
-      if (!$usersignature){
-		print("<br></td>\n");
-	  }else{
-		print("<br>--------------------<br>$usersignature</td>\n");
-	  }
+        if (!$usersignature) {
+            print("<br></td>\n");
+        } else {
+            print("<br>--------------------<br>$usersignature</td>\n");
+        }
         print("</tr>\n");
-      end_table();
+        end_table();
     }
     end_frame();
 }
@@ -1608,9 +1609,8 @@ function sql_timestamp_to_unix_timestamp($s)
 
 function write_log($text)
 {
-  $text = sqlesc($text);
-  $added = sqlesc(get_date_time());
-  mysql_query("INSERT INTO log (added, txt) VALUES($added, $text)") or sqlerr();
+    $added = get_date_time();
+    DB::executeQuery('INSERT INTO log (added, txt) VALUES(?, ?)', [$added, $text]);
 }
 
 function get_elapsed_time($ts)

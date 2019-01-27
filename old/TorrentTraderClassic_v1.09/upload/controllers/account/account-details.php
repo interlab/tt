@@ -6,7 +6,7 @@ dbconn(false);
 
 loggedinorreturn();
 
-global $CURUSER;
+global $CURUSER, $txt;
 
 function maketable($res)
 {

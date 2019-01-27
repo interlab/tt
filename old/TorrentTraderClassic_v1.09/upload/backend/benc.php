@@ -142,6 +142,7 @@ function benc_list($a) {
 		$s .= benc($e);
 	}
 	$s .= "e";
+
 	return $s;
 }
 
@@ -155,6 +156,7 @@ function benc_dict($d) {
 		$s .= benc($v);
 	}
 	$s .= "e";
+
 	return $s;
 }
 
@@ -164,6 +166,7 @@ function bdec_file($f, $ms) {
 		return;
 	$e = fread($fp, $ms);
 	fclose($fp);
+
 	return bdec($e);
 }
 
@@ -173,18 +176,28 @@ function bdec($s) {
 		$pl = strlen($l) + 1;
 		$v = substr($s, $pl, $l);
 		$ss = substr($s, 0, $pl + $l);
-		if (strlen($v) != $l)
+		if (strlen($v) != $l) {
 			return;
-		return array(type => "string", value => $v, strlen => strlen($ss), string => $ss);
+        }
+
+		return [
+            'type' => 'string', 'value' => $v,
+            'strlen' => strlen($ss), 'string' => $ss];
 	}
 	if (preg_match('/^i(\d+)e/', $s, $m)) {
 		$v = $m[1];
 		$ss = "i" . $v . "e";
-		if ($v === "-0")
+		if ($v === "-0") {
 			return;
-		if ($v[0] == "0" && strlen($v) != 1)
+        }
+		if ($v[0] == "0" && strlen($v) != 1) {
 			return;
-		return array(type => "integer", value => $v, strlen => strlen($ss), string => $ss);
+        }
+
+		return [
+            'type' => 'integer', 'value' => $v,
+            'strlen' => strlen($ss), 'string' => $ss
+        ];
 	}
 	switch ($s[0]) {
 		case "l":
@@ -216,7 +229,11 @@ function bdec_list($s) {
 		$ss .= $ret["string"];
 	}
 	$ss .= "e";
-	return array(type => "list", value => $v, strlen => strlen($ss), string => $ss);
+
+	return [
+        'type' => 'list', 'value' => $v,
+        'strlen' => strlen($ss), 'string' => $ss
+    ];
 }
 
 function bdec_dict($s) {
@@ -247,6 +264,10 @@ function bdec_dict($s) {
 		$ss .= $ret["string"];
 	}
 	$ss .= "e";
-	return array(type => "dictionary", value => $v, strlen => strlen($ss), string => $ss);
+
+    return [
+        'type' => 'dictionary', 'value' => $v,
+        'strlen' => strlen($ss), 'string' => $ss
+    ];
 }
 
