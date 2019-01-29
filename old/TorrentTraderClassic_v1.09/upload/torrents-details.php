@@ -602,7 +602,7 @@ if (!$count) {
     $allrows = DB::fetchAll('
         SELECT
             comments.id, text, user, comments.added, avatar, signature,
-            username, fancyname, title, class, uploaded, downloaded, privacy, donated, ip
+            username, title, class, uploaded, downloaded, privacy, donated, ip
         FROM comments
             LEFT JOIN users ON comments.user = users.id
         WHERE torrent = {int:id}

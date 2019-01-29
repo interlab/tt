@@ -44,15 +44,14 @@ $category = (int) ($_GET["cat"] ?? 0);
 $all = $_GET["all"] ?? '';
 
 if (!$all && (!$_GET && $CURUSER["notifs"])) { // todo: check logik
-        $all = true;
-        foreach ($cats as $cat) {
-            $all &= $cat['id'];
-            if (strpos($CURUSER["notifs"], "[cat" . $cat[id] . "]") !== False) {
-                $wherecatina[] = (int) $cat['id'];
-                $addparam .= "c$cat[id]=1&amp;";
-            }
+    $all = true;
+    foreach ($cats as $cat) {
+        $all &= $cat['id'];
+        if (strpos($CURUSER["notifs"], '[cat' . $cat['id'] . ']') !== false) {
+            $wherecatina[] = (int) $cat['id'];
+            $addparam .= "c$cat[id]=1&amp;";
         }
-
+    }
 }
 elseif ($category) {
     if (!is_valid_id($category)) {

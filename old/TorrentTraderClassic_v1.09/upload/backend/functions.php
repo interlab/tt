@@ -313,16 +313,19 @@ function tr($x,$y,$noesc=0) {
     print("<tr><td class=\"heading\" valign=\"top\" align=\"right\">$x</td><td valign=\"top\" align=left>$a</td></tr>\n");
 }
 
-function validfilename($name) {
+function validfilename($name)
+{
     return preg_match('/^[^\0-\x1f:\\\\\/?*\xff#<>|]+$/si', $name);
 }
 
-function validemail($email) {
+function validemail($email)
+{
     return preg_match('/^[\w.-]+@([\w.-]+\.)+[a-z]{2,6}$/is', $email);
 }
 
 //secure vars
-function sqlesc($x) {
+function sqlesc($x)
+{
 	$x = str_replace("'", "'", $x);
     $x = str_replace("--", "--", $x);
     $x = str_replace("UPDATE", "", $x);
@@ -341,18 +344,26 @@ function sqlesc($x) {
    return $x;
 }
 
-function sqlwildcardesc($x) {
+function sqlwildcardesc($x)
+{
     return str_replace(array("%","_"), array("\\%","\\_"), mysql_real_escape_string($x));
 }
 
-function urlparse($m) {
+function sqlwildcardesc2($x)
+{
+    return str_replace(['%', '_'], ['\\%', '\\_'], $x);
+}
+
+function urlparse($m)
+{
     $t = $m[0];
     if (preg_match(',^\w+://,', $t))
         return "<a href=\"$t\">$t</a>";
     return "<a href=\"http://$t\">$t</a>";
 }
 
-function parsedescr($d, $html) {
+function parsedescr($d, $html)
+{
     if (!$html)
     {
       $d = h($d);
@@ -361,7 +372,8 @@ function parsedescr($d, $html) {
     return $d;
 }
 
-function genbark($x,$y) {
+function genbark($x,$y)
+{
     stdhead($y);
     begin_frame("<font color=red>Error - ". h($y) ."</font>", 'center');
     print("<p>" . h($x) . "</p>\n");
@@ -370,7 +382,8 @@ function genbark($x,$y) {
     exit();
 }
 
-function mksecret($len = 20) {
+function mksecret($len = 20)
+{
     $ret = "";
     for ($i = 0; $i < $len; $i++)
         $ret .= chr(mt_rand(0, 255));
@@ -630,21 +643,33 @@ function commenttable($rows)
 				print("<td></td><TD>Posted: " . $row["added"] . "</td></tr><tr valign=top>\n");
 		}
 
+        $posterlink = '<a href="/account-details.php?id='.$row['user'].'"><b>'.$postername.'</b></a>';
         if ($privacylevel == "strong") {
 			if (get_user_class() >= UC_JMODERATOR) {
-				print("<td valign=top width=150 align=left><center><b>$postername</b><br><i>$title</i></center><br>
-                    <font color=green>Uploaded: $useruploaded<br>Downloaded: $userdownloaded</font><br>Forum Posts: $forumposts
-                    <br>Comments Posted: $commentposts<br><font color=green>Ratio: $userratio</font><br><br>
+				print("<td valign=top width=150 align=left><center>".$posterlink."
+                    <br><i>$title</i></center>
+                    <br><font color=green>Uploaded: $useruploaded
+                    <br>Downloaded: $userdownloaded</font>
+                    <br>Forum Posts: $forumposts
+                    <br>Comments Posted: $commentposts
+                    <br><font color=green>Ratio: $userratio</font><br><br>
                     <center><img width=80 height=80 src=$avatar></center><br></td>\n");
             } else {
-                print("<td valign=top width=150 align=left><center><b>$postername</b><br><i>$title</i></center>
-                    <br>Forum Posts: $forumposts<br>Comments Posted: $commentposts<br><br>
+                print("<td valign=top width=150 align=left><center>".$posterlink."
+                    <br><i>$title</i></center>
+                    <br>Forum Posts: $forumposts
+                    <br>Comments Posted: $commentposts<br><br>
                     <center><img width=80 height=80 src=$avatar></center><br></td>\n");
 			}
 		} else {
-            print("<td valign=top width=150 align=left><center><b>$postername</b><br><i>$title</i></center>
-                <br>Uploaded: $useruploaded<br>Downloaded: $userdownloaded<br>Forum Posts: $forumposts<br>Comments Posted: $commentposts
-                <br>Ratio: $userratio<br><br><center><img width=80 height=80 src=$avatar></center><br></td>\n");
+            print("<td valign=top width=150 align=left><center>".$posterlink."
+                <br><i>$title</i></center>
+                <br>Uploaded: $useruploaded
+                <br>Downloaded: $userdownloaded
+                <br>Forum Posts: $forumposts
+                <br>Comments Posted: $commentposts
+                <br>Ratio: $userratio<br><br>
+                <center><img width=80 height=80 src=$avatar></center><br></td>\n");
         }
 
         print("<td class=text>" . format_comment($row["text"]) . "<br><br>");
@@ -664,6 +689,7 @@ function searchfield($s)
     return preg_replace(array('/[^a-z0-9]/si', '/^\s*/s', '/\s*$/s', '/\s+/s'), array(" ", "", "", " "), $s);
 }
 
+// todo: cache result
 function genrelist()
 {
     return DB::fetchAll('SELECT id, name FROM categories ORDER BY sort_index, id');
@@ -798,15 +824,31 @@ function stdfoot()
   require_once ST_THEMES_DIR . '/' . $GLOBALS['ss_uri'] . '/footer.php';
 }
 
-function get_percent_completed_image($p) {
- $maxpx = "30"; // Maximum amount of pixels for the progress bar
+function get_percent_completed_image($p)
+{
+    $maxpx = "30"; // Maximum amount of pixels for the progress bar
 
- if ($p == 0) $progress = "<img src=\"" . $GLOBALS['SITEURL'] . "/images/progbar-rest.gif\" height=9 width=" . ($maxpx) . " />";
- if ($p >= 100) $progress = "<img src=\"" . $GLOBALS['SITEURL'] . "/images/progbar-green.gif\" height=9 width=" . ($maxpx) . " />";
- if ($p >= 1 && $p <= 30) $progress = "<img src=\"" . $GLOBALS['SITEURL'] . "/images/progbar-red.gif\" height=9 width=" . ($p*($maxpx/100)) . " /><img src=\"" . $GLOBALS['SITEURL'] . "/images/progbar-rest.gif\" height=9 width=" . ((100-$p)*($maxpx/100)) . " />";
- if ($p >= 31 && $p <= 65) $progress = "<img src=\"" . $GLOBALS['SITEURL'] . "/images/progbar-yellow.gif\" height=9 width=" . ($p*($maxpx/100)) . " /><img src=\"" . $GLOBALS['SITEURL'] . "/images/progbar-rest.gif\" height=9 width=" . ((100-$p)*($maxpx/100)) . " />";
- if ($p >= 66 && $p <= 99) $progress = "<img src=\"" . $GLOBALS['SITEURL'] . "/images/progbar-green.gif\" height=9 width=" . ($p*($maxpx/100)) . " /><img src=\"" . $GLOBALS['SITEURL'] . "/images/progbar-rest.gif\" height=9 width=" . ((100-$p)*($maxpx/100)) . " />";
- return "<img src=\"" . $GLOBALS['SITEURL'] . "/images/bar_left.gif\" />" . $progress ."<img src=\"" . $GLOBALS['SITEURL'] . "/images/bar_right.gif\" />";
+    if ($p == 0) $progress = "<img src=\"" . $GLOBALS['SITEURL'] .
+        "/images/progbar-rest.gif\" height=9 width=" . ($maxpx) . " />";
+
+    if ($p >= 100) $progress = "<img src=\"" . $GLOBALS['SITEURL'] .
+        "/images/progbar-green.gif\" height=9 width=" . ($maxpx) . " />";
+
+    if ($p >= 1 && $p <= 30) $progress = "<img src=\"" . $GLOBALS['SITEURL'] .
+        "/images/progbar-red.gif\" height=9 width=" . ($p*($maxpx/100)) .
+        " /><img src=\"" . $GLOBALS['SITEURL'] . "/images/progbar-rest.gif\" height=9 width=" .
+        ((100-$p)*($maxpx/100)) . " />";
+
+    if ($p >= 31 && $p <= 65) $progress = "<img src=\"" . $GLOBALS['SITEURL'] .
+        "/images/progbar-yellow.gif\" height=9 width=" . ($p*($maxpx/100)) .
+        " /><img src=\"" . $GLOBALS['SITEURL'] . "/images/progbar-rest.gif\" height=9 width=" . ((100-$p)*($maxpx/100)) . " />";
+
+    if ($p >= 66 && $p <= 99) $progress = "<img src=\"" . $GLOBALS['SITEURL'] .
+        "/images/progbar-green.gif\" height=9 width=" . ($p*($maxpx/100)) .
+        " /><img src=\"" . $GLOBALS['SITEURL'] . "/images/progbar-rest.gif\" height=9 width=" . ((100-$p)*($maxpx/100)) . " />";
+
+    return "<img src=\"" . $GLOBALS['SITEURL'] . "/images/bar_left.gif\" />" .
+        $progress ."<img src=\"" . $GLOBALS['SITEURL'] . "/images/bar_right.gif\" />";
 }
 
 function torrenttable($res, $variant = "index")
@@ -816,20 +858,23 @@ function torrenttable($res, $variant = "index")
 // Please only modify the section below if you understand PHP/MYSQL
 //
 	global $CURUSER, $MEMBERSONLY_WAIT, $MAXDISPLAYLENGTH, $WAITA, $WAITB, $WAITC, $WAITD;
-    global $GIGSA, $GIGSB, $GIGSC, $GIGSD, $RATIOA, $RATIOB, $RATIOC, $RATIOD;	
+    global $GIGSA, $GIGSB, $GIGSC, $GIGSD, $RATIOA, $RATIOB, $RATIOC, $RATIOD;
+    global $txt;
 	
     //ratio wait code
 	if ($CURUSER["class"] < UC_VIP && $CURUSER['donated'] == 0) {
 		$gigs = $CURUSER["uploaded"] / (1024*1024*1024);
 		$ratio = (($CURUSER["downloaded"] > 0) ? ($CURUSER["uploaded"] / $CURUSER["downloaded"]) : 0);
-		  if ($ratio < 0 || $gigs < 0) $wait = $WAITA;
-		  elseif ($ratio < $RATIOA || $gigs < $GIGSA) $wait = $WAITA;
-		  elseif ($ratio < $RATIOB || $gigs < $GIGSB) $wait = $WAITB;
-		  elseif ($ratio < $RATIOC || $gigs < $GIGSC) $wait = $WAITC;
-		  elseif ($ratio < $RATIOD || $gigs < $GIGSD) $wait = $WAITD;
-		  else $wait = 0;
-			}
-	//end ratio wait code
+        if ($ratio < 0 || $gigs < 0) $wait = $WAITA;
+        elseif ($ratio < $RATIOA || $gigs < $GIGSA) $wait = $WAITA;
+        elseif ($ratio < $RATIOB || $gigs < $GIGSB) $wait = $WAITB;
+        elseif ($ratio < $RATIOC || $gigs < $GIGSC) $wait = $WAITC;
+        elseif ($ratio < $RATIOD || $gigs < $GIGSD) $wait = $WAITD;
+        else $wait = 0;
+	} else {
+        $wait = 0;
+    }
+	// end ratio wait code
 ?>
 
 <table align=center cellpadding="0" cellspacing="0" class="ttable_headouter" width=100%>
@@ -838,6 +883,7 @@ function torrenttable($res, $variant = "index")
 
 <!---------------------START SORTING MOD------------------------->
 <?php
+$oldlink = '';
 $count_get = 0;
 foreach ($_GET as $get_name => $get_value) {
     if ($get_name != "sort" && $get_name != "type") {
@@ -854,111 +900,128 @@ if ($count_get > 0) {
     $oldlink = $oldlink . "&";
 }
 
-if ($_GET['sort'] == "1") {
+$_GET['sort'] = (int) ($_GET['sort'] ?? 0);
+
+// for torrent name
+if ($_GET['sort'] === 1) {
     if ($_GET['type'] == "desc") {
         $link1 = "asc";
     } else {
         $link1 = "desc";
     }
+} else {
+    $link1 = "asc";
 }
 
-if ($_GET['sort'] == "2") {
+// for torrent nfo
+if ($_GET['sort'] === 2) {
     if ($_GET['type'] == "desc") {
         $link2 = "asc";
     } else {
         $link2 = "desc";
     }
-}
-
-if ($_GET['sort'] == "3") {
-if ($_GET['type'] == "desc") {
- $link3 = "asc";
 } else {
- $link3 = "desc";
-}
+    $link2 = "desc";
 }
 
-if ($_GET['sort'] == "4") {
-if ($_GET['type'] == "desc") {
- $link4 = "asc";
+// for Comments
+if ($_GET['sort'] === 3) {
+    if ($_GET['type'] == "desc") {
+        $link3 = "asc";
+    } else {
+        $link3 = "desc";
+    }
 } else {
- $link4 = "desc";
-}
+    $link3 = "desc";
 }
 
-if ($_GET['sort'] == "5") {
-if ($_GET['type'] == "desc") {
- $link5 = "asc";
+// for Size
+if ($_GET['sort'] === 4) {
+    if ($_GET['type'] == "desc") {
+        $link4 = "asc";
+    } else {
+        $link4 = "desc";
+    }
 } else {
- $link5 = "desc";
-}
+    $link4 = "desc";
 }
 
-if ($_GET['sort'] == "6") {
-if ($_GET['type'] == "desc") {
- $link6 = "asc";
+// for Times Completed
+if ($_GET['sort'] === 5) {
+    if ($_GET['type'] == "desc") {
+        $link5 = "asc";
+    } else {
+        $link5 = "desc";
+    }
 } else {
- $link6 = "desc";
-}
+    $link5 = "desc";
 }
 
-if ($_GET['sort'] == "7") {
-if ($_GET['type'] == "desc") {
- $link7 = "asc";
+// for Seeders
+if ($_GET['sort'] === 6) {
+    if ($_GET['type'] == "desc") {
+        $link6 = "asc";
+    } else {
+        $link6 = "desc";
+    }
 } else {
- $link7 = "desc";
-}
+    $link6 = "desc";
 }
 
-if ($_GET['sort'] == "8") {
-if ($_GET['type'] == "desc") {
- $link8 = "asc";
+// for Leechers
+if ($_GET['sort'] === 7) {
+    if ($_GET['type'] == "desc") {
+        $link7 = "asc";
+    } else {
+        $link7 = "desc";
+    }
 } else {
- $link8 = "desc";
-}
+    $link7 = "desc";
 }
 
-if ($link1 == "") { $link1 = "asc"; } // for torrent name
-if ($link2 == "") { $link2 = "desc"; } // for torrent nfo
-if ($link3 == "") { $link3 = "desc"; } // for Comments
-if ($link4 == "") { $link4 = "desc"; } // for Size
-if ($link5 == "") { $link5 = "desc"; } // for Times Completed
-if ($link6 == "") { $link6 = "desc"; } // for Seeders
-if ($link7 == "") { $link7 = "desc"; } // for Leechers
-if ($link8 == "") { $link8 = "desc"; } //for Categories
+// for Categories
+if ($_GET['sort'] === 8) {
+    if ($_GET['type'] == "desc") {
+        $link8 = "asc";
+    } else {
+        $link8 = "desc";
+    }
+} else {
+    $link8 = "desc";
+}
+
 ?>
 
 <!--------------------END SORTING MOD--------------------->
 
-<td class=ttable_head><a href="?<?= $oldlink; ?>sort=8&type=<?= $link8; ?>"><?= TYPE ?></a></td>
-<td class=ttable_head><a href="?<?= $oldlink; ?>sort=1&type=<?= $link1; ?>"><?= NAME ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink; ?>sort=8&type=<?= $link8; ?>"><?= $txt['TYPE'] ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink; ?>sort=1&type=<?= $link1; ?>"><?= $txt['NAME'] ?></a></td>
 <?php if ($variant == "index"){
 echo "<td class=ttable_head>DL</td>";
 ?>
-<td class=ttable_head><a href="?<?= $oldlink; ?>sort=2&type=<?= $link2; ?>">NFO</a></td>
+<td class=ttable_head><a href="?<?= $oldlink; ?>sort=2&type=<?= $link2; ?>"><?= $txt['NFO'] ?></a></td>
 <?php
 }
-elseif ($variant == "mytorrents"){
-echo "<td class=ttable_head>" . EDIT . "</td>";
-echo "<td class=ttable_head>" . VISIBLE . "</td>";
-echo "<td class=ttable_head>" . BANNED . "</td>";
+elseif ($variant == "mytorrents") {
+    echo "<td class=ttable_head>" . $txt['EDIT'] . "</td>";
+    echo "<td class=ttable_head>" . $txt['VISIBLE'] . "</td>";
+    echo "<td class=ttable_head>" . $txt['BANNED'] . "</td>";
 }
 
-if ($MEMBERSONLY_WAIT){
-	if ($wait)
-		{
-			print("<td class=ttable_head>" . WAIT . "</td>\n");
-		}
+if ($MEMBERSONLY_WAIT) {
+	if ($wait) {
+		print("<td class=ttable_head>" . $txt['WAIT'] . "</td>\n");
+	}
 }
 ?>
-<td class=ttable_head><a href="?<?= $oldlink; ?>sort=3&type=<?= $link3; ?>"><?= COMMENTS ?></a></td>
-<!-- <td class=ttable_head><?= RATINGS ?></td> -->
-<td class=ttable_head><a href="?<?= $oldlink;?>sort=4&type=<?= $link4; ?>"><?= SIZE ?></a></td>
-<!-- <td class=ttable_head><?= FILES ?></td> -->
-<td class=ttable_head><a href="?<?= $oldlink;?>sort=5&type=<?= $link5; ?>"><?= COMPLETED ?></a></td>
-<td class=ttable_head><a href="?<?= $oldlink;?>sort=6&type=<?= $link6; ?>"><?= SEEDS ?></a></td>
-<td class=ttable_head><a href="?<?= $oldlink;?>sort=7&type=<?= $link7; ?>"><?= LEECH ?></a></td>
-<td class=ttable_head><?= HEALTH ?></td>
+<td class=ttable_head><a href="?<?= $oldlink; ?>sort=3&type=<?= $link3; ?>"><?= $txt['COMMENTS'] ?></a></td>
+<!-- <td class=ttable_head><?= $txt['RATINGS'] ?></td> -->
+<td class=ttable_head><a href="?<?= $oldlink;?>sort=4&type=<?= $link4; ?>"><?= $txt['SIZE'] ?></a></td>
+<!-- <td class=ttable_head><?= $txt['FILES'] ?></td> -->
+<td class=ttable_head><a href="?<?= $oldlink;?>sort=5&type=<?= $link5; ?>"><?= $txt['COMPLETED'] ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink;?>sort=6&type=<?= $link6; ?>"><?= $txt['SEEDS'] ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink;?>sort=7&type=<?= $link7; ?>"><?= $txt['LEECH'] ?></a></td>
+<td class=ttable_head><?= $txt['HEALTH'] ?></td>
 
 <?php
 	print("</tr>\n");
@@ -970,10 +1033,12 @@ if ($MEMBERSONLY_WAIT){
 		print("<td class=ttable_col1 align=center>");
 		if (isset($row["cat_name"])) {
 			print("<a href=\"browse.php?cat=" . $row["category"] . "\">");
-			if (isset($row["cat_pic"]) && $row["cat_pic"] != "")
-				print("<img border=\"0\"src=\"" . $GLOBALS['SITEURL'] . "/images/categories/" . $row["cat_pic"] . "\" alt=\"" . $row["cat_name"] . "\" />");
-			else
+			if (isset($row["cat_pic"]) && $row["cat_pic"] != "") {
+				print("<img border=\"0\"src=\"" . $GLOBALS['SITEURL'] .
+                    "/images/categories/" . $row["cat_pic"] . "\" alt=\"" . $row["cat_name"] . "\" />");
+			} else {
 				print($row["cat_name"]);
+            }
 			print("</a>");
 		}
 		else
@@ -982,41 +1047,50 @@ if ($MEMBERSONLY_WAIT){
 
 		// MODIFICATION TO DISPLAY ONLY x FIRST CHARACTERS IN TORRENT NAME !
 
-$smallname =substr(h($row["name"]) , 0, $MAXDISPLAYLENGTH);
-if ($smallname != h($row["name"])) { $smallname .= '...' ; }
+        $smallname = substr(h($row["name"]) , 0, $MAXDISPLAYLENGTH);
+        if ($smallname != h($row["name"])) { $smallname .= '...' ; }
 
-$last_browse = $CURUSER["last_browse"];
-$time_now = gmtime();
-if ($last_browse > $time_now || !is_numeric($last_browse)) {
-  $last_browse=$time_now;
-}
-if (sql_timestamp_to_unix_timestamp($row["added"]) >= $last_browse){
-	$dispname = "<b>" . $smallname . "</b> <b><font color=red>(NEW)</font></b>";
-}else{
-	$dispname = "<b>" . $smallname . "</b>";
-}
+        $last_browse = $CURUSER["last_browse"];
+        $time_now = gmtime();
+        if ($last_browse > $time_now || !is_numeric($last_browse)) {
+            $last_browse=$time_now;
+        }
+        if (sql_timestamp_to_unix_timestamp($row["added"]) >= $last_browse){
+            $dispname = "<b>" . $smallname . "</b> <b><font color=red>(NEW)</font></b>";
+        } else {
+            $dispname = "<b>" . $smallname . "</b>";
+        }
 
-		print("<td class=ttable_col2> <img border=0 src=" . $GLOBALS['SITEURL'] . "/images/cross.gif id=expandoGif$id onclick=\"expand($id)\" alt=\"show/hide\"> <a  title=\"".$row["name"]."\" href=\"torrents-details.php?");
+		print("<td class=ttable_col2> <img border=0 src=" . $GLOBALS['SITEURL'] .
+            "/images/cross.gif id=expandoGif$id onclick=\"expand($id)\" alt=\"show/hide\"> <a  title=\"".$row["name"].
+            "\" href=\"torrents-details.php?");
 
         if ($variant == "mytorrents")
 			print("returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;");
-		print("id=$id");
+
+        print("id=$id");
 		if ($variant == "index")
 			print("&amp;hit=1");
-		print("\">$dispname</a></td>\n");
 
-		if ($variant == "index"){
-			print("<td class=ttable_col1 align=center><a href=\"download.php?id=$id&name=" . rawurlencode($row["filename"]) . "\"><img src=" . $GLOBALS['SITEURL'] . "/images/icon_download.gif border=0 alt=\"Download .torrent\"></a></td>");
+        print("\">$dispname</a></td>\n");
 
-			$nfo = h($row["nfo"]);
+		if ($variant == "index") {
+			print("<td class=ttable_col1 align=center><a href=\"download.php?id=$id&name=" .
+                rawurlencode($row["filename"]) . "\"><img src=" . $GLOBALS['SITEURL'] .
+                "/images/icon_download.gif border=0 alt=\"Download .torrent\"></a></td>");
+
+            $nfo = h($row["nfo"]);
 			if (!$nfo) {
 				print("<td class=ttable_col1 align=center>-</td>");
-			}else{
-				print("<td class=ttable_col1 align=center><a href=torrents-viewnfo.php?id=$row[id]><img  src=" . $GLOBALS['SITEURL'] . "/images/icon_nfo.gif border=0 alt='View NFO'></a></td>");
+			} else {
+				print("<td class=ttable_col1 align=center><a href=torrents-viewnfo.php?id=$row[id]><img  src=" .
+                    $GLOBALS['SITEURL'] . "/images/icon_nfo.gif border=0 alt='View NFO'></a></td>");
 			}
 		}
-		elseif ($variant == "mytorrents")
-			print("<td class=ttable_colx align=center><a href=\"torrents-edit.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=" . $row["id"] . "\"><font size=1 face=Verdana>EDIT</a></td>\n");
+		elseif ($variant == "mytorrents") {
+			print("<td class=ttable_colx align=center><a href=\"torrents-edit.php?returnto=" .
+                urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=" . $row["id"] . "\"><font size=1 face=Verdana>EDIT</a></td>\n");
+        }
 
 		if ($variant == "mytorrents") {
 			print("<td class=ttable_colx align=center>");
@@ -1036,39 +1110,40 @@ if (sql_timestamp_to_unix_timestamp($row["added"]) >= $last_browse){
 			print("</td>\n");
 		}
 
-//START RATIO WAIT HACK
-if ($MEMBERSONLY_WAIT){
-		if ($wait)	{
-			$elapsed = floor((gmtime() - strtotime($row["added"])) / 3600);
-	        if ($elapsed < $wait)
-	        {
-	          $color = dechex(floor(127*($wait - $elapsed)/48 + 128)*65536);
-	          print("<td align=center class=ttable_colx><nobr><a href=\"faq.php\"><font color=\"$color\">" . number_format($wait - $elapsed) . " h</font></a></nobr></td>\n");
-			}
-	        else
-	          print("<td align=center class=ttable_colx><nobr>-</nobr></td>\n");
+        // START RATIO WAIT HACK
+        if ($MEMBERSONLY_WAIT){
+            if ($wait)	{
+                $elapsed = floor((gmtime() - strtotime($row["added"])) / 3600);
+                if ($elapsed < $wait) {
+                    $color = dechex(floor(127*($wait - $elapsed)/48 + 128)*65536);
+                    print("<td align=center class=ttable_colx><nobr><a href=\"faq.php\"><font color=\"$color\">" .
+                    number_format($wait - $elapsed) . " h</font></a></nobr></td>\n");
+                }
+                else
+                    print("<td align=center class=ttable_colx><nobr>-</nobr></td>\n");
+            }
         }
-}
 //END RATIO WAIT HACK
 
-		print("<td class=ttable_col1 align=center><font size=1 face=Verdana><a href=torrents-comment.php?id=$id>" . $row["comments"] . "</a></td>\n");
+		print("<td class=ttable_col1 align=center><font size=1 face=Verdana><a href=torrents-comment.php?id=$id>" .
+            $row["comments"] . "</a></td>\n");
 
-	/*	print("<td class=ttable_col2 align=center>");
-		if (!isset($row["rating"]))
-			print("---");
-		else {
-			$rating = round($row["rating"] * 2) / 2;
-			$rating = ratingpic($row["rating"]);
-			if (!isset($rating))
-				print("-");
-			else
-				print($rating);
-		}
-		print("</td>\n");*/
+        /*	print("<td class=ttable_col2 align=center>");
+            if (!isset($row["rating"]))
+                print("---");
+            else {
+                $rating = round($row["rating"] * 2) / 2;
+                $rating = ratingpic($row["rating"]);
+                if (!isset($rating))
+                    print("-");
+                else
+                    print($rating);
+            }
+            print("</td>\n");*/
 
 		print("<td class=ttable_col2 align=center><font size=1 face=Verdana>" . mksize($row["size"]) . "</td>\n");
 
-			/*	if ($row["type"] == "single")
+		/*	if ($row["type"] == "single")
 			print("<td class=alt2 align=center><font size=1 face=Verdana>" . $row["numfiles"] . "</td>\n");
 		else {
 			if ($variant == "index")
@@ -1097,90 +1172,120 @@ if ($MEMBERSONLY_WAIT){
 		else
 			print("<td class=ttable_col1 align=center><font color=red><B>" . $row["leechers"] . "</b></td>\n");
 
-// Progressbar Mod
-$seedersProgressbar = [];
-$leechersProgressbar = [];
-$resProgressbar = mysql_query("SELECT p.seeder, p.to_go, t.size FROM torrents AS t LEFT JOIN peers AS p ON t.id = p.torrent WHERE  p.torrent = '$id'") or sqlerr();
-$progressPerTorrent = 0;
-$iProgressbar = 0;
-while ($rowProgressbar = mysql_fetch_array($resProgressbar)) {
-    $progressPerTorrent += sprintf("%.2f", 100 * (1 - ($rowProgressbar["to_go"] / $rowProgressbar["size"])));    
-    $iProgressbar++;
-}
-if ($iProgressbar == 0)
-    $iProgressbar = 1;
-$progressTotal = sprintf("%.2f", $progressPerTorrent / $iProgressbar);
-$picProgress = get_percent_completed_image(floor($progressTotal))." (".round($progressTotal)."%)";
-print("<td class=ttable_col2 align=left>$picProgress</td>\n");
 
-/*
-End of modification
-*/
+        // Progressbar Mod
+        $seedersProgressbar = [];
+        $leechersProgressbar = [];
+        $resProgressbar = DB::query('
+            SELECT p.seeder, p.to_go, t.size
+            FROM torrents AS t
+                LEFT JOIN peers AS p ON t.id = p.torrent
+            WHERE p.torrent = ' . $id);
+        $progressPerTorrent = 0;
+        $iProgressbar = 0;
+        while ($rowpb = $resProgressbar->fetch()) {
+            $progressPerTorrent += sprintf("%.2f", 100 * (1 - ($rowpb["to_go"] / $rowpb["size"])));    
+            $iProgressbar++;
+        }
 
+        if (! $iProgressbar) {
+            $iProgressbar = 1;
+        }
+        $progressTotal = sprintf("%.2f", $progressPerTorrent / $iProgressbar);
+        $picProgress = get_percent_completed_image(floor($progressTotal))." (".round($progressTotal)."%)";
+        print("<td class=ttable_col2 align=left>$picProgress</td>\n");
+        // End of modification
 
-		print("</tr>\n");
-		print("<tr><td class=alt1 colspan=11><div id=\"descr$id\" style=\"margin-left: 70px; display: none\">\n");
-		print("<table width=97% border=0 cellspacing=0 cellpadding=0>\n");
-		print("<tr><td><b>Date Added:</b></td>\n");
-		print("<td>" . str_replace(" ", "&nbsp;at&nbsp;", $row["added"]) . "</td>\n");
-			if($row["privacy"] == "strong" && get_user_class() < UC_JMODERATOR AND $CURUSER["id"] != $row["owner"]){
+		print("</tr>
+            <tr><td class=alt1 colspan=11><div id=\"descr$id\" style=\"margin-left: 70px; display: none\">
+            <table width=97% border=0 cellspacing=0 cellpadding=0>
+            <tr><td><b>Date Added:</b></td>
+            <td>" . str_replace(" ", "&nbsp;at&nbsp;", $row["added"]) . "</td>\n");
+		if ($row["privacy"] == "strong" && get_user_class() < UC_JMODERATOR AND $CURUSER["id"] != $row["owner"]) {
 			print("</tr><tr><td><b>Added By:</b></td><td>Anonymous</td></tr><tr><td><b>Comments</b></td>\n");
-			}else{
-			print("</tr><tr><td><b>Added By:</b></td><td><a href=account-details.php?id=" . $row["owner"] . ">" . (isset($row["username"]) ? h($row["username"]) : "<i>(unknown)</i>") . "</a></td></tr><tr><td><b>Comments</b></td>\n");
-			}
-		print("<td>There are <b><a href=\"torrents-details.php?id=$id#startcomments\">" . $row["comments"] . "</a></b> comments for this file.\n");
-		print("</td>\n");
-		print("</tr><tr><td><b>Status:</b></td>\n");
-		print("<td>\n");
+		} else {
+			print("</tr><tr><td><b>Added By:</b></td><td><a href=account-details.php?id=" . $row["owner"] .
+                ">" . (isset($row["username"]) ? h($row["username"]) : "<i>(unknown)</i>") . "</a></td></tr><tr><td><b>Comments</b></td>\n");
+		}
+		print("<td>There are <b><a href=\"torrents-details.php?id=$id#startcomments\">" . $row["comments"] . "</a></b> comments for this file.
+            </td>
+            </tr><tr><td><b>Status:</b></td>
+            <td>\n");
 
 		if ($row['seeders'] == 0 && $row['leechers'] == 0) {
 			// no seeders/leechers = innactive
-			echo '<font color=#808080><b>INACTIVE</b></font>- This release is most probably dead (<b>' . $row['seeders'] . '</b> seeds and <b>' . $row['leechers'] . '</b> leechers).';
+			echo '<font color=#808080><b>INACTIVE</b></font>- This release is most probably dead (<b>' . $row['seeders'] .
+                '</b> seeds and <b>' . $row['leechers'] . '</b> leechers).';
 		} elseif($row['seeders'] == 0 && $row['leechers']) {
 			// some leechers but no seed = very bad
-			echo '<font color=#CC0000><b>CAUTION</b></font>- The release is active (<b>' . $row['leechers'] . '</b>)but there are no complete versions for the file availble.';
+			echo '<font color=#CC0000><b>CAUTION</b></font>- The release is active (<b>' . $row['leechers'] .
+                '</b>)but there are no complete versions for the file availble.';
 		} elseif($row['seeders'] < 2) {
 			// few seeds = poor
-			echo '<font color=#808000><b>POOR</b></font>- This release is active but there are only <b>' . $row['seeders'] . '</b> seeds. This release may be slow to download.';
+			echo '<font color=#808000><b>POOR</b></font>- This release is active but there are only <b>' . $row['seeders'] .
+                '</b> seeds. This release may be slow to download.';
 		} else {
 			// working fine
-			echo '<font color=#008000><b>GOOD</b></font>- This release is active (<b>' . $row['seeders'] . '</b> seeds and <b>' . $row['leechers'] . '</b> leechers) and should download within a few hours.';
+			echo '<font color=#008000><b>GOOD</b></font>- This release is active (<b>' . $row['seeders'] . '</b> seeds and <b>' .
+                $row['leechers'] . '</b> leechers) and should download within a few hours.';
 		}
-		//speed mod
-		$resSpeed = mysql_query("SELECT seeders,leechers FROM torrents WHERE $where visible='yes' and id = $id ORDER BY added DESC LIMIT 15") or sqlerr(__FILE__, __LINE__); 
-		if ($rowTmp = mysql_fetch_row($resSpeed))
-			list($seedersTmp,$leechersTmp) = $rowTmp;  
-		if ($seedersTmp >= 1 && $leechersTmp >= 1){ 
-		   $speedQ = mysql_query("SELECT (t.size * t.times_completed + SUM(p.downloaded)) / (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(added)) AS totalspeed FROM torrents AS t LEFT JOIN peers AS p ON t.id = p.torrent WHERE p.seeder = 'no' AND p.torrent = '$id' GROUP BY t.id ORDER BY added ASC LIMIT 15") or sqlerr(__FILE__, __LINE__); 
-		   $a = mysql_fetch_assoc($speedQ); 
-		   $totalspeed = mksize($a["totalspeed"]) . "/s"; 
-		} 
-		else 
-		$totalspeed = "Torrent inactive";  
-			print("<tr><td><b>Total Speed:</b></td>\n");
-			print("<td><b><font color=green>");
-			echo $totalspeed;
-			print("</font></b></td></tr>");//speed end
 
-		print("</td></tr></table>\n");
-		print("</div>\n");
+		// speed mod
+		$rowTmp = DB::fetchArray("
+            SELECT seeders,leechers
+            FROM torrents
+            WHERE visible='yes'
+                AND id = $id
+            ORDER BY added DESC
+            LIMIT 15");
+
+		[$seedersTmp, $leechersTmp] = $rowTmp ? $rowTmp : [0, 0];
+
+		if ($seedersTmp && $leechersTmp) {
+		   $a = DB::fetchAssoc("
+            SELECT (t.size * t.times_completed + SUM(p.downloaded)) / (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(added)) AS totalspeed
+            FROM torrents AS t
+                LEFT JOIN peers AS p ON t.id = p.torrent
+            WHERE p.seeder = 'no'
+                AND p.torrent = '$id'
+            GROUP BY t.id
+            ORDER BY added ASC
+            LIMIT 15"); 
+		   $totalspeed = mksize($a["totalspeed"]) . "/s";
+		} else {
+            $totalspeed = "Torrent inactive";
+        }
+        echo '
+            <tr><td><b>Total Speed:</b></td>
+            <td><b><font color=green>', $totalspeed, '
+            </font></b></td></tr>';
+        // speed end
+
+		print("</td></tr></table>
+            </div>\n");
 	}
 
 	print("</table></td></table>\n");
 
-    return $rows;
+    // return $rows; // ???
 }
 
-function hit_start() {
+function hit_start()
+{
     return;
+
     global $RUNTIME_START, $RUNTIME_TIMES;
+
     $RUNTIME_TIMES = posix_times();
     $RUNTIME_START = gettimeofday();
 }
 
-function hit_count() {
+function hit_count()
+{
     return;
+
     global $RUNTIME_CLAUSE;
+
     if (preg_match(',([^/]+)$,', $_SERVER["SCRIPT_NAME"], $matches))
         $path = $matches[1];
     else
@@ -1196,9 +1301,12 @@ function hit_count() {
         mysql_query($update);
 }
 
-function hit_end() {
+function hit_end()
+{
     return;
+
     global $RUNTIME_START, $RUNTIME_CLAUSE, $RUNTIME_TIMES;
+
     if (empty($RUNTIME_CLAUSE))
         return;
     $now = gettimeofday();
@@ -1209,12 +1317,15 @@ function hit_end() {
     mysql_query("UPDATE hits SET runs = runs + 1, runtime = runtime + $runtime, user_cpu = user_cpu + $user, sys_cpu = sys_cpu + $sys WHERE $RUNTIME_CLAUSE");
 }
 
-function hash_pad($hash) {
+function hash_pad($hash)
+{
     return str_pad($hash, 20);
 }
 
-function hash_where($name, $hash) {
+function hash_where($name, $hash)
+{
     $shhash = preg_replace('/ *$/s', "", $hash);
+
     return "($name = " . sqlesc($hash) . " OR $name = " . sqlesc($shhash) . ")";
 }
 
@@ -1226,18 +1337,21 @@ function get_row_count($table, $suffix = '')
 {
     $suffix = !empty($suffix) ? ' '.$suffix : '';
     $num = DB::fetchColumn('
-    SELECT COUNT(*)
-    FROM '.$table.$suffix, [], 0);
+        SELECT COUNT(*)
+        FROM '. $table . $suffix);
 
     return $num;
 }
 
-function show_error_msg($title, $message, $wrapper = "1") {
-    if ($wrapper)
+function show_error_msg($title, $message, $wrapper = "1")
+{
+    if ($wrapper) {
 		stdhead($title);
-		begin_frame("<font color=red>". h($title) ."</font>");
-		echo "<p><CENTER><B>$message</B></CENTER></p>";
-		end_frame();
+    }
+
+    begin_frame("<font color=red>". h($title) ."</font>");
+	echo "<p><CENTER><B>$message</B></CENTER></p>";
+	end_frame();
 
     if ($wrapper) {
 		stdfoot();
@@ -1246,32 +1360,36 @@ function show_error_msg($title, $message, $wrapper = "1") {
 }
 
 
-function stderr($heading = "", $text, $sort = "") {
-  stdhead("$sort: $heading"); 
-  begin_frame("<font color=red>$sort: $heading</font>", 'center');
-  echo $text;
-  end_frame();
-  stdfoot();
-  die;
+function stderr($heading = "", $text, $sort = "")
+{
+    stdhead("$sort: $heading"); 
+    begin_frame("<font color=red>$sort: $heading</font>", 'center');
+    echo $text;
+    end_frame();
+    stdfoot();
+    die;
 }
 
 function bark($heading = "Error", $text, $sort = "Error")
 {
-  stdhead("$sort: $heading");
-  begin_frame("<font color=red>$sort: $heading</font>", 'center');
-  echo $text;
-  end_frame();
-  stdfoot();
-  die;
+    stdhead("$sort: $heading");
+    begin_frame("<font color=red>$sort: $heading</font>", 'center');
+    echo $text;
+    end_frame();
+    stdfoot();
+    die;
 }
 
-function bark2($heading = "Error", $text, $sort = "Error") {
+function bark2($heading = "Error", $text, $sort = "Error")
+{
 	print("<div align=\"center\"><br /><table border=\"0\" width=\"500\" cellspacing=\"0\" cellpadding=\"0\"><tr>\n");
 	print("<td bgcolor=\"#FFFFFF\" align=\"center\" style=\"border-style: dotted; border-width: 1px\" bordercolor=\"#CC0000\">\n");
 	print("<font face=\"Verdana\" size=\"1\"><font color=\"#CC0000\"><b>$heading</b></font><br />$text</font></td>\n");
 	print("</tr></table></div><br />\n");
 }
-function sqlerr($query = "") {
+
+function sqlerr($query = "")
+{
 	stdhead();
 	begin_frame("MYSQL Error");
 	print("<div align=center><br><table border=0 width=500 cellspacing=0 cellpadding=0><tr>\n");
@@ -1352,11 +1470,12 @@ function getDonations()
 // Returns the current time in GMT in MySQL compatible format.
 function get_date_time($timestamp = 0)
 {
-if ($timestamp)
-return date("Y-m-d H:i:s", $timestamp);
-else
-  $idcookie = $_COOKIE['uid'];
-  return gmdate("Y-m-d H:i:s", time() + (60 * get_user_timezone($idcookie)));
+    if ($timestamp)
+        return date("Y-m-d H:i:s", $timestamp);
+    else
+        $idcookie = $_COOKIE['uid'];
+
+    return gmdate("Y-m-d H:i:s", time() + (60 * get_user_timezone($idcookie)));
 }
 
 function encodehtml($s, $linebreaks = true)
@@ -1374,10 +1493,10 @@ function get_dt_num()
 
 function format_urls($s)
 {
-return preg_replace(
-    "/(\A|[^=\]'\"a-zA-Z0-9])((http|ftp|https|ftps|irc):\/\/[^<>\s]+)/i",
-    "\\1<a href=redirect.php?url=\\2>\\2</a>", $s);
-//  return preg_replace( "/(?<!<a href=\")((http|ftp)+(s)?:\/\/[^<>\s]+)/i", "<a href=\"\\0\">\\0</a>", $txt );
+    return preg_replace(
+        "/(\A|[^=\]'\"a-zA-Z0-9])((http|ftp|https|ftps|irc):\/\/[^<>\s]+)/i",
+        "\\1<a href=redirect.php?url=\\2>\\2</a>", $s);
+    //  return preg_replace( "/(?<!<a href=\")((http|ftp)+(s)?:\/\/[^<>\s]+)/i", "<a href=\"\\0\">\\0</a>", $txt );
 }
 
 function format_comment($text, $strip_html = true, $strip_slash = true)
@@ -1496,84 +1615,59 @@ const UC_ADMINISTRATOR = 5;
 
 function get_user_class()
 {
-  global $CURUSER;
-  return $CURUSER["class"];
+    global $CURUSER;
+
+    return $CURUSER["class"];
 }
 
 function get_user_class_name($class)
 {
-  switch ($class)
-  {
-    case UC_USER: return "User";
+    switch ($class) {
+        case UC_USER: return "User";
 
-	case UC_UPLOADER: return "Uploader";
+        case UC_UPLOADER: return "Uploader";
 
-    case UC_VIP: return "VIP";
+        case UC_VIP: return "VIP";
 
-	case UC_JMODERATOR: return "Moderator";
+        case UC_JMODERATOR: return "Moderator";
 
-    case UC_MODERATOR: return "Super Moderator";
+        case UC_MODERATOR: return "Super Moderator";
 
-    case UC_ADMINISTRATOR: return "Administrator";
+        case UC_ADMINISTRATOR: return "Administrator";
 
     }
-  return "";
+  
+    return "";
 }
 
 function is_valid_user_class($class)
 {
-  return is_numeric($class) && floor($class) == $class && $class >= UC_USER && $class <= UC_ADMINISTRATOR;
+    return is_numeric($class) && floor($class) == $class && $class >= UC_USER && $class <= UC_ADMINISTRATOR;
 }
 
 function is_valid_id($id)
 {
-  return is_numeric($id) && ($id > 0) && (floor($id) == $id);
+    return is_numeric($id) && ($id > 0) && (floor($id) == $id);
 }
 
 function begin_table()
-  {
-
+{
     print("<table align=center cellpadding=\"0\" cellspacing=\"0\" class=\"ttable_headouter\" width=100%><tr><td>"
          ."<table align=center cellpadding=\"0\" cellspacing=\"0\" class=\"ttable_headinner\" width=100%>\n"); 
-  }
+}
 
-  function end_table()
-  {
+function end_table()
+{
     print("</table></td></tr></table>\n");
-  }
-
-  //-------- Inserts a smilies frame
-  //         (move to globals)
-
-  /*
-  function insert_smilies_frame()
-  {
-      global $smilies;
-
-    begin_frame("Smilies", true);
-
-    begin_table(false, 5);
-
-    print("<tr><td class=colhead>Type...</td><td class=colhead>To make a...</td></tr>\n");
-
-    foreach ($smilies as $code => $url) {
-        print("<tr><td>$code</td><td><img src=" . $GLOBALS['SITEURL'] . "/images/smilies/$url></td>\n");
-    }
-
-    end_table();
-
-    end_frame();
-  }
-  */
-
+}
 
 function sql_timestamp_to_unix_timestamp($s)
 {
-  return mktime(substr($s, 11, 2), substr($s, 14, 2), substr($s, 17, 2), substr($s, 5, 2), substr($s, 8, 2), substr($s, 0, 4));
+    return mktime(substr($s, 11, 2), substr($s, 14, 2), substr($s, 17, 2), substr($s, 5, 2), substr($s, 8, 2), substr($s, 0, 4));
 }
 
-  function get_ratio_color($ratio)
-  {
+function get_ratio_color($ratio)
+{
     if ($ratio < 0.1) return "#ff0000";
     if ($ratio < 0.2) return "#ee0000";
     if ($ratio < 0.3) return "#dd0000";
@@ -1584,11 +1678,12 @@ function sql_timestamp_to_unix_timestamp($s)
     if ($ratio < 0.8) return "#880000";
     if ($ratio < 0.9) return "#770000";
     if ($ratio < 1) return "#660000";
-    return "#000000";
-  }
 
-  function get_slr_color($ratio)
-  {
+    return "#000000";
+}
+
+function get_slr_color($ratio)
+{
     if ($ratio < 0.025) return "#ff0000";
     if ($ratio < 0.05) return "#ee0000";
     if ($ratio < 0.075) return "#dd0000";
@@ -1604,8 +1699,9 @@ function sql_timestamp_to_unix_timestamp($s)
     if ($ratio < 0.325) return "#330000";
     if ($ratio < 0.35) return "#220000";
     if ($ratio < 0.375) return "#110000";
+
     return "#000000";
-  }
+}
 
 function write_log($text)
 {
@@ -1635,13 +1731,14 @@ function get_elapsed_time($ts)
 }
 
 if (! function_exists('hex2bin')) {
-    function hex2bin($hexdata) {
-      $bindata = '';
-      for ($i=0; $i<strlen($hexdata); $i+=2) {
-        $bindata.=chr(hexdec(substr($hexdata,$i,2)));
-      }
-     
-      return $bindata;
+    function hex2bin($hexdata)
+    {
+        $bindata = '';
+        for ($i=0; $i<strlen($hexdata); $i+=2) {
+            $bindata.=chr(hexdec(substr($hexdata,$i,2)));
+        }
+
+        return $bindata;
     }
 }
 
@@ -1665,7 +1762,8 @@ function guestadd()
     }
 }
 
-function getguests() {
+function getguests()
+{
     $ip = $_SERVER["REMOTE_ADDR"];
     $past = time()-2400;
 	@mysql_query("DELETE FROM guests WHERE time < $past");
@@ -1673,7 +1771,8 @@ function getguests() {
 	return $guests;
 }
 
-function str_contains($haystack, $needle, $ignoreCase = false) {
+function str_contains($haystack, $needle, $ignoreCase = false)
+{
    if ($ignoreCase) {
        $haystack = strtolower($haystack);
        $needle  = strtolower($needle);
@@ -1682,17 +1781,131 @@ function str_contains($haystack, $needle, $ignoreCase = false) {
    return ($needlePos === false ? false : ($needlePos+1));
 } 
 
-function time_ago($addtime) {
+function time_ago($addtime)
+{
    $addtime = get_elapsed_time(sql_timestamp_to_unix_timestamp($addtime));
    return $addtime;
 }
 
-function CutName ($vTxt, $Car) {
+function CutName ($vTxt, $Car)
+{
 	while(strlen($vTxt) > $Car) {
 		return substr($vTxt, 0, $Car) . "...";
 	} return $vTxt;
 }
 
-function textbbcode($form,$name,$content="") {?><script language=javascript>function SmileIT(smile,form,text){  document.forms[form].elements[text].value = document.forms[form].elements[text].value+" "+smile+" ";  document.forms[form].elements[text].focus();}function PopMoreSmiles(form,name) {        link='moresmiles.php?form='+form+'&text='+name        newWin=window.open(link,'moresmile','height=500,width=300,resizable=no,scrollbars=yes');        if (window.focus) {newWin.focus()}}function BBTag(tag,s,text,form){switch(tag)  {  case '[quote]':  if (document.forms[form].elements[s].value=="QUOTE ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[quote]";      document.forms[form].elements[s].value="QUOTE*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/quote]";         document.forms[form].elements[s].value="QUOTE ";         }      break;  case '[img]':  if (document.forms[form].elements[s].value=="IMG ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[img]";      document.forms[form].elements[s].value="IMG*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/img]";         document.forms[form].elements[s].value="IMG ";         }      break;  case '[url]':  if (document.forms[form].elements[s].value=="URL ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[url]";      document.forms[form].elements[s].value="URL*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/url]";         document.forms[form].elements[s].value="URL ";         }      break;  case '[*]':  if (document.forms[form].elements[s].value=="List ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[*]";      }      break;  case '':  if (document.forms[form].elements[s].value=="B ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[b]";      document.forms[form].elements[s].value="B*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";         document.forms[form].elements[s].value="B ";         }      break;  case '':  if (document.forms[form].elements[s].value=="I ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[i]";      document.forms[form].elements[s].value="I*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";         document.forms[form].elements[s].value="I ";         }      break;  case '':  if (document.forms[form].elements[s].value=="U ")     {      document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[u]";      document.forms[form].elements[s].value="U*";      }     else         {         document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";         document.forms[form].elements[s].value="U ";         }      break;  }  document.forms[form].elements[text].focus();}</script><table width="100%" style='margin: 3px' cellpadding="0" cellspacing="0">  <tr>    <td class=embedded colspan=3>    <table cellpadding="2" cellspacing="1">    <tr>    <td class=embedded><input style="font-weight: bold;" type="button" name="bold" value="B " onclick="javascript: BBTag('[b]','bold','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input style="font-style: italic;" type="button" name="italic" value="I " onclick="javascript: BBTag('[i]','italic','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input style="text-decoration: underline;" type="button" name="underline" value="U " onclick="javascript: BBTag('[u]','underline','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input type="button" name="li" value="List " onclick="javascript: BBTag('[*]','li','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input type="button" name="quote" value="QUOTE " onclick="javascript: BBTag('[quote]','quote','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input type="button" name="url" value="URL " onclick="javascript: BBTag('[url]','url','<?= $name; ?>','<?= $form; ?>')" /></td>    <td class=embedded><input type="button" name="img" value="IMG " onclick="javascript: BBTag('[img]','img','<?= $name; ?>','<?= $form; ?>')" /></td>    </tr>    </table>    </td>  </tr>  <tr>    <td class=embedded>    <textarea name="<?= $name; ?>" rows="15" cols="80"><?= $content; ?></textarea>    </td>    <td class=embedded>    <table cellpadding="3" cellspacing="1">    <?php global $smilies;    while ((list($code, $url) = each($smilies)) && $count<36) {       if ($count % 4==0)          print("<tr>");          print("\n<td class=embedded style='padding: 3px; margin: 2px'><a href=\"javascript: SmileIT('".str_replace("'","\'",$code)."','$form','$name')\"><img border=0 src=pic/smilies/".$url."></a></td>");          $count++;       if ($count % 4==0)          print("</tr>");    }    ?>    </table> <center><a href="javascript: PopMoreSmiles('<?= $form; ?>','<?= $name; ?>')"><?= MORE_SMILES;?></a></center>    </td>  </tr></table>
+function textbbcode($form,$name,$content="")
+{
+    ?><script language=javascript>
+    function SmileIT(smile,form,text)
+    {
+        document.forms[form].elements[text].value = document.forms[form].elements[text].value+" "+smile+" ";
+        document.forms[form].elements[text].focus();
+    }
+    function PopMoreSmiles(form,name)
+    {
+        link='moresmiles.php?form='+form+'&text='+name
+        newWin=window.open(link,'moresmile','height=500,width=300,resizable=no,scrollbars=yes');
+        if (window.focus) {newWin.focus()}
+    }
+    function BBTag(tag,s,text,form){switch(tag)
+    {
+        case '[quote]': if (document.forms[form].elements[s].value=="QUOTE ") {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[quote]";
+            document.forms[form].elements[s].value="QUOTE*";
+                } else {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/quote]";
+            document.forms[form].elements[s].value="QUOTE ";
+                }
+        break;
+        
+        case '[img]': if (document.forms[form].elements[s].value=="IMG ") {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[img]";
+            document.forms[form].elements[s].value="IMG*";
+                } else {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/img]";
+            document.forms[form].elements[s].value="IMG ";
+                }
+        break;
+        
+        case '[url]': if (document.forms[form].elements[s].value=="URL ") {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[url]";
+            document.forms[form].elements[s].value="URL*";
+                } else {        
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[/url]";
+            document.forms[form].elements[s].value="URL ";
+                }
+        break;
+
+        case '[*]': if (document.forms[form].elements[s].value=="List ") {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[*]";
+                }
+        break;
+
+        case '':  if (document.forms[form].elements[s].value=="B ") {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[b]";
+            document.forms[form].elements[s].value="B*";
+                } else {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";
+            document.forms[form].elements[s].value="B ";
+                }
+        break;
+
+        case '':  if (document.forms[form].elements[s].value=="I ") {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[i]";
+            document.forms[form].elements[s].value="I*";
+                } else {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";
+            document.forms[form].elements[s].value="I ";
+                }
+        break;
+
+        case '':  if (document.forms[form].elements[s].value=="U ") {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"[u]";
+            document.forms[form].elements[s].value="U*";
+                } else {
+            document.forms[form].elements[text].value = document.forms[form].elements[text].value+"";
+            document.forms[form].elements[s].value="U ";         }
+        break;
+        }
+
+        document.forms[form].elements[text].focus();
+    }
+    </script>
+    <table width="100%" style='margin: 3px' cellpadding="0" cellspacing="0">
+        <tr><td class=embedded colspan=3>
+        <table cellpadding="2" cellspacing="1">
+            <tr><td class=embedded><input style="font-weight: bold;" type="button" name="bold" value="B " onclick="javascript: BBTag('[b]','bold','<?= $name; ?>','<?= $form; ?>')" /></td>
+            <td class=embedded><input style="font-style: italic;" type="button" name="italic" value="I " onclick="javascript: BBTag('[i]','italic','<?= $name; ?>','<?= $form; ?>')" /></td>
+            <td class=embedded><input style="text-decoration: underline;" type="button" name="underline" value="U " onclick="javascript: BBTag('[u]','underline','<?= $name; ?>','<?= $form; ?>')" /></td>
+            <td class=embedded><input type="button" name="li" value="List " onclick="javascript: BBTag('[*]','li','<?= $name; ?>','<?= $form; ?>')" /></td>
+            <td class=embedded><input type="button" name="quote" value="QUOTE " onclick="javascript: BBTag('[quote]','quote','<?= $name; ?>','<?= $form; ?>')" /></td>
+            <td class=embedded><input type="button" name="url" value="URL " onclick="javascript: BBTag('[url]','url','<?= $name; ?>','<?= $form; ?>')" /></td>
+            <td class=embedded><input type="button" name="img" value="IMG " onclick="javascript: BBTag('[img]','img','<?= $name; ?>','<?= $form; ?>')" /></td>
+            </tr>
+        </table></td></tr>
+        <tr><td class=embedded><textarea name="<?= $name; ?>" rows="15" cols="80"><?= $content; ?></textarea></td>
+        <td class=embedded>
+        <table cellpadding="3" cellspacing="1">
+        <?php
+        global $smilies, $txt;
+
+        $count = 0;
+        foreach ($smilies as $code => $url) {
+            if ($count > 35) {
+                break;
+            }
+            if ($count % 4 == 0)
+                print("<tr>");
+            print("\n<td class=embedded style='padding: 3px; margin: 2px'><a href=\"javascript: SmileIT('".
+                str_replace("'","\'", $code)."','$form','$name')\"><img border=0 src=pic/smilies/". $url ."></a></td>");
+            $count++;
+            if ($count % 4 == 0)
+                print("</tr>");
+            }
+        ?>
+        </table> 
+        <center><a href="javascript: PopMoreSmiles('<?= $form; ?>','<?= $name; ?>')"><?= $txt['MORE_SMILES'] ?></a></center>
+        </td></tr></table>
 <?php }
 

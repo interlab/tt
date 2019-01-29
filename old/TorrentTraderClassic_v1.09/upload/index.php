@@ -13,7 +13,6 @@ if ($RATIO_WARNINGON && $CURUSER)
     include('ratiowarn.php');
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $choice = (int) ($_POST['choice'] ?? 0);
     if ($CURUSER && $choice > 0 && $choice < 256) {
@@ -37,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $time_start = getmicrotime();
 
-$searchstr = unesc($_GET['search']);
+$searchstr = unesc($_GET['search'] ?? '');
 $cleansearchstr = searchfield($searchstr);
 if (empty($cleansearchstr))
 	unset($cleansearchstr);
@@ -47,56 +46,61 @@ $orderby = "ORDER BY t.id DESC";
 $addparam = '';
 $wherea = [];
 
-if ($_GET["incldead"] == 1) {
-	$addparam .= "incldead=1&amp;";
-	if (!isset($CURUSER) || get_user_class < UC_ADMINISTRATOR)
+$_GET["incldead"] = (int) ($_GET["incldead"] ?? 0);
+if ($_GET["incldead"] === 1) {
+    $addparam .= "incldead=1&amp;";
+    if (!isset($CURUSER) || get_user_class < UC_ADMINISTRATOR)
         $wherea[] = "banned != 'yes'";
 }
-elseif ($_GET["incldead"] == 2)
+elseif ($_GET["incldead"] === 2) {
     $wherea[] = "visible = 'no'";
-else
+} else {
     $wherea[] = "visible = 'yes'";
-
-if ($_GET["cat"]) {
-	$wherea[] = "category = " . sqlesc($_GET["cat"]);
-	$addparam .= "cat=" . urlencode($_GET["cat"]) . "&amp;";
 }
+
+$_GET["cat"] = (int) ($_GET["cat"] ?? 0);
+if ($_GET["cat"]) {
+    $wherea[] = "category = " . sqlesc($_GET["cat"]);
+    $addparam .= "cat=" . urlencode($_GET["cat"]) . "&amp;";
+}
+
 $wherebase = $wherea;
 if (isset($cleansearchstr)) {
-	$wherea[] = "MATCH (search_text, ori_descr) AGAINST (" . sqlesc($searchstr) . ")";
-	$addparam .= "search=" . urlencode($searchstr) . "&amp;";
-	$orderby = "";
+    $wherea[] = "MATCH (search_text, ori_descr) AGAINST (" . sqlesc($searchstr) . ")";
+    $addparam .= "search=" . urlencode($searchstr) . "&amp;";
+    $orderby = "";
 }
 $where = implode(" AND ", $wherea);
-if ($where != "")
+if ($where != '') {
     $where = "WHERE $where";
+}
 $limit = 15;
 
 $count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where . ' LIMIT 1');
 
 if (!$count && isset($cleansearchstr)) {
-	$wherea = $wherebase;
-	$orderby = "ORDER BY id DESC";
-	$searcha = explode(" ", $cleansearchstr);
-	$sc = 0;
-	foreach ($searcha as $searchss) {
-		if (strlen($searchss) <= 1)
-		continue;
-		$sc++;
-		if ($sc > 5)
+    $wherea = $wherebase;
+    $orderby = "ORDER BY id DESC";
+    $searcha = explode(" ", $cleansearchstr);
+    $sc = 0;
+    foreach ($searcha as $searchss) {
+        if (strlen($searchss) <= 1)
+            continue;
+        $sc++;
+        if ($sc > 5)
             break;
-		$ssa = [];
-		foreach (array("search_text", "ori_descr") as $sss) {
+        $ssa = [];
+        foreach (array("search_text", "ori_descr") as $sss) {
             $ssa[] = "$sss LIKE '%" . sqlwildcardesc($searchss) . "%'";
         }
-		$wherea[] = "(" . implode(" OR ", $ssa) . ")";
-	}
-	if ($sc) {
-		$where = implode(" AND ", $wherea);
-		if ($where != "")
+        $wherea[] = "(" . implode(" OR ", $ssa) . ")";
+    }
+    if ($sc) {
+        $where = implode(" AND ", $wherea);
+        if ($where != "")
             $where = "WHERE $where";
-		$count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
-	}
+        $count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
+    }
 }
 
 if ($count) {
@@ -155,7 +159,7 @@ if ($POLLON)
     {
   // Get current poll
   $res = mysql_query("SELECT * FROM polls ORDER BY added DESC LIMIT 1") or sqlerr();
-  if($pollok=(mysql_num_rows($res)))
+  if ($pollok=(mysql_num_rows($res)))
   {
   	$arr = mysql_fetch_assoc($res);
   	$pollid = $arr["id"];

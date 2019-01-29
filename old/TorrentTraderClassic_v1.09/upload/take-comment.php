@@ -1,51 +1,52 @@
-<?
+<?php
+
 require_once("backend/functions.php");
 
 dbconn();
 
-$body = trim($_POST["body"]);
+$body = trim($_POST["body"] ?? '');
 if (!$body) {
-  bark("Oops...", "You must enter something!");
-  exit;
+    bark("Oops...", "You must enter something!");
+    exit;
 }
 
-if (!isset($CURUSER))
-	die();
+if (!isset($CURUSER)) {
+	die('curuser not found.');
+}
 
-if (!mkglobal("body:id"))
-	die();
+loggedinorreturn();
 
-$id = 0 + $id;
-if (!$id)
-	die();
+$id = (int) ($_POST['id'] ?? 0);
+if (!$id) {
+	die('id not found.');
+}
 
-$res = mysql_query("SELECT 1 FROM torrents WHERE id = $id");
-$row = mysql_fetch_array($res);
-if (!$row)
-	die();
+$arr = DB::fetchAssoc("SELECT name, owner FROM torrents WHERE id = $id LIMIT 1");
+if (! $arr) {
+	die('Torrent not found!');
+}
 
-mysql_query("INSERT INTO comments (user, torrent, added, text, ori_text) VALUES (" .
-		$CURUSER["id"] . ",$id, '" . get_date_time() . "', " . sqlesc($body) .
-     "," . sqlesc($body) . ")");
+DB::executeUpdate('
+    INSERT INTO comments (user, torrent, added, text, ori_text)
+        VALUES (?, ?, ?, ?, ?)',
+    [ $CURUSER["id"], $id, get_date_time(), $body, $body]
+);
 
-$newid = mysql_insert_id();
+$newid = DB::lastInsertId();
 
-mysql_query("UPDATE torrents SET comments = comments + 1 WHERE id = $id");
+DB::executeUpdate('UPDATE torrents SET comments = comments + 1 WHERE id = ' . $id);
 
-//PM NOTIF
-$res = mysql_query("SELECT name, owner FROM torrents WHERE id = $id") or sqlerr;
-$arr = mysql_fetch_array($res);
+// PM NOTIF
+$user = DB::fetchAssoc('SELECT commentpm FROM users WHERE id = ' . $arr['owner']);
 
-$ras = mysql_query("SELECT commentpm FROM users WHERE id = $arr[owner]") or sqlerr;
-                 $arg = mysql_fetch_array($ras);
+if ($user["commentpm"] === 'yes' && $CURUSER['id'] != $arr["owner"]) {
+    $msg = 'You have received a comment on your torrent [url='. $SITEURL. '/torrents-details.php?id=' . $id . ']here[/url]';
+    DB::executeUpdate('
+        INSERT INTO messages (poster, sender, receiver, msg, added) VALUES(?, ?, ?, ?, ?)',
+        [0, 0, $arr['owner'], $msg, get_date_time()]
+    );
+}
+// end PM NOTIF
 
-				 if($arg["commentpm"] == 'yes' && $CURUSER['id'] != $arr["owner"])
-                    {
-$msg = "You have received a comment on your torrent [url=". $SITEURL."/torrents-details.php?id=$id]here[/url]";
-mysql_query("INSERT INTO messages (poster, sender, receiver, msg, added) VALUES('0','0', " . $arr['owner'] . ", " . sqlesc($msg) . ", '" . get_date_time() . "')") or bark("", mysql_error());
-                     }  
-//PM NOTIF
+header('Refresh: 0; url=torrents-details.php?id=' . $id . '&viewcomm=' . $newid . '#comm' . $newid);
 
-header("Refresh: 0; url=torrents-details.php?id=$id&viewcomm=$newid#comm$newid");
-
-?>

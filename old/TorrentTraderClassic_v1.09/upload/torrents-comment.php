@@ -52,12 +52,13 @@ Please type your comment here, please remember to obey the <a href="rules.php">R
 </form>
 <?php
 
-$res = DB::query("SELECT comments.id, text, comments.added, username, users.id as user,
-users.avatar, users.title, users.signature, users.downloaded, users.uploaded, users.privacy
-FROM comments
-    LEFT JOIN users ON comments.user = users.id
-WHERE torrent = $id
-ORDER BY comments.id ASC");
+$res = DB::query('
+    SELECT c.id, text, c.added, u.username, u.id as user,
+        u.avatar, u.title, u.signature, u.downloaded, u.uploaded, u.privacy
+    FROM comments AS c
+        LEFT JOIN users AS u ON c.user = u.id
+    WHERE c.torrent =  ' . $id . '
+    ORDER BY c.id ASC');
 
 $allrows = [];
 while ($row = $res->fetch())
