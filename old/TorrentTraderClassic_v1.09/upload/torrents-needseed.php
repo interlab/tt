@@ -42,7 +42,7 @@ if ($need_seeds) {
             <td class=table_head align=center><font size=1 face=Verdana color=black>" . $txt['COMPLETE'] . "</td>
             <td class=table_head widht=100% align=center><font size=1 face=Verdana color=black>" . $txt['ADDED'] . "</td>";
 
-    while ($row = $need_seeds->fetch()) {
+    foreach ($need_seeds as $row) {
         $torrname = h($row["name"]);
         if (strlen($torrname) > 40) {
             $torrname = substr($torrname, 0, 40) . "...";
@@ -68,6 +68,7 @@ if ($need_seeds) {
     <br></br>";
 }
 echo "<br></br>";
+
 end_frame();
 stdfoot();
 

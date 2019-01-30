@@ -1006,14 +1006,14 @@ if ($action == "viewforum") {
         FROM forum_topics
         WHERE forumid = $forumid
         ORDER BY sticky, lastpost DESC
-        LIMIT $offset,$perpage");
+        LIMIT $offset, $perpage");
 
     stdhead("Forum : $forumname");
 
     begin_frame("$forumname", 'center');
-	forumheader("<a href=forums.php?action=viewforum&forumid=$forumid>$forumname</a>");
+    forumheader("<a href=forums.php?action=viewforum&forumid=$forumid>$forumname</a>");
 	
-	print ("
+    print ("
         <table align=center cellpadding=0 cellspacing=5 width=95% border=0 ><tr>
         <td><div align='right'><a href=forums.php?action=newtopic&forumid=$forumid>
             <img src=". $themedir. "button_new_post.gif border=0></a></div></td></tr></table>");
@@ -1022,105 +1022,118 @@ if ($action == "viewforum") {
         print("<table align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262 width=100% border=1 >");
 
         print("<tr><td align=left width=100% bgcolor=#E0F1FE><b>Topic</b></td><td bgcolor=#E0F1FE align=center><b>Replies</b></td><td bgcolor=#E0F1FE align=center><b>Views</b></td><td bgcolor=#E0F1FE align=center><b>Author</b></td><td bgcolor=#E0F1FE align=right><b>Last post</b></td>\n");
-		if (get_user_class() >= UC_JMODERATOR)
-			print("<td bgcolor=#E0F1FE><b>Moderator</b></td>");
+	if (get_user_class() >= UC_JMODERATOR) {
+            print("<td bgcolor=#E0F1FE><b>Moderator</b></td>");
+        }
         print("</tr>\n");
         foreach ($topicsres as $topicarr) {
-			$topicid = $topicarr["id"];
-			$topic_userid = $topicarr["userid"];
-			$locked = $topicarr["locked"] == "yes";
-			$moved = $topicarr["moved"] == "yes";
-			$sticky = $topicarr["sticky"] == "yes";
-			//---- Get reply count
-			$posts = DB::fetchColumn("SELECT COUNT(*) FROM forum_posts WHERE topicid = $topicid");
-			$replies = max(0, $posts - 1);
-			$tpages = floor($posts / $postsperpage);
-			if ($tpages * $postsperpage != $posts)
-			  ++$tpages;
-			if ($tpages > 1) {
-			  $topicpages = " (<img src=". $GLOBALS['SITEURL'] ."/images/multipage.gif>";
-			  for ($i = 1; $i <= $tpages; ++$i)
-				$topicpages .= " <a href=forums.php?action=viewtopic&topicid=$topicid&page=$i>$i</a>";
-			  $topicpages .= ")";
-        }
-        else
-          $topicpages = "";
+            // todo: sub queries!
 
-        //---- Get userID and date of last post
-        $arr = DB::fetchAssoc("SELECT * FROM forum_posts WHERE topicid=$topicid ORDER BY id DESC LIMIT 1");
-        $lppostid = $arr["id"];
-        $lpuserid = $arr["userid"];
-        $lpadded = $arr["added"];
+            $topicid = $topicarr["id"];
+            $topic_userid = $topicarr["userid"];
+            $locked = $topicarr["locked"] == "yes";
+            $moved = $topicarr["moved"] == "yes";
+            $sticky = $topicarr["sticky"] == "yes";
+            //---- Get reply count
+            // todo: subquery
+            $posts = DB::fetchColumn("SELECT COUNT(*) FROM forum_posts WHERE topicid = $topicid");
+            $replies = max(0, $posts - 1);
+            $tpages = floor($posts / $postsperpage);
+            if ($tpages * $postsperpage != $posts)
+                ++$tpages;
+            if ($tpages > 1) {
+                $topicpages = " (<img src=". $GLOBALS['SITEURL'] ."/images/multipage.gif>";
+                for ($i = 1; $i <= $tpages; ++$i)
+                    $topicpages .= " <a href=forums.php?action=viewtopic&topicid=$topicid&page=$i>$i</a>";
+                $topicpages .= ")";
+            }
+            else {
+                $topicpages = "";
+            }
 
-        //------ Get name of last poster
-        $arr = DB::fetchAssoc("SELECT * FROM users WHERE id = $lpuserid");
-        if ($arr) {
-            $lpusername = "<a href=account-details.php?id=$lpuserid>$arr[username]</a>";
-        }
-        else
-            $lpusername = "Deluser";
+            //---- Get userID and date of last post
+            $arr = DB::fetchAssoc("SELECT * FROM forum_posts WHERE topicid=$topicid ORDER BY id DESC LIMIT 1");
+            $lppostid = $arr["id"];
+            $lpuserid = $arr["userid"];
+            $lpadded = $arr["added"];
 
-        //------ Get author
-        $arr = DB::fetchAssoc("SELECT username FROM users WHERE id = $topic_userid");
-        if ($arr) {
-            $lpauthor = "<a href=account-details.php?id=$topic_userid>$arr[username]</a>";
-        }
-        else
-          $lpauthor = "Deluser";
+            //------ Get name of last poster
+            $arr = DB::fetchAssoc("SELECT * FROM users WHERE id = $lpuserid");
+            if ($arr) {
+                $lpusername = "<a href=account-details.php?id=$lpuserid>$arr[username]</a>";
+            }
+            else {
+                $lpusername = "Deluser";
+            }
 
-		// Topic Views
-		$views = DB::fetchColumn("SELECT views FROM forum_topics WHERE id = $topicid LIMIT 1");
-		// End
+            //------ Get author
+            $arr = DB::fetchAssoc("SELECT username FROM users WHERE id = $topic_userid");
+            if ($arr) {
+                $lpauthor = "<a href=account-details.php?id=$topic_userid>$arr[username]</a>";
+            }
+            else {
+                $lpauthor = "Deluser";
+            }
 
-        //---- Print row
-        $a = DB::fetchColumn("SELECT lastpostread FROM forum_readposts WHERE userid = $userid AND topicid = $topicid LIMIT 1");
-        $new = !$a || $lppostid > $a;
-        $topicpic = ($locked ? ($new ? "folder_locked_new" : "folder_locked") : ($new ? "folder_new" : "folder"));
-        $subject = ($sticky ? "<b>Sticky: </b>" : "") . "<a href=forums.php?action=viewtopic&topicid=$topicid><b>" .
-        encodehtml(stripslashes($topicarr["subject"])) . "</b></a>$topicpages";
-        print("<tr><td align=left class=alt1><table border=0 cellspacing=0 cellpadding=0><tr>" .
-         "<td style='padding-right: 5px'><img src=". $themedir ."$topicpic.gif>" .
-         "</td><td class=alt1 align=left>\n" .
-         "$subject</td></tr></table></td><td class=alt2 align=center>$replies</td>\n" .
-		 "<td class=alt1 align=center>$views</td>\n" .
-         "<td class=alt1 align=center>$lpauthor</td>\n" .
-         "<td class=alt2 align=right><nobr><small>by&nbsp;$lpusername<br>$lpadded</small></nobr></td>\n");
-        if (get_user_class() >= UC_JMODERATOR) {
-			  print("<td class=alt1 align=center>\n");
-			if ($locked)
-				print("<a href=forums.php?action=unlocktopic&forumid=$forumid&topicid=$topicid&page=$page title='Unlock'><img src=". $themedir ."topic_unlock.gif border=0 alt=UnLock Topic></a>\n");
-			else
-				print("<a href=forums.php?action=locktopic&forumid=$forumid&topicid=$topicid&page=$page title='Lock'><img src=". $themedir ."topic_lock.gif border=0 alt=Lock Topic></a>\n");
-				print("<a href=forums.php?action=deletetopic&topicid=$topicid&sure=0 title='Delete'><img src=". $themedir ."topic_delete.gif border=0 alt=Delete Topic></a>\n");
-			if ($sticky)
-			   print("<a href=forums.php?action=unsetsticky&forumid=$forumid&topicid=$topicid&page=$page title='UnStick'><img src=". $themedir ."folder_sticky_new.gif border=0 alt=UnStick Topic></a>\n");
-			else
-			   print("<a href=forums.php?action=setsticky&forumid=$forumid&topicid=$topicid&page=$page title='Stick'><img src=". $themedir ."folder_sticky.gif border=0 alt=Stick Topic></a>\n");
-			  print("</td>\n");
-        }
-        print("</tr>\n");
-      } // while
-   //   end_table();
-   print("</table>");
-      print($menu);
+            // Topic Views
+            $views = DB::fetchColumn("SELECT views FROM forum_topics WHERE id = $topicid LIMIT 1");
+            // End
+
+            //---- Print row
+            $a = DB::fetchColumn("SELECT lastpostread FROM forum_readposts WHERE userid = $userid AND topicid = $topicid LIMIT 1");
+            $new = !$a || $lppostid > $a;
+            $topicpic = ($locked ? ($new ? "folder_locked_new" : "folder_locked") : ($new ? "folder_new" : "folder"));
+            $subject = ($sticky ? "<b>Sticky: </b>" : "") . "<a href=forums.php?action=viewtopic&topicid=$topicid><b>" .
+            encodehtml(stripslashes($topicarr["subject"])) . "</b></a>$topicpages";
+            print("<tr><td align=left class=alt1><table border=0 cellspacing=0 cellpadding=0><tr>" .
+                "<td style='padding-right: 5px'><img src=". $themedir ."$topicpic.gif>" .
+                "</td><td class=alt1 align=left>\n" .
+                "$subject</td></tr></table></td><td class=alt2 align=center>$replies</td>\n" .
+                "<td class=alt1 align=center>$views</td>\n" .
+                "<td class=alt1 align=center>$lpauthor</td>\n" .
+                "<td class=alt2 align=right><nobr><small>by&nbsp;$lpusername<br>$lpadded</small></nobr></td>\n");
+            if (get_user_class() >= UC_JMODERATOR) {
+                print("<td class=alt1 align=center>\n");
+		if ($locked)
+                    print("<a href=forums.php?action=unlocktopic&forumid=$forumid&topicid=$topicid&page=$page title='Unlock'><img src=".
+                        $themedir ."topic_unlock.gif border=0 alt=UnLock Topic></a>\n");
+		else
+                    print("<a href=forums.php?action=locktopic&forumid=$forumid&topicid=$topicid&page=$page title='Lock'><img src=".
+                        $themedir ."topic_lock.gif border=0 alt=Lock Topic></a>\n");
+		print("<a href=forums.php?action=deletetopic&topicid=$topicid&sure=0 title='Delete'><img src=".
+                        $themedir ."topic_delete.gif border=0 alt=Delete Topic></a>\n");
+		if ($sticky)
+                    print("<a href=forums.php?action=unsetsticky&forumid=$forumid&topicid=$topicid&page=$page title='UnStick'><img src=".
+                        $themedir ."folder_sticky_new.gif border=0 alt=UnStick Topic></a>\n");
+		else
+                    print("<a href=forums.php?action=setsticky&forumid=$forumid&topicid=$topicid&page=$page title='Stick'><img src=".
+                        $themedir ."folder_sticky.gif border=0 alt=Stick Topic></a>\n");
+		print("</td>\n");
+            }
+            print("</tr>\n");
+        } // foreach
+        //   end_table();
+        print("</table>");
+        print($menu);
     } // if
-    else
-      print("<p align=center>No topics found</p>\n");
+    else {
+        print("<p align=center>No topics found</p>\n");
+    }
     print("<p><table border=0 cellspacing=0 cellpadding=0><tr valing=center>\n");
     print("<td ><img src=". $themedir ."folder_new.gif style='margin-right: 5px'></td><td >New posts</td>\n");
-	 print("<td ><img src=". $themedir ."folder.gif style='margin-left: 10px; margin-right: 5px'>" .
-     "</td><td >No New posts</td>\n");
+    print("<td ><img src=". $themedir ."folder.gif style='margin-left: 10px; margin-right: 5px'>" .
+        "</td><td >No New posts</td>\n");
     print("<td ><img src=". $themedir ."folder_locked.gif style='margin-left: 10px; margin-right: 5px'>" .
-     "</td><td >Locked topic</td>\n");
+        "</td><td >Locked topic</td>\n");
     print("</tr></table></p>\n");
     $arr = get_forum_access_levels($forumid) or die;
     $maypost = get_user_class() >= $arr["write"];
     if (!$maypost)
-		print("<p><i>You are not permitted to post in this forum.</i></p>\n");
+	print("<p><i>You are not permitted to post in this forum.</i></p>\n");
     print("<p><table border=0 cellspacing=0 cellpadding=0><tr>\n");
 
     if ($maypost)
-		print("<td ><a href=forums.php?action=newtopic&forumid=$forumid><img src=" . $themedir . "button_new_post.gif border=0></a></td>\n");
+	print("<td ><a href=forums.php?action=newtopic&forumid=$forumid><img src=" . $themedir . "button_new_post.gif border=0></a></td>\n");
     print("</tr></table>\n");
     insert_quick_jump_menu($forumid);
     end_frame();
@@ -1130,114 +1143,124 @@ if ($action == "viewforum") {
 
 ///////////////////////////////////////////////////////// Action: VIEW NEW POSTS
 if ($action == "viewunread") {
-	$userid = $CURUSER['id'];
-	$maxresults = 25;
-	$res = mysql_query("SELECT id, forumid, subject, lastpost FROM forum_topics ORDER BY lastpost") or forumsqlerr(__FILE__, __LINE__);
+    $userid = $CURUSER['id'];
+    $maxresults = 25;
+    $res = mysql_query("SELECT id, forumid, subject, lastpost FROM forum_topics ORDER BY lastpost") or forumsqlerr(__FILE__, __LINE__);
     stdhead();
-	begin_frame("Topics with unread posts");
-	forumheader("New Topics");
+    begin_frame("Topics with unread posts");
+    forumheader("New Topics");
 
     $n = 0;
     $uc = get_user_class();
     while ($arr = mysql_fetch_assoc($res)) {
-      $topicid = $arr['id'];
-      $forumid = $arr['forumid'];
+        $topicid = $arr['id'];
+        $forumid = $arr['forumid'];
 
-      //---- Check if post is read
-      $r = mysql_query("SELECT lastpostread FROM forum_readposts WHERE userid=$userid AND topicid=$topicid") or forumsqlerr(__FILE__, __LINE__);
-      $a = mysql_fetch_row($r);
-      if ($a && $a[0] == $arr['lastpost'])
-        continue;
+        //---- Check if post is read
+        $r = mysql_query("SELECT lastpostread FROM forum_readposts WHERE userid=$userid AND topicid=$topicid") or forumsqlerr(__FILE__, __LINE__);
+        $a = mysql_fetch_row($r);
+        if ($a && $a[0] == $arr['lastpost'])
+            continue;
 
-      //---- Check access & get forum name
-      $r = mysql_query("SELECT name, minclassread FROM forum_forums WHERE id=$forumid") or forumsqlerr(__FILE__, __LINE__);
-      $a = mysql_fetch_assoc($r);
-      if ($uc < $a['minclassread'])
-        continue;
-      ++$n;
-      if ($n > $maxresults)
-        break;
-      $forumname = $a['name'];
-      if ($n == 1) {
-        print("<center><table border=1 cellspacing=0 cellpadding=5 width=95%>\n");
-        print("<tr><td class=alt3 align=left>Topic</td><td class=alt3 align=left>Forum</td></tr>\n");
-      }
-      print("<tr><td align=left><table border=0 cellspacing=0 cellpadding=0><tr><td class=embedded>" .
-       "<img src=". $GLOBALS['SITEURL'] ."/images/unlockednew.gif style='margin-right: 5px'></td><td class=embedded>" .
-       "<a href=forums.php?action=viewtopic&topicid=$topicid&page=last#last><b>" . stripslashes(h($arr["subject"])) ."</b></a></td></tr></table></td><td align=left><a href=forums.php?action=viewforum&amp;forumid=$forumid><b>$forumname</b></a></td></tr>\n");
+        //---- Check access & get forum name
+        $r = mysql_query("SELECT name, minclassread FROM forum_forums WHERE id=$forumid") or forumsqlerr(__FILE__, __LINE__);
+        $a = mysql_fetch_assoc($r);
+        if ($uc < $a['minclassread'])
+              continue;
+        ++$n;
+        if ($n > $maxresults)
+            break;
+        $forumname = $a['name'];
+        if ($n == 1) {
+            print("<center><table border=1 cellspacing=0 cellpadding=5 width=95%>\n");
+            print("<tr><td class=alt3 align=left>Topic</td><td class=alt3 align=left>Forum</td></tr>\n");
+        }
+        print("<tr><td align=left><table border=0 cellspacing=0 cellpadding=0><tr><td class=embedded>" .
+            "<img src=". $GLOBALS['SITEURL'] ."/images/unlockednew.gif style='margin-right: 5px'></td><td class=embedded>" .
+            "<a href=forums.php?action=viewtopic&topicid=$topicid&page=last#last><b>" . stripslashes(h($arr["subject"])) ."</b></a></td></tr></table></td><td align=left><a href=forums.php?action=viewforum&amp;forumid=$forumid><b>$forumname</b></a></td></tr>\n");
     }
     if ($n > 0) {
-      print("</table>\n");
-      if ($n > $maxresults)
-        print("<p>More than $maxresults items found, displaying first $maxresults.</p>\n");
-      print("<p><a href=forums.php?catchup><b>Mark All Forums Read.</b></a></center><br></p>\n");
+        print("</table>\n");
+        if ($n > $maxresults)
+            print("<p>More than $maxresults items found, displaying first $maxresults.</p>\n");
+        print("<p><a href=forums.php?catchup><b>Mark All Forums Read.</b></a></center><br></p>\n");
     }
-    else
-      print("<b>Nothing found</b>");
-	 end_frame();
+    else {
+        print("<b>Nothing found</b>");
+    }
+    end_frame();
     stdfoot();
     die;
 }
 
 ///////////////////////////////////////////////////////// Action: SEARCH
 if ($action == "search") {
-	stdhead("Forum Search");
-	begin_frame("Search Forum");
-	forumheader("Search Forums");
-			
-	$keywords = trim($HTTP_GET_VARS["keywords"]);
+    stdhead("Forum Search");
+    begin_frame("Search Forum");
+    forumheader("Search Forums");
+
+    $keywords = trim($HTTP_GET_VARS["keywords"]);
 	
-	if ($keywords != ""){
-		print("<p>Search Phrase: <b>" . h($keywords) . "</b></p>\n");
-		$maxresults = 50;
-		$ekeywords = sqlesc($keywords);
-		$res = mysql_query("SELECT * FROM forum_posts WHERE MATCH (body) AGAINST ($ekeywords)") or forumsqlerr(__FILE__, __LINE__);
-		// search and display results...
-		$num = mysql_num_rows($res);
+    if ($keywords != ""){
+        print("<p>Search Phrase: <b>" . h($keywords) . "</b></p>\n");
+        $maxresults = 50;
+        $ekeywords = sqlesc($keywords);
+        $res = mysql_query("SELECT * FROM forum_posts WHERE MATCH (body) AGAINST ($ekeywords)") or forumsqlerr(__FILE__, __LINE__);
+        // search and display results...
+        $num = mysql_num_rows($res);
 
-		if ($num > $maxresults) {
-			$num = $maxresults;
-			print("<p>Found more than $maxresults posts; displaying first $num.</p>\n");
-		}
-		
-		if ($num == 0)
-			print("<p><b>Sorry, nothing found!</b></p>");
-		else {
-			print("<p><center><table border=1 cellspacing=0 cellpadding=2 width=95%>\n");
-			print("<tr><td class=colhead>Post ID</td><td class=colhead align=left>Topic</td><td class=colhead align=left>Forum</td><td class=colhead align=left>Posted by</td></tr>\n");
+        if ($num > $maxresults) {
+                $num = $maxresults;
+                print("<p>Found more than $maxresults posts; displaying first $num.</p>\n");
+        }
 
-			for ($i = 0; $i < $num; ++$i){
-				$post = mysql_fetch_assoc($res);
+        if ($num == 0)
+                print("<p><b>Sorry, nothing found!</b></p>");
+        else {
+            print("<p><center><table border=1 cellspacing=0 cellpadding=2 width=95%>\n");
+            print("<tr><td class=colhead>Post ID</td>"
+                    . "<td class=colhead align=left>Topic</td>"
+                    . "<td class=colhead align=left>Forum</td>"
+                    . "<td class=colhead align=left>Posted by</td></tr>\n");
 
-				$res2 = mysql_query("SELECT forumid, subject FROM forum_topics WHERE id=$post[topicid]") or forumsqlerr();
-				$topic = mysql_fetch_assoc($res2);
+            for ($i = 0; $i < $num; ++$i){
+                $post = mysql_fetch_assoc($res);
 
-				$res2 = mysql_query("SELECT name,minclassread FROM forum_forums WHERE id=$topic[forumid]") or forumsqlerr();
-				$forum = mysql_fetch_assoc($res2);
+                $res2 = mysql_query("SELECT forumid, subject FROM forum_topics WHERE id=$post[topicid]") or forumsqlerr();
+                $topic = mysql_fetch_assoc($res2);
 
-				if ($forum["name"] == "" || $forum["minclassread"] > $CURUSER["class"])
-					continue;
-				
-				$res2 = mysql_query("SELECT username FROM users WHERE id=$post[userid]") or	forumsqlerr();
-				$user = mysql_fetch_assoc($res2);
-				if ($user["username"] == "")
-					$user["username"] = "Deluser";
-				print("<tr><td>$post[id]</td><td align=left><a href=forums.php?action=viewtopic&topicid=$post[topicid]#$post[id]><b>" . h($topic["subject"]) . "</b></a></td><td align=left><a href=forums.php?action=viewforum&amp;forumid=$topic[forumid]><b>" . h($forum["name"]) . "</b></a><td align=left><a href=account-details.php?id=$post[userid]><b>$user[username]</b></a><br />at $post[added]</tr>\n");
-			}
-			print("</table></center></p>\n");
-			print("<p><b>Search again</b></p>\n");
-		}
-	}
+                $res2 = mysql_query("SELECT name,minclassread FROM forum_forums WHERE id=$topic[forumid]") or forumsqlerr();
+                $forum = mysql_fetch_assoc($res2);
 
-	print("<center><form method=get action=?>\n");
-	print("<input type=hidden name=action value=search>\n");
-	print("<table border=0 cellspacing=0 cellpadding=5>\n");
-	print("<tr><td valign=bottom align=right>Search For: </td><td align=left><input type=text size=40 name=keywords><br /></td></tr>\n");
-	print("<tr><td colspan=2 align=center><input type=submit value='Search' class=btn></td></tr>\n");
-	print("</table>\n</form></center>\n");
-	end_frame();
-	stdfoot();
-	die;
+                if ($forum["name"] == "" || $forum["minclassread"] > $CURUSER["class"])
+                        continue;
+
+                $res2 = mysql_query("SELECT username FROM users WHERE id=$post[userid]") or	forumsqlerr();
+                $user = mysql_fetch_assoc($res2);
+                if ($user["username"] == "")
+                        $user["username"] = "Deluser";
+                print("<tr><td>$post[id]</td>"
+                        . "<td align=left><a href=forums.php?action=viewtopic&topicid=$post[topicid]#$post[id]><b>"
+                        . h($topic["subject"]) . "</b></a></td>"
+                        . "<td align=left><a href=forums.php?action=viewforum&amp;forumid=$topic[forumid]><b>"
+                        . h($forum["name"]) . "</b></a>"
+                        . "<td align=left><a href=account-details.php?id=$post[userid]><b>$user[username]</b></a>"
+                        . "<br />at $post[added]</tr>\n");
+            }
+            print("</table></center></p>\n");
+            print("<p><b>Search again</b></p>\n");
+        }
+    }
+
+    print("<center><form method=get action=?>\n");
+    print("<input type=hidden name=action value=search>\n");
+    print("<table border=0 cellspacing=0 cellpadding=5>\n");
+    print("<tr><td valign=bottom align=right>Search For: </td><td align=left><input type=text size=40 name=keywords><br /></td></tr>\n");
+    print("<tr><td colspan=2 align=center><input type=submit value='Search' class=btn></td></tr>\n");
+    print("</table>\n</form></center>\n");
+    end_frame();
+    stdfoot();
+    die;
 }
 
 ///////////////////////////////////////////////////////// Action: UNKNOWN
@@ -1300,30 +1323,30 @@ while ($forums_arr = $forums_res->fetch()) {
     // Get last post info
     $post_arr = DB::fetchAssoc("SELECT added, topicid, userid FROM forum_posts WHERE id = $lastpostid");
     if ($post_arr) {
-		$lastposterid = $post_arr["userid"];
-		$lastpostdate = $post_arr["added"];
-		$lasttopicid = $post_arr["topicid"];
-		$user_arr = DB::fetchAssoc("SELECT username FROM users WHERE id=$lastposterid");
-		$lastposter = h($user_arr['username']);
-		$topic_arr = DB::fetchAssoc("SELECT subject FROM forum_topics WHERE id=$lasttopicid");
-		$lasttopic = stripslashes(h($topic_arr['subject']));
+        $lastposterid = $post_arr["userid"];
+        $lastpostdate = $post_arr["added"];
+        $lasttopicid = $post_arr["topicid"];
+        $user_arr = DB::fetchAssoc("SELECT username FROM users WHERE id=$lastposterid");
+        $lastposter = h($user_arr['username']);
+        $topic_arr = DB::fetchAssoc("SELECT subject FROM forum_topics WHERE id=$lasttopicid");
+        $lasttopic = stripslashes(h($topic_arr['subject']));
 
-		//cut last topic
-		$latestleng = 10;
+        //cut last topic
+        $latestleng = 10;
 
-		$lastpost = "<nobr><small><a href=forums.php?action=viewtopic&topicid=$lasttopicid&page=last#last>" .
-            CutName($lasttopic, $latestleng) . "</a> by <a href=account-details.php?id=$lastposterid>$lastposter</a><br>$lastpostdate</small></nobr>";
+	$lastpost = "<nobr><small><a href=forums.php?action=viewtopic&topicid=$lasttopicid&page=last#last>" .
+        CutName($lasttopic, $latestleng) . "</a> by <a href=account-details.php?id=$lastposterid>$lastposter</a><br>$lastpostdate</small></nobr>";
 
 
-		$a = DB::fetchColumn("SELECT lastpostread FROM forum_readposts WHERE userid=$CURUSER[id] AND topicid=$lasttopicid LIMIT 1");
-		//define the images for new posts or not on index
-		if ($a && $a == $lastpostid)
-			$img = "folder";
-		else
+	$a = DB::fetchColumn("SELECT lastpostread FROM forum_readposts WHERE userid=$CURUSER[id] AND topicid=$lasttopicid LIMIT 1");
+	//define the images for new posts or not on index
+	if ($a && $a == $lastpostid)
+            $img = "folder";
+	else
             $img = "folder_new";
     } else {
-		$lastpost = "<small>No Posts</small>";
-		$img = "folder";
+	$lastpost = "<small>No Posts</small>";
+	$img = "folder";
     }
 	//following line is each forums display
     print("<tr><td class=alt1 align=left><table border=0 cellspacing=0 cellpadding=0><tr><td style='padding-right: 5px'><img src=". $themedir ."$img.gif></td><td class=alt1><a href=forums.php?action=viewforum&forumid=$forumid><b>$forumname</b></a><br />\n" .

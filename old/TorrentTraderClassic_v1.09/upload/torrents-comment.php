@@ -38,7 +38,7 @@ if (!$torrow) {
 
 stdhead("Add a comment to \"" . $torrow["name"] . "\"");
 
-begin_frame("Add a comment to \"" . h($torrow["name"]) . "\"", 'center');
+begin_frame('Add a comment to "<a href="torrents-details.php?id=' . $id . '">' . h($torrow['name']) . '</a>"', 'center');
 ?>
 <p>
 Please type your comment here, please remember to obey the <a href="rules.php">Rules</a>.

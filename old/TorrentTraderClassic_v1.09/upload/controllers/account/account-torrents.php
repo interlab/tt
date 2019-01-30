@@ -106,9 +106,9 @@ echo '<br><br><CENTER><a href="account-details.php?id=' . $user["id"] . '">Retur
 
 echo "<table border=0 width=80%>";
 
-$completedls = DB::fetchAll("SELECT torrent FROM downloaded WHERE user = ".$id." ORDER BY torrent ASC ");
+$completedls = DB::fetchColumn('SELECT COUNT(*) FROM downloaded WHERE user = ' . $id . ' LIMIT 1');
 
-if (empty($completedls)) {
+if (! $completedls) {
     echo '<tr valign=top><td><B>Downloaded Torrents: </B> <br></td><td align=left>This member has not downloaded any Torrents</td></tr>';
 } else {
     $finished = '
@@ -137,10 +137,10 @@ if (empty($completedls)) {
     }
 
     $finished .= '</table>';
-}
-echo '
-    <tr>&nbsp;</tr><tr valign=top><td><B>Downloaded Torrents:</B> </td><td align=left>' . $finished . '</td></tr>';
 
+    echo '
+        <tr>&nbsp;</tr><tr valign=top><td><B>Downloaded Torrents:</B> </td><td align=left>' . $finished . '</td></tr>';
+}
 
 if ($torrents) {
     print("<tr valign=top><td><B>Posted Torrents:</B> </td><td align=left>$torrents</td></tr>\n");

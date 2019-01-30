@@ -860,10 +860,10 @@ function torrenttable($res, $variant = "index")
 	global $CURUSER, $MEMBERSONLY_WAIT, $MAXDISPLAYLENGTH, $WAITA, $WAITB, $WAITC, $WAITD;
     global $GIGSA, $GIGSB, $GIGSC, $GIGSD, $RATIOA, $RATIOB, $RATIOC, $RATIOD;
     global $txt;
-	
+
     //ratio wait code
 	if ($CURUSER["class"] < UC_VIP && $CURUSER['donated'] == 0) {
-		$gigs = $CURUSER["uploaded"] / (1024*1024*1024);
+		$gigs = $CURUSER["uploaded"] / (1024**3);
 		$ratio = (($CURUSER["downloaded"] > 0) ? ($CURUSER["uploaded"] / $CURUSER["downloaded"]) : 0);
         if ($ratio < 0 || $gigs < 0) $wait = $WAITA;
         elseif ($ratio < $RATIOA || $gigs < $GIGSA) $wait = $WAITA;
@@ -881,126 +881,45 @@ function torrenttable($res, $variant = "index")
 <td>
 <table align=center cellpadding="0" cellspacing="0" class="ttable_headinner" width=100%>
 
-<!---------------------START SORTING MOD------------------------->
 <?php
+// START SORTING MOD
 $oldlink = '';
 $count_get = 0;
 foreach ($_GET as $get_name => $get_value) {
-    if ($get_name != "sort" && $get_name != "type") {
+    if ($get_name !== 'sort' && $get_name !== 'type') {
         if ($count_get > 0) {
-            $oldlink = $oldlink . "&" . $get_name . "=" . $get_value;
+            $oldlink = $oldlink . '&' . $get_name . '=' . $get_value;
         } else {
-            $oldlink = $oldlink . $get_name . "=" . $get_value;
+            $oldlink = $oldlink . $get_name . '=' . $get_value;
         }
         $count_get++;
     }
 }
 
 if ($count_get > 0) {
-    $oldlink = $oldlink . "&";
+    $oldlink = $oldlink . '&';
 }
 
-$_GET['sort'] = (int) ($_GET['sort'] ?? 0);
+$col = (int) ($_GET['sort'] ?? 0);
+$by = strtolower($_GET['type'] ?? '');
+$by = $by === 'asc' ? 'desc' : 'asc';
+$link1 = $col === 1 ? $by : 'desc';
+$link2 = $col === 2 ? $by : 'desc';
+$link3 = $col === 3 ? $by : 'desc';
+$link4 = $col === 4 ? $by : 'desc';
+$link5 = $col === 5 ? $by : 'desc';
+$link6 = $col === 6 ? $by : 'desc';
+$link7 = $col === 7 ? $by : 'desc';
+$link8 = $col === 8 ? $by : 'desc';
 
-// for torrent name
-if ($_GET['sort'] === 1) {
-    if ($_GET['type'] == "desc") {
-        $link1 = "asc";
-    } else {
-        $link1 = "desc";
-    }
-} else {
-    $link1 = "asc";
-}
-
-// for torrent nfo
-if ($_GET['sort'] === 2) {
-    if ($_GET['type'] == "desc") {
-        $link2 = "asc";
-    } else {
-        $link2 = "desc";
-    }
-} else {
-    $link2 = "desc";
-}
-
-// for Comments
-if ($_GET['sort'] === 3) {
-    if ($_GET['type'] == "desc") {
-        $link3 = "asc";
-    } else {
-        $link3 = "desc";
-    }
-} else {
-    $link3 = "desc";
-}
-
-// for Size
-if ($_GET['sort'] === 4) {
-    if ($_GET['type'] == "desc") {
-        $link4 = "asc";
-    } else {
-        $link4 = "desc";
-    }
-} else {
-    $link4 = "desc";
-}
-
-// for Times Completed
-if ($_GET['sort'] === 5) {
-    if ($_GET['type'] == "desc") {
-        $link5 = "asc";
-    } else {
-        $link5 = "desc";
-    }
-} else {
-    $link5 = "desc";
-}
-
-// for Seeders
-if ($_GET['sort'] === 6) {
-    if ($_GET['type'] == "desc") {
-        $link6 = "asc";
-    } else {
-        $link6 = "desc";
-    }
-} else {
-    $link6 = "desc";
-}
-
-// for Leechers
-if ($_GET['sort'] === 7) {
-    if ($_GET['type'] == "desc") {
-        $link7 = "asc";
-    } else {
-        $link7 = "desc";
-    }
-} else {
-    $link7 = "desc";
-}
-
-// for Categories
-if ($_GET['sort'] === 8) {
-    if ($_GET['type'] == "desc") {
-        $link8 = "asc";
-    } else {
-        $link8 = "desc";
-    }
-} else {
-    $link8 = "desc";
-}
-
+// END SORTING MOD
 ?>
-
-<!--------------------END SORTING MOD--------------------->
 
 <td class=ttable_head><a href="?<?= $oldlink; ?>sort=8&type=<?= $link8; ?>"><?= $txt['TYPE'] ?></a></td>
 <td class=ttable_head><a href="?<?= $oldlink; ?>sort=1&type=<?= $link1; ?>"><?= $txt['NAME'] ?></a></td>
-<?php if ($variant == "index"){
+<?php if ($variant == "index") {
 echo "<td class=ttable_head>DL</td>";
-?>
-<td class=ttable_head><a href="?<?= $oldlink; ?>sort=2&type=<?= $link2; ?>"><?= $txt['NFO'] ?></a></td>
-<?php
+// echo '<td class=ttable_head><a href="?'. $oldlink .'sort=2&type='. $link2 .'">'. $txt['NFO'] .'</a></td>';
 }
 elseif ($variant == "mytorrents") {
     echo "<td class=ttable_head>" . $txt['EDIT'] . "</td>";
@@ -1053,7 +972,7 @@ if ($MEMBERSONLY_WAIT) {
         $last_browse = $CURUSER["last_browse"];
         $time_now = gmtime();
         if ($last_browse > $time_now || !is_numeric($last_browse)) {
-            $last_browse=$time_now;
+            $last_browse = $time_now;
         }
         if (sql_timestamp_to_unix_timestamp($row["added"]) >= $last_browse){
             $dispname = "<b>" . $smallname . "</b> <b><font color=red>(NEW)</font></b>";
@@ -1079,6 +998,7 @@ if ($MEMBERSONLY_WAIT) {
                 rawurlencode($row["filename"]) . "\"><img src=" . $GLOBALS['SITEURL'] .
                 "/images/icon_download.gif border=0 alt=\"Download .torrent\"></a></td>");
 
+            /*
             $nfo = h($row["nfo"]);
 			if (!$nfo) {
 				print("<td class=ttable_col1 align=center>-</td>");
@@ -1086,6 +1006,7 @@ if ($MEMBERSONLY_WAIT) {
 				print("<td class=ttable_col1 align=center><a href=torrents-viewnfo.php?id=$row[id]><img  src=" .
                     $GLOBALS['SITEURL'] . "/images/icon_nfo.gif border=0 alt='View NFO'></a></td>");
 			}
+            */
 		}
 		elseif ($variant == "mytorrents") {
 			print("<td class=ttable_colx align=center><a href=\"torrents-edit.php?returnto=" .

@@ -22,41 +22,11 @@ if (empty($cleansearchstr)) {
 $_GET['incldead'] = (int) ($_GET['incldead'] ?? 0);
 $_GET['cat'] = (int) ($_GET['cat'] ?? 0);
 
-// MOD FOR SORTING
-if (isset($_GET['sort'], $_GET['type'])) {
-    $column = '';
-    $ascdesc = '';
-    $_GET['sort'] = (int) $_GET['sort'];
-    $_GET['type'] = strtolower($_GET['type']) === 'asc' ? 'asc' : 'desc';
 
-    switch($_GET['sort']) {
-        case 1: $column = "name"; break;
-        case 2: $column = "nfo"; break;
-        case 3: $column = "Comments"; break;
-        case 4: $column = "size"; break;
-        case 5: $column = "times_completed"; break;
-        case 6: $column = "seeders"; break;
-        case 7: $column = "leechers"; break;
-        case 8: $column = "category"; break;
-        default: $column = "id"; break;
-    }
+$sortmod = Helper::sortMod($_GET['sort'] ?? '', $_GET['type'] ?? '');
+$orderby = 'ORDER BY torrents.' . $sortmod['column'] . ' ' . $sortmod['by'];
+$pagerlink = $sortmod['pagerlink'];
 
-    switch($_GET['type']) {
-        case 'asc': $ascdesc = "ASC"; break;
-        case 'desc': $ascdesc = "DESC"; break;
-        default: $ascdesc = "DESC"; break;
-    }
-
-    $orderby = "ORDER BY torrents." . $column . " " . $ascdesc;
-    $pagerlink = "sort=" . $_GET['sort'] . "&type=" . $_GET['type'] . "&";
-
-} else {
-    $pagerlink = '';
-    $orderby = "ORDER BY torrents.id DESC";
-}
-// END SORTING MOD
-
-// $orderby = "ORDER BY torrents.id DESC";  //REMOVE FOR SORT MOD
 
 $addparam = '';
 $wherea = [];

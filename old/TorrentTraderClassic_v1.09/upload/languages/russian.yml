@@ -188,6 +188,7 @@ COOKIES: 'Cookies должны быть включены для авториза
 CONTENTS: 'Содержание'
 SUCCESS: 'Успешно'
 PM: 'ЛС'
+FILES: 'Файлы'
 
 # Phrases
 WELCOME_NEW: 'Приветствуем нашего последнего новичка:'
@@ -286,6 +287,7 @@ LAST_SEEDED: 'Последние раздаваемые'
 SEE_WHO_COMPLETED: 'Посмотреть кто закончил'
 MODERATOR_ONLY: 'Только Модераторам'
 FROM: 'из'
+FROM2: 'от'
 AT: 'в'
 WHEN_YOU: 'Когда вы'
 UPLOADED: 'Загружено'

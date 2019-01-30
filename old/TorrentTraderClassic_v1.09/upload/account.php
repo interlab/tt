@@ -190,7 +190,7 @@ $res = DB::fetchAll('
     WHERE receiver=' . $CURUSER['id'] . '
     ORDER BY added DESC');
 if (empty($res)) {
-	echo '<br><p align=center><b>'.$txt['ACCOUNT_YOU_HAVE'].
+    echo '<br><p align=center><b>'.$txt['ACCOUNT_YOU_HAVE'].
         '<font color="#CC0000"><b> 0 </b></font>'.$txt['ACCOUNT_MESSAGES'].
         '</b></p>';
 } else {

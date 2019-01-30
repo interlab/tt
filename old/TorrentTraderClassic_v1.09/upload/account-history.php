@@ -9,7 +9,7 @@ loggedinorreturn();
 $userid = (int) ($_GET["id"] ?? 0);
 
 if (!is_valid_id($userid)) {
-	bark("Error", "Invalid ID");
+    bark("Error", "Invalid ID");
 }
 
 // jmodonly();
@@ -21,33 +21,33 @@ $perpage = 25;
 //-------- Action: View posts - forum
 
 if ($action == "viewposts") {
-	$query = '
+    $query = '
         SELECT COUNT(*)
         FROM forum_posts AS p
             JOIN forum_topics as t ON p.topicid = t.id
 	        JOIN forum_forums AS f ON t.forumid = f.id
         WHERE p.userid = ' . $userid . '
             AND f.minclassread <= ' . $CURUSER['class'];
-	$postcount = DB::fetchColumn($query);
+    $postcount = DB::fetchColumn($query);
     if (! $postcount) {
         bark("Error", "No posts found");
     }
 
-	//------ Make page menu
-	list($pagertop, $pagerbottom, $limit) = pager($perpage, $postcount, $_SERVER["PHP_SELF"] . "?action=viewposts&id=$userid&");
+    //------ Make page menu
+    list($pagertop, $pagerbottom, $limit) = pager($perpage, $postcount, $_SERVER["PHP_SELF"] . "?action=viewposts&id=$userid&");
 
-	//------ Get user data
-	$arr = DB::fetchAssoc('SELECT username, donated, warned FROM users WHERE id = ' . $userid);
-	if (empty($arr)) {
+    //------ Get user data
+    $arr = DB::fetchAssoc('SELECT username, donated, warned FROM users WHERE id = ' . $userid);
+    if (empty($arr)) {
         $subject = "unknown[$userid]";
     } else {
         $subject = "<a href=account-details.php?id=$userid><b>$arr[username]</b></a>".
             ($arr["donated"] > 1 ? "<img src=images/star.gif alt='Donor' style='margin-left: 4pt'>" : "") .
             ($arr["warned"] == "yes" ? "<img src=images/warned.gif alt='Warned' style='margin-left: 4pt'>" : "");
-	}
+    }
 
-	//------ Get posts
-	$query = '
+    //------ Get posts
+    $query = '
         SELECT f.id AS f_id, f.name, t.id AS t_id, t.subject, t.lastpost, r.lastpostread, p.*
         FROM forum_posts AS p
             JOIN forum_topics as t ON p.topicid = t.id
@@ -58,42 +58,32 @@ if ($action == "viewposts") {
             AND f.minclassread <= ' . $CURUSER['class'] . '
         ORDER BY p.id DESC
         ' . $limit;
-	$res = DB::fetchAll($query);
-	if (empty($res)) {
-	    bark("Error", "No posts found");
+    $res = DB::fetchAll($query);
+    if (! $res) {
+        bark("Error", "No posts found");
     }
 
-	stdhead("Posts history");
+    stdhead("Posts history");
 
-	//print("<h1>Post history for $subject</h1>\n");
+    // Print table
 
-//	if ($postcount > $perpage) echo $pagertop;
+    begin_frame("Post history for $subject");
 
-	//------ Print table
-
-	begin_frame("Post history for $subject");
-
-	if ($postcount > $perpage)
+    if ($postcount > $perpage) {
         echo $pagertop;
+    }
 
-	foreach ($res as $arr) {
-	    $postid = $arr["id"];
+    foreach ($res as $arr) {
+        $postid = $arr["id"];
+        $posterid = $arr["userid"];
+        $topicid = $arr["t_id"];
+        $topicname = $arr["subject"];
+        $forumid = $arr["f_id"];
+        $forumname = $arr["name"];
+        $newposts = ($arr["lastpostread"] < $arr["lastpost"]) && $CURUSER["id"] == $userid;
+        $added = $arr["added"] . " GMT (" . (get_elapsed_time(sql_timestamp_to_unix_timestamp($arr["added"]))) . " ago)";
 
-	    $posterid = $arr["userid"];
-
-	    $topicid = $arr["t_id"];
-
-	    $topicname = $arr["subject"];
-
-	    $forumid = $arr["f_id"];
-
-	    $forumname = $arr["name"];
-
-	    $newposts = ($arr["lastpostread"] < $arr["lastpost"]) && $CURUSER["id"] == $userid;
-
-	    $added = $arr["added"] . " GMT (" . (get_elapsed_time(sql_timestamp_to_unix_timestamp($arr["added"]))) . " ago)";
-
-	    print("<br><table border=0 cellspacing=0 cellpadding=0 width=95%><tr><td width=100% bgcolor=#66CCFF>
+	print("<br><table border=0 cellspacing=0 cellpadding=0 width=95%><tr><td width=100% bgcolor=#66CCFF>
 	    <b>Forum:&nbsp;</b>
 	    <a href=forums.php?action=viewforum&forumid=$forumid>$forumname</a>
 	    &nbsp;--&nbsp;<b>Topic:&nbsp;</b>
@@ -103,43 +93,43 @@ if ($action == "viewposts") {
       ($newposts ? " &nbsp;<b>(<font color=red>NEW!</font>)</b>" : "") .
 	    "&nbsp;--&nbsp;$added</td></tr></table>\n");
 
-	    begin_table(true);
+	begin_table(true);
 
-	    $body = format_comment($arr["body"]);
+	$body = format_comment($arr["body"]);
 
-	    if (is_valid_id($arr['editedby'])) {
-        	$subrow = DB::fetchAssoc('SELECT username FROM users WHERE id = ' . $arr['editedby'] . ' LIMIT 1');
-	        if ($subrow) {
-	            $body .= "<p><font size=1 class=small>Last edited by <a href=userdetails.php?id=$arr[editedby]><b>".
-                    "$subrow[username]</b></a> at $arr[editedat] GMT</font></p>\n";
-	        }
-	    }
+        if (is_valid_id($arr['editedby'])) {
+            $subrow = DB::fetchAssoc('SELECT username FROM users WHERE id = ' . $arr['editedby'] . ' LIMIT 1');
+            if ($subrow) {
+                $body .= "<p><font size=1 class=small>Last edited by <a href=userdetails.php?id=$arr[editedby]><b>".
+                "$subrow[username]</b></a> at $arr[editedat] GMT</font></p>\n";
+            }
+        }
 
-	    print("<tr valign=top><td width=95%>&nbsp;<i>$body</i></td></tr>\n");
+        print("<tr valign=top><td width=95%>&nbsp;<i>$body</i></td></tr>\n");
 
-	    end_table();
-	}
+        end_table();
+    }
 
-    if ($postcount > $perpage)
+    if ($postcount > $perpage) {
         echo $pagerbottom;
+    }
 
-	end_frame();
+    end_frame();
 
-	stdfoot();
+    stdfoot();
 }
 
 //-------- Action: View comments
 
 elseif ($action === "viewcomments") {
+    // LEFT due to orphan comments
+    $from_is = "comments AS c LEFT JOIN torrents as t
+                ON c.torrent = t.id";
 
-	// LEFT due to orphan comments
-	$from_is = "comments AS c LEFT JOIN torrents as t
-	            ON c.torrent = t.id";
+    $where_is = "c.user = $userid";
+    $order_is = "c.id DESC";
 
-	$where_is = "c.user = $userid";
-	$order_is = "c.id DESC";
-
-	$query = '
+    $query = '
         SELECT COUNT(*)
         FROM comments AS c
             LEFT JOIN torrents as t ON c.torrent = t.id
@@ -150,102 +140,88 @@ elseif ($action === "viewcomments") {
         bark("Error", "No comments found");
     }
 
-	//------ Make page menu
+    //------ Make page menu
+    list($pagertop, $pagerbottom, $limit) = pager($perpage, $commentcount,
+            $_SERVER["PHP_SELF"] . "?action=viewcomments&id=$userid&");
 
-	list($pagertop, $pagerbottom, $limit) = pager($perpage, $commentcount, $_SERVER["PHP_SELF"] . "?action=viewcomments&id=$userid&");
+    //------ Get user data
+    $arr = DB::fetchAssoc("SELECT username, donated, warned FROM users WHERE id = $userid");
 
-	//------ Get user data
+    if ($arr) {		
+        $subject = "<a href=account-details.php?id=$userid><b>$arr[username]</b></a>" .
+            ($arr["donated"] > 1 ? "<img src=images/star.gif alt='Donor' style='margin-left: 4pt'>" : "") .
+            ($arr["warned"] == "yes" ? "<img src=images/warned.gif alt='Warned' style='margin-left: 4pt'>" : "");
+    } else {
+        $subject = "unknown[$userid]";
+    }
+    //------ Get comments
 
-	$res = mysql_query("SELECT username, donated, warned FROM users WHERE id=$userid") or sqlerr(__FILE__, __LINE__);
+    $select_is = "t.name, c.torrent AS t_id, c.id, c.added, c.text";
+    $query = "SELECT $select_is FROM $from_is WHERE $where_is " .
+                "ORDER BY $order_is ".$limit;
 
-	if (mysql_num_rows($res) == 1)
-	{
-		$arr = mysql_fetch_assoc($res);
+    $res = DB::fetchAll($query);
+    if (! $res) {
+        bark("Error", "No comments found");
+    }
 
-	  $subject = "<a href=account-details.php?id=$userid><b>$arr[username]</b></a>" .
-	  	($arr["donated"] > 1 ? "<img src=images/star.gif alt='Donor' style='margin-left: 4pt'>" : "") .
-	  	($arr["warned"] == "yes" ? "<img src=images/warned.gif alt='Warned' style='margin-left: 4pt'>" : "");
-	}
-	else
-	  $subject = "unknown[$userid]";
+    stdhead("Comments history");
 
-	//------ Get comments
+    // Print table
 
-	$select_is = "t.name, c.torrent AS t_id, c.id, c.added, c.text";
+    begin_frame("Comments history for $subject");
 
-	$query = "SELECT $select_is FROM $from_is WHERE $where_is " .
-	            "ORDER BY $order_is ".$limit;
+    if ($commentcount > $perpage) {
+        echo $pagertop;
+    }
 
-	$res = mysql_query($query) or sqlerr(__FILE__, __LINE__);
+    foreach ($res as $arr) {
+        $commentid = $arr["id"];
+        $torrent = $arr["name"];
 
-	if (mysql_num_rows($res) == 0) bark("Error", "No comments found");
+        // make sure the line doesn't wrap
+        if (strlen($torrent) > 55) {
+            $torrent = mb_substr($torrent, 0, 52, 'utf-8') . '...';
+        }
 
-	stdhead("Comments history");
+        $torrentid = $arr["t_id"];
 
-//	print("<h1>Comments history for $subject</h1>\n");
+        //find the page; this code should probably be in torrents-details.php instead
 
-//	if ($commentcount > $perpage) echo $pagertop;
+        $count = DB::fetchColumn("SELECT COUNT(*) FROM comments WHERE torrent = $torrentid AND id < $commentid LIMIT 1");
+        $comm_page = floor($count / 20);
+        $page_url = $comm_page?"&page=$comm_page":"";
 
-	//------ Print table
+        $added = $arr["added"] . " GMT (" . (get_elapsed_time(sql_timestamp_to_unix_timestamp($arr["added"]))) . " ago)";
 
-	begin_frame("Comments history for $subject");
+        print("<br><table border=0 cellspacing=0 cellpadding=0 width=95%><tr><td width=100% bgcolor=#66CCFF>".
+            "<b>Torrent:&nbsp;</b>".
+            ($torrent?("<a href=/torrents-details.php?id=$torrentid&tocomm=1>$torrent</a>"):" [Deleted] ").
+            "&nbsp;---&nbsp;<b>Comment:&nbsp;</b>#<a href=/torrents-details.php?id=$torrentid&tocomm=1$page_url>$commentid</a>&nbsp;---&nbsp;$added
+            </td></tr></table>\n");
 
-	if ($commentcount > $perpage) echo $pagertop;
+        begin_table(true);
 
-	while ($arr = mysql_fetch_assoc($res))
-	{
+        $body = format_comment($arr["text"]);
 
-		$commentid = $arr["id"];
+        print("<tr valign=top><td >$body</td></tr>\n");
 
-	  $torrent = $arr["name"];
+        end_table();
+    }
 
-    // make sure the line doesn't wrap
-	  if (strlen($torrent) > 55)
-	  	$torrent = substr($torrent,0,52)."...";
+    if ($commentcount > $perpage) {
+        echo $pagerbottom;
+    }
 
-	  $torrentid = $arr["t_id"];
+    end_frame();
 
-	  //find the page; this code should probably be in torrents-details.php instead
-
-	  $subres = mysql_query("SELECT COUNT(*) FROM comments WHERE torrent = $torrentid AND id < $commentid")
-	  	or sqlerr(__FILE__, __LINE__);
-	  $subrow = mysql_fetch_row($subres);
-    $count = $subrow[0];
-    $comm_page = floor($count/20);
-    $page_url = $comm_page?"&page=$comm_page":"";
-
-	  $added = $arr["added"] . " GMT (" . (get_elapsed_time(sql_timestamp_to_unix_timestamp($arr["added"]))) . " ago)";
-
-	  print("<br><table border=0 cellspacing=0 cellpadding=0 width=95%><tr><td width=100% bgcolor=#66CCFF>".
-	  "<b>Torrent:&nbsp;</b>".
-	  ($torrent?("<a href=/torrents-details.php?id=$torrentid&tocomm=1>$torrent</a>"):" [Deleted] ").
-	  "&nbsp;---&nbsp;<b>Comment:&nbsp;</b>#<a href=/torrents-details.php?id=$torrentid&tocomm=1$page_url>$commentid</a>&nbsp;---&nbsp;$added
-	  </td></tr></table>\n");
-
-	  begin_table(true);
-
-	  $body = format_comment($arr["text"]);
-
-	  print("<tr valign=top><td >$body</td></tr>\n");
-
-	  end_table();
-	}
-
-	if ($commentcount > $perpage) echo $pagerbottom;
-
-	end_frame();
-
-
-//	if ($commentcount > $perpage) echo $pagerbottom;
-
-	stdfoot();
-
+    stdfoot();
 }
 
 //-------- Handle unknown action
 
 elseif ($action != '') {
-	bark("History Error", "Unknown action '$action'.");
+    bark("History Error", "Unknown action '$action'.");
 }
 
 //-------- Any other case

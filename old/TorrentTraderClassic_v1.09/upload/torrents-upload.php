@@ -322,7 +322,7 @@ EOD;
             $nmax = 100; // Max recipients per message
             $nthis = 0;
             $ntotal = 0;
-            $total = count($res);
+            $total = count($res[0] ?? []);
             foreach ($res as $arr) {
                 if ($nthis == 0)
                     $to = $arr[0];

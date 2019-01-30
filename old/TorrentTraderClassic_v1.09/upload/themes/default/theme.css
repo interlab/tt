@@ -32,13 +32,17 @@ BODY{
 }
 
 /* Define Torrent Table Header */
+.ttable_head a {
+    color: #FFFFFF;
+}
+
 .ttable_head {
-font-family: 'Verdana';
-border:1px solid #D6D9DB;
-color: #FFFFFF;
-font-size: 7pt;
-background: #808080;
-text-align: center;
+    font-family: 'Verdana';
+    border:1px solid #D6D9DB;
+    color: #FFFFFF;
+    font-size: 7pt;
+    background: #808080;
+    text-align: center;
 }
 
 /* Define Torrent Table Columns (colx=misc) */
@@ -253,3 +257,8 @@ ul#tabnav a:hover {
 }
 
 /* end css tabs */
+
+.forumtab {
+    background-color: #E0F1FE;
+}
+

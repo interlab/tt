@@ -53,4 +53,45 @@ class Helper
 
         return $langs;
     }
+
+    public static function sortMod($sort, $type)
+    {
+        if (! empty($sort)) {
+            $column = '';
+            $ascdesc = '';
+            $sort = (int) $sort;
+            $type = strtolower($type) === 'asc' ? 'asc' : 'desc';
+
+            switch ($sort) {
+                case 1: $column = 'name'; break;
+                case 2: $column = 'nfo'; break;
+                case 3: $column = 'comments'; break;
+                case 4: $column = 'size'; break;
+                case 5: $column = 'times_completed'; break;
+                case 6: $column = 'seeders'; break;
+                case 7: $column = 'leechers'; break;
+                case 8: $column = 'category'; break;
+                default: $column = 'id'; break;
+            }
+
+            switch ($type) {
+                case 'asc': $ascdesc = 'ASC'; break;
+                case 'desc': $ascdesc = 'DESC'; break;
+                default: $ascdesc = 'DESC'; break;
+            }
+
+            $orderby = 'ORDER BY torrents.' . $column . ' ' . $ascdesc;
+            $pagerlink = 'sort=' . $sort . '&type=' . $type . '&';
+        } else {
+            $column = 'id';
+            $ascdesc = 'DESC';
+            $pagerlink = '';
+            $orderby = "ORDER BY torrents.id DESC";
+        }
+
+        return [
+            'orderby' => $orderby, 'pagerlink' => $pagerlink,
+            'column' => $column, 'by' => $ascdesc,
+        ];
+    }
 }

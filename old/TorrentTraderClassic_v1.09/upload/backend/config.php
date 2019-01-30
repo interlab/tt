@@ -27,7 +27,7 @@ $WELCOMEPMMSG = "Thank you for registering at our tracker!
 
 Please remember to keep your ratio at 1.00 or greater :)";
 $DHT = false;
-$POLLON = false;
+$POLLON = true;
 
 //Setup Site Blocks
 $SITENOTICEON = true;

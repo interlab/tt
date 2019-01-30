@@ -146,7 +146,10 @@ if ($count) {
     torrents.added, torrents.comments,torrents.numfiles,torrents.filename,torrents.owner,IF(torrents.nfo <> '', 1, 0) as nfoav,
     IF(torrents.numratings < $minvotes, NULL, ROUND(torrents.ratingsum / torrents.numratings, 1)) AS rating, 
     categories.name AS cat_name, categories.image AS cat_pic, 
-    users.username, users.privacy FROM torrents LEFT JOIN categories ON category = categories.id LEFT JOIN users ON torrents.owner = users.id 
+    users.username, users.privacy
+    FROM torrents
+        LEFT JOIN categories ON category = categories.id
+        LEFT JOIN users ON torrents.owner = users.id 
     $where 
     $orderby 
     $limit";

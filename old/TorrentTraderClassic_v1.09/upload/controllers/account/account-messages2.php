@@ -110,9 +110,9 @@ if (!$res) {
         <tr><td class='forumtab'><img border='0' src='".ST_IMG_URL."/envelope.gif'></td>
         <td width='70%' class='forumtab'>");
         if ($sent == 0) {
-            print($txt['FROM']." <b>$sender</b> ");
+            echo $txt['FROM2'] . ' <b>' . $sender . '</b> ';
         } else {
-            print("для <b>$receiver</b> ");
+            echo $txt['FOR1'] . ' <b>' . $receiver . '</b> ';
         }
 
         print($txt['AT'].get_date_time($arr["utadded"], $CURUSER['tzoffset']));

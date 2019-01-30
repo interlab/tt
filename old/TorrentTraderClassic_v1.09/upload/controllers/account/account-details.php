@@ -46,10 +46,11 @@ function maketable($res)
     return $ret;
 }
 
-$id = (int)$_GET["id"];
+$id = (int) ($_GET["id"] ?? 0);
 
-if (!is_valid_id($id))
+if (!is_valid_id($id)) {
     bark("Can't show details", "Bad ID.");
+}
 
 $user = DB::fetchAssoc('SELECT * FROM users WHERE id = ' . $id . ' LIMIT 1');
 if ($user["status"] == "pending") {
@@ -84,38 +85,41 @@ if ($num_torrents > 0) {
     }
 }
 
-if ($user["ip"] && !(get_user_class() < UC_JMODERATOR && $user["class"] >= UC_UPLOADER))
-{
-	$limited = $CURUSER['id'] != $id && get_user_class() < UC_JMODERATOR;
-  if ($limited)
-    $ip = substr($user["ip"], 0, strrpos($user["ip"], ".") + 1) . "xxx";
-  else
-    $ip = $user["ip"];
-  $dom = @gethostbyaddr($user["ip"]);
-  if ($dom == $user["ip"] || @gethostbyname($dom) != $user["ip"])
-    $addr = $ip;
-  else
-  {
-    $dom = strtoupper($dom);
-    $domparts = explode(".", $dom);
-    $domain = $domparts[count($domparts) - 2];
-    if ($domain == "COM" || $domain == "CO" || $domain == "NET" || $domain == "NE" || $domain == "ORG" || $domain == "OR" )
-      $l = 2;
-    else
-      $l = 1;
+if ($user["ip"] && !(get_user_class() < UC_JMODERATOR && $user["class"] >= UC_UPLOADER)) {
+    $limited = $CURUSER['id'] != $id && get_user_class() < UC_JMODERATOR;
     if ($limited)
-      while (substr_count($dom, ".") > $l)
-        $dom = substr($dom, strpos($dom, ".") + 1);
-    $addr = "$ip ($dom)";
-  }
+        $ip = substr($user["ip"], 0, strrpos($user["ip"], ".") + 1) . "xxx";
+    else
+        $ip = $user["ip"];
+    $dom = @gethostbyaddr($user["ip"]);
+    if ($dom == $user["ip"] || @gethostbyname($dom) != $user["ip"])
+        $addr = $ip;
+    else {
+        $dom = strtoupper($dom);
+        $domparts = explode(".", $dom);
+        $domain = $domparts[count($domparts) - 2];
+        if ($domain == "COM" || $domain == "CO" || $domain == "NET" ||
+                $domain == "NE" || $domain == "ORG" || $domain == "OR" ) {
+            $l = 2;
+        } else {
+            $l = 1;
+        }
+        if ($limited) {
+            while (substr_count($dom, ".") > $l)
+                $dom = substr($dom, strpos($dom, ".") + 1);
+        }
+        $addr = "$ip ($dom)";
+    }
 }
+
 if ($user['added'] == "0000-00-00 00:00:00")
-  $joindate = 'N/A';
+    $joindate = 'N/A';
 else
-  $joindate = "$user[added] (" . get_elapsed_time(sql_timestamp_to_unix_timestamp($user["added"])) . " ago)";
+    $joindate = "$user[added] (" . get_elapsed_time(sql_timestamp_to_unix_timestamp($user["added"])) . " ago)";
+
 $lastseen = $user["last_access"];
 if ($lastseen == "0000-00-00 00:00:00")
-  $lastseen = "never";
+    $lastseen = "never";
 else {
     $lastseen .= " (" . get_elapsed_time(sql_timestamp_to_unix_timestamp($lastseen)) . " ago)";
     $torrentcomments = DB::fetchColumn('SELECT COUNT(*) FROM comments WHERE user = ' . $user["id"]);
@@ -124,7 +128,7 @@ else {
 $forumposts = DB::fetchColumn('SELECT COUNT(*) FROM forum_posts WHERE userid = ' . $user['id']);
 
 if ($user['donated'] > 0)
-  $don = "<img src=pic/starbig.gif>";
+    $don = "<img src=pic/starbig.gif>";
 
 $country = DB::fetchColumn('SELECT name FROM countries WHERE id = ' . $user['country'] . ' LIMIT 1');
 
@@ -303,13 +307,14 @@ if (get_user_class() >= UC_JMODERATOR && $user['invitees'] > 0 || $user["id"] ==
         WHERE id IN(' . implode(',', $compl_list) . ')
             AND status = ?
         LIMIT 50', ['confirmed']);
-    $last = count($compl_users);
     if ($compl_users) {
+        $last = count($compl_users[0]);
         echo '<tr><td class=rowhead width=1%>Invited Users: </td><td>';
         $i = 0;
         foreach ($compl_users as $row) {
             $i++;
-            echo '<a href="account-details.php?id=' . $row["id"] . '">' . $row["username"] . '</a>' . ($i === $last ? '' : ', ');
+            echo '<a href="account-details.php?id=' . $row["id"] . '">' .
+                    $row["username"] . '</a>' . ($i === $last ? '' : ', ');
         }
         echo '</td></tr>';
     }
