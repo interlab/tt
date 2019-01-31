@@ -5,12 +5,12 @@
 <!--
 function Smilies(Smilie)
 {
-document.Form.body.value+=Smilie+" ";
-document.Form.body.focus();
+    document.Form.body.value += Smilie + " ";
+    document.Form.body.focus();
 }
 //-->
 </script>
-<title><?= $title; ?></title>
+<title><?= $title ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <meta http-equiv="imagetoolbar" content="no" />
 <link rel="stylesheet" type="text/css" href="themes/default/theme.css" />
@@ -33,30 +33,27 @@ var g_nExpando = 0;
 function putItemInState(n,bState)
 {
    var oItem,oGif;
-      oItem=document.getElementById("descr"+n);
-   oGif=document.getElementById("expandoGif"+n);
+        oItem = document.getElementById("descr"+n);
+        oGif = document.getElementById("expandoGif"+n);
    
-   if (bState=='toggle')
-     bState=(oItem.style.display=='block');
+   if (bState == 'toggle')
+        bState=(oItem.style.display=='block');
 
    if(bState)
    {
        bState=(oItem.style.display='none');
        bState=(oGif.src='images/cross.gif');
    }
-   else
-   {
+   else {
        bState=(oItem.style.display='block');
        bState=(oGif.src='images/noncross.gif');
    }
 }
 
-
 function expand(nItem)
 {
     putItemInState(nItem,'toggle');
 }
-
 
 function expandAll()
 {
@@ -69,7 +66,6 @@ function expandAll()
     for(var i=0; i<g_nExpando; i++)
         putItemInState(i,bState);
 }
-
 
 var tns6=document.getElementById&&!document.all
 var ie=document.all
@@ -124,7 +120,7 @@ echo isset($st['js_files']) ? $st['js_files'] : '';
 		// get unread messages
         $nmessages = numUserMsg();
 		$unread = numUnreadUserMsg();
-		//end
+		// end
 			?>
 
 			&nbsp;&#8595;&nbsp;<font color=red><?= mksize($CURUSER['downloaded']) ?></font> - <b>&#8593;&nbsp;</b>

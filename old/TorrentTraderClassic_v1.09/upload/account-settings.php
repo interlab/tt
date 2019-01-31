@@ -6,7 +6,7 @@ require_once("backend/functions.php");
 dbconn(false);
 loggedinorreturn();
 
-global $CURUSER;
+global $CURUSER, $tzs;
 
 if (!empty($_POST['submit'])) {
     $set = [];
@@ -151,14 +151,15 @@ $stylesheets = Helper::getStylesheets();
 
 $countries = "<option value=0>----</option>\n";
 $res = DB::query("SELECT id, name from countries ORDER BY name");
-while ($ct_a = $res->fetch())
+while ($ct_a = $res->fetch()) {
   $countries .= "<option value=$ct_a[id]" . ($CURUSER["country"] == $ct_a['id'] ? " selected" : '') . ">$ct_a[name]</option>\n";
+}
 
 ksort($tzs);
 
+$timezone = '';
 foreach ($tzs as $key => $val) {
-    $timezone = '';
-    if ($CURUSER["tzoffset"] == $key) {
+    if ($CURUSER['tzoffset'] == $key) {
         $timezone .= "<option value=\"$key\" selected>$val</option>\n";
     } else {
         $timezone .= "<option value=\"$key\">$val</option>\n";

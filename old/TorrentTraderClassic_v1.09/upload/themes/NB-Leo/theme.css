@@ -1,0 +1,158 @@
+/* Link colors */
+A:link			{ text-decoration: none; color: #FFFFFF; font-size:8pt;}
+A:visited		{ text-decoration: none; color: #FFFFFF; font-size:8pt;}
+A:active		{ text-decoration: none; color: #FFFFFF; font-size:8pt;}
+A:hover			{ text-decoration: underline; color: #FFFFFF; font-size:8pt;}
+
+/* Link2 colors */
+A.alt:link			{ text-decoration: none; color: #333333; font-size:8pt;}
+A.alt:visited		{ text-decoration: none; color: #333333; font-size:8pt;}
+A.alt:active		{ text-decoration: none; color: #333333; font-size:8pt;}
+A.alt:hover			{ text-decoration: underline; color: #000000; font-size:8pt;}
+
+/* Define BODY style */
+BODY {
+	font-size:8pt;
+	font-family: Verdana;
+	background-color: #1c1c1c;
+}	
+.mbody {
+	background-image: url(images/leo_bkg.png);
+	background-repeat: repeat-x;
+	background-position: top;
+}
+td.subnav{
+	color: #FFFFFF;
+	font-weight: bold;
+}
+.login {
+	font-family: "Times New Roman", Times, serif;
+	color: #CCCCCC;
+	padding-bottom: 5px;
+	padding-right: 20px;
+	font-size: 12px;
+}
+.cont {
+	padding-top: 4px;
+	padding-right: 5px;
+	padding-bottom: 6px;
+	padding-left: 5px;
+}	
+
+/* Define Torrent Table Outer */
+.ttable_headouter {
+    border-collapse: collapse
+    border: #646262;
+	border:1px solid #646262;
+}
+/* Define Torrent Table Inner */
+.ttable_headinner {
+	border-collapse:collapse;
+	border:1px solid #D6D9DB;
+}
+
+/* Define Torrent Table Header */
+.ttable_head {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+color: #FFFFFF;
+font-size: 7pt;
+background: #808080;
+text-align: center;
+}
+
+/* Define Torrent Table Columns (colx=misc) */
+.ttable_col1 {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #F7F7F7;
+}
+.ttable_col2 {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #ECECEC;
+}
+.ttable_colx {
+font-family: 'Verdana';
+border:1px solid #D6D9DB;
+font-size: 8pt;
+background: #ECECEC;
+}
+
+/* Define Other Tables */
+.table_table {
+/*width:100%;*/
+border: #000000;
+border-style: border-style;
+border-width: 1px
+border-collapse:collapse;
+
+}
+.table_head {
+font-family: 'Verdana';
+border:1px solid #000000;
+color: #FFFFFF;
+font-size: 7pt;
+background: #808080;
+}
+.table_col1 {
+font-family: 'Verdana';
+border:1px solid #CFCFCF;
+font-size: 8pt;
+background: #F7F7F7;
+}
+.table_col2 {
+font-family: 'Verdana';
+border:1px solid #CFCFCF;
+font-size: 8pt;
+background: #ECECEC;
+}
+
+
+/* OLD CSS FOLLOWS... */
+td {
+font-family: 'Verdana';
+font-size: 8pt; 
+}
+
+.alt1 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #F7F7F7;
+}
+
+.alt2 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #ECECEC;
+}
+
+.alt3 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #808080;
+}
+
+.alt4 {
+border-right-style: none; 
+border-right-width: medium; 
+border-bottom-style: none; 
+border-bottom-width: medium
+}
+
+.alt5 {
+font-family: 'Verdana';
+font-size: 8pt;
+background: #ECECEC;
+}
+
+.main {
+background: #CBCAC5;
+}
+
+space {
+background-image: url("images/bar08.gif");width: 8px; height: 8px;
+}
+

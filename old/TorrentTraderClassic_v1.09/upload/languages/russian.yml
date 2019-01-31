@@ -189,6 +189,7 @@ CONTENTS: 'Содержание'
 SUCCESS: 'Успешно'
 PM: 'ЛС'
 FILES: 'Файлы'
+PROFILE_UPDATED: 'Профиль обновлён'
 
 # Phrases
 WELCOME_NEW: 'Приветствуем нашего последнего новичка:'

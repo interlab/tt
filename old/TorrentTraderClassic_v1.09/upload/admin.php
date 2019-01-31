@@ -11,22 +11,26 @@ stdhead("Staff CP");
 require_once("backend/admin-functions.php");
 
 $act = $_REQUEST['act'] ?? '';
+$_POST['submit'] = $_POST['submit'] ?? '';
+$do = $_POST['do'] ?? '';
+$error_ac = '';
+$_SERVER['php_self'] = $_SERVER['php_self'] ?? '';
 
 if (empty($act))
 {
-adminmenu(); 
-begin_frame("Reported Items To Be Dealt With");
+    adminmenu(); 
+    begin_frame("Reported Items To Be Dealt With");
 
 // Start reports block
 $type = $_GET["type"];
 if ($type == "user")
-$where = " WHERE type = 'user'";
-else if ($type == "torrent")
-$where = " WHERE type = 'torrent'";
-else if ($type == "forum")
-$where = " WHERE type = 'forum'";
+    $where = " WHERE type = 'user'";
+elseif ($type == "torrent")
+    $where = " WHERE type = 'torrent'";
+elseif ($type == "forum")
+    $where = " WHERE type = 'forum'";
 else
-$where = "";
+    $where = "";
 
 
 $count = DB::fetchColumn('SELECT count(id) FROM reports ' . $where);
@@ -39,8 +43,10 @@ echo $pagertop;
 
 print("<table border=1 cellspacing=0 cellpadding=1 align=center width=95%>\n");
 print("<tr><td class=table_head align=center>By</td><td class=table_head align=center>Reported</td><td class=table_head align=center>Type</td><td class=table_head align=center>Reason</td><td class=table_head align=center>Dealt With</td><td class=table_head align=center>Mark Dealt With</td>");
+
 if (get_user_class() >= UC_MODERATOR)
- printf("<td class=table_head align=center>Delete</td>");
+    printf("<td class=table_head align=center>Delete</td>");
+
 print("</tr>");
 print("<form method=post action=takedelreport.php>");
 
@@ -54,49 +60,42 @@ $res = DB::executeQuery('
     ORDER BY id desc
     ' . $limit, [0]);
 
-while ($arr = $res->fetch())
-{
-if ($arr[dealtwith])
-{
-$res3 = mysql_query("SELECT username FROM users WHERE id=$arr[dealtby]");
-$arr3 = mysql_fetch_assoc($res3);
-$dealtwith = "<font color=green><b>Yes - <a href=account-details.php?id=$arr[dealtby]><b>$arr3[username]</b></a></b></font>";
-}
-else
-$dealtwith = "<font color=red><b>No</b></font>";
-if ($arr[type] == "user")
-{
-$type = "account-details";
-$res2 = mysql_query("SELECT username FROM users WHERE id=$arr[votedfor]");
-$arr2 = mysql_fetch_assoc($res2);
-$name = $arr2[username];
-}
-else if  ($arr[type] == "forum")
-{
-$type = "forums";
-$res2 = mysql_query("SELECT subject FROM forum_topics WHERE id=$arr[votedfor]");
-$arr2 = mysql_fetch_assoc($res2);
-$subject = $arr2[subject];
-}
-else if ($arr[type] == "torrent")
-{
-$type = "torrents-details";
-$res2 = mysql_query("SELECT name FROM torrents WHERE id=$arr[votedfor]");
-$arr2 = mysql_fetch_assoc($res2);
-$name = $arr2[name];
-if ($name == "")
- $name = "<b>[Deleted]</b>";
-}
+while ($arr = $res->fetch()) {
+    if ($arr['dealtwith']) {
+        $res3 = mysql_query("SELECT username FROM users WHERE id=$arr[dealtby]");
+        $arr3 = mysql_fetch_assoc($res3);
+        $dealtwith = "<font color=green><b>Yes - <a href=account-details.php?id=$arr[dealtby]><b>$arr3[username]</b></a></b></font>";
+    } else
+        $dealtwith = "<font color=red><b>No</b></font>";
+    if ($arr[type] == "user") {
+        $type = "account-details";
+        $res2 = mysql_query("SELECT username FROM users WHERE id=$arr[votedfor]");
+        $arr2 = mysql_fetch_assoc($res2);
+        $name = $arr2[username];
+    } elseif  ($arr[type] == "forum") {
+        $type = "forums";
+        $res2 = mysql_query("SELECT subject FROM forum_topics WHERE id=$arr[votedfor]");
+        $arr2 = mysql_fetch_assoc($res2);
+        $subject = $arr2[subject];
+    } elseif ($arr[type] == "torrent") {
+        $type = "torrents-details";
+        $res2 = mysql_query("SELECT name FROM torrents WHERE id=$arr[votedfor]");
+        $arr2 = mysql_fetch_assoc($res2);
+        $name = $arr2[name];
+        if ($name == "")
+            $name = "<b>[Deleted]</b>";
+    }
 
-if ($arr[type] == "forum")
-  { print("<tr><td><a href=account-details.php?id=$arr[addedby]><b>$arr[username]</b></a></td><td align=left><a href=$type.php?action=viewtopic&topicid=$arr[votedfor]&page=p#$arr[votedfor_xtra]><b>$subject</b></a></td><td align=left>$arr[type]</td><td align=left>$arr[reason]</td><td align=left>$dealtwith</td><td align=center><input type=\"checkbox\" name=\"delreport[]\" value=\"" . $arr[id] . "\" /></td></tr>\n");
-  }
-else {
-print("<tr><td><a href=account-details.php?id=$arr[addedby]><b>$arr[username]</b></a></td><td align=left><a href=$type.php?id=$arr[votedfor]><b>$name</b></a></td><td align=left>$arr[type]</td><td align=left>$arr[reason]</td><td align=left>$dealtwith</td><td align=center><input type=\"checkbox\" name=\"delreport[]\" value=\"" . $arr[id] . "\" /></td>\n");
-if (get_user_class() >= UC_MODERATOR)
- printf("<td><a href=delreport.php?id=$arr[id]>Delete</a></td>");
-print("</tr>");
-}}
+    if ($arr[type] == "forum") {
+        print("<tr><td><a href=account-details.php?id=$arr[addedby]><b>$arr[username]</b></a></td><td align=left><a href=$type.php?action=viewtopic&topicid=$arr[votedfor]&page=p#$arr[votedfor_xtra]><b>$subject</b></a></td><td align=left>$arr[type]</td><td align=left>$arr[reason]</td><td align=left>$dealtwith</td><td align=center><input type=\"checkbox\" name=\"delreport[]\" value=\"" . $arr[id] . "\" /></td></tr>\n");
+    }
+    else {
+        print("<tr><td><a href=account-details.php?id=$arr[addedby]><b>$arr[username]</b></a></td><td align=left><a href=$type.php?id=$arr[votedfor]><b>$name</b></a></td><td align=left>$arr[type]</td><td align=left>$arr[reason]</td><td align=left>$dealtwith</td><td align=center><input type=\"checkbox\" name=\"delreport[]\" value=\"" . $arr[id] . "\" /></td>\n");
+        if (get_user_class() >= UC_MODERATOR)
+            printf("<td><a href=delreport.php?id=$arr[id]>Delete</a></td>");
+        print("</tr>");
+    }
+}
 
 print("</table>\n");
 
@@ -281,54 +280,58 @@ if($act == "disabledaccounts")
 {
 	adminmenu();
 	begin_frame("Disabled Accounts", 'center');
-	$res = mysql_query("SELECT * FROM users WHERE enabled='no' ORDER BY username") or sqlerr();
-$num = mysql_num_rows($res);
-print("<center><br><br><table border=1 width=95% cellspacing=0 cellpadding=1>\n");
-print("<tr align=center><td class=table_head width=90>User Name</td>
- <td class=table_head width=70>Registered</td>
- <td class=table_head width=75>Last Access</td>  
- <td class=table_head width=75>User Class</td>
- <td class=table_head width=70>Downloaded</td>
- <td class=table_head width=70>Uploaded</td>
- <td class=table_head width=45>Ratio</td>
- <td class=table_head width=225>Moderator Comments</td>
-</tr>\n");
-for ($i = 1; $i <= $num; $i++)
-{
-$arr = mysql_fetch_assoc($res);
-if ($arr['added'] == '0000-00-00 00:00:00')
-  $arr['added'] = '-';
-if ($arr['last_access'] == '0000-00-00 00:00:00')
-  $arr['last_access'] = '-';
 
+    // todo
+    $pagemenu = '';
+    $browsemenu = '';
 
-if($arr["downloaded"] != 0){
-$ratio = number_format($arr["uploaded"] / $arr["downloaded"], 3);
-} else {
-$ratio="---";
-}
-$ratio = "<font color=" . get_ratio_color($ratio) . ">$ratio</font>";
-  $uploaded = mksize($arr["uploaded"]);
-  $downloaded = mksize($arr["downloaded"]);
+	$res = DB::query("SELECT * FROM users WHERE enabled = 'no' ORDER BY username");
 
-$added = substr($arr['added'],0,10);
-$last_access = substr($arr['last_access'],0,10);
-$class=get_user_class_name($arr["class"]);
+    print("<center><br><br><table border=1 width=95% cellspacing=0 cellpadding=1>\n");
+    print("<tr align=center><td class=table_head width=90>User Name</td>
+        <td class=table_head width=70>Registered</td>
+        <td class=table_head width=75>Last Access</td>  
+        <td class=table_head width=75>User Class</td>
+        <td class=table_head width=70>Downloaded</td>
+        <td class=table_head width=70>Uploaded</td>
+        <td class=table_head width=45>Ratio</td>
+        <td class=table_head width=225>Moderator Comments</td>
+        </tr>\n");
 
-print("<tr><td align=left><a href=account-details.php?id=$arr[id]><b>$arr[username]</b></a>" .($arr["donated"] > 1 ? "<img src=/images/star.gif border=0 alt='Donor'>" : "")."</td>
-  <td align=center>$added</td>
-  <td align=center>$last_access</td>
-  <td align=center>$class</td>
-  <td align=center>$downloaded</td>
-  <td align=center>$uploaded</td>
-  <td align=center>$ratio</td>
-  <td align=center>$arr[modcomment]</td></tr>\n");
-}
+    while ($arr = $res->fetch()) {
+        if ($arr['added'] == '0000-00-00 00:00:00')
+            $arr['added'] = '-';
+        if ($arr['last_access'] == '0000-00-00 00:00:00')
+            $arr['last_access'] = '-';
 
-print("</table>\n");
-print("<p>$pagemenu<br>$browsemenu</p>");
+        if ($arr["downloaded"] != 0) {
+            $ratio = number_format($arr["uploaded"] / $arr["downloaded"], 3);
+        } else {
+            $ratio="---";
+        }
+        $ratio = "<font color=" . get_ratio_color($ratio) . ">$ratio</font>";
+        $uploaded = mksize($arr["uploaded"]);
+        $downloaded = mksize($arr["downloaded"]);
 
-end_frame();
+        $added = substr($arr['added'],0,10);
+        $last_access = substr($arr['last_access'], 0, 10);
+        $class = get_user_class_name($arr["class"]);
+
+        print("<tr><td align=left><a href=account-details.php?id=$arr[id]><b>$arr[username]</b></a>" .
+            ($arr["donated"] > 1 ? "<img src=/images/star.gif border=0 alt='Donor'>" : "")."</td>
+        <td align=center>$added</td>
+        <td align=center>$last_access</td>
+        <td align=center>$class</td>
+        <td align=center>$downloaded</td>
+        <td align=center>$uploaded</td>
+        <td align=center>$ratio</td>
+        <td align=center>$arr[modcomment]</td></tr>\n");
+    }
+
+    print("</table>\n");
+    print("<p>$pagemenu<br>$browsemenu</p>");
+
+    end_frame();
 }
 
 #======================================================================#
@@ -387,25 +390,25 @@ print("<p>$pagemenu<br>$browsemenu</p>");
 
 end_frame();
 }
+
 #======================================================================#
 # Database Administration
 #======================================================================#
-if($act == "databaseadmin")
-{
-adminonly();
-  adminmenu();
-  
-  $tablename = $_GET["tbname"];
-  $cmd = stripslashes($_POST['cmd']);
-    if(!$tablename == ""){
+if ($act == "databaseadmin") {
+    adminonly();
+    adminmenu();
+
+    $tablename = $_GET["tbname"] ?? '';
+    $cmd = stripslashes($_POST['cmd']);
+    if (!$tablename === '') {
         $cmd = "SELECT * FROM $tablename";
     }
-    
-    
-    
+
 	begin_frame("Database Administration");
 	echo "<BR><center><B><a href=admin.php?act=database>Backup / Optimise Database</a></b></center><BR><BR>";
-    echo "<i>WARNING: This area is for <u>advanced users only</u>! Do not send commands of which you do not know the meaning!<br><br>This is for performing manual database tasks.<br>Visit <a href=http://dev.mysql.com/doc/>http://dev.mysql.com/doc/</a> for syntax documentation.</i>";
+    echo "<i>WARNING: This area is for <u>advanced users only</u>! Do not send commands of which you do not know the meaning!
+        <br><br>This is for performing manual database tasks.<br>Visit <a href=http://dev.mysql.com/doc/>http://dev.mysql.com/doc/</a>
+        for syntax documentation.</i>";
     echo "<br><hr>";
     print("<form action='admin.php' method='post'>\n");
     print("<input type=hidden name='act' value='databaseadmin'>\n");
@@ -416,24 +419,25 @@ adminonly();
     print("<tr><td colspan=2 align=center><input type=submit class=btn value='Run'></td></tr>\n");
     print("</table>\n");
     print("</form>\n");
-    
-    if($do == "submitquery"){
+
+    if ($do == "submitquery") {
         $validatecmd = mysql_query($cmd);
         echo "<br><br>";
-        
-        if ($validatecmd){
+
+        if ($validatecmd) {
             echo "<font color=green><b>Execution of MySQL Query successful!</b></font>";
-        }else{
+        } else {
             echo "<font color=red><b>" . mysql_error() . "</b></font>";
         }
         echo "<br><br><a href=admin.php?act=databaseadmin>Show Database Tables</a>";
     }
-    elseif($do == "listfields"){
+    elseif ($do == "listfields") {
         echo "<br><br><a href=admin.php?act=databaseadmin>Show Database Tables</a><br><br>";
         echo "<table align=center cellpadding=0 cellspacing=0 style=border-collapse: collapse bordercolor=#D6D9DB width=100% border=1>";
         echo "<tr><td class=alt3 align=center><font size=1 face=Verdana color=white>Fields in table \"<b>".$tbname."</b>\"</td></tr></table>";
         echo "<table align=center cellpadding=0 cellspacing=0 style=border-collapse: collapse bordercolor=#D6D9DB width=100% border=1>";
-        echo "<tr><td class=alt3 align=center><font size=1 face=Verdana color=white>Name</td><td class=alt3 align=center><font size=1 face=Verdana color=white>Type</td><td class=alt3 align=center><font size=1 face=Verdana color=white>Flags</td></tr>";
+        echo "<tr><td class=alt3 align=center><font size=1 face=Verdana color=white>Name</td><td class=alt3 align=center><font size=1
+            face=Verdana color=white>Type</td><td class=alt3 align=center><font size=1 face=Verdana color=white>Flags</td></tr>";
         
         $reslistfields = mysql_query ("SELECT * FROM " . $tbname);
         $numfields = mysql_num_fields ($reslistfields);
@@ -454,21 +458,17 @@ adminonly();
         }
     
         echo "</table>";
-    }else{
-        
-    //-----TABLE DISPLAY
-    echo "<table align=center cellpadding=0 cellspacing=0 style=border-collapse: collapse bordercolor=#D6D9DB width=100% border=1>";
-    echo "<tr><td class=alt3 align=center><font size=1 face=Verdana color=white>Table Names in database \"<b>".$mysql_db."</b>\"</td></tr>";
-    $result = mysql_list_tables ($mysql_db);
-    $dbtablerowcounter = 0;
-    
-    while ($dbtablerowcounter < mysql_num_rows ($result)) {
-    $tb_names[$dbtablerowcounter] = mysql_tablename ($result, $dbtablerowcounter);
-    echo "<tr><td><a href=admin.php?act=databaseadmin&do=listfields&tbname=" . $tb_names[$dbtablerowcounter] .">" . $tb_names[$dbtablerowcounter] . "</a></td></tr>";
-    $dbtablerowcounter++;
-    }
-    echo "</table>";
-    //----END TABLE DISPLAY
+    } else {
+        // ----- TABLE DISPLAY
+        echo "<table align=center cellpadding=0 cellspacing=0 style=border-collapse: collapse bordercolor=#D6D9DB width=100% border=1>";
+        echo "<tr><td class=alt3 align=center><font size=1 face=Verdana color=white>Table Names in database \"<b>".$mysql_db."</b>\"</td></tr>";
+        $res = DB::query('SHOW TABLES FROM ' . $mysql_db);
+        while ($row = $res->fetch(\PDO::FETCH_NUM)) {
+            echo '<tr><td><a href="admin.php?act=databaseadmin&do=listfields&tbname=' . $row[0] .'">' . $row[0] . '</a></td></tr>';
+        }
+
+        echo '</table>';
+        // ---- END TABLE DISPLAY
     }
     
 	end_frame();
@@ -1542,183 +1542,9 @@ adminonly();
 #======================================================================#
 #        News
 #======================================================================#
-if($act == "news"){
-       function dbainsert ($table, $a1) {
-       global $errors;
-       $q = 'INSERT INTO `' . $table . '` (';
-       $n = '1';
-       foreach ($a1 as $k => $v) {
-               $q .= '`' . $k . '`';
-               if ($n != count($a1)) {
-                       $q .= ',';
-               }
-               $n++;
-       }
-       $q .= ') VALUES (';
-       $n = '1';
-       foreach ($a1 as $k => $v) {
-               $q .= '\'' . $v . '\'';
-               if ($n != count($a1)) {
-                       $q .= ', ';
-               }
-               $n++;
-       }
-       $q .= ')';
-       if ($r = mysql_query($q)) {
-               return TRUE;
-       } else {
-               return FALSE;
-       }
+if ($act === "news") {
+    require_once TT_CONTR_DIR . '/admin/admin-action-news.php';
 }
-               adminmenu();        // show menu
-               //output
-               begin_frame("News Settings", 'center');
-               if ($_POST['submit'] != 'Update Settings') {
-                               $query = 'SELECT * FROM news_options';
-               $res = mysql_query($query) or die(mysql_error());
-               while ($row = mysql_fetch_array($res)){
-               ?>
-               <form id="esetting" name="esetting" method="POST" action="./admin.php?act=news">
-               <br>----------------------Global Options--------------------------<br>
-               <B>Max News In Index:</b>
-               <input type='text' name='maxdisplay' value='<?=$row['max_display']?>' maxlength='2' size='2'>
-               <br><B>Enable News Comments: </b>
-               <input type="checkbox" name="comments"<?php if($row['comment'] == "on"){echo" CHECKED";}?>>
-               <br><B>Enable News Archiving: </b>
-               <input type="checkbox" name="archive"<?php if($row['archive'] == "on"){echo" CHECKED";}?>>
-               <br><br>----------------------Scrolling Options--------------------------<br>
-               <br><B>Enable News Scrolling: </b>
-               <input type="checkbox" name="scrolling"<?php if($row['scrolling'] == "on"){echo" CHECKED";}?>>
-               <br><B>Scroll Speed (1-10 1=slowest):</b>
-               <input type='text' name='sspeed' value='<?=$row['sspeed']?>' maxlength='2' size='2'>
-               <br><B>Title Size:</b>
-               <input type='text' name='titles' value='<?=$row['titles']?>' maxlength='2' size='2'>
-               <br><B>Posted by size:</b>
-               <input type='text' name='subs' value='<?=$row['subs']?>' maxlength='2' size='2'>
-               <br><B>Posted by colour:</b>
-               <input type='text' name='subc' value='<?=$row['subc']?>' maxlength='15' size='15'>
-               <br><br><input type="submit" name="submit" value="Update Settings">
-               <?php 
-             //  if($scrolling == "on")
-               }
-               }else{
-               $query = "UPDATE news_options SET max_display='{$_POST['maxdisplay']}', scrolling='$scrolling', comment='$comments', archive='$archive', titles='{$_POST['titles']}', subs='{$_POST['subs']}', subc='{$_POST['subc']}', sspeed='{$_POST['sspeed']}'";
-                               if(mysql_query($query)) {
-                                       echo 'Settings Updated!<br>';
-                                       $query = 'SELECT * FROM news_options';
-               $res = mysql_query($query) or die(mysql_error());
-               while ($row = mysql_fetch_array($res)){
-               ?>
-               <form id="esetting" name="esetting" method="POST" action="./admin.php?act=news">
-               <br>----------------------Global Options--------------------------<br>
-               <B>Max News In Index:</b>
-               <input type='text' name='maxdisplay' value='<?=$row['max_display']?>' maxlength='2' size='2'>
-               <br><B>Enable News Comments: </b>
-               <input type="checkbox" name="comments"<?php if($row['comment'] == "on"){echo" CHECKED";}?>>
-               <br><B>Enable News Archiving: </b>
-               <input type="checkbox" name="archive"<?php if($row['archive'] == "on"){echo" CHECKED";}?>>
-               <br><br>----------------------Scrolling Options--------------------------<br>
-               <br><B>Enable News Scrolling: </b>
-               <input type="checkbox" name="scrolling"<?php if($row['scrolling'] == "on"){echo" CHECKED";}?>>
-               <br><B>Scroll Speed (1-10 1=slowest):</b>
-               <input type='text' name='sspeed' value='<?=$row['sspeed']?>' maxlength='2' size='2'>
-               <br><B>Title Size:</b>
-               <input type='text' name='titles' value='<?=$row['titles']?>' maxlength='2' size='2'>
-               <br><B>Posted by size:</b>
-               <input type='text' name='subs' value='<?=$row['subs']?>' maxlength='2' size='2'>
-               <br><B>Posted by colour:</b>
-               <input type='text' name='subc' value='<?=$row['subc']?>' maxlength='15' size='15'>
-               <br><br><input type="submit" name="submit" value="Update Settings">
-                             <?php }
-                               } else {
-                                       echo 'ERROR: ' . mysql_error();
-                               }
-
-                             }
-               end_frame();
-               print("</form>");
-
-               begin_frame("Add News", 'center');
-               $form = '
-                       <form id="anews" name="anews" method="POST" action="' . $_SERVER['php_self'] . '?act=news">
-                               <span style="font: bold 11px sans-serif; letter-spacing: 2px;">Title:</span><br><input type="text" name="title" id="title" size="50" maxlength="255" value="Title"><br><span style="font: bold 11px sans-serif; letter-spacing: 2px;">News Text:</span><br>
-                               <textarea rows="10" cols="75" name="text" id="text">News Text</textarea><br><br>
-                               <input type="submit" name="submit" value="Add News">
-                       </form>';
-                       // new news
-               if ($_POST['submit'] != 'Add News') {
-                       // No form
-                       echo $form;
-               }else{
-                    $news = str_replace("\n", '<br>', $_POST['text']);
-                    $v = array(
-                               'title' => $_POST['title'],
-                               'user'  => $CURUSER[username],
-                               'date'        => date("F j, g:i a"),
-                               'text'        => $news
-                       );
-                       if (!dbainsert('news', $v)) {
-                               'Could not insert, ERROR: ' . mysql_error();
-                               exit;
-                       }
-                       echo '<b>News has been added</b><br>';
-                       echo $form;
-               }
-
-
-
-               end_frame();
-               print("</form>");
-
-               begin_frame("Edit News", 'center');
-
-               if ($_POST['submit'] != 'Edit News' && $_POST['submit'] != 'Delete') {
-                       // No Results
-                       echo $_POST['submit'];
-               } elseif ($_POST['submit'] == 'Edit News' || $_POST['submit'] == 'Delete') {
-                       if ($_POST['submit'] == 'Edit News') {
-                               // Edit Ahoy!
-                               $news = str_replace("\n", '<br>', $_POST['text']);
-
-
-                               $news = str_replace($smileys1, $smileys2, $news);
-                               $query = "UPDATE news SET title = '{$_POST['title']}', text = '{$news}', date = '" . date("F j, g:i a") . "' WHERE id='{$_POST['id']}'";
-                               if(mysql_query($query)) {
-                                       echo 'News updated!';
-                               } else {
-                                       echo 'ERROR: ' . mysql_error();
-                               }
-                       } elseif ($_POST['submit'] == 'Delete') {
-                               $query = "DELETE FROM news WHERE id = '{$_POST['id']}'";
-                               if (mysql_query($query))
-                                       echo 'News Deleted!';
-                               }
-                       }
-
-               $query = 'SELECT max_display FROM news_options';
-               $res = mysql_query($query) or die(mysql_error());
-               while ($row = mysql_fetch_array($res)){
-               $query = 'SELECT id, title, text FROM news ORDER BY id DESC LIMIT ' . $row['max_display'] . '';
-               $res = mysql_query($query) or die(mysql_error());
-               while ($row = mysql_fetch_array($res)){
-                       $news = str_replace("<br>", "\n", $row['text']);
-
-
-                       ?>
-                       <form id="anews" name="anews" method="POST" action="<?=$_SERVER['php_self']?>?act=news">
-                       <input type="text" name="title" id="title" size="50" maxlength="255" value="<?=$row['title']?>"><br><br>
-                       <textarea rows="10" cols="75" name="text" id="text"><?=$news?></textarea><br><br>
-                       <input type="hidden" name="id" value="<?=$row['id']?>">
-                       <input type="submit" name="submit" value="Edit News"> <input type="submit" name="submit" value="Delete">
-                       </form>
-                       </div>
-                      <?php 
-                           }
-
-                              end_frame();
-               print("</form>");
-                             }
-                              }
 
 #======================================================================#
 #	Bans
@@ -1870,7 +1696,7 @@ if ($class)
 
 stdhead("Users");
 adminmenu();
-begin_frame("" . MEMBERS . "", 'center');
+begin_frame($txt['MEMBERS'], 'center');
 print("<center><a href='admin.php?act=confirmreg'>Manual Confirm User Registration</a></center><br>\n");
 print("<center><a href='cheats.php'>Check For Possible Cheaters</a></center><br>\n");
 print("<br /><form method=get action=?>\n");
@@ -2022,7 +1848,7 @@ while ($row = mysql_fetch_array($reqww))
 end_table();
 end_frame();
 }
-if($do == "save_editreg")
+if ($do == "save_editreg")
 // SAVE THEME EDIT FUNCTION
 	{
 		mysql_query(" UPDATE users SET status='$ed_status' WHERE id=$id");
@@ -2190,8 +2016,7 @@ AHA not yet matey...
 #======================================================================#
 #	Theme Settings
 #======================================================================#
-if($act == "style")
-{
+if ($act == "style") {
 	adminonly();
 	adminmenu();
 	begin_frame("Themes Management", 'center');
@@ -2205,41 +2030,47 @@ if($act == "style")
 	<TD><b>Theme Name</b></td><TD><b>Folder Name</b></td><TD><b>ID</b></td></tr>
 	<?php 
 	// LIST THEME
-	$querya = MYSQL_QUERY("SELECT * FROM stylesheets ORDER BY name");
-	$allthemes = MYSQL_NUM_ROWS($querya);
-	if($allthemes == 0) {
-		echo "<h4>None</h4>\n";
-	} else {
-		while($row =MYSQL_FETCH_ARRAY($querya))
-		{
-			echo "<tr><td><font size='2'><b><a href='admin.php?do=edtheme&id=$row[id]'>$row[name]</b></a></font></td><td>$row[uri]</td><td>$row[id]</td></tr>\n";
-		}
-	MYSQL_FREE_RESULT($querya);
-	}
+	$querya = DB::query("SELECT * FROM stylesheets ORDER BY name");
+	$allthemes = 0;
+    while ($row = $querya->fetch()) {
+        echo "<tr>
+            <td><font size='2'><b><a href='admin.php?do=edtheme&id=$row[id]'>$row[name]</b></a></font></td>
+            <td>$row[uri]</td><td>$row[id]</td></tr>\n";
+    }
+
+    if (! $allthemes) {
+        echo "<h4>None</h4>\n";
+    }
+
 	echo "</table>\n";
 	end_frame();
 }
 
-if($do == "add_this_theme")
-//ADD THEME TO DATABASE FUNCTION
-{
-		adminmenu();
-	$error_ac == "";
-	if($new_theme_name == "") $error_ac .= "<br><br><li>Theme Name was empty\n";
-	if($new_uri == "")	$error_ac .= "<br><br><li>Folder Name was empty\n";
+// ADD THEME TO DATABASE FUNCTION
+if ($do == "add_this_theme") {
+	adminmenu();
+    $new_theme_name = $_POST['new_theme_name'] ?? '';
+	$new_uri = $_POST['new_uri'] ?? '';
+    $error_ac == "";
+	if ($new_theme_name == "")
+        $error_ac .= "<br><br><li>Theme Name was empty\n";
+	if ($new_uri == "")
+        $error_ac .= "<br><br><li>Folder Name was empty\n";
 
-	if($error_ac == "")
-	{
-		mysql_query(" INSERT INTO stylesheets (`name`, `uri`) VALUES ('$new_theme_name', '$new_uri')");
-echo "<br><br><center><b>Theme Added OK</b></center>";
-	} else { echo "ERROR! Please fill out all fields!<p>:: <a href='javascript:history.back()'>back</a>\n"; }
+	if ($error_ac == "") {
+		DB::insert('stylesheets', ['name' => $new_theme_name, 'uri' => $new_uri]);
+        echo "<br><br><center><b>Theme Added OK</b></center>";
+	} else {
+        echo "ERROR! Please fill out all fields!<p>:: <a href='javascript:history.back()'>back</a>\n";
+    }
 }
 
-if($act == "add_theme" || $error_ac != "")
 // ADD THEME FORM
-{
+if ($act == "add_theme" || $error_ac != "") {
 	adminmenu();
 	begin_frame();
+    $new_theme_name = $_POST['new_theme_name'] ?? '';
+	$new_uri = $_POST['new_uri'] ?? '';
 	?>
 	<p>
 	<table align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2' style='border: 1px solid black'>
@@ -2249,11 +2080,11 @@ if($act == "add_theme" || $error_ac != "")
 	<input type='hidden' name='do' value='add_this_theme'>
 	<tr>
 	<td>Name of the new Theme:</td>
-	<td align='right'><input type='text' name='new_theme_name' size='30' maxlength='30' value='<?=$new_theme_name?>'></td>
+	<td align='right'><input type='text' name='new_theme_name' size='30' maxlength='30' value='<?= $new_theme_name ?>'></td>
 	</tr>
 	<tr>
 	<td>Folder Name (case SenSiTive):</td>
-	<td align='right'><input type='text' name='new_uri' size='30' maxlength='30' value='<?=$new_uri?>'></td>
+	<td align='right'><input type='text' name='new_uri' size='30' maxlength='30' value='<?= $new_uri ?>'></td>
 	</tr>
 	<tr>
 	<td colspan='2' align='center'>
@@ -2728,7 +2559,7 @@ if($act == "rws-watched")
         begin_table();
         print("<tr><td class=alt3 align=left><font size=1 face=Verdana color=white>User</td><td class=alt3 align=left><font size=1 face=Verdana color=white>Ratio</td><td class=alt3 align=left><font size=1 face=Verdana color=white>Warned</td><td class=alt3 align=left><font size=1 face=Verdana color=white>Time Until Warning</td></tr>\n");
         for ($i = 0; $i < $num; ++$i)
-        {            
+        {
             $arr = mysql_fetch_array($res_rws);
             $userid = $arr['userid'];
             $userr = mysql_query("SELECT username, uploaded, downloaded FROM users WHERE id='$userid'");
@@ -2794,4 +2625,4 @@ if($act == "rws-warned")
 //end here
 stdfoot();
 hit_end();
-?>
+

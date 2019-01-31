@@ -106,27 +106,28 @@ function validip($ip)
 }
 
 // Patched function to detect REAL IP address if it's valid
-function getip() {
-   if (isset($_SERVER)) {
-     if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && validip($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-       $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-     } elseif (isset($_SERVER['HTTP_CLIENT_IP']) && validip($_SERVER['HTTP_CLIENT_IP'])) {
-       $ip = $_SERVER['HTTP_CLIENT_IP'];
-     } else {
-       $ip = $_SERVER['REMOTE_ADDR'];
-     }
-   } else {
-     if (getenv('HTTP_X_FORWARDED_FOR') && validip(getenv('HTTP_X_FORWARDED_FOR'))) {
-       $ip = getenv('HTTP_X_FORWARDED_FOR');
-     } elseif (getenv('HTTP_CLIENT_IP') && validip(getenv('HTTP_CLIENT_IP'))) {
-       $ip = getenv('HTTP_CLIENT_IP');
-     } else {
-       $ip = getenv('REMOTE_ADDR');
-     }
-   }
+function getip()
+{
+    if (isset($_SERVER)) {
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && validip($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } elseif (isset($_SERVER['HTTP_CLIENT_IP']) && validip($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } else {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+    } else {
+        if (getenv('HTTP_X_FORWARDED_FOR') && validip(getenv('HTTP_X_FORWARDED_FOR'))) {
+            $ip = getenv('HTTP_X_FORWARDED_FOR');
+        } elseif (getenv('HTTP_CLIENT_IP') && validip(getenv('HTTP_CLIENT_IP'))) {
+            $ip = getenv('HTTP_CLIENT_IP');
+        } else {
+            $ip = getenv('REMOTE_ADDR');
+        }
+    }
 
-   return $ip;
- }
+    return $ip;
+}
 
 function dbconn($autoclean = false)
 {
@@ -207,65 +208,73 @@ function userlogin()
     $GLOBALS["CURUSER"] = $row;
 }
 
-function autoclean() {
+function autoclean()
+{
     global $autoclean_interval;
 
     $now = time();
     $docleanup = 0;
 
-    $res = mysql_query("SELECT value_u FROM avps WHERE arg = 'lastcleantime'");
-    $row = mysql_fetch_array($res);
-    if (!$row) {
-        mysql_query("INSERT INTO avps (arg, value_u) VALUES ('lastcleantime',$now)");
+    $row = DB::fetchAssoc('SELECT value_u FROM avps WHERE arg = \'lastcleantime\' LIMIT 1');
+    if (! $row) {
+        DB::executeUpdate('INSERT INTO avps (arg, value_u) VALUES (?, ?)', ['lastcleantime', $now]);
         return;
     }
     $ts = $row[0];
-    if ($ts + $autoclean_interval > $now)
+    if ($ts + $autoclean_interval > $now) {
         return;
-    mysql_query("UPDATE avps SET value_u=$now WHERE arg='lastcleantime' AND value_u = $ts");
-    if (!mysql_affected_rows())
+    }
+    $affected_rows = DB::update('avps', ['value_u' => $now], ['arg' => 'lastcleantime', 'value_u' => $ts]);
+    if (! $affected_rows) {
         return;
+    }
 
     docleanup();
 }
 
-function unesc($x) {
-    if (get_magic_quotes_gpc())
+function unesc($x)
+{
+    if (get_magic_quotes_gpc()) {
         return stripslashes($x);
+    }
     return $x;
 }
 
-function mksize($bytes) {
-  if ($bytes < 1000 * 1024)
-    return number_format($bytes / 1024, 2) . " KB";
-  if ($bytes < 1000 * 1048576)
-    return number_format($bytes / 1048576, 2) . " MB";
-  if ($bytes < 1000 * 1073741824)
-	return number_format($bytes / 1073741824, 2) . " GB";
-  return number_format($bytes / 1099511627776, 2) . " TB";
+function mksize($bytes)
+{
+    if ($bytes < 1000 * 1024)
+        return number_format($bytes / 1024, 2) . " KB";
+    if ($bytes < 1000 * 1048576)
+        return number_format($bytes / 1048576, 2) . " MB";
+    if ($bytes < 1000 * 1073741824)
+        return number_format($bytes / 1073741824, 2) . " GB";
+    return number_format($bytes / 1099511627776, 2) . " TB";
 }
 
 function mksizekb($bytes)
 {
-  return number_format($bytes / 1024) . " KiB";
+    return number_format($bytes / 1024) . " KiB";
 }
 
 function mksizemb($bytes)
 {
-  return number_format($bytes / 1048576,2) . " MiB";
+    return number_format($bytes / 1048576,2) . " MiB";
 }
 
 function mksizegb($bytes)
 {
-  return number_format($bytes / 1073741824,2) . " GiB";
+    return number_format($bytes / 1073741824,2) . " GiB";
 }
 
-function deadtime() {
+function deadtime()
+{
     global $announce_interval;
+
     return time() - floor($announce_interval * 1.3);
 }
 
-function mkprettytime($s) {
+function mkprettytime($s)
+{
     if ($s < 0)
         $s = 0;
     $t = [];
@@ -274,9 +283,9 @@ function mkprettytime($s) {
         if ($y[0] > 1) {
             $v = $s % $y[0];
             $s = floor($s / $y[0]);
-        }
-        else
+        } else {
             $v = $s;
+        }
         $t[$y[1]] = $v;
     }
 
@@ -289,7 +298,8 @@ function mkprettytime($s) {
 //    return $t["sec"] . " secs";
 }
 
-function mkglobal($vars) {
+function mkglobal($vars)
+{
     if (!is_array($vars))
         $vars = explode(":", $vars);
     foreach ($vars as $v) {
@@ -303,7 +313,8 @@ function mkglobal($vars) {
     return 1;
 }
 
-function tr($x,$y,$noesc=0) {
+function tr($x,$y,$noesc=0)
+{
     if ($noesc)
         $a = $y;
     else {
@@ -323,7 +334,7 @@ function validemail($email)
     return preg_match('/^[\w.-]+@([\w.-]+\.)+[a-z]{2,6}$/is', $email);
 }
 
-//secure vars
+// secure vars
 function sqlesc($x)
 {
 	$x = str_replace("'", "'", $x);
@@ -335,13 +346,14 @@ function sqlesc($x)
     $x = str_replace("$mysql_", "", $x);
     $x = str_replace("java script:", "", $x);
 
-   if (get_magic_quotes_gpc()) {
-       $x = stripslashes($x);
-   }
-   if (!is_numeric($x)) {
-       $x = "'".mysql_real_escape_string($x)."'";
-   }
-   return $x;
+    if (get_magic_quotes_gpc()) {
+        $x = stripslashes($x);
+    }
+    if (!is_numeric($x)) {
+        $x = "'".mysql_real_escape_string($x)."'";
+    }
+
+    return $x;
 }
 
 function sqlwildcardesc($x)
@@ -472,14 +484,23 @@ function jmodonly()
     }
 }
 
-function deletetorrent($id) {
+function deletetorrent($id)
+{
     global $torrent_dir;
-    mysql_query("DELETE FROM torrents WHERE id = $id");
-	mysql_query("DELETE FROM snatched WHERE torrentid = $id");
-    foreach(explode(".","peers.files.comments.ratings") as $x)
-        mysql_query("DELETE FROM $x WHERE torrent = $id");
-    unlink("$torrent_dir/$id.torrent");
-	@unlink("$nfo_dir/$id.nfo");
+
+    DB::query('DELETE FROM torrents WHERE id = ' . $id);
+	DB::query('DELETE FROM snatched WHERE torrentid = ' . $id);
+    foreach(explode('.', 'peers.files.comments.ratings') as $x) {
+        DB::query('DELETE FROM ' . $x . ' WHERE torrent = ' . $id);
+    }
+    $path_tor = $torrent_dir . '/' . $id . '.torrent';
+    if (file_exists($path_tor)) {
+        unlink($path_tor);
+    }
+    $path_nfo = $nfo_dir . '/' . $id . '.nfo';
+    if (file_exists($path_nfo)) {
+        @unlink($path_nfo);
+    }
 }
 
 function pager($rpp, $count, $href, $opts = [])
@@ -497,10 +518,10 @@ function pager($rpp, $count, $href, $opts = [])
 
     if (isset($_GET["page"])) {
         $page = 0 + $_GET["page"];
-        if ($page < 0)
+        if ($page < 0) {
             $page = $pagedefault;
-    }
-    else {
+        }
+    } else {
         $page = $pagedefault;
     }
 
@@ -521,9 +542,9 @@ function pager($rpp, $count, $href, $opts = [])
         $pager .= "<a href=\"{$href}page=" . ($page + 1) . "\">";
         $pager .= $as;
         $pager .= "</a>";
-    }
-    else
+    } else {
         $pager .= $as;
+    }
 
     if ($count) {
         $pagerarr = [];
@@ -534,72 +555,74 @@ function pager($rpp, $count, $href, $opts = [])
         $curdotstart = $page + $dotspace;
         for ($i = 0; $i < $pages; $i++) {
             if (($i >= $dotspace && $i <= $curdotend) || ($i >= $curdotstart && $i < $dotend)) {
-                if (!$dotted)
-                    $pagerarr[] = "...";
+                if (! $dotted) {
+                    $pagerarr[] = '...';
+                }
                 $dotted = 1;
                 continue;
             }
             $dotted = 0;
             $start = $i * $rpp + 1;
             $end = $start + $rpp - 1;
-            if ($end > $count)
+            if ($end > $count) {
                 $end = $count;
+            }
             $text = "$start&nbsp;-&nbsp;$end";
-            if ($i != $page)
+            if ($i != $page) {
                 $pagerarr[] = "<a href=\"{$href}page=$i\"><b>$text</b></a>";
-            else
+            } else {
                 $pagerarr[] = "<b>$text</b>";
+            }
         }
         $pagerstr = join(" | ", $pagerarr);
         $pagertop = "<p align=\"center\">$pager<br />$pagerstr</p>\n";
         $pagerbottom = "<p align=\"center\">$pagerstr<br />$pager</p>\n";
-    }
-    else {
+    } else {
         $pagertop = "<p align=\"center\">$pager</p>\n";
         $pagerbottom = $pagertop;
     }
 
     $start = $page * $rpp;
 
-    return array($pagertop, $pagerbottom, "LIMIT $start, $rpp");
+    return [ $pagertop, $pagerbottom, "LIMIT $start, $rpp" ];
 }
 
-function downloaderdata($res) {
+function downloaderdata($res)
+{
     $rows = [];
     $ids = [];
     $peerdata = [];
-    while ($row = mysql_fetch_assoc($res)) {
+    while ($row = $res->fetch()) {
         $rows[] = $row;
         $id = $row["id"];
         $ids[] = $id;
-        $peerdata[$id] = array(downloaders => 0, seeders => 0, comments => 0);
+        $peerdata[$id] = ['downloaders' => 0, 'seeders' => 0, 'comments' => 0];
     }
 
     if (count($ids)) {
         $allids = implode(",", $ids);
-        $res = mysql_query("SELECT COUNT(*) AS c, torrent, seeder FROM peers WHERE torrent IN ($allids) GROUP BY torrent, seeder");
-        while ($row = mysql_fetch_assoc($res)) {
+        $res = DB::query("SELECT COUNT(*) AS c, torrent, seeder FROM peers WHERE torrent IN ($allids) GROUP BY torrent, seeder");
+        while ($row = $res->fetch()) {
             if ($row["seeder"] == "yes")
                 $key = "seeders";
             else
                 $key = "downloaders";
             $peerdata[$row["torrent"]][$key] = $row["c"];
         }
-        $res = mysql_query("SELECT COUNT(*) AS c, torrent FROM comments WHERE torrent IN ($allids) GROUP BY torrent");
-        while ($row = mysql_fetch_assoc($res)) {
+        $res = DB::query("SELECT COUNT(*) AS c, torrent FROM comments WHERE torrent IN ($allids) GROUP BY torrent");
+        while ($row = $res->fetch()) {
             $peerdata[$row["torrent"]]["comments"] = $row["c"];
         }
     }
 
-    return array($rows, $peerdata);
+    return [ $rows, $peerdata ];
 }
 
 function commenttable($rows)
 {
     begin_frame();
     $count = 0;
-    foreach ($rows as $row)
-    {
+    foreach ($rows as $row) {
         print("<br>\n");
         $postername = h($row["username"]);
         if ($postername == "") {
@@ -611,8 +634,9 @@ function commenttable($rows)
             $userdownloaded = "";
             $useruploaded = "";
         } else {
+            // todo: move total forumposts to user profile
             $forumposts = DB::fetchColumn('SELECT COUNT(*) FROM forum_posts WHERE userid = ' . $row["user"]);
-            $commentposts = DB::fetchColumn("SELECT COUNT(*) FROM comments WHERE user=" . $row["user"]);
+            $commentposts = DB::fetchColumn("SELECT COUNT(*) FROM comments WHERE user = " . $row["user"]);
             $commentid = $row["id"];
 
             $avatar = h($row["avatar"]);
@@ -635,24 +659,16 @@ function commenttable($rows)
         begin_table(true);
         print("<tr valign=top>\n");
 
-		if (get_user_class() >= UC_JMODERATOR) {
-			print("<td></td><TD>Posted: " . $row["added"] . " - <a href=edit-comments.php?cid=" .
-                $row["id"] . ">[Edit]</a>- <a href=edit-comments.php?action=delete&cid=" . $row["id"] .
-                ">[Delete]</a></td></tr><tr valign=top>\n");
-		} else {
-				print("<td></td><TD>Posted: " . $row["added"] . "</td></tr><tr valign=top>\n");
-		}
-
         $posterlink = '<a href="/account-details.php?id='.$row['user'].'"><b>'.$postername.'</b></a>';
         if ($privacylevel == "strong") {
 			if (get_user_class() >= UC_JMODERATOR) {
 				print("<td valign=top width=150 align=left><center>".$posterlink."
                     <br><i>$title</i></center>
-                    <br><font color=green>Uploaded: $useruploaded
-                    <br>Downloaded: $userdownloaded</font>
+                    <br>Uploaded: $useruploaded
+                    <br>Downloaded: $userdownloaded
                     <br>Forum Posts: $forumposts
                     <br>Comments Posted: $commentposts
-                    <br><font color=green>Ratio: $userratio</font><br><br>
+                    <br>Ratio: $userratio<br><br>
                     <center><img width=80 height=80 src=$avatar></center><br></td>\n");
             } else {
                 print("<td valign=top width=150 align=left><center>".$posterlink."
@@ -672,13 +688,24 @@ function commenttable($rows)
                 <center><img width=80 height=80 src=$avatar></center><br></td>\n");
         }
 
-        print("<td class=text>" . format_comment($row["text"]) . "<br><br>");
+        // echo '</tr><tr valign=top>';
+        echo '<td><div class="tt-comment-table-date">';
+		if (get_user_class() >= UC_JMODERATOR) {
+			print("Posted: " . $row["added"] . " - <a href=edit-comments.php?cid=" .
+                $row["id"] . ">[Edit]</a> - <a href=edit-comments.php?action=delete&cid=" . $row["id"] .
+                ">[Delete]</a>");
+		} else {
+				print("Posted: " . $row["added"]);
+		}
+        echo '</div>';
+
+        echo '<div class="text tt-comment-table-text">' . format_comment($row['text']) . '<br><br>';
         if (!$usersignature) {
-            print("<br></td>\n");
+            print("<br>\n");
         } else {
-            print("<br>--------------------<br>$usersignature</td>\n");
+            print("<br>--------------------<br>$usersignature\n");
         }
-        print("</tr>\n");
+        print("</div></td>");
         end_table();
     }
     end_frame();
@@ -861,7 +888,7 @@ function torrenttable($res, $variant = "index")
     global $GIGSA, $GIGSB, $GIGSC, $GIGSD, $RATIOA, $RATIOB, $RATIOC, $RATIOD;
     global $txt;
 
-    //ratio wait code
+    // ratio wait code
 	if ($CURUSER["class"] < UC_VIP && $CURUSER['donated'] == 0) {
 		$gigs = $CURUSER["uploaded"] / (1024**3);
 		$ratio = (($CURUSER["downloaded"] > 0) ? ($CURUSER["uploaded"] / $CURUSER["downloaded"]) : 0);
@@ -966,7 +993,7 @@ if ($MEMBERSONLY_WAIT) {
 
 		// MODIFICATION TO DISPLAY ONLY x FIRST CHARACTERS IN TORRENT NAME !
 
-        $smallname = substr(h($row["name"]) , 0, $MAXDISPLAYLENGTH);
+        $smallname = substr(h($row["name"]), 0, $MAXDISPLAYLENGTH);
         if ($smallname != h($row["name"])) { $smallname .= '...' ; }
 
         $last_browse = $CURUSER["last_browse"];
@@ -1036,15 +1063,16 @@ if ($MEMBERSONLY_WAIT) {
             if ($wait)	{
                 $elapsed = floor((gmtime() - strtotime($row["added"])) / 3600);
                 if ($elapsed < $wait) {
-                    $color = dechex(floor(127*($wait - $elapsed)/48 + 128)*65536);
+                    $color = dechex(floor(127*($wait - $elapsed)/48 + 128) * 65536);
                     print("<td align=center class=ttable_colx><nobr><a href=\"faq.php\"><font color=\"$color\">" .
                     number_format($wait - $elapsed) . " h</font></a></nobr></td>\n");
                 }
-                else
+                else {
                     print("<td align=center class=ttable_colx><nobr>-</nobr></td>\n");
+                }
             }
         }
-//END RATIO WAIT HACK
+        // END RATIO WAIT HACK
 
 		print("<td class=ttable_col1 align=center><font size=1 face=Verdana><a href=torrents-comment.php?id=$id>" .
             $row["comments"] . "</a></td>\n");
@@ -1153,7 +1181,7 @@ if ($MEMBERSONLY_WAIT) {
 
 		// speed mod
 		$rowTmp = DB::fetchArray("
-            SELECT seeders,leechers
+            SELECT seeders, leechers
             FROM torrents
             WHERE visible='yes'
                 AND id = $id
@@ -1207,19 +1235,22 @@ function hit_count()
 
     global $RUNTIME_CLAUSE;
 
-    if (preg_match(',([^/]+)$,', $_SERVER["SCRIPT_NAME"], $matches))
+    if (preg_match(',([^/]+)$,', $_SERVER["SCRIPT_NAME"], $matches)) {
         $path = $matches[1];
-    else
+    } else {
         $path= "(unknown)";
+    }
     $period = date("Y-m-d H") . ":00:00";
     $RUNTIME_CLAUSE = "page = " . sqlesc($path) . " AND period = '$period'";
     $update = "UPDATE hits SET count = count + 1 WHERE $RUNTIME_CLAUSE";
-    mysql_query($update);
-    if (mysql_affected_rows())
+    $affected_rows = DB::executeUpdate($update);
+    if ($affected_rows) {
         return;
-    $ret = mysql_query("INSERT INTO hits (page, period, count) VALUES (" . sqlesc($path) . ", '$period', 1)");
-    if (!$ret)
-        mysql_query($update);
+    }
+    $ret = DB::insert('hits', ['page' => $path, 'period' => $period, 'count' => 1]);
+    if (! $ret) {
+        DB::query($update);
+    }
 }
 
 function hit_end()
@@ -1228,14 +1259,16 @@ function hit_end()
 
     global $RUNTIME_START, $RUNTIME_CLAUSE, $RUNTIME_TIMES;
 
-    if (empty($RUNTIME_CLAUSE))
+    if (empty($RUNTIME_CLAUSE)) {
         return;
+    }
+
     $now = gettimeofday();
     $runtime = ($now["sec"] - $RUNTIME_START["sec"]) + ($now["usec"] - $RUNTIME_START["usec"]) / 1000000;
     $ts = posix_times();
     $sys = ($ts["stime"] - $RUNTIME_TIMES["stime"]) / 100;
     $user = ($ts["utime"] - $RUNTIME_TIMES["utime"]) / 100;
-    mysql_query("UPDATE hits SET runs = runs + 1, runtime = runtime + $runtime, user_cpu = user_cpu + $user, sys_cpu = sys_cpu + $sys WHERE $RUNTIME_CLAUSE");
+    DB::query("UPDATE hits SET runs = runs + 1, runtime = runtime + $runtime, user_cpu = user_cpu + $user, sys_cpu = sys_cpu + $sys WHERE $RUNTIME_CLAUSE");
 }
 
 function hash_pad($hash)
@@ -1335,13 +1368,12 @@ function get_user_timezone($id)
     FROM users
     WHERE id = '.$id.'
     LIMIT 1');
-
         if ($timezone) {
             return $timezone;
-        } else {
-            return 3;
-        } // Default timezone
+        }
     }
+
+    return 3; // Default timezone
 }
 
 function numUserMsg()
@@ -1391,10 +1423,11 @@ function getDonations()
 // Returns the current time in GMT in MySQL compatible format.
 function get_date_time($timestamp = 0)
 {
-    if ($timestamp)
+    if ($timestamp) {
         return date("Y-m-d H:i:s", $timestamp);
-    else
-        $idcookie = $_COOKIE['uid'];
+    } else {
+        $idcookie = $_COOKIE['uid'] ?? 0;
+    }
 
     return gmdate("Y-m-d H:i:s", time() + (60 * get_user_timezone($idcookie)));
 }
@@ -1687,9 +1720,10 @@ function getguests()
 {
     $ip = $_SERVER["REMOTE_ADDR"];
     $past = time()-2400;
-	@mysql_query("DELETE FROM guests WHERE time < $past");
+	DB::executeUpdate("DELETE FROM guests WHERE time < $past");
 	$guests = number_format(get_row_count("guests"));
-	return $guests;
+
+    return $guests;
 }
 
 function str_contains($haystack, $needle, $ignoreCase = false)

@@ -19,3 +19,4 @@ const ST_THEMES_URL = ST_URL.'/themes';
 const ST_JS_URL = ST_PUB_URL.'/js';
 const ST_IMG_URL = ST_PUB_URL.'/images';
 const ST_AVATARS_URL = ST_PUB_URL.'/avatars';
+const TT_CONTR_DIR = ST_ROOT_DIR . '/controllers';

@@ -185,9 +185,9 @@ if ($POLLON) {
                     } else {
                         $c = '';
                     }
-                    print("<tr><td width=1% class=embedded$c><nobr>" . $a[1] . "&nbsp;&nbsp;</nobr></td><td width=99% class=embedded$c>" .
-                        "<img src=$SITEURL/images/bar_left.gif><img src=$SITEURL/images/bar.gif height=9 width=" . ($p * 3) .
-                        "><img src=$SITEURL/images/bar_right.gif> $p%</td></tr>\n");
+                    echo '<tr><td width=1% class=embedded' . $c . '><nobr>' . $a[1] . '&nbsp;&nbsp;</nobr></td>
+                        <td width=99% class=embedded' . $c . '>
+                        <div class="tt-poll-line" style="width: ' . ($p * 3) . 'px"></div></td></tr>';
                     ++$i;
                 }
                 print("</table>\n");

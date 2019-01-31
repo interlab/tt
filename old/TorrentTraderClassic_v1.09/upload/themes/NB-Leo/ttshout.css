@@ -1,0 +1,55 @@
+/*DEFINE THE SHOUTBOX CSS */
+
+BODY {
+font-family: verdana;
+color: black;
+float: middle;
+background-image: url(images/fmm.jpg);
+}
+
+DIV.contain {
+border: 0;
+height: 150;
+width: 100%;
+overflow: auto;
+align: middle;
+}
+
+DIV.history {
+border: 0;
+height: 100%;
+width: 100%;
+align: middle;
+}
+
+TR.messageboxback {
+background-image: url(images/fmm.jpg);
+}
+
+TR.noalt {
+background-color: #CCCCCC;
+}
+
+TR.alt {
+background-color: #999999;
+}
+
+INPUT.msgbox {
+	width: 100%;
+	font-size: 12px;
+	background-color: #CCCCCC;
+	border: 1px solid black;
+	color: #000000;
+}
+
+INPUT.shoutbtn { 
+font-size: 12px; 
+background-color: AliceBlue;
+border: 1px solid black; 
+font-weight: bold;
+}
+
+.error {
+color: red;
+font-size: 13px;
+}

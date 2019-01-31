@@ -195,6 +195,7 @@ CONTENTS: 'Contents'
 SUCCESS: 'Success'
 PM: 'PM'
 FILES: 'Files'
+# PROFILE_UPDATED: 'Profile has been updated'
 
 # Phrases
 WELCOME_NEW: 'Welcome to our newest member'
