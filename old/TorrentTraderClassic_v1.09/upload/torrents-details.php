@@ -378,8 +378,7 @@ print("<tr><td align=left colspan=2 style=\"border-radius: 6px; border: 1px soli
 
 print("<tr><td align=left><b>" . $txt['NAME'] . ":</b></td><td>" . h($row["name"]) . "</td></tr>");
 
-print("<tr><td align=left><b>" . $txt['TORRENT'] . ":</b></td><td><a href=\"download.php?id=$id&name=" .
-    rawurlencode($row["filename"]) . "\">" . h($row["filename"]) . "</a></td></tr>");
+echo '<tr><td align=left><b>' . $txt['TORRENT'] . ':</b></td><td><a href="download.php?id=' . $id . '">' . h($row["filename"]) . '</a></td></tr>';
 
 print("<tr><td align=left><b>" . $txt['TTYPE'] . ":</b></td><td>" . $row["cat_name"] . "</td></tr>");
 
@@ -404,8 +403,7 @@ echo "</table></TD><TD align=right valign=top><table width=100% cellspacing=0 ce
 if ($row["banned"] == "yes"){
 	print ("<tr><td valign=top align=right><B>" . $txt['DOWNLOAD'] . ": </B>BANNED!</td></tr>");
 }else{
-	print ("<tr><td valign=top align=right><a href=\"download.php?id=$id&name=" . rawurlencode($row["filename"]) .
-        "\"><img src=images/download.png border=0></td></tr>");
+	echo '<tr><td valign=top align=right><a href="download.php?id=' . $id. '"><img src=images/download.png border=0></td></tr>';
 }
 
 print("<tr><td valign=top align=right><B>" . $txt['AVAILABILITY'] . ":</B><br>" . get_percent_completed_image(floor($progressTotal)) .

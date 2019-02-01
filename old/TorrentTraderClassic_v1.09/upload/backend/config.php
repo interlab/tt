@@ -82,7 +82,7 @@ $announce_urls = [];
 $announce_urls[] = "http://tt.pmr/announce.php";
 $GLOBALBAN = false;
 $MEMBERSONLY = true;
-$MEMBERSONLY_WAIT = true;
+$MEMBERSONLY_WAIT = false;
 $RATIO_WARNINGON = true;
 $PEERLIMIT = "10000";
 

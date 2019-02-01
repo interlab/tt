@@ -205,6 +205,7 @@ function userlogin()
     );
 
     $row['ip'] = $ip;
+    $row['id'] = (int) $row['id'];
     $GLOBALS["CURUSER"] = $row;
 }
 
@@ -1505,6 +1506,11 @@ function format_comment($text, $strip_html = true, $strip_slash = true)
 	$s = preg_replace(
 		"/\[url\]((http|ftp|https|ftps|irc):\/\/[^<>\s]+?)\[\/url\]/i",
 		"<a href=redirect.php?url=\\1>\\1</a>", $s);
+
+    // [url=account-details.php?id=2]bandito[/url]
+	$s = preg_replace(
+		"/\[url=([^<>\s]+?)\]((\s|.)+?)\[\/url\]/i",
+		"<a href=\"\\1\">\\2</a>", $s);
 
 	// [size=4]Text[/size]
 	$s = preg_replace(

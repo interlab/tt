@@ -1,19 +1,21 @@
-<?
+<?php
+
 ob_start();
 require_once("backend/functions.php");
 
 dbconn();
-$id = (int)$_GET["id"];
+
+$id = (int) ($_GET["id"] ?? 0);
 
 IF ($LOGGEDINONLY){
 	loggedinorreturn();
 }
 
-if (!$id)
+if (! $id) {
 	bark("ID not found", "You can't download, if you don't tell me what you want!");
+}
 
-$res = mysql_query("SELECT filename FROM torrents WHERE id = $id");
-$name = mysql_result($res, 0);
+$name = DB::fetchColumn('SELECT filename FROM torrents WHERE id = ' . $id);
 
 $fn = "$torrent_dir/$id.torrent";
 
@@ -24,11 +26,9 @@ if (!is_file($fn))
 if (!is_readable($fn))
 	bark("File not found", "The ID and torrent were found, but the torrent is NOT readable!");
 
-mysql_query("UPDATE torrents SET hits = hits + 1 WHERE id = $id");
+DB::query("UPDATE torrents SET hits = hits + 1 WHERE id = $id");
 
 header("Content-Type: application/x-bittorrent");
 header("Content-Disposition: attachment; filename=\"$name\"");
 
 readfile($fn);
-
-?>

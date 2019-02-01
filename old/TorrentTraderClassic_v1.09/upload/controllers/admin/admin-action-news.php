@@ -1,34 +1,8 @@
 <?php
 
-function dbainsert ($table, $a1)
-{
-    global $errors;
+ // show menu
+adminmenu();
 
-    $q = 'INSERT INTO `' . $table . '` (';
-    $n = '1';
-    foreach ($a1 as $k => $v) {
-        $q .= '`' . $k . '`';
-        if ($n != count($a1)) {
-            $q .= ',';
-        }
-        $n++;
-    }
-    $q .= ') VALUES (';
-    $n = '1';
-    foreach ($a1 as $k => $v) {
-        $q .= '\'' . $v . '\'';
-        if ($n != count($a1)) {
-            $q .= ', ';
-        }
-        $n++;
-    }
-    $q .= ')';
-   
-    return (bool) DB::executeUpdate($q);
-}
-
-adminmenu(); // show menu
-//output
 begin_frame("News Settings", 'center');
 if ($_POST['submit'] != 'Update Settings') {
     $query = 'SELECT * FROM news_options';
@@ -59,10 +33,13 @@ if ($_POST['submit'] != 'Update Settings') {
         //  if($scrolling == "on")
     }
 } else {
-    $query = "UPDATE news_options SET max_display='{$_POST['maxdisplay']}', scrolling='$scrolling',
-        comment='$comments', archive='$archive', titles='{$_POST['titles']}',
-        subs='{$_POST['subs']}', subc='{$_POST['subc']}', sspeed='{$_POST['sspeed']}'";
-    if (DB::executeUpdate($query)) {
+    $query = 'UPDATE news_options SET max_display = ?, scrolling = ?,
+        comment = ?, archive = ?, titles = ?,
+        subs = ?, subc = ?, sspeed = ?';
+    if (DB::executeUpdate($query, [
+        $_POST['maxdisplay'], $scrolling, $comments, $archive,
+        $_POST['titles'], $_POST['subs'], $_POST['subc'], $_POST['sspeed'] ])
+    ) {
         echo 'Settings Updated!<br>';
         $query = 'SELECT * FROM news_options';
         $res = DB::query($query);
@@ -116,11 +93,11 @@ if ($_POST['submit'] != 'Add News') {
     $v = [
         'title' => $_POST['title'],
         'user'  => $CURUSER['username'],
-        'date'        => date("F j, g:i a"),
-        'text'        => $news
+        'date'  => date("F j, g:i a"),
+        'text'  => $news
     ];
-    if (!dbainsert('news', $v)) {
-        'Could not insert, ERROR in line: ' . __LINE__;
+    if (! DB::insert('news', $v)) {
+        echo 'Could not insert, ERROR in line: ' . __LINE__;
         exit;
     }
     echo '<b>News has been added</b><br>';
@@ -132,24 +109,20 @@ print("</form>");
 
 begin_frame("Edit News", 'center');
 
-if ($_POST['submit'] != 'Edit News' && $_POST['submit'] != 'Delete') {
-    // No Results
-   echo $_POST['submit'];
-} elseif ($_POST['submit'] == 'Edit News' || $_POST['submit'] == 'Delete') {
-    if ($_POST['submit'] == 'Edit News') {
-    // Edit Ahoy!
+if ($_POST['submit'] !== 'Edit News' && $_POST['submit'] !== 'Delete') {
+    echo $_POST['submit'];
+} elseif ($_POST['submit'] === 'Edit News') {
     $news = str_replace("\n", '<br>', $_POST['text']);
-
-    $news = str_replace($smileys1, $smileys2, $news);
-    $query = "UPDATE news SET title = '{$_POST['title']}', text = '{$news}', date = '" . date("F j, g:i a") . "' WHERE id='{$_POST['id']}'";
-    if (DB::executeUpdate($query)) {
+    // $news = str_replace($smileys1, $smileys2, $news);
+    $query = 'UPDATE news SET title = ?, text = ?, date = ? WHERE id = ?';
+    if (DB::executeUpdate($query, [$_POST['title'], $news, date("F j, g:i a"), $_POST['id']])) {
         echo 'News updated!';
     } else {
         echo 'ERROR in line: ' . __LINE__;
     }
-} elseif ($_POST['submit'] == 'Delete') {
-    $query = "DELETE FROM news WHERE id = '{$_POST['id']}'";
-    if (mysql_query($query))
+} elseif ($_POST['submit'] === 'Delete') {
+    $query = 'DELETE FROM news WHERE id = ?';
+    if (DB::executeUpdate($query, [$_POST['id']])) {
         echo 'News Deleted!';
     }
 }
@@ -157,7 +130,7 @@ if ($_POST['submit'] != 'Edit News' && $_POST['submit'] != 'Delete') {
 $query = 'SELECT max_display FROM news_options';
 $res = DB::query($query);
 while ($row = $res->fetch()) {
-    $query = 'SELECT id, title, text FROM news ORDER BY id DESC LIMIT ' . $row['max_display'] . '';
+    $query = 'SELECT id, title, text FROM news ORDER BY id DESC LIMIT ' . $row['max_display'];
     $res = DB::query($query);
     while ($row = $res->fetch()) {
         $news = str_replace("<br>", "\n", $row['text']);

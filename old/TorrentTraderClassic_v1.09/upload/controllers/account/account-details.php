@@ -189,7 +189,7 @@ if (!$enabled)
   print("<br><b>" . $txt['ACCOUNT_DISABLED'] . "</b>");
 
 ?>
-<BR>Joined: <?=$joindate?><br>
+<BR>Joined: <?= $joindate ?><br>
 <br>
 User Class: <?=get_user_class_name($user["class"]) ?>
 <?php
@@ -225,20 +225,25 @@ print("<BR><br><a href=account-inbox.php?receiver=$user[id]>" . $txt['ACCOUNT_SE
 	<td width=10 valign=top>&nbsp;</td>
 </td><td width=50% valign=top>
 	<table width=100% border=0 cellpadding=0 cellspacing=0><tr><td width=100% valign=top>
-		<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262><TR><TD width=100% valign=middle class=table_head height=30><B>Statistics:</B></TD></TR>
+		<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
+        <TR><TD width=100% valign=middle class=table_head height=30><B>Statistics:</B></TD></TR>
 		<TR><TD>
 		<table width=100% border=0 cellspacing=0 cellpadding=3>
 		<?php
-		if ($privacylevel == "strong") { ?>
+        if ($CURUSER['id'] === $id || $privacylevel !== 'strong') {
+            $avg_daily = round(strtotime($user["added"]) / (1 * 24 * 60 * 60)); // ежедневно
+        ?>
+            <tr><td><?= $txt['UPLOADED'] ?>: </td><td align=left><?= mksize($user["uploaded"]) ?></td></tr>
+            <tr><td><?= $txt['DOWNLOADED'] ?>: </td><td align=left><?= mksize($user["downloaded"]) ?></td></tr>
+            <tr><td>Avg Daily UL:</td><td align=left><?= mksize(round($user["uploaded"]) / $avg_daily) ?></td></tr>
+            <tr><td>Avg Daily DL:</td><td align=left><?= mksize(round($user["downloaded"]) / $avg_daily) ?></td></tr>
+        <?php
+        } else {
+        ?>
 			<tr><td><?= $txt['UPLOADED'] ?>: </td><td align=left>---</td></tr>
 			<tr><td><?= $txt['DOWNLOADED'] ?>: </td><td align=left>---</td></tr>
-		<?php } else { ?>
-<tr><td><?= $txt['UPLOADED'] ?>: </td><td align=left><?= mksize($user["uploaded"]) ?></td></tr>
-<tr><td><?= $txt['DOWNLOADED'] ?>: </td><td align=left><?= mksize($user["downloaded"]) ?></td></tr>
-<tr><td>Avg Daily DL:</td><td align=left><?= mksize($user["downloaded"] / $user["added"]) ?></td></tr>
-<tr><td>Avg Daily UL:</td><td align=left><?= mksize($user["uploaded"] / $user["added"]) ?></td></tr>
-<?php
-		}
+		<?php
+        }
 
   if ($user["downloaded"] > 0)
   {

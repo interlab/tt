@@ -21,7 +21,8 @@ if (!(get_user_class() > 3)) {
     echo $pagertop;
 
 ?>
-<form method="post" action="takedelreq.php">
+<form method="post" action="requests.php">
+    <input type="hidden" name="action" value="delete">
 <tr><td class="colhead" align="left">Requests</td>
 <td class="colhead" align="left">Added</td>
 <td class="colhead" align="left">Requested by</td>
@@ -53,7 +54,7 @@ while ($arr = $res->fetch()) {
     if ($filled)
         $filled = "<a href=$filled><font color=green><b>Yes</b></font></a>";
     else
-        $filled = "<a href=reqdetails.php?id=$arr[id]><font color=red><b>No</b></font></a>";
+        $filled = "<a href=requests.php?details=$arr[id]><font color=red><b>No</b></font></a>";
 
 
     echo "<tr><td align=\"left\"><b>" . $arr['request'] . "</b></td><td align=\"left\">" . $arr['added'] .

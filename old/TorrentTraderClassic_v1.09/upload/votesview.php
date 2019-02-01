@@ -25,7 +25,7 @@ stdhead("Votes");
 $res2 = mysql_query("select request from requests where id=$requestid");
 $arr2 = mysql_fetch_assoc($res2);
 
-begin_frame("" . VOTES . ": <a href=reqdetails.php?id=$requestid>$arr2[request]</a>");
+begin_frame("" . VOTES . ": <a href=requests.php?details=$requestid>$arr2[request]</a>");
 print("<p>" . VOTE_FOR_THIS . "<a href=addrequest.php?id=$requestid><b>" . REQUEST . "</b></a></p>");
 
 echo $pagertop;

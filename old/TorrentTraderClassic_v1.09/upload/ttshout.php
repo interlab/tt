@@ -108,8 +108,13 @@ $msg = preg_replace(
 
 // [url]http://www.example.com[/url]
 $msg = preg_replace(
- "/\[url\]((http|ftp|https|ftps|irc):\/\/[^<>\s]+?)\[\/url\]/i",
- "<a target='_parent' href=\\1>\\1</a>", $msg);
+    "/\[url\]((http|ftp|https|ftps|irc):\/\/[^<>\s]+?)\[\/url\]/i",
+    "<a target='_parent' href=\\1>\\1</a>", $msg);
+
+// [url=account-details.php?id=2]bandito[/url]
+$msg = preg_replace(
+    "/\[url=([^<>\s]+?)\]((\s|.)+?)\[\/url\]/i",
+    "<a target='_parent' href=\"\\1\">\\2</a>", $msg);
 
 // [font=Arial]Text[/font]
 $msg = preg_replace(

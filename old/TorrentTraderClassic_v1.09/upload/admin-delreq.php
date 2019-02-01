@@ -27,8 +27,14 @@ echo $pagertop;
 
 
 ?>
-<form method="post" action="takedelreq.php">
-<tr><td class="colhead" align="left"><?php echo "" . REQUESTS . "";?></td><td class="colhead" align="left"><?php echo "" . DATE_ADDED . "";?></td><td class="colhead" align="left"><?php echo "" . ADDED_BY . "";?></td><td class="colhead"><?php echo "" . TTYPE . "";?></td><td class="colhead"><?php echo "" . FILLED . "";?></td><td class="colhead"><?php echo "" . ACCOUNT_DELETE . "";?></td></tr>
+<form method="post" action="requests.php">
+    <input type="hidden" name="action" value="delete">
+<tr><td class="colhead" align="left"><?= $txt['REQUESTS'] ?></td>
+    <td class="colhead" align="left"><?= $txt['DATE_ADDED'] ?></td>
+    <td class="colhead" align="left"><?= $txt['ADDED_BY'] ?></td>
+    <td class="colhead"><?= $txt['TTYPE'] ?></td>
+    <td class="colhead"><?= $txt['FILLED'] ?></td>
+    <td class="colhead"><?= $txt['ACCOUNT_DELETE'] ?></td></tr>
 <?php 
 
 $res=mysql_query("SELECT users.username, requests.filled, requests.filledby, requests.id, requests.userid, requests.request, requests.added, categories.name as cat FROM requests inner join categories on requests.cat = categories.id inner join users on requests.userid = users.id order by requests.request $limit") or print(mysql_error());
@@ -45,7 +51,7 @@ $filled = $arr[filled];
 if ($filled)
 $filled = "<a href=$filled><font color=green><b>Yes</b></font></a>";
 else
-$filled = "<a href=reqdetails.php?id=$arr[id]><font color=red><b>No</b></font></a>";
+$filled = "<a href=requests.php?details=$arr[id]><font color=red><b>No</b></font></a>";
 
  }
 echo "<tr><td align=\"left\"><b>" . $arr[request] . "</b></td><td align=\"left\">" . $arr[added] . "</td><td align=\"center\">$addedby</td><td align=center>$arr[cat]</td><td align=center>$filled</td><td><input type=\"checkbox\" name=\"delreq[]\" value=\"" . $arr[id] . "\" /></td></tr>";
