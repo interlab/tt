@@ -127,7 +127,7 @@ print("<input type=submit align=center value=" . $txt['DISPLAY'] . " style='heig
 print("</form></td></tr></table>");
 
 echo '<form method=post action=requests.php>
-      <input type="hidden" name="action" value="delete">';
+      <input type="hidden" name="sa" value="delete">';
 print("<table width=100% cellspacing=0 cellpadding=3 class=table_table>\n");
 print("<tr><td class=table_head align=left>" . $txt['REQUESTS'] .
     "</td><td class=table_head align=center>" . $txt['TYPE'] .

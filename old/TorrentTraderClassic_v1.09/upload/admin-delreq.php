@@ -28,7 +28,7 @@ echo $pagertop;
 
 ?>
 <form method="post" action="requests.php">
-    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="sa" value="delete">
 <tr><td class="colhead" align="left"><?= $txt['REQUESTS'] ?></td>
     <td class="colhead" align="left"><?= $txt['DATE_ADDED'] ?></td>
     <td class="colhead" align="left"><?= $txt['ADDED_BY'] ?></td>

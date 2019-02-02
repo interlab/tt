@@ -287,7 +287,7 @@ begin_block($txt['NAVIGATION']);
 &nbsp;&nbsp;· <a href="torrents-upload.php"><?= $txt['UPLOADT'] ?></a><br />
 &nbsp;&nbsp;· <a href="torrents-needseed.php"><?= $txt['UNSEEDED'] ?></a><br />
 &nbsp;&nbsp;· <a href="viewrequests.php"><?= $txt['REQUESTED'] ?></a><br />
-&nbsp;&nbsp;· <a href="today.php"><?= $txt['TODAYS_TORRENTS'] ?></a><br /><br />
+&nbsp;&nbsp;· <a href="torrents-today.php"><?= $txt['TODAYS_TORRENTS'] ?></a><br /><br />
 				  <CENTER><a href="rssinfo.php"><img src="images/rss2.gif" border=0 alt="XML RSS Feed"></a></CENTER>
 				  <hr>
 · <a href="faq.php"><?= $txt['FAQ'] ?></a><br />

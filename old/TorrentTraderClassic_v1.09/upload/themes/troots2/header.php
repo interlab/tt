@@ -242,7 +242,7 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
 <?php if ($IRCCHAT) {?><A style="TEXT-DECORATION: none" href=irc.php><?= $txt['CHAT'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle><?php }?>
 <A style="TEXT-DECORATION: none" href="torrents-needseed.php"><?= $txt['UNSEEDED'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
 <A style="TEXT-DECORATION: none" href="viewrequests.php"><?= $txt['REQUESTED'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
-<A style="TEXT-DECORATION: none" href="today.php"><?= $txt['TODAYS_TORRENTS'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
+<A style="TEXT-DECORATION: none" href="torrents-today.php"><?= $txt['TODAYS_TORRENTS'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
 <A style="TEXT-DECORATION: none" href="formats.php"><?= $txt['FILE_FORMATS'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
 <A style="TEXT-DECORATION: none" href="videoformats.php"><?= $txt['MOVIE_FORMATS'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
 <A style="TEXT-DECORATION: none" href="rules.php"><?= $txt['SITE_RULES'] ?></A>
@@ -380,7 +380,7 @@ begin_block($txt['NAVIGATION']);
 &nbsp;&nbsp;· <a href="torrents-upload.php"><?= $txt['UPLOADT'] ?></a><br />
 &nbsp;&nbsp;· <a href="torrents-needseed.php"><?= $txt['UNSEEDED'] ?></a><br />
 &nbsp;&nbsp;· <a href="viewrequests.php"><?= $txt['REQUESTED'] ?></a><br />
-&nbsp;&nbsp;· <a href="today.php"><?= $txt['TODAYS_TORRENTS'] ?></a><br /><br />
+&nbsp;&nbsp;· <a href="torrents-today.php"><?= $txt['TODAYS_TORRENTS'] ?></a><br /><br />
 				  <CENTER><a href="rssinfo.php"><img src="images/rss2.gif" border=0 alt="XML RSS Feed"></a></CENTER>
 				  <hr>
 · <a href="faq.php"><?= $txt['FAQ'] ?></a><br />

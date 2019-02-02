@@ -9,7 +9,7 @@ loggedinorreturn();
 
 
 // if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-if (isset($_POST['action']) && $_POST['action'] === 'add') {
+if (isset($_POST['sa']) && $_POST['sa'] === 'add') {
     $request = $_POST["requesttitle"] ?? '';
     $descr = $_POST["descr"] ?? '';
     $cat = (int) ($_POST["category"] ?? 0);
@@ -39,7 +39,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'add') {
     if ($SHOUTBOX) {
         DB::insert('shoutbox', [
             'user' => 'Request',
-            'message' => '[url=account-details.php?id=' . $CURUSER['id'] . '][b]' .$CURUSER['username'] . '[/b][/url] has made a request for [url='.
+            'message' => '[url=account-details.php?id=' . $CURUSER['id'] . '][b]' .
+                $CURUSER['username'] . '[/b][/url] has made a request for [url='.
                 $SITEURL.'/requests.php?details='.$id.']'.$_POST["requesttitle"].'[/url]',
             'date' => date('Y-m-d H:i:s'),
             'userid' => 0
@@ -53,7 +54,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'add') {
     die('');
 }
 
-if (isset($_POST['action']) && $_POST['action'] === 'delete') {
+if (isset($_POST['sa']) && $_POST['sa'] === 'delete') {
     // dbconn();
     // loggedinorreturn();
     // global $CURUSER;
@@ -218,7 +219,9 @@ if (isset($_GET['reset'])) {
         bark('Error', 'Request not found.');
     }
 
-    if (($CURUSER['id'] == $arr['userid']) || (get_user_class() >= 4) || ($CURUSER['id'] == $arr['filledby'])) {
+    if (($CURUSER['id'] == $arr['userid']) || (get_user_class() >= 4)
+            || ($CURUSER['id'] == $arr['filledby'])
+    ) {
         DB::query("UPDATE requests SET filled = '', filledby = 0 WHERE id = $id");
         print("Request $id successfully reset.");
     } else {
@@ -275,6 +278,7 @@ $deadchkbox .= " /> " . $txt['INC_DEAD'] . "\n";
 <br>
 
 <form method=post action="requests.php">
+    <input type=hidden value='add' name='sa'>
 <CENTER><table border=0 width=600 cellspacing=0 cellpadding=3>
 <tr><td class=colhead align=center><B><?= $txt['MAKE_REQUEST'] ?></B></a></td><tr>
 <tr><td align=center><b>Title: </b><input type=text size=40 name=requesttitle>
@@ -299,7 +303,6 @@ while ($cats2 = $res2->fetch()) {
 <tr><td align=center>Additional Information (Optional)
 <br><textarea name=descr rows=7 cols=60></textarea></td></tr>
 <tr><td align=center><input type=submit value="<?= $txt['SUBMIT'] ?>" style="height: 22px"></td></tr>
-<input type=hidden value='add' name=action>
 </form>
 </table></CENTER>
 

@@ -4,7 +4,7 @@
 error_reporting(-1);
 // error_reporting(E_ALL ^ E_NOTICE);
 
-define('ST_START_TIME', microtime(true));
+define('TT_START_TIME', microtime(true));
 
 mb_internal_encoding('UTF-8');
 setlocale(LC_ALL, 'ru_RU.UTF-8');
@@ -35,6 +35,7 @@ require_once("cleanup.php");
 require_once("extras.php");
 
 define('ST_ROOT_DIR', dirname(__DIR__));
+define('TT_DIR', dirname(__DIR__));
 require_once __DIR__ . '/constants.php';
 require_once ST_ROOT_DIR . '/helpers/DB.php';
 require_once ST_ROOT_DIR . '/helpers/Yaml.php';

@@ -22,7 +22,7 @@ if (!(get_user_class() > 3)) {
 
 ?>
 <form method="post" action="requests.php">
-    <input type="hidden" name="action" value="delete">
+    <input type="hidden" name="sa" value="delete">
 <tr><td class="colhead" align="left">Requests</td>
 <td class="colhead" align="left">Added</td>
 <td class="colhead" align="left">Requested by</td>

@@ -214,7 +214,7 @@ if ($POLLON) {
 
 begin_frame($txt['TORRENT_CATEGORIES'], 'center');
 print "<B><font color=#FF6600>•</font></B> <a href=browse.php>" . $txt['BROWSE_TORRENTS'] . "</a> ";
-print "<B><font color=#FF6600>•</font></B> <a href=today.php>" . $txt['TODAYS_TORRENTS'] . "</a> ";
+print "<B><font color=#FF6600>•</font></B> <a href=torrents-today.php>" . $txt['TODAYS_TORRENTS'] . "</a> ";
 print "<B><font color=#FF6600>•</font></B> <a href=torrents-search.php>" . $txt['SEARCH'] . "</a><hr>";
 $bull = "<B><font color=#FF6600>&bull;</font></B>";
 

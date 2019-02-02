@@ -21,9 +21,25 @@ BODY {
 	background-repeat: repeat-x;
 	background-position: top;
 }
+
+.subnav{
+	color: #FFFFFF;
+	font-weight: bold;
+}
+
 td.subnav{
 	color: #FFFFFF;
 	font-weight: bold;
+}
+
+.logo-container {
+    background-color: #191919;
+    height: 89px;
+}
+.leo-logo {
+    float: left;
+    width: 379px;
+    height: 89px;
 }
 .login {
 	font-family: "Times New Roman", Times, serif;
@@ -31,7 +47,49 @@ td.subnav{
 	padding-bottom: 5px;
 	padding-right: 20px;
 	font-size: 12px;
+    
+    padding-top: 68px;
+    text-align: right;
 }
+
+/*
+.leo-top-menu {
+    background: url('../NB-Leo/images/leo_02.jpg');
+    height: 35px;
+    color: #FFFFFF;
+    font-weight: bold;
+    display: table;
+    width: 100%;
+}
+
+.leo-top-menu div {
+    display: table-cell;
+    vertical-align: middle;
+    margin: 0 auto;
+}
+*/
+
+.leo-top-menu,
+.leo-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.leo-top-menu {
+    background: url('../NB-Leo/images/leo_02.jpg');
+    height: 35px;
+    color: #FFFFFF;
+    font-weight: bold;
+    width: 100%;
+}
+
+.leo-footer {
+    height: 30px;
+    width: 100%;
+    background: url('../NB-Leo/images/leo_04.jpg')
+}
+
 .cont {
 	padding-top: 4px;
 	padding-right: 5px;
