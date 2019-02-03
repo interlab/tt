@@ -294,7 +294,7 @@ if ($SHOUTBOX) {
 //Here we decide if the block is on or off
 if ($DISCLAIMERON) {
     begin_frame($txt['DISCLAIMER']); 
-    echo file_get_contents(ST_ROOT_DIR . '/disclaimer.txt');
+    echo file_get_contents(TT_ROOT_DIR . '/disclaimer.txt');
     end_frame();
 }
 

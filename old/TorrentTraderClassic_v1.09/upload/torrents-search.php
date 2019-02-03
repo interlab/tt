@@ -165,7 +165,7 @@ foreach ($cats as $cat) {
 $deadchkbox = "<input type=\"checkbox\" name=\"incldead\" value=\"1\"";
 if ($_GET["incldead"])
     $deadchkbox .= " checked=\"checked\"";
-$deadchkbox .= " /> " . INC_DEAD . "\n";
+$deadchkbox .= " /> " . $txt['INC_DEAD'] . "\n";
 
 ?>
 <?= $catdropdown ?>

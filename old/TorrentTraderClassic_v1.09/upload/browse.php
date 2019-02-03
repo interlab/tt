@@ -15,7 +15,7 @@ if ($LOGGEDINONLY) {
 }
 
 if ($RATIO_WARNINGON && $CURUSER) {
-    require_once ST_ROOT_DIR.'/ratiowarn.php';
+    require_once TT_ROOT_DIR.'/ratiowarn.php';
 }
 
 $time_start = getmicrotime();

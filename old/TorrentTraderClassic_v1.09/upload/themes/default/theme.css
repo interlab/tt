@@ -70,8 +70,8 @@ background: #ECECEC;
 /*width:100%;*/
 border: #000000;
 border-style: border-style;
-border-width: 1px
-border-collapse:collapse;
+border-width: 1px;
+border-collapse: collapse;
 
 }
 .table_head {
@@ -214,8 +214,20 @@ background-image: url("images/block_bottom.gif");  width: 100%;  height: 23px;
 background-image: url("images/block_bottom_right.gif"); width: 15px; height: 23px;
 }
 
-/* begin css tabs */
 
+/* 110 */
+
+.ttable_col1, .ttable_col2 {
+    padding: 3px 5px;
+}
+
+.tt-descr-box {
+    border-radius: 6px;
+    border: 1px solid green;
+}
+
+
+/* begin css tabs */
 ul#tabnav {
     text-align: left;
     margin: 1em 0 1em 0;
@@ -255,22 +267,31 @@ ul#tabnav li a {
 ul#tabnav a:hover {
     background: #fff;
 }
-
 /* end css tabs */
 
 .forumtab {
     background-color: #E0F1FE;
 }
 
+.tt-comment-user img {
+    margin: 4px auto;
+    display: block;
+}
+
+.tt-comment-user {
+    border: 1px solid #D6D9DB;
+    padding: 0 2px;
+}
+
 .tt-comment-table-date {
     margin: 0;
     border-bottom: 1px #cbc8ca solid;
-    padding: 2px 0 4px 0;
+    padding: 2px 0 4px 4px;
 }
 
 .tt-comment-table-text {
     margin:  4px 0 0 0;
-    padding: 0;
+    padding: 0 4px;
 }
 
 .tt-poll-line {
@@ -279,3 +300,11 @@ ul#tabnav a:hover {
     background-color: #e0502c;
     border-radius: 4px;
 }
+
+
+.tt-page-footer {
+    text-align: center;
+    margin: 2rem 0 3.6rem 0;
+}
+
+

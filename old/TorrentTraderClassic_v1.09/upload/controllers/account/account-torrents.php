@@ -36,7 +36,7 @@ function maketable($res)
 
         $ret .= "
         <tr>
-    <td><a href=torrents-details.php?id=$arr[torrent]&amp;hit=1><b>" . h($arr2['name']) . "</b></a></td>
+    <td><a href=torrents-details.php?id=$arr[torrent]><b>" . h($arr2['name']) . "</b></a></td>
     <td align=center>" . mksize($arr2["size"]) . "</td>
     <td align=center>" . mksize($arr["uploaded"]) . "</td>
     <td align=center>" . mksize($arr["downloaded"]) . "</td>
@@ -76,7 +76,7 @@ if (!empty($r)) {
         if ($smallname != h($a["name"])){
             $smallname .= '...';
         }
-        $torrents .= "<tr><td><a href=torrents-details.php?id=" . $a["id"] . "&hit=1><b>" . $smallname . "</b></a></td>" .
+        $torrents .= "<tr><td><a href=torrents-details.php?id=" . $a["id"] . "><b>" . $smallname . "</b></a></td>" .
             "<td align=center><font color=green>$a[seeders]</font></td><td align=center><font color=red>$a[leechers]</font></td></tr>\n";
     }
     $torrents .= "</table>";

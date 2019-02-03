@@ -97,7 +97,9 @@ function _torrenttable($res, $frame_caption) {
             $ratio = "Inf.";
         print("<tr>
             <td class=\"rowhead\" align=\"center\">$num</td>
-            <td class=\"rowhead\" align=\"left\"><a href=\"torrents-details.php?id=" . $a["id"] . "&hit=1\"><b>" . $a["name"] . "</b></a></td>
+            <td class=\"rowhead\" align=\"left\">
+                <a href=\"torrents-details.php?id=" . $a["id"] . "><b>" . $a["name"] . "</b></a>
+            </td>
             <td class=\"rowhead\" align=right>" . number_format($a["times_completed"]) . "</td>
             <td class=\"rowhead\" align=\"right\">" . mksize($a["data"]) . "</td>
             <td class=\"rowhead\" align=\"right\">" . number_format($a["seeders"]) . "</td>

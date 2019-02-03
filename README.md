@@ -4,6 +4,10 @@
 - PHP 7
 - MySQL 5.7
 
+## Diff
+- deleted nfo-file upload
+- deleted irc notifications
+
 ## Links
 - http://www.torrenttrader.org/
 - https://sourceforge.net/projects/torrenttrader/

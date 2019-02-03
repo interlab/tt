@@ -49,7 +49,7 @@ $aktivl="$leechers leecher$l";
 else 
 $aktivl="no leecher"; 
 
-$link = "$SITEURL/torrents-details.php?id=$id&amp;hit=1"; 
+$link = $SITEURL . '/torrents-details.php?id=' . $id; 
 
 // measure the totalspeed 
 if ($seeders >= 1 && $leechers >= 1){ 

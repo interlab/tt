@@ -1,24 +1,28 @@
 <?php
 
+define('TT_ROOT_DIR', dirname(__DIR__));
+define('TT_DIR', dirname(__DIR__));
+define('TT_URL', $GLOBALS['SITEURL']);
 
-define('ST_URL', $GLOBALS['SITEURL']);
+const TT_LIBS_DIR = TT_ROOT_DIR.'/libs';
+const TT_CONFIG_DIR = TT_ROOT_DIR.'/backend/config';
+const TT_HELP_DIR = TT_ROOT_DIR.'/helpers';
 
-const ST_LIBS_DIR = ST_ROOT_DIR.'/libs';
-const ST_CONFIG_DIR = ST_ROOT_DIR.'/backend/config';
-const ST_HELP_DIR = ST_ROOT_DIR.'/helpers';
-const ST_CACHE_DIR = ST_ROOT_DIR.'/storage/cache';
+const TT_CACHE_DIR = TT_ROOT_DIR.'/storage/cache';
+const TT_CACHE_TIME = 60*60*2; // 2 hour
 
-const ST_PUB_DIR = ST_ROOT_DIR.'/pub';
-const ST_IMG_DIR = ST_PUB_DIR.'/images';
-const ST_AVATARS_DIR = ST_PUB_DIR.'/avatars';
-const ST_THEMES_DIR = ST_ROOT_DIR.'/themes';
-const ST_COLUMNS_DIR = ST_ROOT_DIR . '/columns';
-const ST_JS_DIR = ST_PUB_DIR.'/js';
-const ST_PUB_URL = ST_URL.'';
-const ST_THEMES_URL = ST_URL.'/themes';
-const ST_JS_URL = ST_PUB_URL.'/js';
-const ST_IMG_URL = ST_PUB_URL.'/images';
-const ST_AVATARS_URL = ST_PUB_URL.'/avatars';
+const TT_PUB_DIR = TT_ROOT_DIR.'/pub';
+const TT_IMG_DIR = TT_PUB_DIR.'/images';
+const TT_AVATARS_DIR = TT_PUB_DIR.'/avatars';
+const TT_THEMES_DIR = TT_ROOT_DIR.'/themes';
+const TT_COLUMNS_DIR = TT_ROOT_DIR . '/columns';
+const TT_JS_DIR = TT_PUB_DIR.'/js';
+const TT_PUB_URL = TT_URL.'';
+const TT_THEMES_URL = TT_URL.'/themes';
 
-const TT_CONTR_DIR = ST_ROOT_DIR . '/controllers';
-const TT_COLUMNS_DIR = ST_ROOT_DIR . '/columns';
+const TT_IMG_URL = TT_PUB_URL.'/images';
+const TT_AVATARS_URL = TT_PUB_URL.'/avatars';
+
+const TT_CONTR_DIR = TT_ROOT_DIR . '/controllers';
+const TT_JS_URL = TT_PUB_URL . '/js';
+

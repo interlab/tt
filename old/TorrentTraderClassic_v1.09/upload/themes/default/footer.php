@@ -1,5 +1,16 @@
-	<BR><BR><BR>
-	<CENTER>
+
+</TD>
+
+<TD vAlign=top width=180>
+
+<?php require_once TT_DIR . '/columns/right-column.php'; ?>
+
+</TD>
+</TR>
+</TABLE>
+
+
+<footer class="tt-page-footer">
 <?php
 
 $tend = microtime(true);
@@ -11,12 +22,8 @@ echo "<BR>Powered by TorrentTrader Classic v{$GLOBALS['ttversion']}<br><a href=h
 //			PLEASE DO NOT REMOVE THE POWERED BY LINE, SHOW SOME SUPPORT!
 // *******************************************************************************
 ?>
-</CENTER>
+</footer>
 
-</TD>
-	</TR>
-	</TABLE><br><br>
-	<br><br>
 
 </body>
 </html>

@@ -22,7 +22,8 @@ NcodeImageResizer.getNextId = function() {
 
 NcodeImageResizer.createOn = function(img) {
 	isRecovery = false; // if this is a recovery from QuickEdit, which only restores the HTML, not the OO structure
-	if(img.id && img.id.indexOf(NcodeImageResizer.IMAGE_ID_BASE) == 0 && document.getElementById(NcodeImageResizer.WARNING_ID_BASE+img.id.substr(NcodeImageResizer.IMAGE_ID_BASE.length)) != null) {
+	if(img.id && img.id.indexOf(NcodeImageResizer.IMAGE_ID_BASE) == 0
+        && document.getElementById(NcodeImageResizer.WARNING_ID_BASE+img.id.substr(NcodeImageResizer.IMAGE_ID_BASE.length)) != null) {
 		newid = img.id.substr(NcodeImageResizer.IMAGE_ID_BASE.length);
 		resizer = new NcodeImageResizer(newid, img);
 		isRecovery = true;
@@ -35,7 +36,8 @@ NcodeImageResizer.createOn = function(img) {
 	if (resizer.originalWidth == 0) resizer.originalWidth = img.width;
 	if (resizer.originalHeight == 0) resizer.originalHeight = img.height;
 	
-	if((NcodeImageResizer.MAXWIDTH > 0 && resizer.originalWidth > NcodeImageResizer.MAXWIDTH) || (NcodeImageResizer.MAXHEIGHT > 0 && resizer.originalHeight > NcodeImageResizer.MAXHEIGHT)) {
+	if((NcodeImageResizer.MAXWIDTH > 0 && resizer.originalWidth > NcodeImageResizer.MAXWIDTH)
+        || (NcodeImageResizer.MAXHEIGHT > 0 && resizer.originalHeight > NcodeImageResizer.MAXHEIGHT)) {
 		if(isRecovery) {
 			resizer.reclaimWarning(warning);
 		} else {
@@ -122,7 +124,8 @@ NcodeImageResizer.prototype.scale = function() {
 	if(this.img.width < 450) {
 		this.warningTextNode.data = NcodeImageResizer.Msg1;
 	} else if(this.img.fileSize && this.img.fileSize > 0) {
-		this.warningTextNode.data = NcodeImageResizer.Msg2.replace('%1$s', this.originalWidth).replace('%2$s', this.originalHeight).replace('%3$s', Math.round(this.img.fileSize/1024));		
+		this.warningTextNode.data = NcodeImageResizer.Msg2.replace('%1$s',
+            this.originalWidth).replace('%2$s', this.originalHeight).replace('%3$s', Math.round(this.img.fileSize/1024));		
 	} else {
 		this.warningTextNode.data = NcodeImageResizer.Msg3.replace('%1$s', this.originalWidth).replace('%2$s', this.originalHeight);		
 	}

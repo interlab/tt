@@ -140,7 +140,7 @@ if ($DONATEON) {
 
 // start side banner
 echo "<br><CENTER>";
-$contents = file_get_contents(ST_ROOT_DIR . '/sponsors.txt');
+$contents = file_get_contents(TT_ROOT_DIR . '/sponsors.txt');
 $s_cons = preg_split('/~/', $contents);
 $bannerss = rand(0,(count($s_cons)-1));
 echo $s_cons[$bannerss], '

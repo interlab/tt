@@ -35,7 +35,7 @@ function maketable($res)
             else
                 $ratio = "---";
         }
-        $ret .= "<tr><td class=table_col1><a href=torrents-details.php?id=$arr[torrent]&amp;hit=1><b>" .
+        $ret .= "<tr><td class=table_col1><a href=torrents-details.php?id=$arr[torrent]><b>" .
             h($arr2['name']) . "</b></a></td><td align=center class=table_col2>" . mksize($arr2["size"]) .
             "</td><td align=center class=table_col1>" . mksize($arr["uploaded"]) .
             "</td><td align=center class=table_col2>" . mksize($arr["downloaded"]) .
@@ -78,7 +78,7 @@ if ($num_torrents > 0) {
             <td class=table_head>" . $txt['LEECH'] . "</td>
             </tr>\n";
         while ($a = $r->fetch()) {
-            $torrents .= "<tr><td class=table_col1><a href=torrents-details.php?id=" . $a["id"] . "&hit=1><b>" . h($a["name"]) . "</b></a></td>" .
+            $torrents .= "<tr><td class=table_col1><a href=torrents-details.php?id=" . $a["id"] . "><b>" . h($a["name"]) . "</b></a></td>" .
             "<td align=right class=table_col2>$a[seeders]</td><td align=right class=table_col1>$a[leechers]</td></tr>\n";
         }
         $torrents .= "</table>";

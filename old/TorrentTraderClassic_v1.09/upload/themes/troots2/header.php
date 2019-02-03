@@ -1,97 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<script language="JavaScript">
-<!--
-function Smilies(Smilie)
-{
-document.Form.body.value+=Smilie+" ";
-document.Form.body.focus();
-}
-//-->
-</script>
-<title><?= $title; ?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title><?= $title ?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="imagetoolbar" content="no" />
 <link rel="stylesheet" type="text/css" href="themes/troots2/css/style.css" />
-
-<script>
-
-var myimages=new Array()
-function preloadimages(){
-for (i=0;i<preloadimages.arguments.length;i++){
-myimages[i]=new Image()
-myimages[i].src=preloadimages.arguments[i]
-}
-}
-
-preloadimages("images/space.gif")
-
-</script>
-
-<script>
-
-var g_nExpando=0;
-// To make the cross clickable in every browser
-function putItemInState(n,bState)
-{
-   var oItem,oGif;
-      oItem=document.getElementById("descr"+n);
-   oGif=document.getElementById("expandoGif"+n);
-   
-   if (bState=='toggle')
-     bState=(oItem.style.display=='block');
-
-   if(bState)
-   {
-       bState=(oItem.style.display='none');
-       bState=(oGif.src='images/cross.gif');
-   }
-   else
-   {
-       bState=(oItem.style.display='block');
-       bState=(oGif.src='images/noncross.gif');
-   }
-}
-
-
-
-function expand(nItem)
-{
-    putItemInState(nItem,'toggle');
-}
-
-
-function expandAll()
-{
-    if (!g_nExpando)
-    {
-        document.all.chkFlag.checked=false;
-        return;
-    }
-    var bState=!document.all.chkFlag.checked;
-    for(var i=0; i<g_nExpando; i++)
-        putItemInState(i,bState);
-}
-
-</script>
-
-<script>
-
-var tns6=document.getElementById&&!document.all
-var ie=document.all
-
-function show_text(thetext, whichdiv){
-if (ie) {eval("document.all."+whichdiv).innerHTML=thetext;}
-else if (tns6) {document.getElementById(whichdiv).innerHTML=thetext;}
-}
-
-function resetit(whichdiv){
-if (ie) eval("document.all."+whichdiv).innerHTML=''
-else if (tns6) document.getElementById(whichdiv).innerHTML=''
-}
-
-</script>
+<script src="<?= TT_JS_URL ?>/theme.js"></script>
 
 </head>
 
@@ -116,7 +30,7 @@ else if (tns6) document.getElementById(whichdiv).innerHTML=''
             <TABLE cellSpacing=0 cellPadding=0 width=165 border=0>
               <TBODY>
               <TR>
-                <TD colSpan=6><IMG height=12 
+                <TD colSpan=6><IMG height=12
                   src="themes/troots2/images/spacer.gif" 
                   width=7></TD></TR>
               <TR>
@@ -413,7 +327,7 @@ if ($DONATEON) {
 
 //start side banner
 echo "<br><CENTER>";
-$contents = file_get_contents(ST_ROOT_DIR . '/sponsors.txt');
+$contents = file_get_contents(TT_ROOT_DIR . '/sponsors.txt');
 $s_cons = preg_split('/~/', $contents);
 $bannerss = rand(0,(count($s_cons)-1));
 echo $s_cons[$bannerss], '
@@ -426,7 +340,7 @@ echo $s_cons[$bannerss], '
                 <TD vAlign=top>
 <!-- banner code starts here -->
 <br><CENTER><?php
-$content = file_get_contents(ST_ROOT_DIR . '/banners.txt');
+$content = file_get_contents(TT_ROOT_DIR . '/banners.txt');
 $s_con = preg_split('/~/', $content);
 $banners = rand(0,(count($s_con)-1));
 echo $s_con[$banners];

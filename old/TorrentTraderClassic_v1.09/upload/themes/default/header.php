@@ -1,93 +1,16 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<script language="JavaScript">
-<!--
-function Smilies(Smilie)
-{
-    document.Form.body.value += Smilie + " ";
-    document.Form.body.focus();
-}
-//-->
-</script>
 <title><?= $title ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="imagetoolbar" content="no" />
 <link rel="stylesheet" type="text/css" href="themes/default/theme.css" />
-
-<script>
-
-var myimages = new Array();
-function preloadimages() {
-    for (i = 0; i < preloadimages.arguments.length; i++) {
-        myimages[i] = new Image();
-        myimages[i].src=preloadimages.arguments[i]
-    }
-}
-
-preloadimages("images/space.gif");
-
-
-var g_nExpando = 0;
-// To make the cross clickable in every browser
-function putItemInState(n,bState)
-{
-   var oItem,oGif;
-        oItem = document.getElementById("descr"+n);
-        oGif = document.getElementById("expandoGif"+n);
-   
-   if (bState == 'toggle')
-        bState=(oItem.style.display=='block');
-
-   if(bState)
-   {
-       bState=(oItem.style.display='none');
-       bState=(oGif.src='images/cross.gif');
-   }
-   else {
-       bState=(oItem.style.display='block');
-       bState=(oGif.src='images/noncross.gif');
-   }
-}
-
-function expand(nItem)
-{
-    putItemInState(nItem,'toggle');
-}
-
-function expandAll()
-{
-    if (!g_nExpando)
-    {
-        document.all.chkFlag.checked=false;
-        return;
-    }
-    var bState=!document.all.chkFlag.checked;
-    for(var i=0; i<g_nExpando; i++)
-        putItemInState(i,bState);
-}
-
-var tns6=document.getElementById&&!document.all
-var ie=document.all
-
-function show_text(thetext, whichdiv){
-if (ie) {eval("document.all."+whichdiv).innerHTML=thetext;}
-else if (tns6) {document.getElementById(whichdiv).innerHTML=thetext;}
-}
-
-function resetit(whichdiv){
-if (ie) eval("document.all."+whichdiv).innerHTML=''
-else if (tns6) document.getElementById(whichdiv).innerHTML=''
-}
-
-</script>
-
+<script src="<?= TT_JS_URL ?>/theme.js"></script>
 <?php
 global $st;
 
 echo isset($st['js_files']) ? $st['js_files'] : '';
 ?>
-
 </head>
 
 <BODY LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0" align="center">
@@ -104,7 +27,7 @@ echo isset($st['js_files']) ? $st['js_files'] : '';
 	<TR>
 <!-- TOP NAV MENU AND USER RATIO AREA -->
 		<TD background="themes/default/images/template1_04.jpg" WIDTH=497 HEIGHT=24>
-			<FONT COLOR=#FFFFFF>&nbsp;
+			<div style="color: #FFFFFF;">&nbsp;
 			<?php if ($CURUSER) {
 				print $CURUSER['username']; 
 				echo "(<a href=account-logout.php><font color=#ffffff><b>Logout</b></font></a>)";
@@ -135,7 +58,7 @@ echo isset($st['js_files']) ? $st['js_files'] : '';
                     "</font></a> <B>:</B> <a href=account-signup.php><font color=#FF0000>". $txt['REGISTERNEW'] ."</font></a>";
 			}
 			?>
-			</FONT></TD>
+			</div></TD>
 	</TR>
 	<TR>
 		<TD background="themes/default/images/template1_05.jpg" WIDTH=497 HEIGHT=28>
@@ -168,7 +91,7 @@ echo isset($st['js_files']) ? $st['js_files'] : '';
 
 <!-- banner code starts here -->
 <br><CENTER><?php
-$content = file_get_contents(ST_ROOT_DIR . '/banners.txt');
+$content = file_get_contents(TT_ROOT_DIR . '/banners.txt');
 $s_con = preg_split('/~/', $content);
 $banners = rand(0,(count($s_con)-1));
 echo $s_con[$banners];

@@ -229,7 +229,7 @@ function docleanup()
     $abc = mysql_query("SELECT id, userid, request, descr, added, hits, cat, filled, filledby FROM requests WHERE filledby > 0");
     while ($arr = mysql_fetch_assoc($abc))
     {
-        $re_msg = "Your request \"$torrent\" was filled by " . $CURUSER["username"] . ".You can download it <a href=".$SITEURL."/torrents-details.php?id=$id&hit=1>HERE</a>";
+        $re_msg = "Your request \"$torrent\" was filled by " . $CURUSER["username"] . ".You can download it <a href=".$SITEURL."/torrents-details.php?id=$id>HERE</a>";
         mysql_query("INSERT INTO messages (poster, sender, receiver, added, msg) VALUES(0, 0, $arr[userid], '" . get_date_time() . "', " . sqlesc($re_msg) . ")") or sqlerr(__FILE__, __LINE__);
         mysql_query("DELETE FROM requests WHERE id=$arr[id]") or sqlerr(__FILE__, __LINE__);
         mysql_query("DELETE FROM addedrequests WHERE requestid=$arr[id]") or sqlerr(__FILE__, __LINE__);

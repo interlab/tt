@@ -4,12 +4,13 @@ use Doctrine\DBAL;
 
 class DB
 {
+    private static $_dbal_conn = null;
+
+    private function __construct(){}
+
     public static function __callStatic($name, $args)
     {
-        global $dbal_conn;
-
         // return call_user_func_array([$dbal_conn, $name], $args);
-
         // dump($args);
         // dump('Вход', $args);
         $methods = [
@@ -24,17 +25,20 @@ class DB
 
             // dump('Выход', $sql, $args2, [$sql, $args2]);
             // dump($sql, $args2);
-            return call_user_func_array([$dbal_conn, $name], [$sql, $args2 ?? []]);
+            return call_user_func_array([self::$_dbal_conn, $name], [$sql, $args2 ?? []]);
         } else {
-            return call_user_func_array([$dbal_conn, $name], $args);
+            return call_user_func_array([self::$_dbal_conn, $name], $args);
         }
     }
 
     public static function conn()
     {
-        global $dbal_conn;
+        return self::$_dbal_conn;
+    }
 
-        return $dbal_conn;
+    public static function setConn(Doctrine\DBAL\Connection $conn)
+    {
+        return self::$_dbal_conn = $conn;
     }
 
     protected static function prepareSql($sql, array $params = [])
@@ -101,13 +105,7 @@ class DB
 
 function my_pdo_connect($name, $user, $passwd, $host)
 {
-    // global $mysql_host, $mysql_user, $mysql_pass, $mysql_db;
-    // global $pdo;
-    global $dbal_conn;
-
-    static $pdo_conn = null;
-
-    if (is_null($pdo_conn)) {
+    if (is_null(DB::conn())) {
         $config = new DBAL\Configuration();
 
         $params = [
@@ -120,7 +118,7 @@ function my_pdo_connect($name, $user, $passwd, $host)
             'port' => 3306,
         ];
 
-        $dbal_conn = DBAL\DriverManager::getConnection($params, $config);
+        DB::setConn(DBAL\DriverManager::getConnection($params, $config));
 
         // $dbal_conn->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, FALSE);
 
@@ -140,7 +138,5 @@ function my_pdo_connect($name, $user, $passwd, $host)
 
         $dbal_conn = DBAL\DriverManager::getConnection($params, $config);
         */
-
-        $pdo_conn = true;
     }
 }

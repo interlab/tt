@@ -6,6 +6,8 @@ error_reporting(-1);
 
 define('TT_START_TIME', microtime(true));
 
+session_start();
+
 mb_internal_encoding('UTF-8');
 setlocale(LC_ALL, 'ru_RU.UTF-8');
 header("Content-Type: text/html; charset=UTF-8");
@@ -34,13 +36,15 @@ require_once("config.php");
 require_once("cleanup.php");
 require_once("extras.php");
 
-define('ST_ROOT_DIR', dirname(__DIR__));
-define('TT_DIR', dirname(__DIR__));
 require_once __DIR__ . '/constants.php';
-require_once ST_ROOT_DIR . '/helpers/DB.php';
-require_once ST_ROOT_DIR . '/helpers/Yaml.php';
-require_once ST_ROOT_DIR . '/helpers/Helper.php';
-require_once ST_ROOT_DIR . '/libs/vendor/autoload.php';
+require_once TT_ROOT_DIR . '/helpers/DB.php';
+require_once TT_ROOT_DIR . '/helpers/Cache.php';
+
+Cache::$cacheDir = TT_CACHE_DIR;
+
+require_once TT_ROOT_DIR . '/helpers/Yaml.php';
+require_once TT_ROOT_DIR . '/helpers/Helper.php';
+require_once TT_ROOT_DIR . '/libs/vendor/autoload.php';
 
 
 //temp place for invites variables
@@ -74,7 +78,7 @@ function addJsFile($file)
     global $st;
 
     $file = '
-    <script type="text/javascript" src="'. ST_JS_URL .'/'.$file.'"></script>';
+    <script type="text/javascript" src="'. TT_JS_URL .'/'.$file.'"></script>';
 
     $st['js_files'] = ($st['js_files'] ?? '') . $file;
 }
@@ -664,30 +668,33 @@ function commenttable($rows)
         $posterlink = '<a href="/account-details.php?id='.$row['user'].'"><b>'.$postername.'</b></a>';
         if ($privacylevel == "strong") {
 			if (get_user_class() >= UC_JMODERATOR) {
-				print("<td valign=top width=150 align=left><center>".$posterlink."
+				print("<td valign=top width=150 align=left class=\"tt-comment-user\"><center>".$posterlink."
                     <br><i>$title</i></center>
-                    <br>Uploaded: $useruploaded
+                    <img width=80 height=80 src=$avatar>
+                    Uploaded: $useruploaded
                     <br>Downloaded: $userdownloaded
                     <br>Forum Posts: $forumposts
                     <br>Comments Posted: $commentposts
                     <br>Ratio: $userratio<br><br>
-                    <center><img width=80 height=80 src=$avatar></center><br></td>\n");
+                    <br></td>\n");
             } else {
-                print("<td valign=top width=150 align=left><center>".$posterlink."
-                    <br><i>$title</i></center>
-                    <br>Forum Posts: $forumposts
-                    <br>Comments Posted: $commentposts<br><br>
-                    <center><img width=80 height=80 src=$avatar></center><br></td>\n");
+                echo '<td valign=top width=150 align=left class="tt-comment-user"><center>'.$posterlink.'
+                    <br><i>' . $title . '</i></center>
+                    <img width="80" height="80" src="'.$avatar.'">
+                    Forum Posts: ' . $forumposts .'
+                    <br>Comments Posted: ' . $commentposts . '<br><br>
+                    <br></td>';
 			}
 		} else {
-            print("<td valign=top width=150 align=left><center>".$posterlink."
+            print("<td valign=top width=150 align=left class=\"tt-comment-user\"><center>".$posterlink."
                 <br><i>$title</i></center>
-                <br>Uploaded: $useruploaded
+                <img width=80 height=80 src=$avatar>
+                Uploaded: $useruploaded
                 <br>Downloaded: $userdownloaded
                 <br>Forum Posts: $forumposts
                 <br>Comments Posted: $commentposts
                 <br>Ratio: $userratio<br><br>
-                <center><img width=80 height=80 src=$avatar></center><br></td>\n");
+                <br></td>\n");
         }
 
         // echo '</tr><tr valign=top>';
@@ -778,8 +785,8 @@ function stdhead($title = "", $msgalert = true)
     $GLOBALS['ss_uri'] = $ss_uri;
     $GLOBALS['SITEURL'] = $SITEURL;
 
-    require_once ST_ROOT_DIR.'/themes/'.$ss_uri.'/block.php'; //add theme blocks modification
-    require_once ST_ROOT_DIR.'/themes/'.$ss_uri.'/header.php';
+    require_once TT_ROOT_DIR.'/themes/'.$ss_uri.'/block.php'; //add theme blocks modification
+    require_once TT_ROOT_DIR.'/themes/'.$ss_uri.'/header.php';
 }
 
 function getThemeUri()
@@ -828,10 +835,10 @@ function loadLanguage()
     WHERE id = 1');
     }
 
-    // dump($lang_uri, ST_ROOT_DIR . '/languages/' . $lang_uri);
+    // dump($lang_uri, TT_ROOT_DIR . '/languages/' . $lang_uri);
     
-    $GLOBALS['txt'] = st_parse_yaml(ST_ROOT_DIR . '/languages/' . $lang_uri);
-    // $GLOBALS['txt'] = st_parse_yaml(ST_ROOT_DIR . '/languages/russian.yml');
+    $GLOBALS['txt'] = st_parse_yaml(TT_ROOT_DIR . '/languages/' . $lang_uri);
+    // $GLOBALS['txt'] = st_parse_yaml(TT_ROOT_DIR . '/languages/russian.yml');
 
     // dump($GLOBALS['txt']);
     // die;
@@ -850,7 +857,7 @@ function updateUserLastBrowse()
 
 function stdfoot()
 {
-  require_once ST_THEMES_DIR . '/' . $GLOBALS['ss_uri'] . '/footer.php';
+  require_once TT_THEMES_DIR . '/' . $GLOBALS['ss_uri'] . '/footer.php';
 }
 
 function get_percent_completed_image($p)
@@ -886,24 +893,24 @@ function torrenttable($res, $variant = "index")
 // The parts commented out in this section can be used to display different columns in your torrent tables
 // Please only modify the section below if you understand PHP/MYSQL
 //
-	global $CURUSER, $MEMBERSONLY_WAIT, $MAXDISPLAYLENGTH, $WAITA, $WAITB, $WAITC, $WAITD;
+    global $CURUSER, $MEMBERSONLY_WAIT, $MAXDISPLAYLENGTH, $WAITA, $WAITB, $WAITC, $WAITD;
     global $GIGSA, $GIGSB, $GIGSC, $GIGSD, $RATIOA, $RATIOB, $RATIOC, $RATIOD;
     global $txt;
 
     // ratio wait code
-	if ($CURUSER["class"] < UC_VIP && $CURUSER['donated'] == 0) {
-		$gigs = $CURUSER["uploaded"] / (1024**3);
-		$ratio = (($CURUSER["downloaded"] > 0) ? ($CURUSER["uploaded"] / $CURUSER["downloaded"]) : 0);
+    if ($CURUSER["class"] < UC_VIP && $CURUSER['donated'] == 0) {
+	$gigs = $CURUSER["uploaded"] / (1024**3);
+	$ratio = (($CURUSER["downloaded"] > 0) ? ($CURUSER["uploaded"] / $CURUSER["downloaded"]) : 0);
         if ($ratio < 0 || $gigs < 0) $wait = $WAITA;
         elseif ($ratio < $RATIOA || $gigs < $GIGSA) $wait = $WAITA;
         elseif ($ratio < $RATIOB || $gigs < $GIGSB) $wait = $WAITB;
         elseif ($ratio < $RATIOC || $gigs < $GIGSC) $wait = $WAITC;
         elseif ($ratio < $RATIOD || $gigs < $GIGSD) $wait = $WAITD;
         else $wait = 0;
-	} else {
+    } else {
         $wait = 0;
     }
-	// end ratio wait code
+    // end ratio wait code
 ?>
 
 <table align=center cellpadding="0" cellspacing="0" class="ttable_headouter" width=100%>
@@ -940,7 +947,6 @@ $link5 = $col === 5 ? $by : 'desc';
 $link6 = $col === 6 ? $by : 'desc';
 $link7 = $col === 7 ? $by : 'desc';
 $link8 = $col === 8 ? $by : 'desc';
-
 // END SORTING MOD
 ?>
 
@@ -975,28 +981,31 @@ if ($MEMBERSONLY_WAIT) {
 	print("</tr>\n");
 
 	while ($row = $res->fetch()) {
-		$id = $row["id"];
-		print("<tr>\n");
+            $id = $row["id"];
+            print("<tr>\n");
 
-		print("<td class=ttable_col1 align=center>");
-		if (isset($row["cat_name"])) {
-			print("<a href=\"browse.php?cat=" . $row["category"] . "\">");
-			if (isset($row["cat_pic"]) && $row["cat_pic"] != "") {
-				print("<img border=\"0\"src=\"" . $GLOBALS['SITEURL'] .
-                    "/images/categories/" . $row["cat_pic"] . "\" alt=\"" . $row["cat_name"] . "\" />");
-			} else {
-				print($row["cat_name"]);
+            print("<td class=ttable_col1 align=center>");
+            if (isset($row["cat_name"])) {
+                print("<a href=\"browse.php?cat=" . $row["category"] . "\">");
+                if (isset($row["cat_pic"]) && $row["cat_pic"] != "") {
+                    echo '<img border="0" src="' . $GLOBALS['SITEURL'] .
+                        '/images/categories/' . $row["cat_pic"] . '" alt="' . $row["cat_name"] . '">';
+                } else {
+                    print($row["cat_name"]);
+                }
+                print("</a>");
             }
-			print("</a>");
-		}
-		else
-			print("-");
-		print("</td>\n");
+            else {
+                print("-");
+            }
+            print("</td>\n");
 
-		// MODIFICATION TO DISPLAY ONLY x FIRST CHARACTERS IN TORRENT NAME !
+            // MODIFICATION TO DISPLAY ONLY x FIRST CHARACTERS IN TORRENT NAME !
 
         $smallname = substr(h($row["name"]), 0, $MAXDISPLAYLENGTH);
-        if ($smallname != h($row["name"])) { $smallname .= '...' ; }
+        if ($smallname != h($row["name"])) {
+            $smallname .= '...' ;
+        }
 
         $last_browse = $CURUSER["last_browse"];
         $time_now = gmtime();
@@ -1009,56 +1018,45 @@ if ($MEMBERSONLY_WAIT) {
             $dispname = "<b>" . $smallname . "</b>";
         }
 
-		print("<td class=ttable_col2> <img border=0 src=" . $GLOBALS['SITEURL'] .
+	print("<td class=ttable_col2> <img border=0 src=" . $GLOBALS['SITEURL'] .
             "/images/cross.gif id=expandoGif$id onclick=\"expand($id)\" alt=\"show/hide\"> <a  title=\"".$row["name"].
             "\" href=\"torrents-details.php?");
 
-        if ($variant == "mytorrents")
-			print("returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;");
+        if ($variant == "mytorrents") {
+            print("returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;");
+        }
 
         print("id=$id");
-		if ($variant == "index")
-			print("&amp;hit=1");
 
         print("\">$dispname</a></td>\n");
 
-		if ($variant == "index") {
-			print("<td class=ttable_col1 align=center><a href=\"download.php?id=$id&name=" .
+        if ($variant == "index") {
+            print("<td class=ttable_col1 align=center><a href=\"download.php?id=$id&name=" .
                 rawurlencode($row["filename"]) . "\"><img src=" . $GLOBALS['SITEURL'] .
                 "/images/icon_download.gif border=0 alt=\"Download .torrent\"></a></td>");
-
-            /*
-            $nfo = h($row["nfo"]);
-			if (!$nfo) {
-				print("<td class=ttable_col1 align=center>-</td>");
-			} else {
-				print("<td class=ttable_col1 align=center><a href=torrents-viewnfo.php?id=$row[id]><img  src=" .
-                    $GLOBALS['SITEURL'] . "/images/icon_nfo.gif border=0 alt='View NFO'></a></td>");
-			}
-            */
-		}
-		elseif ($variant == "mytorrents") {
-			print("<td class=ttable_colx align=center><a href=\"torrents-edit.php?returnto=" .
-                urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=" . $row["id"] . "\"><font size=1 face=Verdana>EDIT</a></td>\n");
+        } elseif ($variant == "mytorrents") {
+            print("<td class=ttable_colx align=center><a href=\"torrents-edit.php?returnto=" .
+                urlencode($_SERVER["REQUEST_URI"]) . "&amp;id=" . $row["id"] .
+                "\"><font size=1 face=Verdana>EDIT</a></td>\n");
         }
 
-		if ($variant == "mytorrents") {
-			print("<td class=ttable_colx align=center>");
-			if ($row["visible"] == "no")
-				print("NO");
-			else
-				print("YES");
-			print("</td>\n");
-		}
+        if ($variant == "mytorrents") {
+                print("<td class=ttable_colx align=center>");
+                if ($row["visible"] == "no")
+                    print("NO");
+                else
+                    print("YES");
+                print("</td>\n");
+        }
 
-		if ($variant == "mytorrents") {
-			print("<td class=ttable_colx align=center>");
-			if ($row["banned"] == "no")
-				print("NO");
-			else
-				print("YES");
-			print("</td>\n");
-		}
+        if ($variant == "mytorrents") {
+                print("<td class=ttable_colx align=center>");
+                if ($row["banned"] == "no")
+                    print("NO");
+                else
+                    print("YES");
+                print("</td>\n");
+        }
 
         // START RATIO WAIT HACK
         if ($MEMBERSONLY_WAIT){
@@ -1076,53 +1074,31 @@ if ($MEMBERSONLY_WAIT) {
         }
         // END RATIO WAIT HACK
 
-		print("<td class=ttable_col1 align=center><font size=1 face=Verdana><a href=torrents-comment.php?id=$id>" .
+	print("<td class=ttable_col1 align=center><font size=1 face=Verdana><a href=torrents-comment.php?id=$id>" .
             $row["comments"] . "</a></td>\n");
 
-        /*	print("<td class=ttable_col2 align=center>");
-            if (!isset($row["rating"]))
-                print("---");
-            else {
-                $rating = round($row["rating"] * 2) / 2;
-                $rating = ratingpic($row["rating"]);
-                if (!isset($rating))
-                    print("-");
+	print("<td class=ttable_col2 align=center><font size=1 face=Verdana>" . mksize($row["size"]) . "</td>\n");
+
+        print("<td class=ttable_col1 align=center>" . $row["times_completed"] . "</td>\n");
+
+        if ($row["seeders"]) {
+            if ($variant == "index")
+                print("<td class=ttable_col2 align=center><b><font color=green><B>" . $row["seeders"] . "</b></td>\n");
+            else
+                print("<td class=ttable_col2 align=center><b><font color=green><B>" . $row["seeders"] . "</b></td>\n");
+        }
+        else {
+            print("<td class=ttable_col2 align=center><font color=green><B>" . $row["seeders"] . "</b></td>\n");
+        }
+
+        if ($row["leechers"]) {
+                if ($variant == "index")
+                    print("<td class=ttable_col1 align=center><font color=red><b>" . $row["leechers"] . "</b></td>\n");
                 else
-                    print($rating);
-            }
-            print("</td>\n");*/
-
-		print("<td class=ttable_col2 align=center><font size=1 face=Verdana>" . mksize($row["size"]) . "</td>\n");
-
-		/*	if ($row["type"] == "single")
-			print("<td class=alt2 align=center><font size=1 face=Verdana>" . $row["numfiles"] . "</td>\n");
-		else {
-			if ($variant == "index")
-				print("<td class=ttable_col1 align=center><b><font size=1 face=Verdana><a href=\"torrents-details.php?id=$id&amp;hit=1&amp;filelist=1\">" . $row["numfiles"] . "</a></b></td>\n");
-			else
-				print("<td class=ttable_col1 align=center><b><font size=1 face=Verdana><a href=\"torrents-details.php?id=$id&amp;filelist=1#filelist\">" . $row["numfiles"] . "</a></b></td>\n"); 
-		}*/
-
-		print("<td class=ttable_col1 align=center>" . $row["times_completed"] . "</td>\n");
-
-		if ($row["seeders"]) {
-			if ($variant == "index")
-				print("<td class=ttable_col2 align=center><b><font color=green><B>" . $row["seeders"] . "</b></td>\n");
-			else
-				print("<td class=ttable_col2 align=center><b><font color=green><B>" . $row["seeders"] . "</b></td>\n");
-		}
-		else
-			print("<td class=ttable_col2 align=center><font color=green><B>" . $row["seeders"] . "</b></td>\n");
-
-		if ($row["leechers"]) {
-			if ($variant == "index")
-				print("<td class=ttable_col1 align=center><font color=red><b>" . $row["leechers"] . "</b></td>\n");
-			else
-				print("<td class=ttable_col1 align=center><font color=red><b>" . $row["leechers"] . "</b></td>\n");
-		}
-		else
-			print("<td class=ttable_col1 align=center><font color=red><B>" . $row["leechers"] . "</b></td>\n");
-
+                    print("<td class=ttable_col1 align=center><font color=red><b>" . $row["leechers"] . "</b></td>\n");
+        } else {
+            print("<td class=ttable_col1 align=center><font color=red><B>" . $row["leechers"] . "</b></td>\n");
+        }
 
         // Progressbar Mod
         $seedersProgressbar = [];
@@ -1147,63 +1123,66 @@ if ($MEMBERSONLY_WAIT) {
         print("<td class=ttable_col2 align=left>$picProgress</td>\n");
         // End of modification
 
-		print("</tr>
+        print("</tr>
             <tr><td class=alt1 colspan=11><div id=\"descr$id\" style=\"margin-left: 70px; display: none\">
             <table width=97% border=0 cellspacing=0 cellpadding=0>
             <tr><td><b>Date Added:</b></td>
             <td>" . str_replace(" ", "&nbsp;at&nbsp;", $row["added"]) . "</td>\n");
-		if ($row["privacy"] == "strong" && get_user_class() < UC_JMODERATOR AND $CURUSER["id"] != $row["owner"]) {
-			print("</tr><tr><td><b>Added By:</b></td><td>Anonymous</td></tr><tr><td><b>Comments</b></td>\n");
-		} else {
-			print("</tr><tr><td><b>Added By:</b></td><td><a href=account-details.php?id=" . $row["owner"] .
-                ">" . (isset($row["username"]) ? h($row["username"]) : "<i>(unknown)</i>") . "</a></td></tr><tr><td><b>Comments</b></td>\n");
-		}
-		print("<td>There are <b><a href=\"torrents-details.php?id=$id#startcomments\">" . $row["comments"] . "</a></b> comments for this file.
+        if ($row["privacy"] == "strong" && get_user_class() < UC_JMODERATOR AND $CURUSER["id"] != $row["owner"]) {
+            print("</tr><tr><td><b>Added By:</b></td><td>Anonymous</td></tr><tr><td><b>Comments</b></td>\n");
+        } else {
+            print("</tr><tr><td><b>Added By:</b></td><td><a href=account-details.php?id=" . $row["owner"] .
+                ">" . (isset($row["username"]) ? h($row["username"]) : "<i>(unknown)</i>") .
+                "</a></td></tr><tr><td><b>Comments</b></td>\n");
+        }
+        print("<td>There are <b><a href=\"torrents-details.php?id=$id#startcomments\">" .
+                $row["comments"] . "</a></b> comments for this file.
             </td>
             </tr><tr><td><b>Status:</b></td>
             <td>\n");
 
-		if ($row['seeders'] == 0 && $row['leechers'] == 0) {
-			// no seeders/leechers = innactive
-			echo '<font color=#808080><b>INACTIVE</b></font>- This release is most probably dead (<b>' . $row['seeders'] .
-                '</b> seeds and <b>' . $row['leechers'] . '</b> leechers).';
-		} elseif($row['seeders'] == 0 && $row['leechers']) {
-			// some leechers but no seed = very bad
-			echo '<font color=#CC0000><b>CAUTION</b></font>- The release is active (<b>' . $row['leechers'] .
-                '</b>)but there are no complete versions for the file availble.';
-		} elseif($row['seeders'] < 2) {
-			// few seeds = poor
-			echo '<font color=#808000><b>POOR</b></font>- This release is active but there are only <b>' . $row['seeders'] .
-                '</b> seeds. This release may be slow to download.';
-		} else {
-			// working fine
-			echo '<font color=#008000><b>GOOD</b></font>- This release is active (<b>' . $row['seeders'] . '</b> seeds and <b>' .
-                $row['leechers'] . '</b> leechers) and should download within a few hours.';
-		}
+        if ($row['seeders'] == 0 && $row['leechers'] == 0) {
+            // no seeders/leechers = innactive
+            echo '<font color=#808080><b>INACTIVE</b></font>- This release is most probably dead (<b>' . $row['seeders'] .
+        '</b> seeds and <b>' . $row['leechers'] . '</b> leechers).';
+        } elseif($row['seeders'] == 0 && $row['leechers']) {
+            // some leechers but no seed = very bad
+            echo '<font color=#CC0000><b>CAUTION</b></font>- The release is active (<b>' . $row['leechers'] .
+        '</b>)but there are no complete versions for the file availble.';
+        } elseif($row['seeders'] < 2) {
+            // few seeds = poor
+            echo '<font color=#808000><b>POOR</b></font>- This release is active but there are only <b>' . $row['seeders'] .
+        '</b> seeds. This release may be slow to download.';
+        } else {
+            // working fine
+            echo '<font color=#008000><b>GOOD</b></font>- This release is active (<b>' . $row['seeders'] . '</b> seeds and <b>' .
+        $row['leechers'] . '</b> leechers) and should download within a few hours.';
+        }
 
-		// speed mod
-		$rowTmp = DB::fetchArray("
+	// speed mod
+        // todo: subquery
+	$rowTmp = DB::fetchArray("
             SELECT seeders, leechers
             FROM torrents
-            WHERE visible='yes'
+            WHERE visible = 'yes'
                 AND id = $id
             ORDER BY added DESC
             LIMIT 15");
 
-		[$seedersTmp, $leechersTmp] = $rowTmp ? $rowTmp : [0, 0];
+	[$seedersTmp, $leechersTmp] = $rowTmp ? $rowTmp : [0, 0];
 
-		if ($seedersTmp && $leechersTmp) {
-		   $a = DB::fetchAssoc("
-            SELECT (t.size * t.times_completed + SUM(p.downloaded)) / (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(added)) AS totalspeed
-            FROM torrents AS t
-                LEFT JOIN peers AS p ON t.id = p.torrent
-            WHERE p.seeder = 'no'
+	if ($seedersTmp && $leechersTmp) {
+            $a = DB::fetchAssoc("
+                SELECT (t.size * t.times_completed + SUM(p.downloaded)) / (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(added)) AS totalspeed
+                FROM torrents AS t
+                    LEFT JOIN peers AS p ON t.id = p.torrent
+                WHERE p.seeder = 'no'
                 AND p.torrent = '$id'
-            GROUP BY t.id
-            ORDER BY added ASC
-            LIMIT 15"); 
-		   $totalspeed = mksize($a["totalspeed"]) . "/s";
-		} else {
+                GROUP BY t.id
+                ORDER BY added ASC
+                LIMIT 15");
+            $totalspeed = mksize($a["totalspeed"]) . "/s";
+        } else {
             $totalspeed = "Torrent inactive";
         }
         echo '
@@ -1212,13 +1191,11 @@ if ($MEMBERSONLY_WAIT) {
             </font></b></td></tr>';
         // speed end
 
-		print("</td></tr></table>
+        print("</td></tr></table>
             </div>\n");
-	}
+    }
 
-	print("</table></td></table>\n");
-
-    // return $rows; // ???
+    print("</table></td></table>\n");
 }
 
 function hit_start()

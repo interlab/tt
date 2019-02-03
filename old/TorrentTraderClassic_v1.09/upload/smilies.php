@@ -31,7 +31,7 @@ function insert_smilies_frame()
 
     foreach ($smilies as $code => $url) {
         echo '
-        <tr style="border: 1px solid #6E8DC2;"><td>', $code, '</td><td><img src="', ST_IMG_URL, '/smilies/', $url, '"></td>';
+        <tr style="border: 1px solid #6E8DC2;"><td>', $code, '</td><td><img src="', TT_IMG_URL, '/smilies/', $url, '"></td>';
     }
 
     echo '

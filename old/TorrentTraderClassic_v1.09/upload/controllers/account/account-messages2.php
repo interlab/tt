@@ -107,7 +107,7 @@ if (!$res) {
         }
 
         print("<table border=0 width=100% cellspacing=0 cellpadding=2>
-        <tr><td class='forumtab'><img border='0' src='".ST_IMG_URL."/envelope.gif'></td>
+        <tr><td class='forumtab'><img border='0' src='".TT_IMG_URL."/envelope.gif'></td>
         <td width='70%' class='forumtab'>");
         if ($sent == 0) {
             echo $txt['FROM2'] . ' <b>' . $sender . '</b> ';

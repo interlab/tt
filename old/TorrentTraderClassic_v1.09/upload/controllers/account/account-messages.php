@@ -14,8 +14,8 @@ global $CURUSER;
 
 $id = (int) $CURUSER["id"];
 
-$loadmsg = "Загрузка...<br><img src='".ST_IMG_URL."/space.gif' width='1' height='200'>";
-$url = ST_URL.'/account-messages2.php';
+$loadmsg = "Загрузка...<br><img src='".TT_IMG_URL."/space.gif' width='1' height='200'>";
+$url = TT_URL.'/account-messages2.php';
 
 addJsFile('ajax.js');
 addJsFile('cvi_busy_lib.js');
