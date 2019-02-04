@@ -280,7 +280,7 @@ ul#tabnav a:hover {
 
 .tt-comment-user {
     border: 1px solid #D6D9DB;
-    padding: 0 2px;
+    padding: 4px 0 4px 4px;
 }
 
 .tt-comment-table-date {

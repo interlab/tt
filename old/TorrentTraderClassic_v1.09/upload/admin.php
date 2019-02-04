@@ -22,7 +22,7 @@ if (empty($act))
     begin_frame("Reported Items To Be Dealt With");
 
 // Start reports block
-$type = $_GET["type"];
+$type = $_GET["type"] = $_GET["type"] ?? '';
 if ($type == "user")
     $where = " WHERE type = 'user'";
 elseif ($type == "torrent")
@@ -62,37 +62,41 @@ $res = DB::executeQuery('
 
 while ($arr = $res->fetch()) {
     if ($arr['dealtwith']) {
-        $res3 = mysql_query("SELECT username FROM users WHERE id=$arr[dealtby]");
-        $arr3 = mysql_fetch_assoc($res3);
+        $arr3 = DB::fetchAssoc("SELECT username FROM users WHERE id = $arr[dealtby]");
         $dealtwith = "<font color=green><b>Yes - <a href=account-details.php?id=$arr[dealtby]><b>$arr3[username]</b></a></b></font>";
     } else
         $dealtwith = "<font color=red><b>No</b></font>";
-    if ($arr[type] == "user") {
+    if ($arr['type'] == "user") {
         $type = "account-details";
-        $res2 = mysql_query("SELECT username FROM users WHERE id=$arr[votedfor]");
-        $arr2 = mysql_fetch_assoc($res2);
-        $name = $arr2[username];
-    } elseif  ($arr[type] == "forum") {
+        $name = DB::fetchColumn("SELECT username FROM users WHERE id = $arr[votedfor]");
+    } elseif  ($arr['type'] == "forum") {
         $type = "forums";
-        $res2 = mysql_query("SELECT subject FROM forum_topics WHERE id=$arr[votedfor]");
-        $arr2 = mysql_fetch_assoc($res2);
-        $subject = $arr2[subject];
-    } elseif ($arr[type] == "torrent") {
+        $subject = DB::fetchColumn("SELECT subject FROM forum_topics WHERE id = $arr[votedfor]");
+    } elseif ($arr['type'] == "torrent") {
         $type = "torrents-details";
-        $res2 = mysql_query("SELECT name FROM torrents WHERE id=$arr[votedfor]");
-        $arr2 = mysql_fetch_assoc($res2);
-        $name = $arr2[name];
-        if ($name == "")
+        $name = DB::fetchColumn("SELECT name FROM torrents WHERE id = $arr[votedfor]");
+        if ($name == '') {
             $name = "<b>[Deleted]</b>";
+        }
     }
 
-    if ($arr[type] == "forum") {
-        print("<tr><td><a href=account-details.php?id=$arr[addedby]><b>$arr[username]</b></a></td><td align=left><a href=$type.php?action=viewtopic&topicid=$arr[votedfor]&page=p#$arr[votedfor_xtra]><b>$subject</b></a></td><td align=left>$arr[type]</td><td align=left>$arr[reason]</td><td align=left>$dealtwith</td><td align=center><input type=\"checkbox\" name=\"delreport[]\" value=\"" . $arr[id] . "\" /></td></tr>\n");
+    if ($arr['type'] == "forum") {
+        print("<tr><td><a href=account-details.php?id=$arr[addedby]><b>$arr[username]</b></a></td>
+            <td align=left><a href=$type.php?action=viewtopic&topicid=$arr[votedfor]&page=p#$arr[votedfor_xtra]><b>$subject</b></a></td>
+            <td align=left>$arr[type]</td>
+            <td align=left>$arr[reason]</td><td align=left>$dealtwith</td>
+            <td align=center><input type=\"checkbox\" name=\"delreport[]\" value=\"" . $arr['id'] . "\" /></td></tr>\n");
     }
     else {
-        print("<tr><td><a href=account-details.php?id=$arr[addedby]><b>$arr[username]</b></a></td><td align=left><a href=$type.php?id=$arr[votedfor]><b>$name</b></a></td><td align=left>$arr[type]</td><td align=left>$arr[reason]</td><td align=left>$dealtwith</td><td align=center><input type=\"checkbox\" name=\"delreport[]\" value=\"" . $arr[id] . "\" /></td>\n");
-        if (get_user_class() >= UC_MODERATOR)
+        print("<tr><td><a href=account-details.php?id=$arr[addedby]><b>$arr[username]</b></a></td>
+            <td align=left><a href=$type.php?id=$arr[votedfor]><b>$name</b></a></td>
+            <td align=left>$arr[type]</td>
+            <td align=left>$arr[reason]</td>
+            <td align=left>$dealtwith</td>
+            <td align=center><input type=\"checkbox\" name=\"delreport[]\" value=\"" . $arr['id'] . "\" /></td>\n");
+        if (get_user_class() >= UC_MODERATOR) {
             printf("<td><a href=delreport.php?id=$arr[id]>Delete</a></td>");
+        }
         print("</tr>");
     }
 }
@@ -113,15 +117,16 @@ end_frame();
 #======================================================================#
 # Donations Code
 #======================================================================#
-if($act == "donations")
-{
-	if($do == "update")
-{
-		mysql_query(" UPDATE site_settings SET requireddonations='$ed_requireddonations' ,donations='$ed_donations' , donatepage='$ed_donatepage'");
-	bark2("Success", "Donations Updated OK", Success);;
-}
-$qrt = MYSQL_QUERY("SELECT * FROM site_settings");
-	$rrt = MYSQL_FETCH_ARRAY($qrt);
+if ($act == "donations") {
+	if ($do == "update") {
+		DB::executeUpdate('
+            UPDATE site_settings SET requireddonations = ?, donations = ?, donatepage = ?',
+            [$_POST['ed_requireddonations'], $_POST['ed_donations'], $_POST['ed_donatepage']
+        ]);
+        bark2("Success", "Donations Updated OK", 'Success');
+    }
+    $row = DB::fetchAssoc("SELECT * FROM site_settings");
+
 	adminonly();
 	adminmenu();
 	begin_frame("Donation Management", 'center');
@@ -130,17 +135,19 @@ $qrt = MYSQL_QUERY("SELECT * FROM site_settings");
 	<input type='hidden' name='act' value='donations'>
 	<input type='hidden' name='do' value='update'>
 	Monthly Required:<br />
-	<input type='text' value='<?=$rrt[requireddonations]?>' size='5' maxlength='5' name='ed_requireddonations'><br />
+	<input type='text' value='<?= $row['requireddonations'] ?>' size='5' maxlength='5' name='ed_requireddonations'><br />
 	Donations:<br>
-	<input type='text' value='<?=$rrt[donations]?>' size='5' maxlength='5' name='ed_donations'><br />
+	<input type='text' value='<?= $row['donations'] ?>' size='5' maxlength='5' name='ed_donations'><br />
 	Donate Page Contents:<br />
-    <textarea name='ed_donatepage' cols="50" rows="8"><?php echo $rrt[donatepage]; ?></textarea><br>
-	<input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
+    <textarea name='ed_donatepage' cols="50" rows="8"><?= $row['donatepage'] ?></textarea><br>
+	<input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;
+    <input type='reset' value='  Reset  ' style='background:#eeeeee'>
 	</form>
 	<?php 
 
-end_frame();
+    end_frame();
 }
+
 #======================================================================#
 # Tracker Load
 #======================================================================#

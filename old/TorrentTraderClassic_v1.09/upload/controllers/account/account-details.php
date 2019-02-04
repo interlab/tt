@@ -46,13 +46,17 @@ function maketable($res)
     return $ret;
 }
 
-$id = (int) ($_GET["id"] ?? 0);
+$id = (int) ($_GET['id'] ?? 0);
 
 if (!is_valid_id($id)) {
     bark("Can't show details", "Bad ID.");
 }
 
 $user = DB::fetchAssoc('SELECT * FROM users WHERE id = ' . $id . ' LIMIT 1');
+if (!$user) {
+    bark("Can't show details", "No user with ID $id.");
+}
+
 if ($user["status"] == "pending") {
     die('User is pending');
 }
@@ -87,14 +91,15 @@ if ($num_torrents > 0) {
 
 if ($user["ip"] && !(get_user_class() < UC_JMODERATOR && $user["class"] >= UC_UPLOADER)) {
     $limited = $CURUSER['id'] != $id && get_user_class() < UC_JMODERATOR;
-    if ($limited)
+    if ($limited) {
         $ip = substr($user["ip"], 0, strrpos($user["ip"], ".") + 1) . "xxx";
-    else
+    } else {
         $ip = $user["ip"];
+    }
     $dom = @gethostbyaddr($user["ip"]);
-    if ($dom == $user["ip"] || @gethostbyname($dom) != $user["ip"])
+    if ($dom == $user["ip"] || @gethostbyname($dom) != $user["ip"]) {
         $addr = $ip;
-    else {
+    } else {
         $dom = strtoupper($dom);
         $domparts = explode(".", $dom);
         $domain = $domparts[count($domparts) - 2];
@@ -105,8 +110,9 @@ if ($user["ip"] && !(get_user_class() < UC_JMODERATOR && $user["class"] >= UC_UP
             $l = 1;
         }
         if ($limited) {
-            while (substr_count($dom, ".") > $l)
+            while (substr_count($dom, ".") > $l) {
                 $dom = substr($dom, strpos($dom, ".") + 1);
+            }
         }
         $addr = "$ip ($dom)";
     }
@@ -127,8 +133,9 @@ else {
 
 $forumposts = DB::fetchColumn('SELECT COUNT(*) FROM forum_posts WHERE userid = ' . $user['id']);
 
-if ($user['donated'] > 0)
+if ($user['donated'] > 0) {
     $don = "<img src=pic/starbig.gif>";
+}
 
 $country = DB::fetchColumn('SELECT name FROM countries WHERE id = ' . $user['country'] . ' LIMIT 1');
 
@@ -181,13 +188,15 @@ begin_frame("User Details for " . $user["username"] . "");
 <TR><TD width=100% valign=middle class=table_head height=30><b>Viewing Profile: <?=$user["username"]?> </b>
 [<a href="report.php?user=$<?= user[id] ?>">Report User</a>]</TD></TR>
 <TR><TD><DIV style="margin-left: 8pt">
-<!--  -->
-<h1><?= $user['username'] ?></h1><img width=80 height=80 src=<?= $avatar ?> alt=""><br><b><i><?= $user['title'] ?></b></i>
+
+<h1><?= $user['username'] ?></h1>
+<img width=80 height=80 src="<?= $avatar ?>" alt="">
+<br><b><i><?= $user['title'] ?></b></i>
 
 <?php
-if (!$enabled)
-  print("<br><b>" . $txt['ACCOUNT_DISABLED'] . "</b>");
-
+if (!$enabled) {
+    print("<br><b>" . $txt['ACCOUNT_DISABLED'] . "</b>");
+}
 ?>
 <BR>Joined: <?= $joindate ?><br>
 <br>
@@ -381,8 +390,13 @@ if ($leeching)
     print("<B>" . $txt['CURRENTLY_LEECHING'] . ":</B><br>$leeching<BR><BR>");
 end_frame();
 
+if ($user["about_myself"]) {
+    begin_frame("О себе", "left");
+    print(format_comment($user["about_myself"]));
+    end_frame();
+}
 
-echo "<br /><br />";
+echo "<br><br>";
 
 if (get_user_class() >= UC_JMODERATOR && $CURUSER["class"] > $user["class"] || get_user_class() >= UC_ADMINISTRATOR )
 {
@@ -399,6 +413,7 @@ if (get_user_class() >= UC_JMODERATOR && $CURUSER["class"] > $user["class"] || g
     <table border=0 cellspacing=0 cellpadding=3>
     <tr><td>Title</td><td align=left><input type=text size=60 name=title value="<?= $user['title'] ?>"></tr>
     <tr><td>Signature</td><td align=left><textarea type=text cols=50 rows=10 name=signature><?= h($user["signature"]) ?></textarea></tr>
+    <tr><td>About myself</td><td align=left><textarea type=text cols=50 rows=10 name=about_myself><?= h($user["about_myself"]) ?></textarea></tr>
     <tr><td>Uploaded</td>
         <td align=left><input type=text size=30 name=uploaded value="<?= $user['uploaded'] ?>">&nbsp;&nbsp;<?= mksize($user['uploaded']) ?></tr>
     <tr><td>Downloaded</td>

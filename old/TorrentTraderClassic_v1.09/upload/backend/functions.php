@@ -676,14 +676,14 @@ function commenttable($rows)
                     <br>Forum Posts: $forumposts
                     <br>Comments Posted: $commentposts
                     <br>Ratio: $userratio<br><br>
-                    <br></td>\n");
+                    </td>\n");
             } else {
                 echo '<td valign=top width=150 align=left class="tt-comment-user"><center>'.$posterlink.'
                     <br><i>' . $title . '</i></center>
                     <img width="80" height="80" src="'.$avatar.'">
                     Forum Posts: ' . $forumposts .'
                     <br>Comments Posted: ' . $commentposts . '<br><br>
-                    <br></td>';
+                    </td>';
 			}
 		} else {
             print("<td valign=top width=150 align=left class=\"tt-comment-user\"><center>".$posterlink."
@@ -694,7 +694,7 @@ function commenttable($rows)
                 <br>Forum Posts: $forumposts
                 <br>Comments Posted: $commentposts
                 <br>Ratio: $userratio<br><br>
-                <br></td>\n");
+                </td>\n");
         }
 
         // echo '</tr><tr valign=top>';
@@ -1018,7 +1018,7 @@ if ($MEMBERSONLY_WAIT) {
             $dispname = "<b>" . $smallname . "</b>";
         }
 
-	print("<td class=ttable_col2> <img border=0 src=" . $GLOBALS['SITEURL'] .
+        print("<td class=ttable_col2> <img border=0 src=" . $GLOBALS['SITEURL'] .
             "/images/cross.gif id=expandoGif$id onclick=\"expand($id)\" alt=\"show/hide\"> <a  title=\"".$row["name"].
             "\" href=\"torrents-details.php?");
 
