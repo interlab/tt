@@ -53,7 +53,6 @@ class DB
         preg_match_all('~\{(int|str):(\w+)\}~', $sql, $m, PREG_SET_ORDER);
         // dump($m);
         $types = ['int' => 'is_int', 'str' => 'is_string'];
-        // echo is_string(77), '<br>';
 
         if (empty($m)) {
             return [$sql, $params];
@@ -114,7 +113,8 @@ function my_pdo_connect($name, $user, $passwd, $host)
             'password' => $passwd,
             'host' => $host,
             'driver' => 'pdo_mysql',
-            'charset' => 'utf8',
+            // 'charset' => 'utf8',
+            'charset' => 'UTF8MB4',
             'port' => 3306,
         ];
 

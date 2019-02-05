@@ -626,9 +626,12 @@ function downloaderdata($res)
 
 function commenttable($rows)
 {
+    global $CURUSER;
+
     begin_frame();
     $count = 0;
     foreach ($rows as $row) {
+        $row["user"] = (int) $row["user"];
         print("<br>\n");
         $postername = h($row["username"]);
         if ($postername == "") {
@@ -699,10 +702,10 @@ function commenttable($rows)
 
         // echo '</tr><tr valign=top>';
         echo '<td><div class="tt-comment-table-date">';
-		if (get_user_class() >= UC_JMODERATOR) {
-			print("Posted: " . $row["added"] . " - <a href=edit-comments.php?cid=" .
-                $row["id"] . ">[Edit]</a> - <a href=edit-comments.php?action=delete&cid=" . $row["id"] .
-                ">[Delete]</a>");
+		if ($CURUSER['id'] === $row["user"] || get_user_class() >= UC_JMODERATOR) {
+			echo 'Posted: ' . $row["added"] . ' - <a href="torrents-comment.php?cid=' .
+                $row["id"] . '&sa=edit">[Edit]</a> - <a href="torrents-comment.php?cid=' . $row["id"] .
+                '&sa=delete">[Delete]</a>';
 		} else {
 				print("Posted: " . $row["added"]);
 		}
