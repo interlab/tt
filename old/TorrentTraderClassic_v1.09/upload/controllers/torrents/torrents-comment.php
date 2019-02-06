@@ -90,7 +90,7 @@ if ($sa === 'create') {
     // end PM NOTIF
 
     header('Refresh: 0; url=torrents-details.php?id=' . $id . '&viewcomm=' . $newid . '#comm' . $newid);
-    
+
     die('');
 }
 
@@ -108,14 +108,14 @@ elseif ($sa === 'edit') {
     <div align="center">
     <p style="margin: 0;">Please type your comment here, please remember to obey the <a href="rules.php">Rules</a>.</p>
     <table border=0 cellpadding=5>
-	<form name="Form" method="post" action="torrents-comment.php?cid=<?= $commentid ?>">
-	<input type="hidden" name="returnto" value="<?= ($_SERVER["HTTP_REFERER"] ?? '') ?>">
-	<input type="hidden" name="cid" value="<?= $commentid ?>">
-	<input type="hidden" name="sa" value="update">
+    <form name="Form" method="post" action="torrents-comment.php?cid=<?= $commentid ?>">
+    <input type="hidden" name="returnto" value="<?= ($_SERVER["HTTP_REFERER"] ?? '') ?>">
+    <input type="hidden" name="cid" value="<?= $commentid ?>">
+    <input type="hidden" name="sa" value="update">
     <tr>
         <td><?= $quicktags ?></td><td><textarea name="body" rows="10" cols="60"><?= h($arr["text"]) ?></textarea></td>
     </tr>
-	<tr>
+    <tr>
         <td colspan=2><center><input type="submit" class="btn" value="Submit Changes"></center></td>
     </tr>
     </form>
@@ -182,8 +182,8 @@ else {
 
     begin_frame('Add a comment to "<a href="torrents-details.php?id=' . $id . '">' . h($torrow['name']) . '</a>"', 'center');
     ?>
-    <p>
-    Please type your comment here, please remember to obey the <a href="rules.php">Rules</a>.
+    <div align="center">
+    <p style="margin: 0;">Please type your comment here, please remember to obey the <a href="rules.php">Rules</a>.</p>
     <table border=0 cellpadding=5>
     <form name=Form method="post" action="torrents-comment.php">
     <input type="hidden" name="id" value="<?= $id ?>">
@@ -191,8 +191,9 @@ else {
     <tr>
     <td><?= $quicktags ?></td><td><textarea name="body" rows="10" cols="60"></textarea></td>
     </tr>
-    <tr><td colspan=2><center><input type="submit" class=btn value="Add Comment"></center></td></tr></table></p>
-    </form>
+    <tr><td colspan=2><center><input type="submit" class=btn value="Add Comment"></center></td></tr>
+    </form></table>
+    </div>
     <?php
 
     $res = DB::query('
