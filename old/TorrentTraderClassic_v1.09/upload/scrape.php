@@ -1,4 +1,4 @@
-<?
+<?php
 //
 // Scrape v1.1 FLASH (4.Feb.2006)
 // Optimised for speed!, GZIP added, Added stats for "completed times"

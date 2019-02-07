@@ -11,8 +11,6 @@ dbconn(false);
 stdhead("FAQ");
 begin_frame($txt['FAQ']);
 
-function  s($val) { return stripslashes($val); }
-
 $faq_categ = [];
 
 $res = DB::query("
@@ -21,7 +19,7 @@ $res = DB::query("
     WHERE `type` = 'categ'
     ORDER BY `order` ASC");
 while ($arr = $res->fetch()) {
-    $faq_categ[$arr['id']]['title'] = s($arr['question']);
+    $faq_categ[$arr['id']]['title'] = $arr['question'];
     $faq_categ[$arr['id']]['flag'] = (int) $arr['flag'];
 }
 
@@ -31,9 +29,8 @@ $res = DB::query(
     WHERE `type`= \'item\'
     ORDER BY `order` ASC');
 while ($arr = $res->fetch()) {
-    // $faq_categ[$arr['categ']]['items'][$arr['id']]['question'] = $arr['question'];
-    $faq_categ[$arr['categ']]['items'][$arr['id']]['question'] = s($arr['question']);
-    $faq_categ[$arr['categ']]['items'][$arr['id']]['answer'] = s($arr['answer']);
+    $faq_categ[$arr['categ']]['items'][$arr['id']]['question'] = $arr['question'];
+    $faq_categ[$arr['categ']]['items'][$arr['id']]['answer'] = $arr['answer'];
     $faq_categ[$arr['categ']]['items'][$arr['id']]['flag'] = (int) $arr['flag'];
 }
 

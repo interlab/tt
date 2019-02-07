@@ -186,7 +186,7 @@ begin_frame("User Details for " . $user["username"] . "");
 
 <table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
 <TR><TD width=100% valign=middle class=table_head height=30><b>Viewing Profile: <?=$user["username"]?> </b>
-[<a href="report.php?user=$<?= $user['id'] ?>">Report User</a>]</TD></TR>
+[<a href="report.php?user=<?= $user['id'] ?>">Report User</a>]</TD></TR>
 <TR><TD><DIV style="margin-left: 8pt">
 
 <h1><?= $user['username'] ?></h1>

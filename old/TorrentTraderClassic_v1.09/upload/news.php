@@ -48,7 +48,7 @@ if ($res) {
 <img id="n', $nid, 'img" src="/images/', $img, '.gif">
 <strong> ', $title, '</strong></a> (By ', $username, '</a> at <em>', $date, '</em>)</a>
             <div id="n', $nid, '" style="display:', $mostrar, '">
-            <table align="center" width="95%"><tr><td >', stripslashes($text), '';
+            <table align="center" width="95%"><tr><td >', $text, '';
 
         if ($opts['comment'] == 'on') {
             echo '

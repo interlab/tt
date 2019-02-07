@@ -118,7 +118,7 @@ if (!empty($message)) {
   </tr>
   <tr>
 	<td valign=top>Message:</td>
-	<td><textarea name=msg cols=60 rows=12><?= stripslashes($body) ?></textarea></td>
+	<td><textarea name=msg cols=60 rows=12><?= $body ?></textarea></td>
   </tr>
 <?php if ($replyto) { ?>
   <tr>

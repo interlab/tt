@@ -18,7 +18,7 @@ echo "<br><b>" . $txt['TARGET'] . ": </b><font color=\"red\">$" . $requireddonat
     . ": </b><font color=\"green\">$" . $mothlydonated . "</font></center><br>
     <br><br><br>";
 
-echo stripslashes($donatepagecontents);
+echo $donatepagecontents;
 
 end_frame();
 stdfoot();

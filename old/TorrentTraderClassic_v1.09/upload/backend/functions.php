@@ -653,7 +653,7 @@ function commenttable($rows)
             $useruploaded = mksize($row["uploaded"]);
             $title =  h($row["title"]);
             $privacylevel = $row["privacy"];
-            $usersignature = stripslashes(format_comment($row["signature"]));
+            $usersignature = format_comment($row["signature"]);
         }
         if ($row["downloaded"] > 0) {
             $userratio = number_format($row["uploaded"] / $row["downloaded"], 2);
@@ -764,7 +764,7 @@ function stdhead($title = "", $msgalert = true)
 
     if (!$SITE_ONLINE) {
         if (get_user_class() != UC_ADMINISTRATOR) {
-            echo '<BR><BR><BR><CENTER>'.stripslashes($OFFLINEMSG).'</CENTER><BR><BR>';
+            echo '<BR><BR><BR><CENTER>'.$OFFLINEMSG.'</CENTER><BR><BR>';
             die;
         } else {
             echo '<BR><BR><BR><CENTER><B>

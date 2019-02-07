@@ -1,26 +1,24 @@
 <?php
-//
-// - Theme And Language Updated 27.Nov.05
-//
-ob_start("ob_gzhandler");
-require "backend/functions.php";
+
+ob_start('ob_gzhandler');
+require_once 'backend/functions.php';
 
 dbconn();
-stdhead("Rules");
+stdhead('Rules');
 begin_frame($txt['SITE_RULES']);
 
-$res = DB::query("select * from rules order by id");
+$res = DB::query('select * from rules order by id');
 while ($arr = $res->fetch()) {
-	if ($arr["public"] == "yes"
-        || ($arr["public"] == "no" && $arr["class"] <= $CURUSER["class"])
+	if ($arr['public'] === 'yes'
+        || ($arr['public'] === 'no' && $arr['class'] <= $CURUSER['class'])
     ){
 		begin_frame($arr['title']);
-		print(format_comment($arr["text"]));
+		print(format_comment($arr['text']));
 		end_frame();
 	}
 }
 
-echo "<BR><BR>";
+echo '<BR><BR>';
 
 end_frame();
 

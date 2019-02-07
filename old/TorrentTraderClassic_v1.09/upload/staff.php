@@ -1,13 +1,11 @@
 <?php 
-//
-// - Theme And Language Updated 26.Nov.05
-//
-require "backend/functions.php";
+
+require_once 'backend/functions.php';
 
 dbconn();
 loggedinorreturn();
 
-stdhead("Staff");
+stdhead('Staff');
 
 // Display Staff List to all users
 begin_frame($txt['STAFF']);
