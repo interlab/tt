@@ -7,6 +7,7 @@ error_reporting(-1);
 define('TT_START_TIME', microtime(true));
 
 session_start();
+ob_start();
 
 mb_internal_encoding('UTF-8');
 setlocale(LC_ALL, 'ru_RU.UTF-8');

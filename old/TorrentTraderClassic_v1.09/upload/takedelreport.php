@@ -1,21 +1,21 @@
 <?php
 
-require_once("backend/functions.php"); 
+require_once('backend/functions.php'); 
 
 dbconn(); 
 loggedinorreturn(); 
 
 jmodonly();
 
-$_POST["delreport"] = array_map("intval", $_POST["delreport"]);
+$_POST['delreport'] = array_map('intval', $_POST['delreport']);
 
-$res = mysql_query ("SELECT id FROM reports WHERE dealtwith=0 AND id IN (" . implode(", ", $_POST[delreport]) . ")");
+$res = DB::query('SELECT id FROM reports WHERE dealtwith = 0 AND id IN (' . implode(', ', $_POST['delreport']) . ')');
 
-while ($arr = mysql_fetch_assoc($res))
-mysql_query ("UPDATE reports SET dealtwith=1, dealtby = $CURUSER[id] WHERE id = $arr[id]") or sqlerr();
+while ($arr = $res->fetch()) {
+    DB::executeUpdate('UPDATE reports SET dealtwith = 1, dealtby = ' . $CURUSER['id'] . ' WHERE id = ' . $arr['id']);
+}
 
-?>
-<script LANGUAGE="JavaScript">
- self.location='admin.php';
-</SCRIPT>
+ob_end_clean();
+header('Location: ' . $GLOBALS['SITEURL'] . '/admin.php');
 
+die('');

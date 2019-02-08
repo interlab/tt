@@ -95,7 +95,7 @@ while ($arr = $res->fetch()) {
             <td align=left>$dealtwith</td>
             <td align=center><input type=\"checkbox\" name=\"delreport[]\" value=\"" . $arr['id'] . "\" /></td>\n");
         if (get_user_class() >= UC_MODERATOR) {
-            printf("<td><a href=delreport.php?id=$arr[id]>Delete</a></td>");
+            printf("<td><a href=admin-delreport.php?id=$arr[id]>Delete</a></td>");
         }
         print("</tr>");
     }
