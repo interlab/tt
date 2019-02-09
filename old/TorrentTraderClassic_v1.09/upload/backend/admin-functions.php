@@ -136,7 +136,7 @@ function adminmenu()
 </tr>
 <tr><td colspan=5></td></tr>
 <TR>
-    <td width=%20 align=center><a href='staffmess.php'><img src="images/admin/massmessage.gif" border=0 width=32 height=32>
+    <td width=%20 align=center><a href='admin-pmessages.php'><img src="images/admin/massmessage.gif" border=0 width=32 height=32>
         <br>Mass Message</a> [A]</td>
     <td width=%20 align=center><a href='admin.php?act=banner'><img src="images/admin/banners.gif" border=0 width=32 height=32>
         <br>Banners / Sponsor</a> [A]</td>
@@ -153,7 +153,7 @@ function adminmenu()
     <td width=%20 align=center><a href='admin.php?act=users'><img src="images/admin/users.gif" border=0 width=32 height=32><br>Users</a></td>
     <td width=%20 align=center><a href='admin.php?act=rws-watched'><img src="images/admin/watchedusers.gif" border=0 width=32 height=32><br>Ratio Warn System<BR>Watched Users</a></td>
     <td width=%20 align=center><a href='admin.php?act=rws-warned'><img src="images/admin/warnedusers.gif" border=0 width=32 height=32><br>Ratio Warn System<BR>Warned Users</a></td>
-    <td width=%20 align=center><a href='ipsearch.php'><img src="images/admin/duplicate.gif" border=0 width=32 height=32><br>Duplicate IPs</a></td>
+    <td width=%20 align=center><a href='admin-ipsearch.php'><img src="images/admin/duplicate.gif" border=0 width=32 height=32><br>Duplicate IPs</a></td>
 </tr>
 <tr><td colspan=5></td></tr>
 <!-- needs imgs -->

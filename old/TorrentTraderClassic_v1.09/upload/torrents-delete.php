@@ -1,31 +1,27 @@
 <?php 
-//
-// CSS and language updated 30.11.05
-//
-require_once("backend/functions.php");
 
-if (!mkglobal("id"))
-    genbark("missing form data");
+require_once 'backend/functions.php';
 
-$id = 0 + $id;
-if (!$id)
-    die();
+$id = (int) ($_POST['id'] ?? 0);
+if (! $id) {
+    die('bad id');
+}
 
 dbconn();
 loggedinorreturn();
 
-$res = mysql_query("SELECT name ,owner, seeders FROM torrents WHERE id = $id");
-$row = mysql_fetch_array($res);
-if (!$row)
-    die();
+$row = DB::fetchAssoc('SELECT name, owner, seeders FROM torrents WHERE id = ' . $id);
+if (! $row) {
+    die('torrent not found');
+}
 
-if ($CURUSER["id"] != $row["owner"] && get_user_class() < UC_MODERATOR){
-    bark("Error", "" . CANT_EDIT_TORRENT . "");
+if ($CURUSER["id"] != $row["owner"] && get_user_class() < UC_MODERATOR) {
+    bark("Error", $txt['CANT_EDIT_TORRENT']);
     die;
 }
 
 $reason = trim($_POST["reason"]);
-if (!$reason){
+if (! $reason) {
     bark("Error", $txt['REASON_FOR_DELETE']);
     die;
 }
@@ -38,14 +34,14 @@ stdhead("Torrent deleted!");
 begin_frame();
 
 if (isset($_POST["returnto"]))
-	$ret = "<BR><BR><a href=\"" . h($_POST["returnto"]) . "\">Back</a><BR>";
+    $ret = "<BR><BR>
+        <a href=\"" . h($_POST["returnto"]) . "\">Back</a><BR>";
 else
 	$ret = "<BR><BR><a href=\"./\">Back to index</a><BR>";
-
 ?>
 
-<?= $txt['TORRENT_DELETED']'; ?>
-<BR><p><?= $ret ?></p></br>
+<?= $txt['TORRENT_DELETED']; ?>
+<BR><p><?= $ret ?></p><br>
 
 <?php 
 end_frame();

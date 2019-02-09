@@ -7,6 +7,7 @@
 ## Diff
 - deleted nfo-file upload
 - deleted irc notifications
+- deleted IRC Web Chat
 
 ## Links
 - http://www.torrenttrader.org/

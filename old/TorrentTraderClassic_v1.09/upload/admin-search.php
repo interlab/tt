@@ -1,4 +1,5 @@
-<?
+<?php
+
 ob_start("ob_gzhandler");
 require "backend/functions.php";
 
@@ -11,9 +12,8 @@ require_once("backend/admin-functions.php");
 adminmenu();
 begin_frame("Search");
 
-if ($_GET['h'])
-{
-echo "<table width=65% border=0 align=center><tr><td class=embedded bgcolor='#F5F4EA'><div align=left>\n
+if (! empty($_GET['h'])) {
+    echo "<table width=65% border=0 align=center><tr><td class=embedded bgcolor='#F5F4EA'><div align=left>\n
 Fields left blank will be ignored;\n
 Wildcards * and ? may be used in Name, Email and Comments, as well as multiple values\n
 separated by spaces (e.g. 'wyz Max*' in Name will list both users named\n
@@ -29,75 +29,101 @@ ignored unless relevant for the type of search chosen. <br><br>\n
 The History column lists the number of forum posts and comments,\n
 respectively, as well as linking to the history page.\n
 </div></td></tr></table><br><br>\n";
-}
-else
-{
-echo "<p align=center>[<a href='".$_SERVER["PHP_SELF"]."?h=1'>Instructions</a>]";
-echo "&nbsp;-&nbsp;[<a href='".$_SERVER["PHP_SELF"]."'>Reset</a>]</p>\n";
+} else {
+    echo "<p align=center>[<a href='".$_SERVER["PHP_SELF"]."?h=1'>Instructions</a>]";
+    echo "&nbsp;-&nbsp;[<a href='".$_SERVER["PHP_SELF"]."'>Reset</a>]</p>\n";
 }
 
+$params = [];
 $highlight = " bgcolor=#BBAF9B";
+$where_is = '';
+$q = '';
+$comment_is = '';
+$comments_exc = null;
+$names_exc = null;
+$join_is = '';
+$name_is = '';
+
+$_GET['c'] = $_GET['c'] ?? 0;
+$_GET['d'] = $_GET['d'] ?? 0;
+$_GET['d2'] = $_GET['d2'] ?? 0;
+$_GET['co'] = $_GET['co'] ?? 0;
+$_GET['ul'] = $_GET['ul'] ?? 0;
+$_GET['ul2'] = $_GET['ul2'] ?? 0;
+$_GET['h'] = $_GET['h'] ?? '';
+$_GET['w'] = $_GET['w'] ?? '';
+$_GET['n'] = $_GET['n'] ?? '';
+$_GET['r'] = $_GET['r'] ?? '';
+$_GET['r2'] = $_GET['r2'] ?? '';
+$_GET['st'] = $_GET['st'] ?? '';
+$_GET['em'] = $_GET['em'] ?? '';
+$_GET['as'] = $_GET['as'] ?? '';
+$_GET['ma'] = $_GET['ma'] ?? '';
+$_GET['dl'] = $_GET['dl'] ?? '';
+$_GET['dl2'] = $_GET['dl2'] ?? '';
+$_GET['ls'] = $_GET['ls'] ?? '';
+$_GET['ls2'] = $_GET['ls2'] ?? '';
 
 ?>
 <center>
-<form method=get action=<?=$_SERVER["PHP_SELF"]?>>
+<form method=get action=<?= $_SERVER["PHP_SELF"] ?>>
 <table border="1" style="border-collapse: collapse" bordercolor="#646262" cellspacing="0" cellpadding="2">
 <tr>
 
 <td valign="middle" class=rowhead>Name:</td>
-<td<?=$_GET['n']?$highlight:""?>><input name="n" type="text" value="<?=$_GET['n']?>" size=35></td>
+<td<?= $_GET['n'] ? $highlight : "" ?>><input name="n" type="text" value="<?= $_GET['n'] ?>" size=35></td>
 
 <td valign="middle" class=rowhead>Ratio:</td>
-<td<?=$_GET['r']?$highlight:""?>><select name="rt">
-<?
-$options = array("equal","above","below","between");
-for ($i = 0; $i < count($options); $i++){
-echo "<option value=$i ".(($_GET['rt']=="$i")?"selected":"").">".$options[$i]."</option>\n";
+<td<?= $_GET['r'] ? $highlight : "" ?>><select name="rt">
+<?php
+$options = ["equal", "above", "below", "between"];
+for ($i = 0; $i < count($options); $i++) {
+    echo "<option value=$i ".(($_GET['rt'] == "$i") ? "selected" : "").">".$options[$i]."</option>\n";
 }
 ?>
 </select>
-<input name="r" type="text" value="<?=$_GET['r']?>" size="5" maxlength="4">
-<input name="r2" type="text" value="<?=$_GET['r2']?>" size="5" maxlength="4"></td>
+<input name="r" type="text" value="<?= $_GET['r'] ?>" size="5" maxlength="4">
+<input name="r2" type="text" value="<?= $_GET['r2'] ?>" size="5" maxlength="4"></td>
 
 <td valign="middle" class=rowhead>Member status:</td>
-<td<?=$_GET['st']?$highlight:""?>><select name="st">
-<?
-$options = array("(any)","confirmed","pending");
-for ($i = 0; $i < count($options); $i++){
-echo "<option value=$i ".(($_GET['st']=="$i")?"selected":"").">".$options[$i]."</option>\n";
+<td<?= $_GET['st'] ? $highlight : "" ?>><select name="st">
+<?php
+$options = ["(any)", "confirmed", "pending"];
+for ($i = 0; $i < count($options); $i++) {
+    echo "<option value=$i ".(($_GET['st'] == "$i") ? "selected" : "").">".$options[$i]."</option>\n";
 }
 ?>
 </select></td></tr>
 <tr><td valign="middle" class=rowhead>Email:</td>
-<td<?=$_GET['em']?$highlight:""?>><input name="em" type="text" value="<?=$_GET['em']?>" size="35"></td>
+<td<?= $_GET['em'] ? $highlight : "" ?>><input name="em" type="text" value="<?= $_GET['em'] ?>" size="35"></td>
 <td valign="middle" class=rowhead>IP:</td>
-<td<?=$_GET['ip']?$highlight:""?>><input name="ip" type="text" value="<?=$_GET['ip']?>" maxlength="17"></td>
+<td<?= $_GET['ip'] ? $highlight : "" ?>><input name="ip" type="text" value="<?= $_GET['ip'] ?>" maxlength="17"></td>
 
 <td valign="middle" class=rowhead>Account status:</td>
-<td<?=$_GET['as']?$highlight:""?>><select name="as">
-<?
-$options = array("(any)","enabled","disabled");
-for ($i = 0; $i < count($options); $i++){
-echo "<option value=$i ".(($_GET['as']=="$i")?"selected":"").">".$options[$i]."</option>\n";
+<td<?= $_GET['as'] ? $highlight : "" ?>><select name="as">
+<?php
+$options = ["(any)", "enabled", "disabled"];
+for ($i = 0; $i < count($options); $i++) {
+    echo "<option value=$i ".(($_GET['as']=="$i")?"selected":"").">".$options[$i]."</option>\n";
 }
 ?>
 </select></td></tr>
 <tr>
 <td valign="middle" class=rowhead>Comment:</td>
-<td<?=$_GET['co']?$highlight:""?>><input name="co" type="text" value="<?=$_GET['co']?>" size="35"></td>
+<td<?= $_GET['co'] ? $highlight : "" ?>><input name="co" type="text" value="<?=$_GET['co']?>" size="35"></td>
 <td valign="middle" class=rowhead>Mask:</td>
-<td<?=$_GET['ma']?$highlight:""?>><input name="ma" type="text" value="<?=$_GET['ma']?>" maxlength="17"></td>
+<td<?= $_GET['ma'] ? $highlight : "" ?>><input name="ma" type="text" value="<?=$_GET['ma']?>" maxlength="17"></td>
 <td valign="middle" class=rowhead>Class:</td>
-<td<?=($_GET['c'] && $_GET['c'] != 1)?$highlight:""?>><select name="c"><option value='1'>(any)</option>
-<?
+<td<?= ($_GET['c'] && $_GET['c'] != 1) ? $highlight : "" ?>><select name="c"><option value='1'>(any)</option>
+<?php
 $class = $_GET['c'];
 if (!is_valid_id($class))
-$class = '';
-for ($i = 2;;++$i) {
-if ($c = get_user_class_name($i-2))
-print("<option value=" . $i . ($class && $class == $i? " selected" : "") . ">$c</option>\n");
-else
-break;
+    $class = '';
+for ($i = 2;; ++$i) {
+    if ($c = get_user_class_name($i-2))
+        print("<option value=" . $i . ($class && $class == $i? " selected" : "") . ">$c</option>\n");
+    else
+        break;
 }
 ?>
 </select></td></tr>
@@ -105,11 +131,11 @@ break;
 
 <td valign="middle" class=rowhead>Joined:</td>
 
-<td<?=$_GET['d']?$highlight:""?>><select name="dt">
-<?
-$options = array("on","before","after","between");
-for ($i = 0; $i < count($options); $i++){
-echo "<option value=$i ".(($_GET['dt']=="$i")?"selected":"").">".$options[$i]."</option>\n";
+<td<?= $_GET['d'] ? $highlight : "" ?>><select name="dt">
+<?php
+$options = ["on", "before", "after", "between"];
+for ($i = 0; $i < count($options); $i++) {
+    echo "<option value=$i ".(($_GET['dt'] == "$i") ? "selected" : "").">".$options[$i]."</option>\n";
 }
 ?>
 </select>
@@ -118,14 +144,13 @@ echo "<option value=$i ".(($_GET['dt']=="$i")?"selected":"").">".$options[$i]."<
 
 <input name="d2" type="text" value="<?=$_GET['d2']?>" size="12" maxlength="10"></td>
 
-
 <td valign="middle" class=rowhead>Uploaded (GB):</td>
 
 <td<?=$_GET['ul']?$highlight:""?>><select name="ult" id="ult">
-<?
+<?php
 $options = array("equal","above","below","between");
-for ($i = 0; $i < count($options); $i++){
-echo "<option value=$i ".(($_GET['ult']=="$i")?"selected":"").">".$options[$i]."</option>\n";
+for ($i = 0; $i < count($options); $i++) {
+    echo "<option value=$i ".(($_GET['ult'] == "$i") ? "selected" : "").">".$options[$i]."</option>\n";
 }
 ?>
 </select>
@@ -140,11 +165,11 @@ echo "<option value=$i ".(($_GET['ult']=="$i")?"selected":"").">".$options[$i]."
 
 <td valign="middle" class=rowhead>Last Seen:</td>
 
-<td <?=$_GET['ls']?$highlight:""?>><select name="lst">
-<?
+<td <?= $_GET['ls'] ? $highlight : "" ?>><select name="lst">
+<?php
 $options = array("on","before","after","between");
-for ($i = 0; $i < count($options); $i++){
-echo "<option value=$i ".(($_GET['lst']=="$i")?"selected":"").">".$options[$i]."</option>\n";
+for ($i = 0; $i < count($options); $i++) {
+    echo "<option value=$i ".(($_GET['lst']=="$i")?"selected":"").">".$options[$i]."</option>\n";
 }
 ?>
 </select>
@@ -155,10 +180,10 @@ echo "<option value=$i ".(($_GET['lst']=="$i")?"selected":"").">".$options[$i]."
 <td valign="middle" class=rowhead>Downloaded (GB):</td>
 
 <td<?=$_GET['dl']?$highlight:""?>><select name="dlt" id="dlt">
-<?
+<?php
 $options = array("equal","above","below","between");
-for ($i = 0; $i < count($options); $i++){
-echo "<option value=$i ".(($_GET['dlt']=="$i")?"selected":"").">".$options[$i]."</option>\n";
+for ($i = 0; $i < count($options); $i++) {
+    echo "<option value=$i ".(($_GET['dlt']=="$i")?"selected":"").">".$options[$i]."</option>\n";
 }
 ?>
 </select>
@@ -170,10 +195,10 @@ echo "<option value=$i ".(($_GET['dlt']=="$i")?"selected":"").">".$options[$i]."
 <td valign="middle" class=rowhead>Warned:</td>
 
 <td<?=$_GET['w']?$highlight:""?>><select name="w">
-<?
+<?php
 $options = array("(any)","Yes","No");
-for ($i = 0; $i < count($options); $i++){
-echo "<option value=$i ".(($_GET['w']=="$i")?"selected":"").">".$options[$i]."</option>\n";
+for ($i = 0; $i < count($options); $i++) {
+    echo "<option value=$i ".(($_GET['w']=="$i")?"selected":"").">".$options[$i]."</option>\n";
 }
 ?>
 </select></td></tr>
@@ -182,50 +207,51 @@ echo "<option value=$i ".(($_GET['w']=="$i")?"selected":"").">".$options[$i]."</
 <br><br>
 </form>
 
-<?
+<?php
 
 // Validates date in the form [yy]yy-mm-dd;
 // Returns date if valid, 0 otherwise.
-function mkdate($date){
-if (strpos($date,'-'))
-$a = explode('-', $date);
-elseif (strpos($date,'/'))
-$a = explode('/', $date);
-else
-return 0;
-for ($i=0;$i<3;$i++)
-if (!is_numeric($a[$i]))
-return 0;
-if (checkdate($a[1], $a[2], $a[0]))
-return date ("Y-m-d", mktime (0,0,0,$a[1],$a[2],$a[0]));
-else
-return 0;
+function mkdate($date)
+{
+    if (strpos($date,'-'))
+        $a = explode('-', $date);
+    elseif (strpos($date,'/'))
+        $a = explode('/', $date);
+    else
+        return 0;
+    for ($i=0; $i<3; $i++)
+        if (!is_numeric($a[$i]))
+            return 0;
+        if (checkdate($a[1], $a[2], $a[0]))
+            return date ("Y-m-d", mktime (0,0,0,$a[1],$a[2],$a[0]));
+        else
+            return 0;
 }
 
 // ratio as a string
 function ratios($up,$down, $color = True)
 {
-if ($down > 0)
-{
-$r = number_format($up / $down, 2);
-if ($color)
-$r = "<font color=".get_ratio_color($r).">$r</font>";
-}
-else
-if ($up > 0)
-$r = "Inf.";
-else
-$r = "---";
-return $r;
+    if ($down > 0) {
+        $r = number_format($up / $down, 2);
+        if ($color)
+            $r = "<font color=".get_ratio_color($r).">$r</font>";
+    }
+    elseif ($up > 0)
+        $r = "Inf.";
+    else
+        $r = "---";
+
+    return $r;
 }
 
 // checks for the usual wildcards *, ? plus mySQL ones
-function haswildcard($text){
-if (strpos($text,'*') === False && strpos($text,'?') === False
-&& strpos($text,'%') === False && strpos($text,'_') === False)
-return False;
-else
-return True;
+function haswildcard($text)
+{
+    if (strpos($text,'*') === False && strpos($text,'?') === False
+        && strpos($text,'%') === False && strpos($text,'_') === False)
+        return False;
+    else
+        return True;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -233,7 +259,7 @@ return True;
 if (count($_GET) > 0 && !$_GET['h'])
 {
 // name
-$names = explode(' ',trim($_GET['n']));
+$names = explode(' ', trim($_GET['n']));
 if ($names[0] !== "")
 {
 foreach($names as $name)
@@ -249,15 +275,16 @@ $names_inc[] = $name;
 
 if (is_array($names_inc))
 {
-$where_is .= isset($where_is)?" AND (":"(";
+$where_is .= !empty($where_is)?" AND (":"(";
 foreach($names_inc as $name)
 {
-if (!haswildcard($name))
-$name_is .= (isset($name_is)?" OR ":"")."u.username = ".sqlesc($name);
-else
-{
-$name = str_replace(array('?','*'), array('_','%'), $name);
-$name_is .= (isset($name_is)?" OR ":"")."u.username LIKE ".sqlesc($name);
+if (!haswildcard($name)) {
+    $name_is .= (!empty($name_is)?" OR ":"")."u.username = ?";
+    $params[] = $name;
+} else {
+    $name = str_replace(array('?','*'), array('_','%'), $name);
+    $name_is .= (!empty($name_is)?" OR ":"")."u.username LIKE ?";
+    $params[] = $name;
 }
 }
 $where_is .= $name_is.")";
@@ -266,16 +293,16 @@ unset($name_is);
 
 if (is_array($names_exc))
 {
-$where_is .= isset($where_is)?" AND NOT (":" NOT (";
-foreach($names_exc as $name)
-{
-if (!haswildcard($name))
-$name_is .= (isset($name_is)?" OR ":"")."u.username = ".sqlesc($name);
-else
-{
-$name = str_replace(array('?','*'), array('_','%'), $name);
-$name_is .= (isset($name_is)?" OR ":"")."u.username LIKE ".sqlesc($name);
-}
+$where_is .= !empty($where_is)?" AND NOT (":" NOT (";
+foreach($names_exc as $name) {
+    if (!haswildcard($name)) {
+        $name_is .= (isset($name_is)?" OR ":"")."u.username = ?";
+        $params[] = $name;
+    } else {
+        $name = str_replace(array('?','*'), array('_','%'), $name);
+        $name_is .= (isset($name_is)?" OR ":"")."u.username LIKE ?";
+        $params[] = $name;
+    }
 }
 $where_is .= $name_is.")";
 }
@@ -284,30 +311,27 @@ $q .= ($q ? "&amp;" : "") . "n=".urlencode(trim($_GET['n']));
 
 // email
 $emaila = explode(' ', trim($_GET['em']));
-if ($emaila[0] !== "")
-{
-$where_is .= isset($where_is)?" AND (":"(";
-foreach($emaila as $email)
-{
-if (strpos($email,'*') === False && strpos($email,'?') === False
-&& strpos($email,'%') === False)
-{
-if (validemail($email) !== 1)
-{
-bark("Error", "Bad email.");
-stdfoot();
-die();
-}
-$email_is .= (isset($email_is)?" OR ":"")."u.email =".sqlesc($email);
-}
-else
-{
-$sql_email = str_replace(array('?','*'), array('_','%'), $email);
-$email_is .= (isset($email_is)?" OR ":"")."u.email LIKE ".sqlesc($sql_email);
-}
-}
-$where_is .= $email_is.")";
-$q .= ($q ? "&amp;" : "") . "em=".urlencode(trim($_GET['em']));
+if ($emaila[0] !== "") {
+    $where_is .= !empty($where_is)?" AND (":"(";
+    foreach($emaila as $email) {
+        if (strpos($email,'*') === False && strpos($email,'?') === false
+        && strpos($email,'%') === False
+        ) {
+            if (validemail($email) !== 1) {
+                bark("Error", "Bad email.");
+                stdfoot();
+                die();
+            }
+            $email_is .= (isset($email_is)?" OR " : "")."u.email = ?";
+            $params[] = $email;
+        } else {
+            $sql_email = str_replace(array('?','*'), array('_','%'), $email);
+            $email_is .= (isset($email_is)?" OR ":"")."u.email LIKE ?";
+            $params[] = $sql_email;
+        }
+    }
+    $where_is .= $email_is.")";
+    $q .= ($q ? "&amp;" : "") . "em=".urlencode(trim($_GET['em']));
 }
 
 //class
@@ -315,7 +339,7 @@ $q .= ($q ? "&amp;" : "") . "em=".urlencode(trim($_GET['em']));
 $class = $_GET['c'] - 2;
 if (is_valid_id($class + 1))
 {
-$where_is .= (isset($where_is)?" AND ":"")."u.class=$class";
+$where_is .= (!empty($where_is) ? " AND " : "")."u.class=$class";
 $q .= ($q ? "&amp;" : "") . "c=".($class+2);
 }
 
@@ -333,7 +357,7 @@ die();
 
 $mask = trim($_GET['ma']);
 if ($mask == "" || $mask == "255.255.255.255")
-$where_is .= (isset($where_is)?" AND ":"")."u.ip = '$ip'";
+$where_is .= (!empty($where_is) ? " AND " : "")."u.ip = '$ip'";
 else
 {
 if (substr($mask,0,1) == "/")
@@ -354,7 +378,7 @@ bark("Error", "Bad subnet mask.");
 stdfoot();
 die();
 }
-$where_is .= (isset($where_is)?" AND ":"")."INET_ATON(u.ip) & INET_ATON('$mask') = INET_ATON('$ip') & INET_ATON('$mask')";
+$where_is .= (!empty($where_is)?" AND ":"")."INET_ATON(u.ip) & INET_ATON('$mask') = INET_ATON('$ip') & INET_ATON('$mask')";
 $q .= ($q ? "&amp;" : "") . "ma=$mask";
 }
 $q .= ($q ? "&amp;" : "") . "ip=$ip";
@@ -367,13 +391,13 @@ if ($ratio)
 if ($ratio == '---')
 {
 $ratio2 = "";
-$where_is .= isset($where_is)?" AND ":"";
+$where_is .= !empty($where_is)?" AND ":"";
 $where_is .= " u.uploaded = 0 and u.downloaded = 0";
 }
 elseif (strtolower(substr($ratio,0,3)) == 'inf')
 {
 $ratio2 = "";
-$where_is .= isset($where_is)?" AND ":"";
+$where_is .= !empty($where_is)?" AND ":"";
 $where_is .= " u.uploaded > 0 and u.downloaded = 0";
 }
 else
@@ -384,7 +408,7 @@ bark("Error", "Bad ratio.");
 stdfoot();
 die();
 }
-$where_is .= isset($where_is)?" AND ":"";
+$where_is .= !empty($where_is) ? " AND " : "";
 $where_is .= " (u.uploaded/u.downloaded)";
 $ratiotype = $_GET['rt'];
 $q .= ($q ? "&amp;" : "") . "rt=$ratiotype";
@@ -417,53 +441,49 @@ $q .= ($q ? "&amp;" : "") . "r=$ratio";
 }
 
 // comment
-$comments = explode(' ',trim($_GET['co']));
-if ($comments[0] !== "")
-{
-foreach($comments as $comment)
-{
-if (substr($comment,0,1) == '~')
-{
-if ($comment == '~') continue;
-$comments_exc[] = substr($comment,1);
-}
-else
-$comments_inc[] = $comment;
-}
+$comments = explode(' ', trim($_GET['co']));
+if ($comments[0]) {
+    foreach($comments as $comment) {
+        if (substr($comment, 0, 1) == '~') {
+            if ($comment == '~')
+                continue;
+            $comments_exc[] = substr($comment,1);
+        } else {
+            $comments_inc[] = $comment;
+        }
+    }
 
-if (is_array($comments_inc))
-{
-$where_is .= isset($where_is)?" AND (":"(";
-foreach($comments_inc as $comment)
-{
-if (!haswildcard($comment))
-$comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc("%".$comment."%");
-else
-{
-$comment = str_replace(array('?','*'), array('_','%'), $comment);
-$comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc($comment);
-}
-}
-$where_is .= $comment_is.")";
-unset($comment_is);
-}
+    if (is_array($comments_inc)) {
+        $where_is .= !empty($where_is)?" AND (":"(";
+        foreach($comments_inc as $comment) {
+            if (!haswildcard($comment)) {
+                $comment_is .= (!empty($comment_is) ? " OR " : "")."u.modcomment LIKE ?";
+                $params[] = '%'.$comment.'%';
+            } else {
+                $comment = str_replace(array('?', '*'), array('_','%'), $comment);
+                $comment_is .= (!empty($comment_is) ? " OR " : "")."u.modcomment LIKE ?";
+                $params[] = $comment;
+            }
+        }
+        $where_is .= $comment_is.")";
+        unset($comment_is);
+    }
 
-if (is_array($comments_exc))
-{
-$where_is .= isset($where_is)?" AND NOT (":" NOT (";
-foreach($comments_exc as $comment)
-{
-if (!haswildcard($comment))
-$comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc("%".$comment."%");
-else
-{
-$comment = str_replace(array('?','*'), array('_','%'), $comment);
-$comment_is .= (isset($comment_is)?" OR ":"")."u.modcomment LIKE ".sqlesc($comment);
-}
-}
-$where_is .= $comment_is.")";
-}
-$q .= ($q ? "&amp;" : "") . "co=".urlencode(trim($_GET['co']));
+    if (is_array($comments_exc)) {
+        $where_is .= !empty($where_is) ? " AND NOT (" : " NOT (";
+        foreach($comments_exc as $comment) {
+            if (!haswildcard($comment)) {
+                $comment_is .= (!empty($comment_is) ? " OR " : "")."u.modcomment LIKE ?";
+                $params[] = '%'.$comment.'%';
+            } else {
+                $comment = str_replace(array('?','*'), array('_','%'), $comment);
+                $comment_is .= (!empty($comment_is) ? " OR " : "")."u.modcomment LIKE ?";
+                $params[] = $comment;
+            }
+        }
+        $where_is .= $comment_is.")";
+    }
+    $q .= ($q ? "&amp;" : "") . "co=".urlencode(trim($_GET['co']));
 }
 
 $unit = 1073741824; // 1GB
@@ -478,7 +498,7 @@ bark("Error", "Bad uploaded amount.");
 stdfoot();
 die();
 }
-$where_is .= isset($where_is)?" AND ":"";
+$where_is .= !empty($where_is)?" AND ":"";
 $where_is .= " u.uploaded ";
 $ultype = $_GET['ult'];
 $q .= ($q ? "&amp;" : "") . "ult=$ultype";
@@ -519,7 +539,7 @@ bark("Error", "Bad downloaded amount.");
 stdfoot();
 die();
 }
-$where_is .= isset($where_is)?" AND ":"";
+$where_is .= !empty($where_is)?" AND ":"";
 $where_is .= " u.downloaded ";
 $dltype = $_GET['dlt'];
 $q .= ($q ? "&amp;" : "") . "dlt=$dltype";
@@ -565,12 +585,12 @@ $datetype = $_GET['dt'];
 $q .= ($q ? "&amp;" : "") . "dt=$datetype";
 if ($datetype == "0")
 // For mySQL 4.1.1 or above use instead
-// $where_is .= (isset($where_is)?" AND ":"")."DATE(added) = DATE('$date')";
-$where_is .= (isset($where_is)?" AND ":"").
+// $where_is .= (!empty($where_is)?" AND ":"")."DATE(added) = DATE('$date')";
+$where_is .= (!empty($where_is) ? " AND " : "").
 "(UNIX_TIMESTAMP(added) - UNIX_TIMESTAMP('$date')) BETWEEN 0 and 86400";
 else
 {
-$where_is .= (isset($where_is)?" AND ":"")."u.added ";
+$where_is .= (!empty($where_is) ? " AND " : "")."u.added ";
 if ($datetype == "3")
 {
 $date2 = mkdate(trim($_GET['d2']));
@@ -614,12 +634,12 @@ $lasttype = $_GET['lst'];
 $q .= ($q ? "&amp;" : "") . "lst=$lasttype";
 if ($lasttype == "0")
 // For mySQL 4.1.1 or above use instead
-// $where_is .= (isset($where_is)?" AND ":"")."DATE(added) = DATE('$date')";
-$where_is .= (isset($where_is)?" AND ":"").
+// $where_is .= (!empty($where_is)?" AND ":"")."DATE(added) = DATE('$date')";
+$where_is .= (!empty($where_is) ? " AND " : "").
 "(UNIX_TIMESTAMP(last_access) - UNIX_TIMESTAMP('$last')) BETWEEN 0 and 86400";
 else
 {
-$where_is .= (isset($where_is)?" AND ":"")."u.last_access ";
+$where_is .= (!empty($where_is) ? " AND " : "")."u.last_access ";
 if ($lasttype == "3")
 {
 $last2 = mkdate(trim($_GET['ls2']));
@@ -646,7 +666,7 @@ $where_is .= "> '$last'";
 $status = $_GET['st'];
 if ($status)
 {
-$where_is .= ((isset($where_is))?" AND ":"");
+$where_is .= (!empty($where_is) ? " AND " : "");
 if ($status == "1")
 $where_is .= "u.status = 'confirmed'";
 else
@@ -658,19 +678,19 @@ $q .= ($q ? "&amp;" : "") . "st=$status";
 $accountstatus = $_GET['as'];
 if ($accountstatus)
 {
-$where_is .= (isset($where_is))?" AND ":"";
-if ($accountstatus == "1")
-$where_is .= " u.enabled = 'yes'";
-else
-$where_is .= " u.enabled = 'no'";
-$q .= ($q ? "&amp;" : "") . "as=$accountstatus";
+    $where_is .= (!empty($where_is)) ? " AND " : "";
+    if ($accountstatus == "1")
+        $where_is .= " u.enabled = 'yes'";
+    else
+        $where_is .= " u.enabled = 'no'";
+    $q .= ($q ? "&amp;" : "") . "as=$accountstatus";
 }
 
 //donor
-$donor = $_GET['do'];
+$donor = $_GET['do'] ?? '';
 if ($donor)
 {
-$where_is .= (isset($where_is))?" AND ":"";
+$where_is .= (!empty($where_is)) ? " AND " : "";
 if ($donor == 1)
 $where_is .= " u.donated > '1'";
 else
@@ -682,36 +702,35 @@ $q .= ($q ? "&amp;" : "") . "do=$donor";
 $warned = $_GET['w'];
 if ($warned)
 {
-$where_is .= (isset($where_is))?" AND ":"";
-if ($warned == 1)
-$where_is .= " u.warned = 'yes'";
-else
-$where_is .= " u.warned = 'no'";
-$q .= ($q ? "&amp;" : "") . "w=$warned";
+    $where_is .= (!empty($where_is)) ? " AND " : "";
+    if ($warned == 1)
+        $where_is .= " u.warned = 'yes'";
+    else
+        $where_is .= " u.warned = 'no'";
+    $q .= ($q ? "&amp;" : "") . "w=$warned";
 }
 
 // disabled IP
-$disabled = $_GET['dip'];
+$disabled = $_GET['dip'] ?? '';
 if ($disabled)
 {
-$distinct = "DISTINCT ";
-$join_is .= " LEFT JOIN users AS u2 ON u.ip = u2.ip";
-$where_is .= ((isset($where_is))?" AND ":"")."u2.enabled = 'no'";
-$q .= ($q ? "&amp;" : "") . "dip=$disabled";
+    $distinct = "DISTINCT ";
+    $join_is .= " LEFT JOIN users AS u2 ON u.ip = u2.ip";
+    $where_is .= (!empty($where_is) ? " AND " : "")."u2.enabled = 'no'";
+    $q .= ($q ? "&amp;" : "") . "dip=$disabled";
 }
 
 // active
-$active = $_GET['ac'];
-if ($active == "1")
-{
-$distinct = "DISTINCT ";
-$join_is .= " LEFT JOIN peers AS p ON u.id = p.userid";
-$q .= ($q ? "&amp;" : "") . "ac=$active";
+$active = $_GET['ac'] ?? '';
+if ($active == "1") {
+    $distinct = "DISTINCT ";
+    $join_is .= " LEFT JOIN peers AS p ON u.id = p.userid";
+    $q .= ($q ? "&amp;" : "") . "ac=$active";
 }
 
 
 $from_is = "users AS u".$join_is;
-$distinct = isset($distinct)?$distinct:"";
+$distinct = isset($distinct) ? $distinct : "";
 
 $queryc = "SELECT COUNT(".$distinct."u.id) FROM ".$from_is.
 (($where_is == "")?"":" WHERE $where_is ");
@@ -723,12 +742,10 @@ u.class, u.uploaded, u.downloaded, u.donated, u.modcomment, u.enabled, u.warned"
 
 $query = "SELECT ".$distinct." ".$select_is." ".$querypm;
 
+// dump($queryc, $params);
+$count = DB::fetchColumn($queryc, $params);
 
-$res = mysql_query($queryc) or sqlerr();
-$arr = mysql_fetch_row($res);
-$count = $arr[0];
-
-$q = isset($q)?($q."&amp;"):"";
+$q = isset($q) ? ($q."&amp;") : "";
 
 $perpage = 30;
 
@@ -736,95 +753,95 @@ list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, $_SERVER["PHP_SE
 
 $query .= $limit;
 
-$res = mysql_query($query) or sqlerr();
+$res = DB::fetchAll($query, $params);
+// dump($query, $res, $params);
+if (! $res) {
+    end_frame();
+    bark("Warning","No user was found.");
+} else {
+    if ($count > $perpage)
+        echo $pagertop;
 
-if (mysql_num_rows($res) == 0)
-bark("Warning","No user was found.");
-else
-{
-if ($count > $perpage)
-echo $pagertop;
-echo "<table border=1 style='border-collapse: collapse' bordercolor=#646262 cellspacing=0 cellpadding=5>\n";
-echo "<tr><td class=colhead align=left>Name</td>
-<td class=colhead align=left>IP</td>
-<td class=colhead align=left>Email</td>".
-"<td class=colhead align=left>Joined:</td>".
-"<td class=colhead align=left>Last Seen:</td>".
-"<td class=colhead align=left>Status</td>".
-"<td class=colhead align=left>Enabled</td>".
-"<td class=colhead>Ratio</td>".
-"<td class=colhead>Uploaded</td>".
-"<td class=colhead>Downloaded</td>".
-"<td class=colhead>History</td>".
-"<td class=colhead colspan=2>Status</td></tr>\n";
+    echo "<table border=1 style='border-collapse: collapse' bordercolor=#646262 cellspacing=0 cellpadding=5>\n";
+    echo "<tr><td class=colhead align=left>Name</td>
+    <td class=colhead align=left>IP</td>
+    <td class=colhead align=left>Email</td>".
+    "<td class=colhead align=left>Joined:</td>".
+    "<td class=colhead align=left>Last Seen:</td>".
+    "<td class=colhead align=left>Status</td>".
+    "<td class=colhead align=left>Enabled</td>".
+    "<td class=colhead>Ratio</td>".
+    "<td class=colhead>Uploaded</td>".
+    "<td class=colhead>Downloaded</td>".
+    "<td class=colhead>History</td>".
+    "<td class=colhead colspan=2>Status</td></tr>\n";
 
-while ($user = mysql_fetch_array($res))
-{
-if ($user['added'] == '0000-00-00 00:00:00')
-$user['added'] = '---';
-if ($user['last_access'] == '0000-00-00 00:00:00')
-$user['last_access'] = '---';
+    foreach ($res as $user) {
+        if ($user['added'] == '0000-00-00 00:00:00')
+            $user['added'] = '---';
+        if ($user['last_access'] == '0000-00-00 00:00:00')
+            $user['last_access'] = '---';
 
-if ($user['ip'])
-{
-$nip = ip2long($user['ip']);
-$auxres = mysql_query("SELECT COUNT(*) FROM bans WHERE $nip >= first AND $nip <= last") or sqlerr(__FILE__, __LINE__);
-$array = mysql_fetch_row($auxres);
-if ($array[0] == 0)
-$ipstr = $user['ip'];
-else
-$ipstr = "<a href='/testip.php?ip=" . $user['ip'] . "'><font color='#FF0000'><b>" . $user['ip'] . "</b></font></a>";
-}
-else
-$ipstr = "---";
+        if ($user['ip']) {
+            $nip = ip2long($user['ip']);
+            $bans = DB::fetchColumn("SELECT COUNT(*) FROM bans WHERE $nip >= first AND $nip <= last");
+            if (! $bans)
+                $ipstr = $user['ip'];
+            else
+                $ipstr = "<a href='/testip.php?ip=" . $user['ip'] . "'><font color='#FF0000'><b>" . $user['ip'] . "</b></font></a>";
+            }
+            else
+                $ipstr = "---";
 
-$pul = $user['uploaded'];
-$pdl = $user['downloaded'];
+        $pul = $user['uploaded'];
+        $pdl = $user['downloaded'];
 
+        $n_posts = DB::fetchColumn("
+            SELECT COUNT(DISTINCT p.id)
+            FROM forum_posts AS p
+                LEFT JOIN forum_topics as t ON p.topicid = t.id
+                LEFT JOIN forum_forums AS f ON t.forumid = f.id
+            WHERE p.userid = " . $user['id'] . "
+                AND f.minclassread <= " .
+        $CURUSER['class']);
 
-$auxres = mysql_query("SELECT COUNT(DISTINCT p.id) FROM forum_posts AS p LEFT JOIN forum_topics as t ON p.topicid = t.id
-LEFT JOIN forum_forums AS f ON t.forumid = f.id WHERE p.userid = " . $user['id'] . " AND f.minclassread <= " .
-$CURUSER['class']) or sqlerr(__FILE__, __LINE__);
+        $n_comments = DB::fetchColumn("SELECT COUNT(id) FROM comments WHERE user = " . $user['id']);
 
-$n = mysql_fetch_row($auxres);
-$n_posts = $n[0];
+        echo "<tr><td><b><a href='account-details.php?id=" . $user['id'] . "'>" .
+        $user['username']."</a></b></td>" .
+        "<td>" . $ipstr . "</td><td>" . $user['email'] . "</td>
+        <td><div align=center>" . $user['added'] . "</div></td>
+        <td><div align=center>" . $user['last_access'] . "</div></td>
+        <td><div align=center>" . $user['status'] . "</div></td>
+        <td><div align=center>" . $user['enabled']."</div></td>
+        <td><div align=center>" . ratios($pul,$pdl) . "</div></td>" .
+        "<td><div align=right>" . mksize($user['uploaded']) . "</div></td>
+        <td><div align=right>" . mksize($user['downloaded']) . "</div></td>
+        <td><div align=center>".($n_posts?"<a href=account-history.php?action=viewposts&id=".$user['id']
+            .">$n_posts</a>":$n_posts).
+            "|".($n_comments?"<a href=account-history.php?action=viewcomments&id="
+            .$user['id'].">$n_comments</a>":$n_comments) . "</div></td><td><div align=center>"
+            . ($user["enabled"] == "no" ? "<img src=\"/images/disabled.gif\" alt=\"Disabled\">" : "")
+            . ($user["warned"] == "yes" ? "<img src=\"/images/warned.gif\" alt=\"Warned\">" : "")
+            . "</div></td><td><div align=center><form action=takewarndisable.php method=post><input type=checkbox name=\"warndisable[]\" value="
+            . $user['id'] . "><input type=hidden name=\"referer\" value=\"$_SERVER[REQUEST_URI]\"></div></td></tr>\n";	
+        }
+        echo "</table>
+        <b><BR>
+        <table border=1 cellspacing=0 cellpadding=0 class=empty>
+        <tr><td style=\"border: none; padding: 4px;\" colspan=2></td></tr>
+        <tr><td style=\"border: none; padding: 2px;\" align=right><img src=\"/images/disabled.gif\" alt=\"Disabled\"> <input type=submit name=disable value=\"Disable Selected Accounts\"></td><td style=\"border: none; padding: 2px;\" align=left><input type=submit name=enable value=\"Enable Selected Accounts\"> <img src=\"/images/disabled.gif\" alt=\"Disabled\"> <img src=\"/images/check.gif\" alt=\"Ok\"></td></tr>
+        <tr><td style=\"border: none; padding: 4px;\" colspan=2><BR><BR></td></tr>
+        <tr><td style=\"border: none; padding: 2px;\" align=center><img src=\"/images/warned.gif\" alt=\"Warned\"> <input type=submit name=warn value=\"Warn Selected\"></td><td style=\"border: none; padding: 2px;\" align=left><input type=submit name=unwarn value=\"Remove Warning Selected\"> <img src=\"/images/warned.gif\" alt=\"Warned\"> <img src=\"/images/check.gif\" alt=\"Ok\"></td></tr>
+        <tr><td style=\"border: none; padding: 2px;\" align=center colspan=2>Mod Comment (reason):<input type=text size=30 name=warnpm></td></tr>
+        </table></center></form>\n";
 
-$auxres = mysql_query("SELECT COUNT(id) FROM comments WHERE user = ".$user['id']) or sqlerr(__FILE__, __LINE__);
-$n = mysql_fetch_row($auxres);
-$n_comments = $n[0];
-
-echo "<tr><td><b><a href='account-details.php?id=" . $user['id'] . "'>" .
-$user['username']."</a></b></td>" .
-"<td>" . $ipstr . "</td><td>" . $user['email'] . "</td>
-<td><div align=center>" . $user['added'] . "</div></td>
-<td><div align=center>" . $user['last_access'] . "</div></td>
-<td><div align=center>" . $user['status'] . "</div></td>
-<td><div align=center>" . $user['enabled']."</div></td>
-<td><div align=center>" . ratios($pul,$pdl) . "</div></td>" .
-"<td><div align=right>" . mksize($user['uploaded']) . "</div></td>
-<td><div align=right>" . mksize($user['downloaded']) . "</div></td>
-<td><div align=center>".($n_posts?"<a href=account-history.php?action=viewposts&id=".$user['id'].">$n_posts</a>":$n_posts).         "|".($n_comments?"<a href=account-history.php?action=viewcomments&id=".$user['id'].">$n_comments</a>":$n_comments) . "</div></td>         <td><div align=center>" . ($user["enabled"] == "no" ? "<img src=\"/images/disabled.gif\" alt=\"Disabled\">" : "") . ($user["warned"] == "yes" ? "<img src=\"/images/warned.gif\" alt=\"Warned\">" : "") . "</div></td>         <td><div align=center><form action=takewarndisable.php method=post><input type=checkbox name=\"warndisable[]\" value=" . $user['id'] . "><input type=hidden name=\"referer\" value=\"$_SERVER[REQUEST_URI]\"></div></td>         </tr>\n";	
-}
-echo "</table>
-<b><BR>
-<table border=1 cellspacing=0 cellpadding=0 class=empty>
-<tr><td style=\"border: none; padding: 4px;\" colspan=2></td></tr>
-<tr><td style=\"border: none; padding: 2px;\" align=right><img src=\"/images/disabled.gif\" alt=\"Disabled\"> <input type=submit name=disable value=\"Disable Selected Accounts\"></td><td style=\"border: none; padding: 2px;\" align=left><input type=submit name=enable value=\"Enable Selected Accounts\"> <img src=\"/images/disabled.gif\" alt=\"Disabled\"> <img src=\"/images/check.gif\" alt=\"Ok\"></td></tr>
-<tr><td style=\"border: none; padding: 4px;\" colspan=2><BR><BR></td></tr>
-<tr><td style=\"border: none; padding: 2px;\" align=center><img src=\"/images/warned.gif\" alt=\"Warned\"> <input type=submit name=warn value=\"Warn Selected\"></td><td style=\"border: none; padding: 2px;\" align=left><input type=submit name=unwarn value=\"Remove Warning Selected\"> <img src=\"/images/warned.gif\" alt=\"Warned\"> <img src=\"/images/check.gif\" alt=\"Ok\"></td></tr>
-<tr><td style=\"border: none; padding: 2px;\" align=center colspan=2>Mod Comment (reason):<input type=text size=30 name=warnpm></td></tr>
-</table></center></form>\n";
-
-
-if ($count > $perpage)
-echo "$pagerbottom";
-
-
-}
+        if ($count > $perpage)
+            echo "$pagerbottom";
+    }
 }
 
 end_frame();
 stdfoot();
 die;
 
-?>

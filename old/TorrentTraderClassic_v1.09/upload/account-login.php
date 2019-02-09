@@ -80,5 +80,5 @@ if (isset($returnto))
 <?php
 end_frame();
 stdfoot();
-?>
+
 
