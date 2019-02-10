@@ -59,26 +59,26 @@ if (isset($_POST['sa']) && $_POST['sa'] === 'delete') {
     // loggedinorreturn();
     // global $CURUSER;
 
-    stdhead("Delete");
-    begin_frame("Delete");
+    stdhead('Delete');
+    begin_frame('Delete');
 
-    $delreq = array_map("intval", $_POST["delreq"]);
+    $delreq = array_map('intval', $_POST['delreq']);
 
     if (get_user_class() > UC_JMODERATOR) {
-        if (empty($_POST["delreq"])) {
-            print("<CENTER>You must select at least one request to delete.</CENTER>");
+        if (empty($_POST['delreq'])) {
+            print('<CENTER>You must select at least one request to delete.</CENTER>');
             end_frame();
             stdfoot();
             die;
         }
 
-        $do = "DELETE FROM requests WHERE id IN (" . implode(", ", $delreq) . ")";
-        $do2 = "DELETE FROM addedrequests WHERE requestid IN (" . implode(", ", $delreq) . ")";
+        $do = 'DELETE FROM requests WHERE id IN (' . implode(', ', $delreq) . ')';
+        $do2 = 'DELETE FROM addedrequests WHERE requestid IN (' . implode(', ', $delreq) . ')';
         $res2 = DB::query($do2);
         $res = DB::query($do);
-        print("<CENTER>Request Deleted OK</CENTER>");
+        print('<CENTER>Request Deleted OK</CENTER>');
 
-        echo "<BR><BR>";
+        echo '<BR><BR>';
     } else {
         foreach ($delreq as $id) {
             $delete_ok = checkRequestOwnership($CURUSER['id'], $id);

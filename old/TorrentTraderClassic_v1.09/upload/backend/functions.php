@@ -893,10 +893,10 @@ function get_percent_completed_image($p)
 
 function torrenttable($res, $variant = "index")
 {
-//
-// The parts commented out in this section can be used to display different columns in your torrent tables
-// Please only modify the section below if you understand PHP/MYSQL
-//
+    //
+    // The parts commented out in this section can be used to display different columns in your torrent tables
+    // Please only modify the section below if you understand PHP/MYSQL
+    //
     global $CURUSER, $MEMBERSONLY_WAIT, $MAXDISPLAYLENGTH, $WAITA, $WAITB, $WAITC, $WAITD;
     global $GIGSA, $GIGSB, $GIGSC, $GIGSD, $RATIOA, $RATIOB, $RATIOC, $RATIOD;
     global $txt;
@@ -957,7 +957,7 @@ $link8 = $col === 8 ? $by : 'desc';
 <td class=ttable_head><a href="?<?= $oldlink; ?>sort=8&type=<?= $link8; ?>"><?= $txt['TYPE'] ?></a></td>
 <td class=ttable_head><a href="?<?= $oldlink; ?>sort=1&type=<?= $link1; ?>"><?= $txt['NAME'] ?></a></td>
 <?php if ($variant == "index") {
-echo "<td class=ttable_head>DL</td>";
+    echo "<td class=ttable_head>DL</td>";
 // echo '<td class=ttable_head><a href="?'. $oldlink .'sort=2&type='. $link2 .'">'. $txt['NFO'] .'</a></td>';
 }
 elseif ($variant == "mytorrents") {
@@ -967,9 +967,9 @@ elseif ($variant == "mytorrents") {
 }
 
 if ($MEMBERSONLY_WAIT) {
-	if ($wait) {
-		print("<td class=ttable_head>" . $txt['WAIT'] . "</td>\n");
-	}
+    if ($wait) {
+        print("<td class=ttable_head>" . $txt['WAIT'] . "</td>\n");
+    }
 }
 ?>
 <td class=ttable_head><a href="?<?= $oldlink; ?>sort=3&type=<?= $link3; ?>"><?= $txt['COMMENTS'] ?></a></td>
@@ -1202,68 +1202,10 @@ if ($MEMBERSONLY_WAIT) {
     print("</table></td></table>\n");
 }
 
-function hit_start()
-{
-    return;
-
-    global $RUNTIME_START, $RUNTIME_TIMES;
-
-    $RUNTIME_TIMES = posix_times();
-    $RUNTIME_START = gettimeofday();
-}
-
-function hit_count()
-{
-    return;
-
-    global $RUNTIME_CLAUSE;
-
-    if (preg_match(',([^/]+)$,', $_SERVER["SCRIPT_NAME"], $matches)) {
-        $path = $matches[1];
-    } else {
-        $path= "(unknown)";
-    }
-    $period = date("Y-m-d H") . ":00:00";
-    $RUNTIME_CLAUSE = "page = " . sqlesc($path) . " AND period = '$period'";
-    $update = "UPDATE hits SET count = count + 1 WHERE $RUNTIME_CLAUSE";
-    $affected_rows = DB::executeUpdate($update);
-    if ($affected_rows) {
-        return;
-    }
-    $ret = DB::insert('hits', ['page' => $path, 'period' => $period, 'count' => 1]);
-    if (! $ret) {
-        DB::query($update);
-    }
-}
-
-function hit_end()
-{
-    return;
-
-    global $RUNTIME_START, $RUNTIME_CLAUSE, $RUNTIME_TIMES;
-
-    if (empty($RUNTIME_CLAUSE)) {
-        return;
-    }
-
-    $now = gettimeofday();
-    $runtime = ($now["sec"] - $RUNTIME_START["sec"]) + ($now["usec"] - $RUNTIME_START["usec"]) / 1000000;
-    $ts = posix_times();
-    $sys = ($ts["stime"] - $RUNTIME_TIMES["stime"]) / 100;
-    $user = ($ts["utime"] - $RUNTIME_TIMES["utime"]) / 100;
-    DB::query("UPDATE hits SET runs = runs + 1, runtime = runtime + $runtime, user_cpu = user_cpu + $user, sys_cpu = sys_cpu + $sys WHERE $RUNTIME_CLAUSE");
-}
 
 function hash_pad($hash)
 {
     return str_pad($hash, 20);
-}
-
-function hash_where($name, $hash)
-{
-    $shhash = preg_replace('/ *$/s', "", $hash);
-
-    return "($name = " . sqlesc($hash) . " OR $name = " . sqlesc($shhash) . ")";
 }
 
 
@@ -1721,12 +1663,14 @@ function str_contains($haystack, $needle, $ignoreCase = false)
        $needle  = strtolower($needle);
    }
    $needlePos = strpos($haystack, $needle);
+
    return ($needlePos === false ? false : ($needlePos+1));
 } 
 
 function time_ago($addtime)
 {
    $addtime = get_elapsed_time(sql_timestamp_to_unix_timestamp($addtime));
+
    return $addtime;
 }
 
@@ -1734,7 +1678,9 @@ function CutName ($vTxt, $Car)
 {
 	while(strlen($vTxt) > $Car) {
 		return substr($vTxt, 0, $Car) . "...";
-	} return $vTxt;
+	}
+
+    return $vTxt;
 }
 
 function textbbcode($form,$name,$content="")

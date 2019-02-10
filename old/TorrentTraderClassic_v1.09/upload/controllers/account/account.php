@@ -101,9 +101,11 @@ $avatar = $CURUSER["avatar"];
 if (!$avatar) {
 	$avatar = "images/default_avatar.gif";
 }
-print("<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">\n");
-print("<tr>\n");
-print("<td rowspan=\"2\" valign=\"top\"><a href=\"account-settings.php\"><img src=\"$avatar\" border=\"0\" width=\"80\" height=\"80\"></a><br><br></td>\n");
+print("<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">
+    <tr>
+    <td rowspan=\"2\" valign=\"top\">
+        <a href=\"account-settings.php\"><img src=\"$avatar\" border=\"0\" width=\"80\" height=\"80\"></a>
+    <br><br></td>\n");
 ?>
 <td width="90%" valign="top">
 <?= $country ?><br><br>
@@ -177,56 +179,6 @@ print("<a href=account.php?action=mytorrents><b>".$txt['VIEW_MYTORRENT']."</b></
 
 <?php
 end_frame();
-
-/*
-// del this block
-//PRIVATE MESSAGES FRAME STARTS HERE
-begin_frame($txt['ACCOUNT_YOUR_MESSAGES']);
-
-$res = DB::fetchAll('
-    SELECT * , UNIX_TIMESTAMP(added) as utadded
-    FROM messages
-    WHERE receiver=' . $CURUSER['id'] . '
-    ORDER BY added DESC');
-if (empty($res)) {
-    echo '<br><p align=center><b>'.$txt['ACCOUNT_YOU_HAVE'].
-        '<font color="#CC0000"><b> 0 </b></font>'.$txt['ACCOUNT_MESSAGES'].
-        '</b></p>';
-} else {
-    foreach ($res as $arr) {
-        if (is_valid_id($arr["sender"])) {
-            // todo: subquery 
-            $arr2 = DB::fetchAssoc('SELECT id AS user_id, username FROM users WHERE id = ' . $arr["sender"]);
-            $sender = "<a href=account-details.php?id=" . $arr["sender"] . ">" . $arr2["username"] . "</a>";
-        }
-        else {
-            $sender = "System";
-        }
-
-        print ("<p align='right'><a href='account-inbox.php?deleteall=yes'>Delete ALL messages</a></p>");
-
-        print("<table border=0 width=100% cellspacing=0 cellpadding=2><tr><td bgcolor=#CCCCCC><img border=0 src=images/envelope.gif></td><td width=80% bgcolor=#ADACAC>\n");
-        print($txt['FROM']." <b>$sender</b> ".$txt['AT']."\n" . get_date_time($arr["utadded"] , $CURUSER['tzoffset'] ) . " GMT\n");
-        if ($arr["unread"] === "yes") {
-            print("<b>(".$txt['ACCOUNT_NEW'].")</b>");
-            DB::update('messages', ['unread' => 'no'], ['id' => $arr["id"]]);
-        }
-
-        print("</td><td bgcolor=#ADACAC width=20% align=right>");
-        if ($arr["sender"] != "0") {
-            print("<a href=account-inbox.php?receiver=". $arr2["user_id"] ."&replyto=". $arr["id"].">".$txt['ACCOUNT_REPLY']."</a> | ");
-        }
-
-        print("<a href=account-inbox.php?deleteid=" . $arr["id"] . ">".$txt['ACCOUNT_DELETE']."</a></td></tr><tr><td colspan=3>\n");
-        print(format_comment($arr["msg"]));
-        print("<br>\n" . "<br></td></tr></table>\n");
-    }
-}
-print("<p align=\"center\"><a href=account-inbox.php>".$txt['ACCOUNT_SEND_MSG']."</a></p>\n");
-
-end_frame();
-// del this end
-*/
 
 
 //MY TORRENTS PAGE STARTS HERE

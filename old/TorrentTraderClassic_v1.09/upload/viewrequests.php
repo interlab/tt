@@ -2,7 +2,7 @@
 
 ob_start("ob_gzhandler");
 require_once("backend/functions.php");
-hit_start();
+
 dbconn();
 loggedinorreturn();
 

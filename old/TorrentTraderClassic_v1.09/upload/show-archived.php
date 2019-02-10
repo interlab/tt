@@ -1,7 +1,6 @@
 <?php
 
 require_once("backend/functions.php");
-hit_start();
 
 $id = (int) ($_GET['id'] ?? 0);
 if (!$id) {
@@ -9,7 +8,6 @@ if (!$id) {
 }
 
 dbconn(false);
-hit_count();
 
 $quicktags = "<center>
     <table border=0 cellpadding=0 cellspacing=0><tr>
@@ -90,10 +88,8 @@ while ($row = $resu->fetch()) {
             Print("You Must Be Logged In To View/Add Comments");
             end_frame();
             stdfoot();
-            hit_end();
         }
     }
 }
 stdfoot();
-hit_end();
 

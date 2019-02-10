@@ -302,5 +302,4 @@ if ($DISCLAIMERON) {
 updateUserLastBrowse();
 
 stdfoot();
-hit_end();
 
