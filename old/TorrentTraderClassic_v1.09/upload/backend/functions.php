@@ -172,31 +172,29 @@ function userlogin()
     </head>
     <body>
     <h1>Forbidden</h1>Unauthorized IP address.
-    <br />
+    <br>
     Reason for banning: ', $row['comment'], '
     </body>
     </html>';
         die;
     }
 
-    if (empty($_COOKIE["uid"]) || empty($_COOKIE["pass"])) {
+    $id = (int) ($_COOKIE['uid'] ?? 0);
+    if (empty($id) || empty($_COOKIE['pass'])) {
         return;
     }
-    $id = (int) $_COOKIE["uid"];
-    if (!$id || strlen($_COOKIE["pass"]) != 32) {
-        return;
-    }
-    $row = DB::fetchAssoc("
+
+    $row = DB::fetchAssoc('
     SELECT *
     FROM users
-    WHERE id = $id
-        AND enabled = 'yes'
-        AND status = 'confirmed'");
-    if (!$row) {
+    WHERE id = ' . $id . '
+        AND enabled = \'yes\'
+        AND status = \'confirmed\'');
+    if (! $row) {
         return;
     }
-    $sec = hash_pad($row["secret"]);
-    if ($_COOKIE["pass"] != md5($sec.$row["password"].$sec)) {
+    $sec = hash_pad($row['secret']);
+    if ($_COOKIE['pass'] != sha1($sec.$row['password'].$sec)) {
         return;
     }
 
@@ -204,15 +202,15 @@ function userlogin()
             'last_access' => get_date_time(),
             'ip' => $ip,
             // 'showext' => $showext,
-            // 'url' => getenv("REQUEST_URI"),
-            // 'useragent' => $_SERVER["HTTP_USER_AGENT"],
+            // 'url' => getenv('REQUEST_URI'),
+            // 'useragent' => $_SERVER['HTTP_USER_AGENT'],
         ],
-        [ 'id' => $row["id"] ]
+        [ 'id' => $row['id'] ]
     );
 
     $row['ip'] = $ip;
     $row['id'] = (int) $row['id'];
-    $GLOBALS["CURUSER"] = $row;
+    $GLOBALS['CURUSER'] = $row;
 }
 
 function autoclean()
@@ -250,27 +248,27 @@ function unesc($x)
 function mksize($bytes)
 {
     if ($bytes < 1000 * 1024)
-        return number_format($bytes / 1024, 2) . " KB";
+        return number_format($bytes / 1024, 2) . ' KB';
     if ($bytes < 1000 * 1048576)
-        return number_format($bytes / 1048576, 2) . " MB";
+        return number_format($bytes / 1048576, 2) . ' MB';
     if ($bytes < 1000 * 1073741824)
-        return number_format($bytes / 1073741824, 2) . " GB";
-    return number_format($bytes / 1099511627776, 2) . " TB";
+        return number_format($bytes / 1073741824, 2) . ' GB';
+    return number_format($bytes / 1099511627776, 2) . ' TB';
 }
 
 function mksizekb($bytes)
 {
-    return number_format($bytes / 1024) . " KiB";
+    return number_format($bytes / 1024) . ' KiB';
 }
 
 function mksizemb($bytes)
 {
-    return number_format($bytes / 1048576,2) . " MiB";
+    return number_format($bytes / 1048576,2) . ' MiB';
 }
 
 function mksizegb($bytes)
 {
-    return number_format($bytes / 1073741824,2) . " GiB";
+    return number_format($bytes / 1073741824,2) . ' GiB';
 }
 
 function deadtime()
@@ -285,8 +283,8 @@ function mkprettytime($s)
     if ($s < 0)
         $s = 0;
     $t = [];
-    foreach (array("60:sec","60:min","24:hour","0:day") as $x) {
-        $y = explode(":", $x);
+    foreach (['60:sec', '60:min', '24:hour', '0:day'] as $x) {
+        $y = explode(':', $x);
         if ($y[0] > 1) {
             $v = $s % $y[0];
             $s = floor($s / $y[0]);
@@ -296,19 +294,19 @@ function mkprettytime($s)
         $t[$y[1]] = $v;
     }
 
-    if ($t["day"])
-        return $t["day"] . "d " . sprintf("%02d:%02d:%02d", $t["hour"], $t["min"], $t["sec"]);
-    if ($t["hour"])
-        return sprintf("%d:%02d:%02d", $t["hour"], $t["min"], $t["sec"]);
-//    if ($t["min"])
-        return sprintf("%d:%02d", $t["min"], $t["sec"]);
-//    return $t["sec"] . " secs";
+    if ($t['day'])
+        return $t['day'] . 'd ' . sprintf('%02d:%02d:%02d', $t['hour'], $t['min'], $t['sec']);
+    if ($t['hour'])
+        return sprintf('%d:%02d:%02d', $t['hour'], $t['min'], $t['sec']);
+//    if ($t['min'])
+        return sprintf('%d:%02d', $t['min'], $t['sec']);
+//    return $t['sec'] . ' secs';
 }
 
 function mkglobal($vars)
 {
     if (!is_array($vars))
-        $vars = explode(":", $vars);
+        $vars = explode(':', $vars);
     foreach ($vars as $v) {
         if (isset($_GET[$v]))
             $GLOBALS[$v] = unesc($_GET[$v]);
@@ -326,7 +324,7 @@ function tr($x,$y,$noesc=0)
         $a = $y;
     else {
         $a = h($y);
-        $a = str_replace("\n", "<br />\n", $a);
+        $a = str_replace("\n", "<br>\n", $a);
     }
     print("<tr><td class=\"heading\" valign=\"top\" align=\"right\">$x</td><td valign=\"top\" align=left>$a</td></tr>\n");
 }
@@ -386,7 +384,7 @@ function parsedescr($d, $html)
     if (!$html)
     {
       $d = h($d);
-      $d = str_replace("\n", "\n<br />", $d);
+      $d = str_replace("\n", "\n<br>", $d);
     }
     return $d;
 }
@@ -401,15 +399,28 @@ function genbark($x,$y)
     exit();
 }
 
-function mksecret($len = 20)
+
+function generateRandomString($length = 20)
 {
-    $ret = "";
-    for ($i = 0; $i < $len; $i++)
-        $ret .= chr(mt_rand(0, 255));
-    return $ret;
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+
+    return $randomString;
 }
 
-function httperr($code = 404) {
+
+function mksecret($len = 20)
+{
+    return generateRandomString(20);
+}
+
+
+function httperr($code = 404)
+{
     header("HTTP/1.0 404 Not found");
     print("<h1>Not Found</h1>\n");
     print("<p>Sorry pal :(</p>\n");
@@ -424,9 +435,9 @@ function gmtime()
 // @todo: md5 not recommended
 function logincookie($id, $password, $secret, $updatedb = 1, $expires = 0x7fffffff)
 {
-    $md5 = md5($secret.$password.$secret);
+    $v = sha1($secret.$password.$secret);
     setcookie('uid', $id, $expires, '/');
-    setcookie('pass', $md5, $expires, '/');
+    setcookie('pass', $v, $expires, '/');
 
     if ($updatedb) {
         DB::query('
@@ -465,16 +476,20 @@ function isNotGuest()
     }
 }
 
-function adminonly() {
+function adminonly()
+{
     global $CURUSER;
+
     if (get_user_class() < UC_ADMINISTRATOR) {
         stderr("ACCESS DENIED", "Sorry this page is only for Administrators.");
         exit();
     }
 }
 
-function modonly() {
+function modonly()
+{
     global $CURUSER;
+
     if (get_user_class() < UC_MODERATOR) {
         stderr("ACCESS DENIED", "Sorry this page is only for Super Moderators.");
         exit();
@@ -524,7 +539,7 @@ function pager($rpp, $count, $href, $opts = [])
     }
 
     if (isset($_GET["page"])) {
-        $page = 0 + $_GET["page"];
+        $page = (int) $_GET["page"];
         if ($page < 0) {
             $page = $pagedefault;
         }
@@ -582,8 +597,8 @@ function pager($rpp, $count, $href, $opts = [])
             }
         }
         $pagerstr = join(" | ", $pagerarr);
-        $pagertop = "<p align=\"center\">$pager<br />$pagerstr</p>\n";
-        $pagerbottom = "<p align=\"center\">$pagerstr<br />$pager</p>\n";
+        $pagertop = "<p align=\"center\">$pager<br>$pagerstr</p>\n";
+        $pagerbottom = "<p align=\"center\">$pagerstr<br>$pager</p>\n";
     } else {
         $pagertop = "<p align=\"center\">$pager</p>\n";
         $pagerbottom = $pagertop;
@@ -1261,10 +1276,10 @@ function bark($heading = "Error", $text, $sort = "Error")
 
 function bark2($heading = "Error", $text, $sort = "Error")
 {
-	print("<div align=\"center\"><br /><table border=\"0\" width=\"500\" cellspacing=\"0\" cellpadding=\"0\"><tr>\n");
+	print("<div align=\"center\"><br><table border=\"0\" width=\"500\" cellspacing=\"0\" cellpadding=\"0\"><tr>\n");
 	print("<td bgcolor=\"#FFFFFF\" align=\"center\" style=\"border-style: dotted; border-width: 1px\" bordercolor=\"#CC0000\">\n");
-	print("<font face=\"Verdana\" size=\"1\"><font color=\"#CC0000\"><b>$heading</b></font><br />$text</font></td>\n");
-	print("</tr></table></div><br />\n");
+	print("<font face=\"Verdana\" size=\"1\"><font color=\"#CC0000\"><b>$heading</b></font><br>$text</font></td>\n");
+	print("</tr></table></div><br>\n");
 }
 
 function sqlerr($query = "")
@@ -1275,7 +1290,7 @@ function sqlerr($query = "")
 	print("<td bgcolor=#FFFFFF align=center style=border-style: dotted; border-width: 1px bordercolor=#CC0000>\n");
 	print("<font face=Verdana size=1><b>MYSQL Error has occurred!</b><br><BR>There is a problem with the database, possibly a corrupt table, missing field/column or bad syntax.</font></td>\n");
 	print("</tr></table></div><br>\n");
-	//print("<BR><b>MySQL error occured</b>.\n<br />Query: " . $query . "<br />\nError: (" . mysql_errno() . ") " . mysql_error());
+	//print("<BR><b>MySQL error occured</b>.\n<br>Query: " . $query . "<br>\nError: (" . mysql_errno() . ") " . mysql_error());
 	end_frame();
 	stdfoot();
 	die;
@@ -1449,12 +1464,12 @@ function format_comment($text, $strip_html = true, $strip_slash = true)
 	//[quote]Text[/quote]
 	$s = preg_replace(
 		"/\[quote\]\s*((\s|.)+?)\s*\[\/quote\]\s*/i",
-		"<p class=sub><b>Quote:</b></p><table class=main border=1 cellspacing=0 cellpadding=10><tr><td style='border: 1px black dotted'>\\1</td></tr></table><br />", $s);
+		"<p class=sub><b>Quote:</b></p><table class=main border=1 cellspacing=0 cellpadding=10><tr><td style='border: 1px black dotted'>\\1</td></tr></table><br>", $s);
 
 	//[quote=Author]Text[/quote]
 	$s = preg_replace(
 		"/\[quote=(.+?)\]\s*((\s|.)+?)\s*\[\/quote\]\s*/i",
-		"<p class=sub><b>\\1 wrote:</b></p><table class=main border=1 cellspacing=0 cellpadding=10><tr><td style='border: 1px black dotted'>\\2</td></tr></table><br />", $s);
+		"<p class=sub><b>\\1 wrote:</b></p><table class=main border=1 cellspacing=0 cellpadding=10><tr><td style='border: 1px black dotted'>\\2</td></tr></table><br>", $s);
                 
         //[hr]
         $s = preg_replace("/\[hr\]/i", "<hr>", $s);

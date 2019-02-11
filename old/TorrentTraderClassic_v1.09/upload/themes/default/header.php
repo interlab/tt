@@ -64,7 +64,6 @@ echo isset($st['js_files']) ? $st['js_files'] : '';
 		<TD background="themes/default/images/template1_05.jpg" WIDTH=497 HEIGHT=28>
 			&nbsp; <a href=index.php><?= $txt['HOME'] ?></a> • 
 			<?php if ($FORUMS) { ?><a href=forums.php><?= $txt['FORUMS'] ?></a> • <?php } ?>
-			<?php if ($IRCCHAT) {?><a href=irc.php><?= $txt['CHAT'] ?></a> • <?php } ?>
 			<a href=browse.php><?= $txt['BROWSE_TORRENTS'] ?></a> • 
 			<a href=torrents-search.php><?= $txt['SEARCH'] ?></a> • 
 			<a href=torrents-upload.php><?= $txt['UPLOADT'] ?></a> • 

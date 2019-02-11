@@ -166,10 +166,12 @@ function foot() {
 EOD;
 }
 
-function mksecret($len = 20) {
+function mksecret($len = 20)
+{
     $ret = "";
     for ($i = 0; $i < $len; $i++)
         $ret .= chr(mt_rand(0, 255));
+
     return $ret;
 }
 

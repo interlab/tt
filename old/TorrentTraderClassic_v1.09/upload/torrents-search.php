@@ -145,7 +145,7 @@ else
 begin_frame($txt['SEARCH_TITLE'], 'center');
 
 ?><CENTER>
-<form method="get" action="torrents-search.php"><br />
+<form method="get" action="torrents-search.php"><br>
 <?= $txt['SEARCH'] ?>
 <input type="text" name="search" size="40" value="<?= h($searchstr) ?>" />
 <?= $txt['IN'] ?>
@@ -194,7 +194,7 @@ $deadchkbox .= " /> " . $txt['INC_DEAD'] . "\n";
 <?php
 if ($count) {
 	end_frame();
-	echo '<br /><br />';
+	echo '<br><br>';
     begin_frame($txt['SEARCH_RESULTS']);
     print($pagertop);
     torrenttable($res);

@@ -113,7 +113,7 @@ begin_block($txt['NAVIGATION']);
 · <a href="faq.php"><?= $txt['FAQ'] ?></a><br>
 · <a href="extras-stats.php"><?= $txt['TRACKER_STATISTICS'] ?></a><br>
 <?php if ($FORUMS) {?>· <a href="forums.php"><?= $txt['FORUMS'] ?></a><br><?php } ?>
-<?php if ($IRCCHAT) {?>· <a href="irc.php"><?= $txt['CHAT'] ?></a><br><?php } ?>
+<?php /* if ($IRCCHAT) {?>· <a href="irc.php"><?= $txt['CHAT'] ?></a><br><?php } */ ?>
 · <a href="formats.php"><?= $txt['FILE_FORMATS'] ?></a><br>
 · <a href="videoformats.php"><?= $txt['MOVIE_FORMATS'] ?></a><br>
 · <a href="staff.php"><?= $txt['STAFF'] ?></a><br>

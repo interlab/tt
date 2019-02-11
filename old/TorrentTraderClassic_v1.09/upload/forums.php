@@ -82,11 +82,11 @@ function forumheader($location)
             <img src='images/atb_search.gif' border='0' alt='' />&nbsp;<a href='forums.php?action=search'>Search</a></td></tr></table>
             <table width='100%' cellspacing='5' border=0 bgcolor=#E0F1FE><tr><td><strong>&nbsp;</td>
             <td align='right'><b>Controls</a></b> &middot; <a href='forums.php?action=viewunread'>View New Posts</a> &middot;
-            <a href='?catchup'>Mark All Read</a></td></tr></table></td></tr></table><br />
+            <a href='?catchup'>Mark All Read</a></td></tr></table></td></tr></table><br>
     <table align=center cellpadding=0 cellspacing=5 style='border-collapse: collapse'
         bordercolor=#646262 width=100% border=1 bgcolor=#E0F1FE>
     <tr><td><div align='left'>You are in: &nbsp;<a href='forums.php'>Forums</a> > <?= $location ?></b></div></td></tr>
-    </table><br />
+    </table><br>
 <?php
 }
 
@@ -335,7 +335,7 @@ $maxsubjectlength = 50;
 
 //Action: New topic
 if ($action == "newtopic") {
-    $forumid = intget($_GET["forumid"]);
+    $forumid = intget('forumid');
     if (!is_valid_id($forumid))
       die;
     stdhead("New topic");
@@ -902,9 +902,9 @@ if ($action == "deletepost") {
 
 ///////////////////////////////////////////////////////// Action: LOCK TOPIC
 if ($action == "locktopic") {
-    $forumid = intget($_GET["forumid"]);
-    $topicid = intget($_GET["topicid"]);
-    $page = intget($_GET["page"]);
+    $forumid = intget('forumid');
+    $topicid = intget('topicid');
+    $page = intget('page');
     if (!is_valid_id($topicid) || get_user_class() < UC_JMODERATOR)
         die;
     DB::ecxequteUpdate("UPDATE forum_topics SET locked = 'yes' WHERE id = $topicid");
@@ -914,9 +914,9 @@ if ($action == "locktopic") {
 
 ///////////////////////////////////////////////////////// Action: UNLOCK TOPIC
 if ($action == "unlocktopic") {
-    $forumid = intget($_GET["forumid"]);
-    $topicid = intget($_GET["topicid"]);
-    $page = intget($_GET["page"]);
+    $forumid = intget('forumid');
+    $topicid = intget('topicid');
+    $page = intget('page');
     if (!is_valid_id($topicid) || get_user_class() < UC_JMODERATOR)
         die;
     DB::ecxequteUpdate("UPDATE forum_topics SET locked = 'no' WHERE id = $topicid");
@@ -926,9 +926,9 @@ if ($action == "unlocktopic") {
 
 ///////////////////////////////////////////////////////// Action: STICK TOPIC
 if ($action == "setsticky") {
-    $forumid = intget($_GET["forumid"]);
-    $topicid = intget($_GET["topicid"]);
-    $page = intget($_GET["page"]);
+    $forumid = intget('forumid');
+    $topicid = intget('topicid');
+    $page = intget('page');
     if (!is_valid_id($topicid) || get_user_class() < UC_JMODERATOR)
         die;
     DB::ecxequteUpdate("UPDATE forum_topics SET sticky = 'yes' WHERE id = $topicid");
@@ -938,9 +938,9 @@ if ($action == "setsticky") {
 
 ///////////////////////////////////////////////////////// Action: UNSTICK TOPIC
 if ($action == "unsetsticky") {
-    $forumid = intget($_GET["forumid"]);
-    $topicid = intget($_GET["topicid"]);
-    $page = intget($_GET["page"]);
+    $forumid = intget('forumid');
+    $topicid = intget('topicid');
+    $page = intget('page');
     if (!is_valid_id($topicid) || get_user_class() < UC_JMODERATOR)
         die;
     DB::ecxequteUpdate("UPDATE forum_topics SET sticky = 'no' WHERE id = $topicid");
@@ -967,10 +967,10 @@ if ($action == 'renametopic') {
 
 ///////////////////////////////////////////////////////// Action: VIEW FORUM
 if ($action == "viewforum") {
-    $forumid = intget($_GET["forumid"]);
+    $forumid = intget('forumid');
     if (!is_valid_id($forumid))
-        die;
-    $page = intget($_GET["page"]);
+        die('ivalid id - ' . $forumid);
+    $page = intget('page');
     $userid = $CURUSER["id"];
 
     //------ Get forum name
@@ -1014,7 +1014,7 @@ if ($action == "viewforum") {
       if ($i < $pages)
         $menu .= "</b>|<b>\n";
     }
-    $menu .= "<br />\n";
+    $menu .= "<br>\n";
     if ($page == 1)
       $menu .= "<font class=gray>&lt;&lt; Prev</font>";
     else
@@ -1269,7 +1269,7 @@ if ($action == "search") {
                     . "<td align=left><a href=forums.php?action=viewforum&amp;forumid=$topic[forumid]><b>"
                     . h($forum["name"]) . "</b></a>"
                     . "<td align=left><a href=account-details.php?id=$post[userid]><b>$user[username]</b></a>"
-                    . "<br />at $post[added]</tr>\n");
+                    . "<br>at $post[added]</tr>\n");
             }
             print("</table></center></p>\n");
             print("<p><b>Search again</b></p>\n");
@@ -1279,7 +1279,7 @@ if ($action == "search") {
     print("<center><form method=get action=?>\n");
     print("<input type=hidden name=action value=search>\n");
     print("<table border=0 cellspacing=0 cellpadding=5>\n");
-    print("<tr><td valign=bottom align=right>Search For: </td><td align=left><input type=text size=40 name=keywords><br /></td></tr>\n");
+    print("<tr><td valign=bottom align=right>Search For: </td><td align=left><input type=text size=40 name=keywords><br></td></tr>\n");
     print("<tr><td colspan=2 align=center><input type=submit value='Search' class=btn></td></tr>\n");
     print("</table>\n</form></center>\n");
     end_frame();
@@ -1379,7 +1379,7 @@ while ($forums_arr = $forums_res->fetch()) {
     $img = "folder";
     }
     //following line is each forums display
-    print("<tr><td class=alt1 align=left><table border=0 cellspacing=0 cellpadding=0><tr><td style='padding-right: 5px'><img src=". $themedir ."$img.gif></td><td class=alt1><a href=forums.php?action=viewforum&forumid=$forumid><b>$forumname</b></a><br />\n" .
+    print("<tr><td class=alt1 align=left><table border=0 cellspacing=0 cellpadding=0><tr><td style='padding-right: 5px'><img src=". $themedir ."$img.gif></td><td class=alt1><a href=forums.php?action=viewforum&forumid=$forumid><b>$forumname</b></a><br>\n" .
     "<SMALL>- $forumdescription</SMALL></td></tr></table></td><td class=alt2 align=center>$topiccount</td></td><td class=alt1 align=center>$postcount</td>" .
     "<td class=alt2 align=right>$lastpost</td></tr>\n");
 }

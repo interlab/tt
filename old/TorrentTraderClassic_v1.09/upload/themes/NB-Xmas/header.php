@@ -85,7 +85,6 @@ echo isset($st['js_files']) ? $st['js_files'] : '';
   <tr>
     <td height="28" class="subnav"><a href=index.php class="link2"><?= $txt['HOME'] ?></a>  • 
 			<?php if ($FORUMS) {?><a href=forums.php class="link2"><?= $txt['FORUMS'] ?></a>  • <?php }?>
-			<?php if ($IRCCHAT) {?><a href=irc.php class="link2"><?= $txt['CHAT'] ?></a>  • <?php }?>
 			<a href=browse.php class="link2"><?= $txt['BROWSE_TORRENTS'] ?></a>  • 
 			<a href=torrents-search.php class="link2"><?= $txt['SEARCH'] ?></a>  • 
 			<a href=torrents-upload.php class="link2"><?= $txt['UPLOADT'] ?></a>  • 

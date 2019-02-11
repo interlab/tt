@@ -1,4 +1,4 @@
-<?
+<?php
 
 require "backend/functions.php";
 dbconn(false);
@@ -9,7 +9,7 @@ $action = $_POST["action"];
 
 if ($action == 'edituser')
 {
-  $userid = $_POST["userid"];
+  $userid = (int) $_POST["userid"];
   $title = $_POST["title"];
   $downloaded = $_POST["downloaded"];
   $uploaded = $_POST["uploaded"];
@@ -56,9 +56,11 @@ mysql_query("UPDATE users SET title='$title', downloaded='$downloaded', uploaded
   if ($chgpasswd) {
     $passreq = mysql_query("SELECT password FROM users WHERE id=$userid");
     $passres = mysql_fetch_assoc($passreq);
-    if($password != $passres['password']){
-      $password = md5($password);
-      mysql_query("UPDATE users SET password='$password' WHERE id=$userid");
+    // if($password != $passres['password']){
+    if (! password_verify($password, $passres['password'])) {
+      // $password = md5($password);
+      $password = password_hash($password, PASSWORD_DEFAULT);
+      DB::executeUpdate("UPDATE users SET password = ? WHERE id = $userid", [$password]);
       write_log($CURUSER['username']." has changed password for user: $userid");
     }
   }

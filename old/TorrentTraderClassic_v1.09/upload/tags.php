@@ -152,8 +152,8 @@ insert_tag(
 	""
 );
 
-//end_block();
-//stdfoot();
+// end_block();
+// stdfoot();
 
 end_frame();
 stdfoot();

@@ -11,7 +11,8 @@ require_once '../../backend/admin-functions.php';
 
 $act = $_REQUEST['act'] ?? '';
 $_POST['submit'] = $_POST['submit'] ?? '';
-$do = $_POST['do'] ?? '';
+// $do = $_POST['do'] ?? '';
+$do = $_REQUEST['do'] ?? '';
 $error_ac = '';
 $_SERVER['php_self'] = $_SERVER['php_self'] ?? '';
 
@@ -1396,9 +1397,9 @@ if($do == "edtheme" && $id != "")
 	<input type='hidden' name='id' value='<?= $id ?>'>
 	<input type='hidden' name='do' value='save_edtheme'>
 	Name:<br>
-	<input type='text' value='<?=$r[name]?>' size='30' maxlength='30' name='ed_name'><br>
+	<input type='text' value='<?=$r['name']?>' size='30' maxlength='30' name='ed_name'><br>
 	Folder Name (case SenSiTive):<br>
-	<input type='text' value='<?=$r[uri]?>' size='30' maxlength='30' name='ed_uri'><br>
+	<input type='text' value='<?=$r['uri']?>' size='30' maxlength='30' name='ed_uri'><br>
 	<input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
 	</form>
 	<br>Please note: All themes must be uploaded to the /themes/ folder.  Please make sure all folder names are EXACT.
@@ -1496,82 +1497,83 @@ echo "<br><br><center><b>Updated Completed</b></center>";
 }
 
 //finally delete forum
-if($do == "delete_forum")
-{
-if($delcat != "")
-{
-  $sql2 = "DELETE FROM forum_forums WHERE id = '$id'";
-        $ok2 = MYSQL_QUERY($sql2);
-  if($ok2) autolink("admin.php?act=forum", "forum deleted ...");
-}}
-
-//finally delete forumcat
-if($do == "delete_forumcat")
-{
-if($delcat != "")
-{
-  $sql2 = "DELETE FROM forumcats WHERE id = '$id'";
-        $ok2 = MYSQL_QUERY($sql2);
-  if($ok2) autolink("admin.php?act=forum", "forum cat deleted ...");
-}}
-
-if($act == "forum" || $error_ac != "")
-{
-//form to add forum
-adminonly();
-adminmenu();
-begin_frame("Forums Management");
-$query = MYSQL_QUERY("SELECT * FROM forumcats ORDER BY sort, name");
-$allcat = MYSQL_NUM_ROWS($query);
-while($row =MYSQL_FETCH_ARRAY($query)) {
-$forumcat[] = $row;
+if ($do == "delete_forum") {
+    if ($delcat != "") {
+        $sql2 = "DELETE FROM forum_forums WHERE id = '$id'";
+        $ok2 = DB::executeUpdate($sql2);
+        if ($ok2)
+            autolink("admin.php?act=forum", "forum deleted ...");
+    }
 }
-MYSQL_FREE_RESULT($query);
+
+// finally delete forumcat
+if ($do == 'delete_forumcat') {
+    if ($delcat != '') {
+        $sql2 = 'DELETE FROM forumcats WHERE id = '.$id;
+        $ok2 = DB::executeUpdate($sql2);
+        if ($ok2)
+            autolink('admin.php?act=forum', 'forum cat deleted ...');
+    }
+}
+
+if ($act == 'forum' || $error_ac != '') {
+    // form to add forum
+    adminonly();
+    adminmenu();
+    begin_frame('Forums Management');
+    $res = DB::query('SELECT * FROM forumcats ORDER BY sort, name');
+    $allcat = 0;
+    while($row = $res->fetch()) {
+        $allcat += 1;
+        $forumcat[] = $row;
+    }
+
 ?>
 <p>
 <table align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2' style='border: 1px solid black'>
 <form action='admin.php' method='post'>
-<input type='hidden' name='sid' value='<?=$sid?>'>
+<input type='hidden' name='sid' value='<?= $sid ?>'>
 <input type='hidden' name='act' value='sql'>
 <input type='hidden' name='do' value='add_this_forum'>
 <tr>
 <td>Name of the new Forum:</td>
-<td align='right'><input type='text' name='new_forum_name' size='30' maxlength='30'  value='<?=$new_forum_name?>'></td>
+<td align='right'><input type='text' name='new_forum_name' size='30' maxlength='30'  value='<?= $_POST['new_forum_name'] ?? '' ?>'></td>
 </tr>
 <tr>
 <td>Forum Sort Order:</td>
-<td align='right'><input type='text' name='new_forum_sort' size='10' maxlength='10'  value='<?=$new_forum_sort?>'></td>
+<td align='right'><input type='text' name='new_forum_sort' size='10' maxlength='10'  value='<?= $_POST['new_forum_sort'] ?? '' ?>'></td>
 </tr>
 <tr>
 <td>Description of the new Forum:</td>
-<td align='right'><textarea cols='50' rows='5' name='new_desc'><?=$new_desc?></textarea></td>
+<td align='right'><textarea cols='50' rows='5' name='new_desc'><?= $_POST['new_desc'] ?? '' ?></textarea></td>
 </tr>
 <tr>
 <td>Forum Category:</td>
 <td align='right'><select name='new_forum_cat'>
 <?php 
-foreach ($forumcat as $row)
-echo "<option value={$row['id']}>{$row['name']}</option>";
+foreach ($forumcat as $row) {
+    echo '<option value="'.$row['id'].'">'.$row['name'].'</option>';
+}
 ?>
 </select>
 </tr>
 <tr><td>Mininum Class Needed to Read:</td>
 <td align='right'><select name='minclassread'>
-<option value='<?=UC_USER?>' <?=$r[minclassread]==UC_USER?'selected':''?>>User</option>
-<option value='<?=UC_UPLOADER?> <?=$r[minclassread]==UC_UPLOADER?'selected':''?>'>Uploader</option>
-<option value='<?=UC_VIP?>' <?=$r[minclassread]==UC_VIP?'selected':''?>>VIP</option>
-<option value='<?=UC_JMODERATOR?>' <?=$r[minclassread]==UC_JMODERATOR?'selected':''?>>Moderator</option>
-<option value='<?=UC_MODERATOR?>' <?=$r[minclassread]==UC_MODERATOR?'selected':''?>>Super Moderator</option>
-<option value='<?=UC_ADMINISTRATOR?>' <?=$r[minclassread]==UC_ADMINISTRATOR?'selected':''?>>Administrator</option>
+<option value='<?=UC_USER?>'>User</option>
+<option value='<?=UC_UPLOADER?>'>Uploader</option>
+<option value='<?=UC_VIP?>'>VIP</option>
+<option value='<?=UC_JMODERATOR?>'>Moderator</option>
+<option value='<?=UC_MODERATOR?>'>Super Moderator</option>
+<option value='<?=UC_ADMINISTRATOR?>'>Administrator</option>
 </select></td></tr>
 <tr><td>Mininum Class Needed to Post:</td>
 <td align='right'><select name='minclasswrite'>
-<option value='<?=UC_USER?>' <?=$r[minclasswrite]==UC_USER?'selected':''?>>User</option>
-<option value='<?=UC_UPLOADER?>' <?=$r[minclasswrite]==UC_UPLOADER?'selected':''?>>Uploader</option>
-<option value='<?=UC_VIP?>' <?=$r[minclasswrite]==UC_VIP?'selected':''?>>VIP</option>
-<option value='<?=UC_JMODERATOR?>' <?=$r[minclasswrite]==UC_JMODERATOR?'selected':''?>>Moderator</option>
-<option value='<?=UC_MODERATOR?>' <?=$r[minclasswrite]==UC_MODERATOR?'selected':''?>>Super Moderator</option>
-<option value='<?=UC_ADMINISTRATOR?> <?=$r[minclasswrite]==UC_ADMINISTRATOR?'selected':''?>'>Administrator</option>
+<option value='<?=UC_USER?>'>User</option>
+<option value='<?=UC_UPLOADER?>'>Uploader</option>
+<option value='<?=UC_VIP?>'>VIP</option>
+<option value='<?=UC_JMODERATOR?>'>Moderator</option>
+<option value='<?=UC_MODERATOR?>'>Super Moderator</option>
+<option value='<?=UC_ADMINISTRATOR?>'>Administrator</option>
 </select></td></tr>
     
     <tr>
@@ -1581,7 +1583,9 @@ echo "<option value={$row['id']}>{$row['name']}</option>";
 </td>
 </tr>
 <?php 
-if($error_ac != "") echo "<tr><td colspan='2' align='center' style='background:#eeeeee;border:2px red solid'><b>COULD  NOT ADD NEW forum:</b><br>$error_ac</tr></td>\n";
+if ($error_ac != "")
+    echo "<tr><td colspan='2' align='center' style='background:#eeeeee;border:2px red solid'><b>COULD  NOT ADD NEW forum:</b>
+            <br>$error_ac</tr></td>\n";
 ?>
 </table>
 </form>
@@ -1590,37 +1594,57 @@ if($error_ac != "") echo "<tr><td colspan='2' align='center' style='background:#
 <h5>Current Forums:</h5>
 <?php 
 // get forum from db
-echo "<tr><td width='60'><font size='2'><b>ID</b></td><td width='120'>NAME</td><td  width='250'>DESC</td><td width='45'>SORT</td><td width='45'>CATEGORY</td><td width='18'>EDIT</td><td width='18'>DEL</td></font>\n";
-$query = MYSQL_QUERY("SELECT * FROM forum_forums ORDER BY sort, name");
-$allforums = MYSQL_NUM_ROWS($query);
-if($allforums == 0) {
-  echo "<h4>None</h4>\n";
+echo "<tr><td width='60'><font size='2'><b>ID</b></td>
+    <td width='120'>NAME</td>
+    <td  width='250'>DESC</td>
+    <td width='45'>SORT</td>
+    <td width='45'>CATEGORY</td>
+    <td width='18'>EDIT</td>
+    <td width='18'>DEL</td></font>\n";
+
+$res = DB::fetchAll("SELECT * FROM forum_forums ORDER BY sort, name");
+
+if (! $res) {
+    echo "<h4>None</h4>\n";
 } else {
-  while($row =MYSQL_FETCH_ARRAY($query))
-  {
-foreach ($forumcat as $cat) if ($cat['id'] == $row['category']) $category = $cat['name'];
-  echo "<tr><td width='60'><font size='2'><b>ID($row[id])</b></td><td width='120'> $row[name]</td><td  width='250'>$row[description]</td><td width='45'>$row[sort]</td><td width='45'>$category</td></font>\n";
-            echo "<td width='18'><a href='admin.php?do=edit_forum&id=$row[id]'>[Edit]</a></td>\n";
-            echo "<td width='18'><a href='admin.php?do=del_forum&id=$row[id]'><img src='images/delete.gif' alt='Delete  Category' width='17' height='17' border='0'></a></td></tr>\n";
-  }
-MYSQL_FREE_RESULT($query);
+    foreach ($res as $row) {
+        foreach ($forumcat as $cat)
+            if ($cat['id'] == $row['category'])
+                $category = $cat['name'];
+
+        echo "<tr><td width='60'><font size='2'><b>ID($row[id])</b></td>
+            <td width='120'> $row[name]</td>
+            <td  width='250'>$row[description]</td>
+            <td width='45'>$row[sort]</td>
+            <td width='45'>$category</td></font>
+            <td width='18'><a href='admin.php?do=edit_forum&id=$row[id]'>[Edit]</a></td>
+            <td width='18'><a href='admin.php?do=del_forum&id=$row[id]'>
+            <img src='images/delete.gif' alt='Delete  Category' width='17' height='17' border='0'></a>
+            </td></tr>\n";
+    }
 } //endif
 echo "</table>\n";
+
 ?>
 <BR><table align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2' style='border: 1px solid black'>
 <h5>Current Forum Categories:</h5>
 <?php 
 // get forum from db
-echo "<tr><td width='60'><font size='2'><b>ID</b></td><td width='120'>NAME</td><td  width='18'>SORT</td><td width='18'>EDIT</td><td width='18'>DEL</td></font>\n";
+echo "<tr><td width='60'><font size='2'><b>ID</b></td>
+    <td width='120'>NAME</td><td  width='18'>SORT</td>
+    <td width='18'>EDIT</td><td width='18'>DEL</td></font>\n";
 
 if($allcat == 0) {
-  echo "<h4>None set</h4>\n";
+    echo "<h4>None set</h4>\n";
 } else {
-  foreach ($forumcat as $row)
-  {
-  echo "<tr><td width='60'><font size='2'><b>ID($row[id])</b></td><td width='120'> $row[name]</td><td width='18'>$row[sort]</td>\n";
-            echo "<td width='18'><a href='admin.php?do=edit_forumcat&id=$row[id]'>[Edit]</a></td>\n";
-            echo "<td width='18'><a href='admin.php?do=del_forumcat&id=$row[id]'><img src='images/delete.gif' alt='Delete  Category' width='17' height='17' border='0'></a></td></tr>\n";
+    foreach ($forumcat as $row) {
+        echo "<tr><td width='60'><font size='2'><b>ID($row[id])</b></td>
+            <td width='120'> $row[name]</td>
+            <td width='18'>$row[sort]</td>
+            <td width='18'><a href='admin.php?do=edit_forumcat&id=$row[id]'>[Edit]</a></td>
+            <td width='18'><a href='admin.php?do=del_forumcat&id=$row[id]'>
+                <img src='images/delete.gif' alt='Delete  Category' width='17' height='17' border='0'></a>
+            </td></tr>\n";
   }
 } //endif
 echo "</table>\n";
@@ -1632,14 +1656,14 @@ echo "</table>\n";
 <input type='hidden' name='do' value='add_this_forumcat'>
 <tr>
 <td>Name of the new Category:</td>
-<td align='right'><input type='text' name='new_forumcat_name' size='30' maxlength='30'  value='<?=$new_forumcat_name?>'></td>
+<td align='right'><input type='text' name='new_forumcat_name' size='30' maxlength='30'  value='<?= $_POST['new_forumcat_name'] ?? '' ?>'></td>
 </tr>
 <tr>
 <td>Category Sort Order:</td>
-<td align='right'><input type='text' name='new_forumcat_sort' size='10' maxlength='10'  value='<?=$new_forumcat_sort?>'></td>
+<td align='right'><input type='text' name='new_forumcat_sort' size='10' maxlength='10'  value='<?= $_POST['new_forumcat_sort'] ?? '' ?>'></td>
 </tr>
-    
-    <tr>
+
+<tr>
 <td colspan='2' align='center'>
 <input type='submit' value='Add new category'>
 <input type='reset' value='Reset'>
@@ -1648,44 +1672,42 @@ echo "</table>\n";
 </table>
 </form>
 <?php 
-        end_frame();
+    end_frame();
 }
-//edit forum
-if($do == "edit_forum")
-{
-    begin_frame("Edit Forum");
-$q = MYSQL_QUERY("SELECT * FROM forum_forums WHERE id = '$id'");
-$r = MYSQL_FETCH_ARRAY($q);
-MYSQL_FREE_RESULT($q);
-?>
-      <table align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2' style='border: 1px solid black'>
 
-  <form action="admin.php" method="post">
-  <input type="hidden" name="do" value="save_edit">
-  <input type="hidden" name="id" value="<?=$id?>">
-      <tr><td>New Name for Forum:</td>
-      <td align='right'><input type="text" name="changed_forum" class="option" size="35" value="<?=$r[name]?>"></td></tr>
-      <tr><td>New Sort Order:</td>
-      <td align='right'><input type="text" name="changed_sort" class="option" size="35" value="<?=$r[sort]?>"></td></tr>
-      <tr><td>Description:</td>
-      <td align='right'><textarea cols='50' rows='5' name='changed_forum_desc'><?=$r[description]?></textarea></td></tr>
-      <tr><td>New Category:</td>
-      <td align='right'><select name='changed_forum_cat'>
+//edit forum
+if ($do == "edit_forum") {
+    begin_frame("Edit Forum");
+    $id = (int) ($_GET['id'] ?? 0);
+    $r = DB::fetchAssoc('SELECT * FROM forum_forums WHERE id = '.$id);
+?>
+    <table align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2' style='border: 1px solid black'>
+    <form action="admin.php" method="post">
+    <input type="hidden" name="do" value="save_edit">
+    <input type="hidden" name="id" value="<?=$id?>">
+    <tr><td>New Name for Forum:</td>
+    <td align='right'><input type="text" name="changed_forum" class="option" size="35" value="<?=$r['name']?>"></td></tr>
+    <tr><td>New Sort Order:</td>
+    <td align='right'><input type="text" name="changed_sort" class="option" size="35" value="<?=$r['sort']?>"></td></tr>
+    <tr><td>Description:</td>
+    <td align='right'><textarea cols='50' rows='5' name='changed_forum_desc'><?=$r['description']?></textarea></td></tr>
+    <tr><td>New Category:</td>
+    <td align='right'><select name='changed_forum_cat'>
 <?php 
-$query = MYSQL_QUERY("SELECT * FROM forumcats ORDER BY sort, name");
-while ($row=mysql_fetch_array($query))
-echo "<option value={$row['id']}>{$row['name']}</option>";
-MYSQL_FREE_RESULT($query);
+$query = DB::query("SELECT * FROM forumcats ORDER BY sort, name");
+while ($row = $query->fetch()) {
+    echo "<option value={$row['id']}>{$row['name']}</option>";
+}
 ?>
 </select></td></tr>
 <tr><td>Mininum Class Needed to Read:</td>
 <td align='right'><select name='minclassread'>
-<option value='<?=UC_USER?>' <?=$r[minclassread]==UC_USER?'selected':''?>>User</option>
-<option value='<?=UC_UPLOADER?> <?=$r[minclassread]==UC_UPLOADER?'selected':''?>'>Uploader</option>
-<option value='<?=UC_VIP?>' <?=$r[minclassread]==UC_VIP?'selected':''?>>VIP</option>
-<option value='<?=UC_JMODERATOR?>' <?=$r[minclassread]==UC_JMODERATOR?'selected':''?>>Moderator</option>
-<option value='<?=UC_MODERATOR?>' <?=$r[minclassread]==UC_MODERATOR?'selected':''?>>Super Moderator</option>
-<option value='<?=UC_ADMINISTRATOR?>' <?=$r[minclassread]==UC_ADMINISTRATOR?'selected':''?>>Administrator</option>
+<option value='<?=UC_USER?>' <?=$r['minclassread']==UC_USER?'selected':''?>>User</option>
+<option value='<?=UC_UPLOADER?> <?=$r['minclassread']==UC_UPLOADER?'selected':''?>'>Uploader</option>
+<option value='<?=UC_VIP?>' <?=$r['minclassread']==UC_VIP?'selected':''?>>VIP</option>
+<option value='<?=UC_JMODERATOR?>' <?=$r['minclassread']==UC_JMODERATOR?'selected':''?>>Moderator</option>
+<option value='<?=UC_MODERATOR?>' <?=$r['minclassread']==UC_MODERATOR?'selected':''?>>Super Moderator</option>
+<option value='<?=UC_ADMINISTRATOR?>' <?=$r['minclassread']==UC_ADMINISTRATOR?'selected':''?>>Administrator</option>
 </select></td></tr>
 <tr><td>Mininum Class Needed to Post:</td>
 <td align='right'><select name='minclasswrite'>
@@ -1696,36 +1718,34 @@ MYSQL_FREE_RESULT($query);
 <option value='<?=UC_MODERATOR?>'>Super Moderator</option>
 <option value='<?=UC_ADMINISTRATOR?>'>Administrator</option>
 </select></td></tr>
-      <tr><td><input type="submit" class="button" value="Change"></td></tr>
-      </form>
-      </table>
+<tr><td><input type="submit" class="button" value="Change"></td></tr>
+</form>
+</table>
 <?php 
     end_frame();
 }
 
 //del Forum
-if($do == "del_forum")
-{
+if ($do == "del_forum") {
     begin_frame("Confirm");
-$t = MYSQL_QUERY("SELECT * FROM forum_forums WHERE id = '$id'");
-$v = MYSQL_FETCH_ARRAY($t);
+    $id = (int) ($_GET['id'] ?? 0);
+    $v = DB::fetchAssoc('SELECT * FROM forum_forums WHERE id = '.$id);
 ?>
-  <form action="admin.php" method="post">
-  <input type="hidden" name="do" value="delete_forum">
-  <input type="hidden" name="id" value="<?=$id?>">
-      Really delete the Forum <?="<b>$v[name] with ID$v[id] ???</b>"?>
-      <input type="submit" name="delcat" class="button" value="Delete">
-      </form>
+    <form action="admin.php" method="post">
+    <input type="hidden" name="do" value="delete_forum">
+    <input type="hidden" name="id" value="<?= $id ?>">
+    Really delete the Forum <?="<b>$v[name] with ID$v[id] ???</b>"?>
+    <input type="submit" name="delcat" class="button" value="Delete">
+    </form>
 <?php 
-          end_frame();
+    end_frame();
 }
 
-      //del Forum
-if($do == "del_forumcat")
-{
+// del Forum
+if ($do == "del_forumcat") {
     begin_frame("Confirm");
-$t = MYSQL_QUERY("SELECT * FROM forumcats WHERE id = '$id'");
-$v = MYSQL_FETCH_ARRAY($t);
+    $id = (int) ($_GET['id'] ?? 0);
+    $v = DB::fetchAssoc('SELECT * FROM forumcats WHERE id = '.$id);
 ?>
   <form action="admin.php" method="post">
   <input type="hidden" name="do" value="delete_forumcat">
@@ -1734,27 +1754,26 @@ $v = MYSQL_FETCH_ARRAY($t);
       <input type="submit" name="delcat" class="button" value="Delete">
       </form>
 <?php 
-          end_frame();
+    end_frame();
 }
 
-//edit forum
-if($do == "edit_forumcat")
-{
+// edit forum
+if ($do == "edit_forumcat") {
     begin_frame("Edit Category");
-$q = MYSQL_QUERY("SELECT * FROM forumcats WHERE id = '$id'");
-$r = MYSQL_FETCH_ARRAY($q);
+    $id = (int) ($_GET['id'] ?? 0);
+    $r = DB::fetchAssoc('SELECT * FROM forumcats WHERE id = '.$id);
 ?>
-      <table align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2' style='border: 1px solid black'>
-  <form action="admin.php" method="post">
-  <input type="hidden" name="do" value="save_editcat">
-  <input type="hidden" name="id" value="<?=$id?>">
-      <tr><td>New Name for Category:</td></tr>
-      <tr><td><input type="text" name="changed_forumcat" class="option" size="35" value="<?=$r[name]?>"></td></tr>
-      <tr><td>New Sort Order:</td></tr>
-      <tr><td><input type="text" name="changed_sortcat" class="option" size="35" value="<?=$r[sort]?>"></td></tr>
-      <input type="submit" class="button" value="Change"></td></tr>
-      </form>
-      </table>
+    <table align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2' style='border: 1px solid black'>
+    <form action="admin.php" method="post">
+    <input type="hidden" name="do" value="save_editcat">
+    <input type="hidden" name="id" value="<?=$id?>">
+    <tr><td>New Name for Category:</td></tr>
+    <tr><td><input type="text" name="changed_forumcat" class="option" size="35" value="<?=$r['name']?>"></td></tr>
+    <tr><td>New Sort Order:</td></tr>
+    <tr><td><input type="text" name="changed_sortcat" class="option" size="35" value="<?=$r['sort']?>"></td></tr>
+    <input type="submit" class="button" value="Change"></td></tr>
+    </form>
+    </table>
 <?php 
     end_frame();
 }
@@ -1804,9 +1823,9 @@ Client Agent Ban Settings<br></font><font size="1" face="Times New Roman">
 |Get the words currently censored
 -------------*/
 $select = "SELECT word FROM censor ORDER BY word";
-$sres = mysql_query($select);
-while ($srow = mysql_fetch_array($sres)) {
-    echo "<option>" . $srow[0] . "</option>\n";
+$res = DB::query($select);
+while ($srow = $res->fetch()) {
+    echo "<option>" . $srow['word'] . "</option>\n";
 }
 echo'</select></font></td></tr><tr><td bgcolor="#eeeeee" align="left">
 <font size="1" face="Verdana"><input type="submit" name="action" value="Delete Censor"></font></td>
@@ -1818,8 +1837,7 @@ end_frame();
 #======================================================================#
 # Ratio Warn System - Watched Users
 #======================================================================#
-if($act == "rws-watched")
-{
+if ($act == "rws-watched") {
     $resrws = mysql_query("SELECT * FROM ratiowarn WHERE warned='no'");
 	$reqrws = mysql_fetch_assoc($resrws);
 	adminmenu();

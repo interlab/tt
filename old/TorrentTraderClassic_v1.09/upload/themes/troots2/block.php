@@ -2,7 +2,7 @@
   function begin_frame($caption = "-", $align = "justify")
 {
 
-	print("<br /><TABLE width=100% border=0 align=center>\n"
+	print("<br><TABLE width=100% border=0 align=center>\n"
 		."\t<TR>\n"
 		."\t\t<TD class=white style='PADDING-LEFT: 12px; FONT-WEIGHT: bold; VERTICAL-ALIGN: middle; PADDING-TOP: 2px' bgColor=#dd1212 height=25>&nbsp;<img src=themes/troots2/images/dot_arrow.gif align=middle>&nbsp;&nbsp;$caption</TD></TR>\n"
 		."\t<TR>\n"
@@ -33,7 +33,7 @@
 function begin_block($caption = "-", $align = "justify")
 {
 
-	print("<br /><TABLE width=100% border=0 align=center>\n"
+	print("<br><TABLE width=100% border=0 align=center>\n"
 		."\t<TR>\n"
 		."\t\t<TD class=white style='PADDING-LEFT: 12px; FONT-WEIGHT: bold; VERTICAL-ALIGN: middle; PADDING-TOP: 2px' bgColor=#4396ca height=25>&nbsp;<img src=themes/troots2/images/dot_arrow.gif align=middle>&nbsp;&nbsp;$caption</TD></TR>\n"
 		."\t<TR>\n"

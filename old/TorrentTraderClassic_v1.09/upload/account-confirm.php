@@ -1,23 +1,23 @@
-<?
-//
+<?php
+
 // Confirm account Via email and send PM
-//
+
 require_once("backend/functions.php");
 
+$id = (int) ($_GET["id"] ?? 0);
+$md5 = $_GET["secret"];
 
-$id = 0 + $HTTP_GET_VARS["id"];
-$md5 = $HTTP_GET_VARS["secret"];
-
-if (!$id)
-	httperr();
+if (! $id) {
+    httperr();
+}
 
 dbconn();
 
-$res = mysql_query("SELECT password, secret, status FROM users WHERE id = $id");
-$row = mysql_fetch_array($res);
+$row = DB::fetchAssoc('SELECT password, secret, status FROM users WHERE id = '.$id);
 
-if (!$row)
+if (! $row) {
 	httperr();
+}
 
 if ($row["status"] != "pending") {
 	header("Refresh: 0; url=account-confirm-ok.php?type=confirmed");
@@ -25,25 +25,29 @@ if ($row["status"] != "pending") {
 }
 
 $sec = hash_pad($row["secret"]);
-if ($md5 != md5($sec))
+if ($md5 != md5($sec)) {
 	httperr();
+}
 
 $newsec = mksecret();
 
-mysql_query("UPDATE users SET secret=" . sqlesc($newsec) . ", status='confirmed' WHERE id=$id AND secret=" . sqlesc($row["secret"]) . " AND status='pending'");
+$aff_rows = DB::executeUpdate('
+    UPDATE users SET secret = ?, status = ?
+    WHERE id = ' . $id . ' AND secret = ? AND status = ?',
+    [$newsec, 'confirmed', $row["secret"], 'pending']
+);
 
-if (!mysql_affected_rows())
+if (! $aff_rows) {
 	httperr();
+}
 
 logincookie($id, $row["password"], $newsec);
-    //send welcome pm
-    if ($WELCOMEPMON)
-    {
-        $WELCOMEPMMSG = trim($WELCOMEPMMSG);
-        $added = sqlesc(get_date_time());
-        mysql_query("INSERT INTO messages (poster, sender, receiver, added, msg) VALUES ('0', '0', $id, $added, " . sqlesc($WELCOMEPMMSG) . ")");
-    
-    }
+// send welcome pm
+if ($WELCOMEPMON) {
+    $WELCOMEPMMSG = trim($WELCOMEPMMSG);
+    DB::executeUpdate('INSERT INTO messages (poster, sender, receiver, added, msg) VALUES (?, ?, ?, ?, ?)',
+        [0, 0, $id, get_date_time(), $WELCOMEPMMSG]
+    );
+}
 header("Refresh: 0; url=account-confirm-ok.php?type=confirm");
 
-?>

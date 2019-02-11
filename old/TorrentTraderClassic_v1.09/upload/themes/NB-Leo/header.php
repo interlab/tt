@@ -66,9 +66,6 @@ if ($CURUSER) {
                 <a href=index.php><?= $txt['HOME'] ?></a><span> | </span>
                 <?php if ($FORUMS) { ?>
                 <a href=forums.php><?= $txt['FORUMS'] ?></a><span> | </span>
-                <?php }
-                      if ($IRCCHAT) { ?>
-                <a href=irc.php><?= $txt['CHAT'] ?></a><span> | </span>
                 <?php } ?>
                 <a href=browse.php><?= $txt['BROWSE_TORRENTS'] ?></a><span> | </span>
                 <a href=torrents-search.php><?= $txt['SEARCH'] ?></a><span> | </span>

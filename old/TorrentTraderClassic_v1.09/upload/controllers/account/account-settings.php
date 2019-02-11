@@ -23,13 +23,15 @@ if (!empty($_POST['submit'])) {
     $params = [];
 
     if ($chpassword != '') {
-        if ($CURUSER["password"] != md5($originalpassword))
+        // if ($CURUSER["password"] != md5($originalpassword))
+        if (! password_verify($originalpassword, $CURUSER["password"]))
             $message = $txt['THATS_NOT_YOUR_ORIGNAL_PASS'];
         if (strlen($chpassword) < 6)
             $message = $txt['PASS_TO_SHORT'];
         if ($chpassword != $passagain)
             $message = $txt['PASSWORDS_NOT_MATCH'];
-        $chpassword = md5($chpassword);
+        // $chpassword = md5($chpassword);
+        $chpassword = password_hash($chpassword, PASSWORD_DEFAULT);
         $params['password'] = $chpassword;
         $newsecret = 1;
     }
@@ -178,12 +180,12 @@ tr($txt['ACCOUNT_ACCEPTPM'], "<input type=radio name=acceptpms" . ($acceptpms ? 
 $gender = "<option value=Male" . ($CURUSER["gender"] == 'Male' ? " selected" : '') . ">" . $txt['MALE'] . "</option>\n"
 	 ."<option value=Female" . ($CURUSER["gender"] == 'Female' ? " selected" : '') . ">" . $txt['FEMALE'] . "</option>\n";
 
-$torrentnotif = "<input type=checkbox checked>" . $txt['ACCOUNT_NOTIFY_WHEN_TORRENT_UPLOADED_IN'] . ":<br />";
+$torrentnotif = "<input type=checkbox checked>" . $txt['ACCOUNT_NOTIFY_WHEN_TORRENT_UPLOADED_IN'] . ":<br>";
 $res = DB::query("SELECT id,name FROM categories ORDER by sort_index, name") or sqlerr();
 $i = 0;
 while ($a = $res->fetch()) {
     $torrentnotif .= "&nbsp;&nbsp;&nbsp;&nbsp;<input type=checkbox name=cat$a[id]" . (strpos($CURUSER['notifs'], "[cat$a[id]]") !== false ? " checked" : '') .
-        " value='yes'>$a[name]<br />\n";
+        " value='yes'>$a[name]<br>\n";
     ++$i;
 }
 
@@ -205,7 +207,7 @@ print("<tr><td align=right>PM on Comments</td><td align=left><input type=radio n
     ($CURUSER["commentpm"] == "no" ? " checked" : '') . " value=no>no");
 
 tr($txt['ACCOUNT_EMAIL_NOTIFICATION'], "<input type=checkbox name=pmnotif" . (strpos($CURUSER['notifs'], "[pm]") !== false ? " checked" : '') .
-   " value=yes>" . $txt['ACCOUNT_PM_NOTIFY_ME'] . "<br />\n" .
+   " value=yes>" . $txt['ACCOUNT_PM_NOTIFY_ME'] . "<br>\n" .
    $torrentnotif, 1);
 
 
@@ -214,19 +216,19 @@ tr($txt['CLIENT'], "<input type=text size=20 maxlength=20 name=client value=\"" 
 tr($txt['AGE'], "<input type=text size=4 maxlength=3 name=age value=\"" . h($CURUSER["age"]) . "\" />", 1);
 tr($txt['GENDER'], "<select size=1 name=gender>\n$gender\n</select>", 1);
 tr($txt['COUNTRY'], "<select name=country>\n$countries\n</select>", 1);
-tr($txt['ACCOUNT_TIMEZONE'], "<select name=tzoffset>\n$timezone\n</select><br />" . $txt['ACCOUNT_TIMEZONEMSG'], 1);
+tr($txt['ACCOUNT_TIMEZONE'], "<select name=tzoffset>\n$timezone\n</select><br>" . $txt['ACCOUNT_TIMEZONEMSG'], 1);
 tr($txt['AVATAR_URL'], "<input name=avatar size=50 value=\"" . h($CURUSER["avatar"]) .
-  "\"><br />\n80x80 px", 1);
+  "\"><br>\n80x80 px", 1);
 tr($txt['CUSTOMTITLE'], "<input name=title size=50 value=\"" . strip_tags($CURUSER["title"]) .
-  "\"><br />\n " . $txt['HTML_NOT_ALLOWED'], 1);
+  "\"><br>\n " . $txt['HTML_NOT_ALLOWED'], 1);
 tr($txt['SIGNATURE'], "<textarea name=signature cols=50 rows=10>" . h($CURUSER["signature"]) .
-  "</textarea><br />\n " . $txt['HTML_NOT_ALLOWED'] . "",1);
+  "</textarea><br>\n " . $txt['HTML_NOT_ALLOWED'] . "",1);
 
 tr('О себе<br>(эта информация будет видна в вашем профиле)', "<textarea name=about_myself cols=50 rows=10>".h($CURUSER["about_myself"])
-    . "</textarea><br />\n " . $txt['HTML_NOT_ALLOWED'] . "",1);
+    . "</textarea><br>\n " . $txt['HTML_NOT_ALLOWED'] . "",1);
 
 tr($txt['EMAIL_ADDRESS'], "<input type=\"text\" name=\"email\" size=50 value=\"" . h($CURUSER["email"]) .
-  "\"><br />\n" . $txt['REPLY_TO_CONFIRM_EMAIL'] . "<br>",1);
+  "\"><br>\n" . $txt['REPLY_TO_CONFIRM_EMAIL'] . "<br>",1);
 ?>
 <tr><td colspan="2" align="center"><input type="submit" value="<?= $txt['SUBMIT']
 ?>" style='height: 25px'> <input type="reset" value="<?= $txt['REVERT'] ?>" style='height: 25px'></td></tr>
@@ -234,7 +236,7 @@ tr($txt['EMAIL_ADDRESS'], "<input type=\"text\" name=\"email\" size=50 value=\""
 
 <?php end_frame(); ?>
 
-<br /><br />
+<br><br>
 
 <?php begin_frame($txt['CHANGE_YOUR_PASS']); ?>
 

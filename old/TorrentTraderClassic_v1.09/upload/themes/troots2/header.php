@@ -153,7 +153,6 @@
                 <TD style="VERTICAL-ALIGN: middle" width=752>
 <NOBR>
 <?php if ($FORUMS) {?><A style="TEXT-DECORATION: none" href=forums.php><?= $txt['FORUMS'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle><?php }?>
-<?php if ($IRCCHAT) {?><A style="TEXT-DECORATION: none" href=irc.php><?= $txt['CHAT'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle><?php }?>
 <A style="TEXT-DECORATION: none" href="torrents-needseed.php"><?= $txt['UNSEEDED'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
 <A style="TEXT-DECORATION: none" href="viewrequests.php"><?= $txt['REQUESTED'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
 <A style="TEXT-DECORATION: none" href="torrents-today.php"><?= $txt['TODAYS_TORRENTS'] ?></A><IMG hspace=11 src="themes/troots2/images/div_red.gif" align=absMiddle>
@@ -289,29 +288,28 @@ if ($CURUSER)
 begin_block($txt['NAVIGATION']);
 ?>
 
-· <a href="index.php"><?= $txt['HOME'] ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-search.php"><?= $txt['SEARCH_TITLE'] ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-upload.php"><?= $txt['UPLOADT'] ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-needseed.php"><?= $txt['UNSEEDED'] ?></a><br />
-&nbsp;&nbsp;· <a href="viewrequests.php"><?= $txt['REQUESTED'] ?></a><br />
-&nbsp;&nbsp;· <a href="torrents-today.php"><?= $txt['TODAYS_TORRENTS'] ?></a><br /><br />
+· <a href="index.php"><?= $txt['HOME'] ?></a><br>
+&nbsp;&nbsp;· <a href="torrents-search.php"><?= $txt['SEARCH_TITLE'] ?></a><br>
+&nbsp;&nbsp;· <a href="torrents-upload.php"><?= $txt['UPLOADT'] ?></a><br>
+&nbsp;&nbsp;· <a href="torrents-needseed.php"><?= $txt['UNSEEDED'] ?></a><br>
+&nbsp;&nbsp;· <a href="viewrequests.php"><?= $txt['REQUESTED'] ?></a><br>
+&nbsp;&nbsp;· <a href="torrents-today.php"><?= $txt['TODAYS_TORRENTS'] ?></a><br><br>
 				  <CENTER><a href="rssinfo.php"><img src="images/rss2.gif" border=0 alt="XML RSS Feed"></a></CENTER>
 				  <hr>
-· <a href="faq.php"><?= $txt['FAQ'] ?></a><br />
-· <a href="extras-stats.php"><?= $txt['TRACKER_STATISTICS'] ?></a><br />
-<?php if ($FORUMS) {?>· <a href="forums.php"><?= $txt['FORUMS'] ?></a><br /><?php }?>
-<?php if ($IRCCHAT) {?>· <a href="irc.php"><?= $txt['CHAT'] ?></a><br /><?php }?>
-· <a href="formats.php"><?= $txt['FILE_FORMATS'] ?></a><br />
-· <a href="videoformats.php"><?= $txt['MOVIE_FORMATS'] ?></a><br />
-· <a href="staff.php"><?= $txt['STAFF'] ?></a><br />
-· <a href="rules.php"><?= $txt['SITE_RULES'] ?></a><br />
-· <a href="extras-users.php"><?= $txt['MEMBERS'] ?></a><br /><hr>
-· <a href="visitorsnow.php"><?= $txt['ONLINE_USERS'] ?></a><br />
-· <a href="visitorstoday.php"><?= $txt['VISITORS_TODAY'] ?></a><br />
+· <a href="faq.php"><?= $txt['FAQ'] ?></a><br>
+· <a href="extras-stats.php"><?= $txt['TRACKER_STATISTICS'] ?></a><br>
+<?php if ($FORUMS) {?>· <a href="forums.php"><?= $txt['FORUMS'] ?></a><br><?php }?>
+· <a href="formats.php"><?= $txt['FILE_FORMATS'] ?></a><br>
+· <a href="videoformats.php"><?= $txt['MOVIE_FORMATS'] ?></a><br>
+· <a href="staff.php"><?= $txt['STAFF'] ?></a><br>
+· <a href="rules.php"><?= $txt['SITE_RULES'] ?></a><br>
+· <a href="extras-users.php"><?= $txt['MEMBERS'] ?></a><br><hr>
+· <a href="visitorsnow.php"><?= $txt['ONLINE_USERS'] ?></a><br>
+· <a href="visitorstoday.php"><?= $txt['VISITORS_TODAY'] ?></a><br>
 
 <?php if(get_user_class() > UC_VIP) {?><hr>
-· <a href="admin.php"><?= $txt['STAFFCP'] ?></a><br /><?php }?>
-<br />
+· <a href="admin.php"><?= $txt['STAFFCP'] ?></a><br><?php }?>
+<br>
 
  <?php
 end_block();
