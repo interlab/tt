@@ -1,46 +1,50 @@
 <?php
 
-use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Yaml\Yaml as SymfonyYaml;
 
-function st_parse_yaml($file)
+class Yaml
 {
-    if (file_exists($file)) {
-        $yml = file_get_contents($file);
+    public static function parse_yaml($file)
+    {
+        if (file_exists($file)) {
+            $yml = file_get_contents($file);
+        }
+        else {
+            trigger_error($file . ' not found!');
+
+            return false;
+        }
+
+        try {
+            $data = self::yaml2php($yml);
+        } catch (\Exception $e) {
+            die($e->getMessage());
+        }
+
+        if (null === $data) {
+            trigger_error('Bad yaml sintax');
+
+            return false;
+        }
+
+        // todo : cache data
+
+        // $txt = array_merge($txt, $data);
+
+        // return array_merge($txt, $data);
+
+        return $data;
     }
-    else {
-        trigger_error($file . ' not found!');
 
-        return false;
+    public static function php2yaml($val)
+    {
+        return SymfonyYaml::dump($val);
     }
 
-    try {
-        $data = st_yaml2php($yml);
-    } catch (\Exception $e) {
-        die($e->getMessage());
+    public static function yaml2php($str)
+    {
+        return SymfonyYaml::parse($str);
+        # return Spyc::YAMLLoadString($str);
     }
-
-    if (null === $data) {
-        trigger_error('Bad yaml sintax');
-
-        return false;
-    }
-
-    // todo : cache data
-
-    // $txt = array_merge($txt, $data);
-
-    // return array_merge($txt, $data);
-
-    return $data;
 }
 
-function st_php2yaml($val)
-{
-    return Yaml::dump($val);
-}
-
-function st_yaml2php($str)
-{
-    return Yaml::parse($str);
-    # return Spyc::YAMLLoadString($str);
-}

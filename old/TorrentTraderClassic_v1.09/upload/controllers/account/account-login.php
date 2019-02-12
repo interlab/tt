@@ -20,10 +20,11 @@ if ($user_name && $user_password) {
     $password = trim($user_password);
 
     $row = DB::fetchAssoc('
-    SELECT id, password, secret, enabled
-    FROM users
-    WHERE username = ?
-        AND status = ?', [$user_name, 'confirmed']);
+        SELECT id, password, secret, enabled, status
+        FROM users
+        WHERE real_name = ?',
+        [$user_name]
+    );
 
     if (! $row)
         $message = "Username Incorrect";
@@ -33,6 +34,8 @@ if ($user_name && $user_password) {
         $message = "Password Incorrect";
     elseif ($row["enabled"] == "no")
         $message = "This account has been disabled by an administrator.";
+    elseif ($row["status"] != "confirmed")
+        $message = "This account not confirmed.";
     else {
         logincookie($row["id"], $row["password"], hash_pad($row["secret"], 20));
         if (!empty($_POST["returnto"])) {

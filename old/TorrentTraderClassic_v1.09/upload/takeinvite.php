@@ -1,4 +1,4 @@
-<?
+<?php
 
 require_once("backend/functions.php");
 
@@ -7,60 +7,85 @@ dbconn();
 //if (get_user_class() < UC_USER)
 //stderr("Error", "Access denied.");
 
-$res = mysql_query("SELECT COUNT(*) FROM users") or sqlerr(__FILE__, __LINE__);
-$arr = mysql_fetch_row($res);
+$count = DB::fetchColumn("SELECT COUNT(*) FROM users");
 
-if ($arr[0] >= $invites)
-stderr("Error", "Sorry, user limit reached. Please try again later.");
+if ($count >= $invites)
+    stderr("Error", "Sorry, user limit reached. Please try again later.");
 
-if($CURUSER["invites"] == 0)
-stderr("Sorry","No invites!");
+if ($CURUSER["invites"] == 0)
+    stderr("Sorry","No invites!");
 
-$mess= unesc($_POST["mess"]);
+$mess = unesc($_POST["mess"]);
 
-if (!$mess)
-barkmsg("You must enter a message!");
+if (! $mess)
+    barkmsg("You must enter a message!");
 
 if (!mkglobal("email"))
-die();
+    die();
 
 
-function barkmsg($msg) {
-stdhead();
-begin_frame("ERROR");
-echo "<BR><BR>Invite Failed!<BR><BR>";
-echo $msg;
-end_frame();
-stdfoot();
-exit;
+function barkmsg($msg)
+{
+    stdhead();
+    begin_frame("ERROR");
+    echo "<BR><BR>Invite Failed!<BR><BR>";
+    echo $msg;
+    end_frame();
+    stdfoot();
+    exit;
 }
 
-
 if (!validemail($email))
-barkmsg("That doesn't look like a valid email address.");
+    barkmsg("That doesn't look like a valid email address.");
 
-// check if email addy is already in use
-$a = (@mysql_fetch_row(@mysql_query("select count(*) from users where email='$email'"))) or die(mysql_error());
-if ($a[0] != 0)
-barkmsg("The e-mail address $email is already in use.");
+$a = DB::fetchColumn('select count(*) from users where email = ?', [$email]);
+if ($a) {
+    barkmsg("The e-mail address $email is already in use.");
+}
+
+$a = DB::fetchColumn('select count(*) from users where real_name = ? OR username = ?',
+    [$username, $username]
+);
+if ($a) {
+    barkmsg("The username $username is already in use."); 
+}
 
 $secret = mksecret();
 $editsecret = mksecret();
-$username = rand();
-$ret = mysql_query("INSERT INTO users (username, secret, editsecret, email, status, invited_by, added) VALUES (" .
-implode(",", array_map("sqlesc", array($username, $secret, $editsecret, $email, 'pending', $CURUSER["id"]))) .
-",'" . get_date_time() . "')");
-if (!$ret) {
-if (mysql_errno() == 1062)
-barkmsg("Username already exists!");
-barkmsg("borked");
+$username = generateRandomString(13);
+
+$password = generateRandomString(15);
+$password = password_hash($password, PASSWORD_DEFAULT);
+
+try {
+    $ret = DB::executeUpdate('
+        INSERT INTO users (username, real_name, password, secret, editsecret,
+            email, status, invited_by, added, about_myself, passkey)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [$username, $username, $password, $secret, $editsecret,
+        $email, 'pending', $CURUSER["id"], get_date_time(), '', generateRandomString(32)
+        ]
+    );
+
+    $id = DB::lastInsertId();
+
+    if (! $ret) {
+        barkmsg("Mysql Error!");
+    }
+} catch(\Exception $e) {
+    trigger_error($e->getMessage(), E_USER_ERROR);
+    if ($e->getCode() === 1062) {
+        barkmsg("Username already exists!");
+    } else {
+        barkmsg("Mysql Error!");
+    }
 }
-$id = mysql_insert_id();
+
 $id2 = $CURUSER["id"];
 $invites = $CURUSER["invites"]-1;
 $invitees = $CURUSER["invitees"];
 $invitees2 = "$id $invitees";
-$ret2 = mysql_query("UPDATE users SET invites='$invites', invitees='$invitees2' WHERE id = $id2");
+$ret2 = DB::query("UPDATE users SET invites='$invites', invitees='$invitees2' WHERE id = $id2");
 $username=$CURUSER["username"];
 
 $psecret = md5($editsecret);
@@ -96,6 +121,3 @@ mail($email, "$SITENAME user registration confirmation", $body, "From: $SITENAME
 
 header("Refresh: 0; url=account-confirm-ok.php?type=invite&email=" . urlencode($email));
 
-
-
-?>

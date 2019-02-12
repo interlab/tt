@@ -834,35 +834,34 @@ function getThemeUri()
 function loadLanguage()
 {
     global $CURUSER, $txt;
-    static $st_load_lang = null;
+    static $tt_load_lang = null;
 
-    if (! is_null($st_load_lang)) {
+    if (! is_null($tt_load_lang)) {
         return;
     }
 
     if ($CURUSER) {
-        $lang_uri = DB::fetchColumn("
-    SELECT uri
-    FROM languages
-    WHERE id = ".$CURUSER["language"]);
+        $lang = DB::fetchAssoc('
+            SELECT id, uri
+            FROM languages
+            WHERE id = '.$CURUSER['language']);
     }
 
-    if (! isset($lang_uri)) {
-        $lang_uri = DB::fetchColumn('
-    SELECT uri
-    FROM languages
-    WHERE id = 1');
+    if (! isset($lang)) {
+        $lang = DB::fetchAssoc('
+            SELECT id, uri
+            FROM languages
+            WHERE id = 1');
     }
 
-    // dump($lang_uri, TT_ROOT_DIR . '/languages/' . $lang_uri);
-    
-    $GLOBALS['txt'] = st_parse_yaml(TT_ROOT_DIR . '/languages/' . $lang_uri);
-    // $GLOBALS['txt'] = st_parse_yaml(TT_ROOT_DIR . '/languages/russian.yml');
+    $GLOBALS['txt'] = Cache::rise('lang-' . $lang['id'], function() use ($lang) {
+        return Yaml::parse_yaml(TT_ROOT_DIR . '/languages/' . $lang['uri']);
+    });
 
     // dump($GLOBALS['txt']);
     // die;
-    
-    $st_load_lang = true;
+
+    $tt_load_lang = true;
 }
 
 function updateUserLastBrowse()

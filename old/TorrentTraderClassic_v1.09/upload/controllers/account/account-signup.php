@@ -82,7 +82,12 @@ if ($wantusername != "") {
         }
 
         // check username isnt in use
-        $a = DB::fetchColumn('select count(*) from users where username = ?', [$wantusername]);
+        $a = DB::fetchColumn('
+            SELECT count(*)
+            from users
+            where real_name = ? OR username = ?',
+            [$wantusername, $wantusername]
+        );
         if ($a) {
             $message = "The username $wantusername is already in use."; 
         }
@@ -96,9 +101,12 @@ if ($wantusername != "") {
 
         try {
             $ret = DB::executeUpdate('
-                INSERT INTO users (username, password, secret, email, status, added, age, country, gender, client, about_myself)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [$wantusername, $wantpassword, $secret, $email, 'pending', get_date_time(), $age, $country, $gender, $client, '']
+                INSERT INTO users (username, real_name, password, secret, email, status,
+                        added, age, country, gender, client, about_myself, passkey)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [$wantusername, $wantusername, $wantpassword, $secret, $email, 'pending',
+                get_date_time(), $age, $country, $gender, $client, '', generateRandomString(32)
+                ]
             );
 
             $id = DB::lastInsertId();

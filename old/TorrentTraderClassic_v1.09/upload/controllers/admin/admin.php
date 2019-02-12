@@ -347,58 +347,57 @@ if($act == "disabledaccounts")
 #======================================================================#
 # Warned Accounts
 #======================================================================#
-if($act == "warneddaccounts")
-{
+if ($act == "warneddaccounts") {
 	adminmenu();
 	begin_frame("Warned Accounts", 'center');
-	$res = mysql_query("SELECT * FROM users WHERE enabled='yes' AND warned='yes' ORDER BY username") or sqlerr();
-$num = mysql_num_rows($res);
-print("<center><br><br><table border=1 width=95% cellspacing=0 cellpadding=1>\n");
-print("<tr align=center><td class=table_head width=90>User Name</td>
- <td class=table_head width=70>Registered</td>
- <td class=table_head width=75>Last Access</td>  
- <td class=table_head width=75>User Class</td>
- <td class=table_head width=70>Downloaded</td>
- <td class=table_head width=70>Uploaded</td>
- <td class=table_head width=45>Ratio</td>
- <td class=table_head width=225>Moderator Comments</td>
-</tr>\n");
-for ($i = 1; $i <= $num; $i++)
-{
-$arr = mysql_fetch_assoc($res);
-if ($arr['added'] == '0000-00-00 00:00:00')
-  $arr['added'] = '-';
-if ($arr['last_access'] == '0000-00-00 00:00:00')
-  $arr['last_access'] = '-';
+    // todo: limit?
+	$res = DB::query("SELECT * FROM users WHERE enabled = 'yes' AND warned = 'yes' ORDER BY username");
 
+    print("<center><br><br><table border=1 width=95% cellspacing=0 cellpadding=1>\n");
+    print("<tr align=center><td class=table_head width=90>User Name</td>
+        <td class=table_head width=70>Registered</td>
+        <td class=table_head width=75>Last Access</td>  
+        <td class=table_head width=75>User Class</td>
+        <td class=table_head width=70>Downloaded</td>
+        <td class=table_head width=70>Uploaded</td>
+        <td class=table_head width=45>Ratio</td>
+        <td class=table_head width=225>Moderator Comments</td>
+        </tr>\n");
 
-if($arr["downloaded"] != 0){
-$ratio = number_format($arr["uploaded"] / $arr["downloaded"], 3);
-} else {
-$ratio="---";
-}
-$ratio = "<font color=" . get_ratio_color($ratio) . ">$ratio</font>";
-  $uploaded = mksize($arr["uploaded"]);
-  $downloaded = mksize($arr["downloaded"]);
+    while ($arr = $res->fetch()) {
+        if ($arr['added'] == '0000-00-00 00:00:00')
+            $arr['added'] = '-';
+        if ($arr['last_access'] == '0000-00-00 00:00:00')
+            $arr['last_access'] = '-';
 
-$added = substr($arr['added'],0,10);
-$last_access = substr($arr['last_access'],0,10);
-$class=get_user_class_name($arr["class"]);
+        if ($arr["downloaded"] != 0) {
+            $ratio = number_format($arr["uploaded"] / $arr["downloaded"], 3);
+        } else {
+            $ratio="---";
+        }
+        $ratio = "<font color=" . get_ratio_color($ratio) . ">$ratio</font>";
+        $uploaded = mksize($arr["uploaded"]);
+        $downloaded = mksize($arr["downloaded"]);
 
-print("<tr><td align=left><a href=account-details.php?id=$arr[id]><b>$arr[username]</b></a>" .($arr["donated"] > 1 ? "<img src=/images/star.gif border=0 alt='Donor'>" : "")."</td>
-  <td align=center>$added</td>
-  <td align=center>$last_access</td>
-  <td align=center>$class</td>
-  <td align=center>$downloaded</td>
-  <td align=center>$uploaded</td>
-  <td align=center>$ratio</td>
-  <td align=center>$arr[modcomment]</td></tr>\n");
-}
+        $added = substr($arr['added'],0,10);
+        $last_access = substr($arr['last_access'],0,10);
+        $class = get_user_class_name($arr["class"]);
 
-print("</table>\n");
-print("<p>$pagemenu<br>$browsemenu</p>");
+        print("<tr><td align=left><a href=account-details.php?id=$arr[id]><b>$arr[username]</b></a>"
+            .($arr["donated"] > 1 ? "<img src=/images/star.gif border=0 alt='Donor'>" : "")."</td>
+            <td align=center>$added</td>
+            <td align=center>$last_access</td>
+            <td align=center>$class</td>
+            <td align=center>$downloaded</td>
+            <td align=center>$uploaded</td>
+            <td align=center>$ratio</td>
+            <td align=center>$arr[modcomment]</td></tr>\n");
+    }
 
-end_frame();
+    print("</table>\n");
+    print("<p>$pagemenu<br>$browsemenu</p>");
+
+    end_frame();
 }
 
 #======================================================================#

@@ -101,15 +101,20 @@ $secret = mksecret();
 // $wantpasshash = md5($wantpassword);
 $wantpasshash = password_hash($wantpassword, PASSWORD_DEFAULT);
 
-$ret = DB::executeUpdate('UPDATE users SET username = ?, password = ?, status = ?, editsecret = ?, secret = ? WHERE id = ' . $id,
-    [$wantusername, $wantpasshash, 'confirmed', '', $secret]
-);
-// todo: try catch
-if (!$ret) {
-if (mysql_errno() == 1062)
-barkmsg("Username already exists!");
-barkmsg("Database Update Failed");
-
+try {
+    $ret = DB::executeUpdate('
+        UPDATE users SET username = ?, real_name = ?, password = ?,
+            status = ?, editsecret = ?, secret = ?
+        WHERE id = ' . $id,
+        [$wantusername, $wantusername, $wantpasshash, 'confirmed', '', $secret]
+    );
+} catch (\Exception $e) {
+    trigger_error($e->getMessage(), E_USER_ERROR);
+    if ($e->getCode() === 1062) {
+        barkmsg("Username already exists!");
+    } else {
+        barkmsg("Database Update Failed");
+    }
 }
 
 // logincookie($id, $wantpasshash);
