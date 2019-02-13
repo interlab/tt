@@ -318,15 +318,17 @@ function mkglobal($vars)
     return 1;
 }
 
-function tr($x,$y,$noesc=0)
+function tr($x, $y, $noesc=0)
 {
-    if ($noesc)
+    if ($noesc) {
         $a = $y;
-    else {
+    } else {
         $a = h($y);
         $a = str_replace("\n", "<br>\n", $a);
     }
-    print("<tr><td class=\"heading\" valign=\"top\" align=\"right\">$x</td><td valign=\"top\" align=left>$a</td></tr>\n");
+    echo '
+        <tr><td class="heading" valign="top" align="right">'.$x.'</td>
+        <td valign="top" align=left>'.$a.'</td></tr>';
 }
 
 function validfilename($name)
@@ -337,6 +339,22 @@ function validfilename($name)
 function validemail($email)
 {
     return preg_match('/^[\w.-]+@([\w.-]+\.)+[a-z]{2,6}$/is', $email);
+}
+
+function validusername($username)
+{
+    if ($username == "") {
+        return false;
+    }
+
+    $allowedchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    for ($i = 0; $i < strlen($username); ++$i) {
+        if (strpos($allowedchars, $username[$i]) === false) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // secure vars
@@ -1129,7 +1147,7 @@ if ($MEMBERSONLY_WAIT) {
         $progressPerTorrent = 0;
         $iProgressbar = 0;
         while ($rowpb = $resProgressbar->fetch()) {
-            $progressPerTorrent += sprintf("%.2f", 100 * (1 - ($rowpb["to_go"] / $rowpb["size"])));    
+            $progressPerTorrent += 100 * (1 - ($rowpb["to_go"] / $rowpb["size"]));    
             $iProgressbar++;
         }
 

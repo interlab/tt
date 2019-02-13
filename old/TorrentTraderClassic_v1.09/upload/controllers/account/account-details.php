@@ -213,7 +213,8 @@ print("<BR><br><a href=account-inbox.php?receiver=$user[id]>" . $txt['ACCOUNT_SE
 <!--  -->
 </TD></TR></TABLE>
 <Br>
-		<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262><TR><TD width=100% valign=middle class=table_head height=30><B>Information:</B></TD></TR>
+		<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
+        <TR><TD width=100% valign=middle class=table_head height=30><B>Information:</B></TD></TR>
 		<TR><TD>
 <!--  -->
 			<table width=100% border=0 cellspacing=0 cellpadding=3>
@@ -269,9 +270,11 @@ print("<BR><br><a href=account-inbox.php?receiver=$user[id]>" . $txt['ACCOUNT_SE
       $s = "sad";
     else
       $s = "cry";
-    $sr = "<table border=0 cellspacing=0 cellpadding=0><tr><td class=embedded><font color=" . get_ratio_color($sr) . ">" . number_format($sr, 2) .
+    $sr = "<table border=0 cellspacing=0 cellpadding=0>
+    <tr><td class=embedded><font color=" . get_ratio_color($sr) . ">" . number_format($sr, 2) .
     "</font></td><td class=embedded>&nbsp;&nbsp;<img src=$SITEURL/images/smilies/$s.gif></td></tr></table>";
-    print("<tr><td style='vertical-align: middle'>" . $txt['RATIO'] . ": </td><td align=left valign=center style='padding-top: 1px; padding-bottom: 0px'>
+    print("<tr><td style='vertical-align: middle'>" . $txt['RATIO'] . ": </td>
+    <td align=left valign=center style='padding-top: 1px; padding-bottom: 0px'>
     $sr</td></tr>\n");
   }
   ?>
@@ -307,7 +310,8 @@ print("<tr><td class=rowhead>Invites: </td><td align=left>$user[invites]</a></td
 if (get_user_class() >= UC_JMODERATOR && $user['invited_by'] > 0 || $user["id"] == $CURUSER["id"] && $user['invited_by'] > 0)
 {
     $invited_by = DB::fetchAssoc('SELECT username FROM users WHERE id = {int:id} LIMIT 1', ['id' => (int) $user['invited_by']]);
-    print("<tr><td class=rowhead>Invited by: </td><td align=left><a href=account-details.php?id=$user[invited_by]>$invited_by[username]</a></td></tr>\n");
+    print("<tr><td class=rowhead>Invited by: </td>
+    <td align=left><a href=account-details.php?id=$user[invited_by]>$invited_by[username]</a></td></tr>\n");
 }
 if (get_user_class() >= UC_JMODERATOR && $user['invitees'] > 0 || $user["id"] == $CURUSER["id"] && $user['invitees'] > 0)
 {
@@ -338,7 +342,8 @@ if (get_user_class() >= UC_JMODERATOR && $user['invitees'] > 0 || $user["id"] ==
 // rated torrents
 if (get_user_class() >= UC_JMODERATOR) {
     if (!$_GET['ratings']) {
-        echo '<tr><td valign=top align=left>' . $txt['RATINGS'] . ': </td><td><a href="account-details.php?id=' . $id . '&amp;ratings=1#ratings">
+        echo '<tr><td valign=top align=left>' . $txt['RATINGS'] . ': </td>
+            <td><a href="account-details.php?id=' . $id . '&amp;ratings=1#ratings">
                 [See Rated Torrents]</a>
                 </td></tr>';
     } else {
@@ -423,37 +428,38 @@ if (get_user_class() >= UC_JMODERATOR && $CURUSER["class"] > $user["class"] || g
     <tr><td>Invites</td><td align=left><input type=text size=4 name=invites value="<?= $user["invites"] ?>"></tr>
     <tr><td>Class</td><td align=left><select name=class>
 <?php
- $maxclass = get_user_class();
-  for ($i = 0; $i < $maxclass; ++$i)
-  print("<option value=$i" . ($user["class"] == $i ? " selected" : "") . ">$prefix" . get_user_class_name($i) . "\n");
-  if (get_user_class() == UC_ADMINISTRATOR)
-	{
-		print("<option value=5>Administrator</option>");
-	}
-  print("</select></td></tr>\n");
+$maxclass = get_user_class();
+for ($i = 0; $i < $maxclass; ++$i) {
+    echo '<option value="'.$i.'"'. ($user["class"] == $i ? ' selected' : '') . '>' . get_user_class_name($i);
+}
+if (get_user_class() == UC_ADMINISTRATOR) {
+    echo '<option value="5">Administrator</option>';
+}
+print("</select></td></tr>\n");
 
-	$modcomment = h($user["modcomment"]);
-  print("<tr><td>US$&nbsp;Donated</td><td align=left><input type=text size=4 name=donated value=$user[donated]></tr>\n");
-  print("<tr><td>Password</td><td align=left><input type=password size=60 name=password value=\"$user[password]\"></tr>\n");
-  print("<tr><td>Change Password:</td><td align=left><input type=checkbox name=chgpasswd value='yes'/></td></tr>");
-  print("<tr><td>Mod Comment</td><td align=left><textarea cols=60 rows=8 name=modcomment>$modcomment</textarea></td></tr>\n");
-  print("<tr><td>Account:</td><td align=left><input name=enabled value=yes type=radio" . ($enabled ? " checked" : "") . 
-    ">Enabled <input name=enabled value=no type=radio" . (!$enabled ? " checked" : "") . ">Disabled</td></tr>\n");
-  print("<tr><td>Warned: </td><td align=left><input name=warned value=yes type=radio" . ($warned ? " checked" : "") . 
-    ">Yes <input name=warned value=no type=radio" . (!$warned ? " checked" : "") . ">No</td></tr>\n");
-  print("<tr><td>Forum Banned: </td><td align=left><input name=forumbanned value=yes type=radio" . ($forumbanned ? " checked" : "") 
-    . ">Yes <input name=forumbanned value=no type=radio" . (!$forumbanned ? " checked" : "") . ">No</td></tr>\n");
-  print("<tr><td colspan=2><input type=submit class=btn value='Okay'></td></tr>\n");
-  print("</table>\n");
-  print("</form>\n");
+$modcomment = h($user["modcomment"]);
+print("<tr><td>US$&nbsp;Donated</td><td align=left><input type=text size=4 name=donated value=$user[donated]></tr>\n");
+print("<tr><td>Password</td><td align=left><input type=password size=60 name=password value=\"$user[password]\"></tr>\n");
+print("<tr><td>Change Password:</td><td align=left><input type=checkbox name=chgpasswd value='yes'/></td></tr>");
+print("<tr><td>Mod Comment</td><td align=left><textarea cols=60 rows=8 name=modcomment>$modcomment</textarea></td></tr>\n");
+print("<tr><td>Account:</td><td align=left><input name=enabled value=yes type=radio" . ($enabled ? " checked" : "") . 
+">Enabled <input name=enabled value=no type=radio" . (!$enabled ? " checked" : "") . ">Disabled</td></tr>\n");
+print("<tr><td>Warned: </td><td align=left><input name=warned value=yes type=radio" . ($warned ? " checked" : "") . 
+">Yes <input name=warned value=no type=radio" . (!$warned ? " checked" : "") . ">No</td></tr>\n");
+print("<tr><td>Forum Banned: </td><td align=left><input name=forumbanned value=yes type=radio" . ($forumbanned ? " checked" : "") 
+. ">Yes <input name=forumbanned value=no type=radio" . (!$forumbanned ? " checked" : "") . ">No</td></tr>\n");
+print("<tr><td colspan=2><input type=submit class=btn value='Okay'></td></tr>
+</table>
+</form>
 
-  print("<BR><center><a href=admin.php?act=deluser&id=".$user["id"].">DELETE ACCOUNT</a><BR>(There will be <b>NO</b> further confirmation)</center>");
+<BR><center><a href=admin.php?act=deluser&id=".$user["id"].">DELETE ACCOUNT</a>
+<BR>(There will be <b>NO</b> further confirmation)</center>");
 
-  end_frame();
+end_frame();
 
-  echo "<br /><br />";
+echo "<br><br>";
 
-    begin_frame("IP Ban", 'center');
+begin_frame("IP Ban", 'center');
 ?>
 	<table border=0 cellspacing=0 cellpadding=3>
 	<form method=post action="admin.php?act=bans&do=add">

@@ -56,16 +56,8 @@ function validip($ip)
 	else return false;
 }
 
-function validusername($username) {
-    $allowedchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    for ($i = 0; $i < strlen($username); ++$i)
-      if (strpos($allowedchars, $username[$i]) === false)
-        return false;
-      return true;
-  }
 
-
-  function begin_frame($caption='-', $align='justify')
+function begin_frame($caption='-', $align='justify')
 {
 
 	print("<br /><TABLE width=100% border=0 align=center>\n"

@@ -43,21 +43,6 @@ function barkmsg($msg)
     exit;
 }
 
-function validusername($username)
-{
-    if ($username == "")
-        return false;
-
-    // The following characters are allowed in user names
-    $allowedchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-    for ($i = 0; $i < strlen($username); ++$i)
-    if (strpos($allowedchars, $username[$i]) === false)
-    return false;
-
-    return true;
-}
-
 function isportopen($port)
 {
     global $HTTP_SERVER_VARS;

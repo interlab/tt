@@ -47,15 +47,6 @@ $age = (int) $age;
 
 if ($wantusername != "") {
     $message == "";
-    function validusername($username)
-    {
-        $allowedchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        for ($i = 0; $i < strlen($username); ++$i)
-            if (strpos($allowedchars, $username[$i]) === false)
-                return false;
-
-        return true;
-    }
 
     if (empty($wantpassword) || empty($email))
         $message = "Don't leave any required field blank.";

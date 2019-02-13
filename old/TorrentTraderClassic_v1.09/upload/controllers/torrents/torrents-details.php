@@ -350,11 +350,15 @@ $resProgressbar = DB::query('
 $progressPerTorrent = 0;
 $iProgressbar = 0;
 while ($rowProgressbar = $resProgressbar->fetch()) {
-    $progressPerTorrent += sprintf("%.2f", 100 * (1 - ($rowProgressbar["to_go"] / $rowProgressbar["size"])));
+    $rowProgressbar['to_go'] = (int) $rowProgressbar['to_go'];
+    $rowProgressbar['size'] = (int) $rowProgressbar['size'];
+    // $progressPerTorrent += sprintf("%.2f", 100 * (1 - ($rowProgressbar['to_go'] / $rowProgressbar["size"])));
+    $progressPerTorrent += 100 * (1 - ($rowProgressbar['to_go'] / $rowProgressbar["size"]));
     $iProgressbar++;
 }
-if ($iProgressbar == 0) 
+if (! $iProgressbar) {
     $iProgressbar = 1;
+}
 $progressTotal = sprintf("%.2f", $progressPerTorrent / $iProgressbar);
 // end progress bar
 

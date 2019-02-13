@@ -9,7 +9,7 @@ loggedinorreturn();
 global $CURUSER, $tzs;
 
 if (!empty($_POST['submit'])) {
-    $set = [];
+    $errors = [];
 
     $updateset = [];
     $changedemail = $newsecret = 0;
@@ -18,18 +18,18 @@ if (!empty($_POST['submit'])) {
     $originalpassword = $_POST['originalpassword'] ?? '';
     $passagain = $_POST['passagain'] ?? '';
     $email = $_POST['email'] ?? '';
-    
+
     // $query = '';
     $params = [];
 
     if ($chpassword != '') {
         // if ($CURUSER["password"] != md5($originalpassword))
         if (! password_verify($originalpassword, $CURUSER["password"]))
-            $message = $txt['THATS_NOT_YOUR_ORIGNAL_PASS'];
+            $errors[] = $txt['THATS_NOT_YOUR_ORIGNAL_PASS'];
         if (strlen($chpassword) < 6)
-            $message = $txt['PASS_TO_SHORT'];
+            $errors[] = $txt['PASS_TO_SHORT'];
         if ($chpassword != $passagain)
-            $message = $txt['PASSWORDS_NOT_MATCH'];
+            $errors[] = $txt['PASSWORDS_NOT_MATCH'];
         // $chpassword = md5($chpassword);
         $chpassword = password_hash($chpassword, PASSWORD_DEFAULT);
         $params['password'] = $chpassword;
@@ -37,9 +37,31 @@ if (!empty($_POST['submit'])) {
     }
 
     if ($email != $CURUSER["email"]) {
-        if (!validemail($email))
-            $message = $txt['NOT_VAILD_EMAIL'];
-        $changedemail = 1;
+        if (! validemail($email)) {
+            $errors[] = $txt['NOT_VAILD_EMAIL'];
+        } else {
+            // check if email addy is already in use
+            $a = DB::fetchColumn('select count(*) from users where email = ?', [$email]);
+            if ($a) {
+                $errors[] = "The e-mail address $email is already in use.";
+            }
+            $changedemail = 1;
+        }
+    }
+
+    $username = trim($_POST['username'] ?? '');
+    if ($username != $CURUSER["username"]) {
+        if (! validusername($username)) {
+            $errors[] = "Invalid username.";
+        } else {
+            $a = DB::fetchColumn('
+                SELECT count(*) from users where username = ?',
+                [$username]
+            );
+            if ($a) {
+                $errors[] = "The username $username is already in use.";
+            }
+        }
     }
 
     $acceptpms = $_POST["acceptpms"];
@@ -75,16 +97,17 @@ if (!empty($_POST['submit'])) {
         $params['language'] = $language;
     if (is_valid_id($country))
         $params['country'] = $country;
-    
+
     $params['tzoffset'] = $tzoffset;
     if ($acceptpms == "yes")
         $acceptpms = 'yes';
     else
         $acceptpms = 'no';
-    
+
     if (is_valid_id($age))
         $params['age'] = $age;
 
+    $params['username'] = $username;
     $params['acceptpms'] = $acceptpms;
     $params['commentpm'] = $commentpm;
     $params['notifs'] = $notifs;
@@ -96,10 +119,7 @@ if (!empty($_POST['submit'])) {
     $params['about_myself'] = $about_myself;
     $params['title'] = $title;
 
-  /* ****** */
-
-    if (empty($_POST['message'])) { // ???
-
+    if (empty($errors)) {
         if ($newsecret) {
             $sec = mksecret();
             $params['secret'] = $sec;
@@ -129,22 +149,30 @@ Your new email address will appear in your profile after you do this. Otherwise
 your profile will remain unchanged.
 EOD;
 
-        mail($email, "$SITENAME profile change confirmation", $body, "From: $SITEEMAIL", "-f$SITEEMAIL");
-        $mailsent = 1;
+            mail($email, "$SITENAME profile change confirmation", $body, "From: $SITEEMAIL", "-f$SITEEMAIL");
+            $mailsent = 1;
+        }
+        DB::update('users', $params, ['id' => $CURUSER['id']]);
+        $edited = 1;
+        $message = 'Account has been updated';
+        header("Location: account.php?edited=$edited&message=$message&mailsent=$mailsent");
+        die;
     }
-    DB::update('users', $params, ['id' => $CURUSER['id']]);
-    $edited = 1;
-  }
-  header("Location: account.php?edited=$edited&message=$message&mailsent=$mailsent");
-  die;
 }
 
-$messages = DB::fetchColumn("SELECT COUNT(*) FROM messages WHERE receiver=" . $CURUSER["id"]);
-
+$messages = numUserMsg();
 $unread = numUnreadUserMsg();
 
 stdhead("User CP");
 begin_frame($txt['YOUR_SETTINGS']);
+
+if (! empty($errors)) {
+    echo '<h3>Errors:</h3><ul>';
+    foreach ($errors as $error) {
+        echo '<li>', $error, '</li>';
+    }
+    echo '</ul>';
+}
 
 ?>
 <form method=post action=account-settings.php>
@@ -157,7 +185,7 @@ $stylesheets = Helper::getStylesheets();
 $countries = "<option value=0>----</option>\n";
 $res = DB::query("SELECT id, name from countries ORDER BY name");
 while ($ct_a = $res->fetch()) {
-  $countries .= "<option value=$ct_a[id]" . ($CURUSER["country"] == $ct_a['id'] ? " selected" : '') . ">$ct_a[name]</option>\n";
+    $countries .= "<option value=$ct_a[id]" . ($CURUSER["country"] == $ct_a['id'] ? " selected" : '') . ">$ct_a[name]</option>\n";
 }
 
 ksort($tzs);
@@ -171,6 +199,9 @@ foreach ($tzs as $key => $val) {
     }
 }
 
+tr('Real username', $CURUSER['real_name'], 1);
+// todo: ajax check name on dublicate in db
+tr('Showing username', '<input type="text" name="username" value="'.$CURUSER['username'].'">', 1);
 
 $acceptpms = $CURUSER["acceptpms"] == "yes";
 tr($txt['ACCOUNT_ACCEPTPM'], "<input type=radio name=acceptpms" . ($acceptpms ? " checked" : '') .
@@ -178,35 +209,37 @@ tr($txt['ACCOUNT_ACCEPTPM'], "<input type=radio name=acceptpms" . ($acceptpms ? 
   ($acceptpms ? '' : " checked") . " value=no>" . $txt['ACCOUNT_PMSTAFFONLY'], 1);
 
 $gender = "<option value=Male" . ($CURUSER["gender"] == 'Male' ? " selected" : '') . ">" . $txt['MALE'] . "</option>\n"
-	 ."<option value=Female" . ($CURUSER["gender"] == 'Female' ? " selected" : '') . ">" . $txt['FEMALE'] . "</option>\n";
+     ."<option value=Female" . ($CURUSER["gender"] == 'Female' ? " selected" : '') . ">" . $txt['FEMALE'] . "</option>\n";
 
 $torrentnotif = "<input type=checkbox checked>" . $txt['ACCOUNT_NOTIFY_WHEN_TORRENT_UPLOADED_IN'] . ":<br>";
-$res = DB::query("SELECT id,name FROM categories ORDER by sort_index, name") or sqlerr();
-$i = 0;
+$res = DB::query("SELECT id,name FROM categories ORDER by sort_index, name");
+
 while ($a = $res->fetch()) {
-    $torrentnotif .= "&nbsp;&nbsp;&nbsp;&nbsp;<input type=checkbox name=cat$a[id]" . (strpos($CURUSER['notifs'], "[cat$a[id]]") !== false ? " checked" : '') .
+    $torrentnotif .= "&nbsp;&nbsp;&nbsp;&nbsp;<input type=checkbox name=cat$a[id]"
+        . (strpos($CURUSER['notifs'], "[cat$a[id]]") !== false ? " checked" : '') .
         " value='yes'>$a[name]<br>\n";
-    ++$i;
 }
 
 function priv($name, $descr)
 {
     global $CURUSER;
 
-	if ($CURUSER["privacy"] == $name)
-		return "<input type=\"radio\" name=\"privacy\" value=\"$name\" checked=\"checked\" /> $descr";
+    if ($CURUSER["privacy"] == $name) {
+        return '<input type="radio" name="privacy" value="'.$name.'" checked="checked"> ' . $descr;
+    }
 
-	return "<input type=\"radio\" name=\"privacy\" value=\"$name\" /> $descr";
+    return '<input type="radio" name="privacy" value="'.$name.'"> '.$descr;
 }
 
-tr($txt['ACCOUNT_PRIVACY_LV'],  priv("normal", $txt['NORMAL']) . " " . priv("low", $txt['LOW']) . " " . 
-    priv("strong", '' . $txt['STRONG'] . " <br>(Stong level will hide your ratio and make your uploads anonymous)"), 1);
+tr($txt['ACCOUNT_PRIVACY_LV'],  priv("normal", $txt['NORMAL']) . " " . priv("low", $txt['LOW']) . " " .
+    priv("strong", $txt['STRONG'] . " <br>(Stong level will hide your ratio and make your uploads anonymous)"), 1);
 
-print("<tr><td align=right>PM on Comments</td><td align=left><input type=radio name=commentpm" . 
+print("<tr><td align=right>PM on Comments</td><td align=left><input type=radio name=commentpm" .
     ($CURUSER["commentpm"] == "yes" ? " checked" : '') . " value=yes>yes<input type=radio name=commentpm" .
     ($CURUSER["commentpm"] == "no" ? " checked" : '') . " value=no>no");
 
-tr($txt['ACCOUNT_EMAIL_NOTIFICATION'], "<input type=checkbox name=pmnotif" . (strpos($CURUSER['notifs'], "[pm]") !== false ? " checked" : '') .
+tr($txt['ACCOUNT_EMAIL_NOTIFICATION'], "<input type=checkbox name=pmnotif"
+    . (strpos($CURUSER['notifs'], "[pm]") !== false ? " checked" : '') .
    " value=yes>" . $txt['ACCOUNT_PM_NOTIFY_ME'] . "<br>\n" .
    $torrentnotif, 1);
 

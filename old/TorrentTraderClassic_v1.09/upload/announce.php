@@ -10,9 +10,18 @@
 // SUPPORT FOR OLD "WHO COMPLETED" MOD ON LINE 409-413 
 //
 //
-require_once("backend/config.php");
+require_once 'backend/config.php';
 
-//START FUNCTIONS
+ignore_user_abort(1);
+
+
+const TT_EXCEPTIONS_FILE = __DIR__ . '/errors/unknown-exceptions.txt';
+const TT_ERRORS_FILE = __DIR__ . '/errors/unknown-errors.txt';
+const TT_DB_ERRORS_FILE = __DIR__ . '/errors/db-errors.txt';
+require_once __DIR__ . '/helpers/errors-helper.php';
+set_exception_handler('unknown_exception_handler');
+set_error_handler('unknown_error_handler');
+
 
 function db_run($db, $sql, array $params=[])
 {
@@ -20,7 +29,7 @@ function db_run($db, $sql, array $params=[])
         $q = $db->prepare($sql);
         $q->execute($params);
     } catch (PDOException $e) {
-        err('DB Error! #' . __LINE__, $e);
+        db_error('DB Error! #' . __LINE__, $e);
     }
 
     return $q;
@@ -94,7 +103,7 @@ function dbconn()
         $options = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            // PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
             PDO::ATTR_EMULATE_PREPARES => 0,
         ];
         $db = new PDO($db_type . ':host=' . $db_server . ';dbname=' . $db_name,
@@ -102,8 +111,7 @@ function dbconn()
         );
         unset($options);
     } catch (PDOException $e) {
-        err('Houston, we have a problem. #' . __LINE__, $e);
-        # die('<br>Error!: ' . $e->getMessage() . '<br>');
+        db_error('Houston, we have a problem. #' . __LINE__, $e);
     }
 
     return $db;
@@ -313,7 +321,7 @@ $q->closeCursor();
 if (! $torrent) {
     err("torrent not found on this tracker - hash = " . $info_hash);
 }
-$torrent = array_map('intval', $torrent);
+// $torrent = array_map('intval', $torrent);
 if ($torrent['banned'] == $is_ban) {
     err('Torrent is banned!');
 }
@@ -469,7 +477,7 @@ if (! isset($self)) {
 
 $updateset = [];
 
-////////////////// NOW WE DO THE TRACKER EVENT UPDATES ///////////////////
+// NOW WE DO THE TRACKER EVENT UPDATES
 
 // UPDATE "STOPPED" EVENT
 if ($event == "stopped") {
@@ -563,7 +571,7 @@ if ($event == "stopped") {
             [$connectable, $torrentid, $peer_id, $ip, $port, $uploaded, $downloaded,
                 $left, date('Y-m-d H:i:s'), date('Y-m-d H:i:s'), $seeder, $userid, $agent]
         );
-		if ($ret->lastInsertId()) {
+		if ($db->lastInsertId()) {
 			if ($seeder == "yes")
 				$updateset[] = "seeders = seeders + 1";
 			else
@@ -571,7 +579,7 @@ if ($event == "stopped") {
         }
     }
 }
-//////////////////	END TRACKER EVENT UPDATES ///////////////////
+// END TRACKER EVENT UPDATES
 
 // SEEDED, LETS MAKE IT VISIBLE THEN
 if ($seeder == "yes") {
@@ -581,8 +589,9 @@ if ($seeder == "yes") {
 }
 
 // NOW WE UPDATE THE TORRENT AS PER ABOVE
-if (count($updateset))
-	db_run($db, "UPDATE torrents SET " . join(",", $updateset) . " WHERE id = $torrentid");
+if (count($updateset)) {
+	db_run($db, 'UPDATE torrents SET ' . join(',', $updateset) . ' WHERE id = '.$torrentid);
+}
 
 // NOW BENC THE DATA AND SEND TO CLIENT???
 benc_resp_raw($resp);
