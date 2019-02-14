@@ -28,9 +28,9 @@ $GLOBALS['ttversion'] = '1.09';
 
 function local_user()
 {
-  global $HTTP_SERVER_VARS;
+    global $HTTP_SERVER_VARS;
 
-  return $HTTP_SERVER_VARS["SERVER_ADDR"] == $HTTP_SERVER_VARS["REMOTE_ADDR"];
+    return $HTTP_SERVER_VARS["SERVER_ADDR"] == $HTTP_SERVER_VARS["REMOTE_ADDR"];
 }
 
 require_once("config.php");
@@ -53,8 +53,7 @@ $invite_timeout = 86400 * 3;
 $invites = 3000;
 
 // PHP5 with register_long_arrays off?
-if (!isset($HTTP_POST_VARS) && isset($_POST))
-{
+if (!isset($HTTP_POST_VARS) && isset($_POST)) {
     $HTTP_POST_VARS = $_POST;
     $HTTP_GET_VARS = $_GET;
     $HTTP_SERVER_VARS = $_SERVER;
@@ -71,6 +70,7 @@ function h($str)
 function getmicrotime()
 {
     [$usec, $sec] = explode(' ', microtime());
+
     return ((float)$usec + (float)$sec);
 }
 
@@ -87,10 +87,10 @@ function addJsFile($file)
 // IP Validation
 function validip($ip)
 {
-	if (!empty($ip) && $ip == long2ip(ip2long($ip))) {
-		// reserved IANA IPv4 addresses
-		// http://www.iana.org/assignments/ipv4-address-space
-		$reserved_ips = [
+    if (!empty($ip) && $ip == long2ip(ip2long($ip))) {
+        // reserved IANA IPv4 addresses
+        // http://www.iana.org/assignments/ipv4-address-space
+        $reserved_ips = [
             array('0.0.0.0','2.255.255.255'),
             array('10.0.0.0','10.255.255.255'),
             array('127.0.0.0','127.255.255.255'),
@@ -99,16 +99,17 @@ function validip($ip)
             array('192.0.2.0','192.0.2.255'),
             array('192.168.0.0','192.168.255.255'),
             array('255.255.255.0','255.255.255.255')
-		];
+        ];
 
-		foreach ($reserved_ips as $r) {
+        foreach ($reserved_ips as $r) {
             $min = ip2long($r[0]);
             $max = ip2long($r[1]);
             if ((ip2long($ip) >= $min) && (ip2long($ip) <= $max)) return false;
-		}
-		return true;
-	}
-	else return false;
+        }
+
+        return true;
+    }
+    else return false;
 }
 
 // Patched function to detect REAL IP address if it's valid
@@ -299,7 +300,7 @@ function mkprettytime($s)
     if ($t['hour'])
         return sprintf('%d:%02d:%02d', $t['hour'], $t['min'], $t['sec']);
 //    if ($t['min'])
-        return sprintf('%d:%02d', $t['min'], $t['sec']);
+    return sprintf('%d:%02d', $t['min'], $t['sec']);
 //    return $t['sec'] . ' secs';
 }
 
@@ -360,7 +361,7 @@ function validusername($username)
 // secure vars
 function sqlesc($x)
 {
-	$x = str_replace("'", "'", $x);
+    $x = str_replace("'", "'", $x);
     $x = str_replace("--", "--", $x);
     $x = str_replace("UPDATE", "", $x);
     $x = str_replace("DELETE", "", $x);
@@ -399,8 +400,7 @@ function urlparse($m)
 
 function parsedescr($d, $html)
 {
-    if (!$html)
-    {
+    if (!$html) {
       $d = h($d);
       $d = str_replace("\n", "\n<br>", $d);
     }
@@ -529,7 +529,7 @@ function deletetorrent($id)
     global $torrent_dir;
 
     DB::query('DELETE FROM torrents WHERE id = ' . $id);
-	DB::query('DELETE FROM snatched WHERE torrentid = ' . $id);
+    DB::query('DELETE FROM snatched WHERE torrentid = ' . $id);
     foreach(explode('.', 'peers.files.comments.ratings') as $x) {
         DB::query('DELETE FROM ' . $x . ' WHERE torrent = ' . $id);
     }
@@ -704,8 +704,8 @@ function commenttable($rows)
 
         $posterlink = '<a href="/account-details.php?id='.$row['user'].'"><b>'.$postername.'</b></a>';
         if ($privacylevel == "strong") {
-			if (get_user_class() >= UC_JMODERATOR) {
-				print("<td valign=top width=150 align=left class=\"tt-comment-user\"><center>".$posterlink."
+            if (get_user_class() >= UC_JMODERATOR) {
+                print("<td valign=top width=150 align=left class=\"tt-comment-user\"><center>".$posterlink."
                     <br><i>$title</i></center>
                     <img width=80 height=80 src=$avatar>
                     Uploaded: $useruploaded
@@ -721,8 +721,8 @@ function commenttable($rows)
                     Forum Posts: ' . $forumposts .'
                     <br>Comments Posted: ' . $commentposts . '<br><br>
                     </td>';
-			}
-		} else {
+            }
+        } else {
             print("<td valign=top width=150 align=left class=\"tt-comment-user\"><center>".$posterlink."
                 <br><i>$title</i></center>
                 <img width=80 height=80 src=$avatar>
@@ -736,13 +736,13 @@ function commenttable($rows)
 
         // echo '</tr><tr valign=top>';
         echo '<td><div class="tt-comment-table-date">';
-		if ($CURUSER['id'] === $row["user"] || get_user_class() >= UC_JMODERATOR) {
-			echo 'Posted: ' . $row["added"] . ' - <a href="torrents-comment.php?cid=' .
+        if ($CURUSER['id'] === $row["user"] || get_user_class() >= UC_JMODERATOR) {
+            echo 'Posted: ' . $row["added"] . ' - <a href="torrents-comment.php?cid=' .
                 $row["id"] . '&sa=edit">[Edit]</a> - <a href="torrents-comment.php?cid=' . $row["id"] .
                 '&sa=delete">[Delete]</a>';
-		} else {
-				print("Posted: " . $row["added"]);
-		}
+        } else {
+            print("Posted: " . $row["added"]);
+        }
         echo '</div>';
 
         echo '<div class="text tt-comment-table-text">' . format_comment($row['text']) . '<br><br>';
@@ -893,7 +893,7 @@ function updateUserLastBrowse()
 
 function stdfoot()
 {
-  require_once TT_THEMES_DIR . '/' . $GLOBALS['ss_uri'] . '/footer.php';
+    require_once TT_THEMES_DIR . '/' . $GLOBALS['ss_uri'] . '/footer.php';
 }
 
 function get_percent_completed_image($p)
@@ -923,6 +923,26 @@ function get_percent_completed_image($p)
         $progress ."<img src=\"" . $GLOBALS['SITEURL'] . "/images/bar_right.gif\" />";
 }
 
+// l - leechers, s - seeders, r - ratio
+function health($l = 0, $s = 0)
+{
+    if ((!$l && !$s) || ($l > 0 && !$s))    return 0;
+    elseif ($s > $l)                        return 10;
+    else {
+        $r = $s / $l * 100;
+        if ($r > 0 && $r < 15)              return 1;
+        elseif ($r >= 15 && $r < 25)        return 2;
+        elseif ($r >= 25 && $r < 35)        return 3;
+        elseif ($r >= 35 && $r < 45)        return 4;
+        elseif ($r >= 45 && $r < 55)        return 5;
+        elseif ($r >= 55 && $r < 65)        return 6;
+        elseif ($r >= 65 && $r < 75)        return 7;
+        elseif ($r >= 75 && $r < 85)        return 8;
+        elseif ($r >= 85 && $r < 95)        return 9;
+        else                                return 10;
+    }
+}
+
 function torrenttable($res, $variant = "index")
 {
     //
@@ -935,8 +955,8 @@ function torrenttable($res, $variant = "index")
 
     // ratio wait code
     if ($CURUSER["class"] < UC_VIP && $CURUSER['donated'] == 0) {
-	$gigs = $CURUSER["uploaded"] / (1024**3);
-	$ratio = (($CURUSER["downloaded"] > 0) ? ($CURUSER["uploaded"] / $CURUSER["downloaded"]) : 0);
+        $gigs = $CURUSER["uploaded"] / (1024**3);
+        $ratio = (($CURUSER["downloaded"] > 0) ? ($CURUSER["uploaded"] / $CURUSER["downloaded"]) : 0);
         if ($ratio < 0 || $gigs < 0) $wait = $WAITA;
         elseif ($ratio < $RATIOA || $gigs < $GIGSA) $wait = $WAITA;
         elseif ($ratio < $RATIOB || $gigs < $GIGSB) $wait = $WAITB;
@@ -1004,39 +1024,38 @@ if ($MEMBERSONLY_WAIT) {
     }
 }
 ?>
-<td class=ttable_head><a href="?<?= $oldlink; ?>sort=3&type=<?= $link3; ?>"><?= $txt['COMMENTS'] ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink ?>sort=3&type=<?= $link3; ?>"><?= $txt['COMMENTS'] ?></a></td>
 <!-- <td class=ttable_head><?= $txt['RATINGS'] ?></td> -->
-<td class=ttable_head><a href="?<?= $oldlink;?>sort=4&type=<?= $link4; ?>"><?= $txt['SIZE'] ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink ?>sort=4&type=<?= $link4; ?>"><?= $txt['SIZE'] ?></a></td>
 <!-- <td class=ttable_head><?= $txt['FILES'] ?></td> -->
-<td class=ttable_head><a href="?<?= $oldlink;?>sort=5&type=<?= $link5; ?>"><?= $txt['COMPLETED'] ?></a></td>
-<td class=ttable_head><a href="?<?= $oldlink;?>sort=6&type=<?= $link6; ?>"><?= $txt['SEEDS'] ?></a></td>
-<td class=ttable_head><a href="?<?= $oldlink;?>sort=7&type=<?= $link7; ?>"><?= $txt['LEECH'] ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink ?>sort=5&type=<?= $link5; ?>"><?= $txt['COMPLETED'] ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink ?>sort=6&type=<?= $link6; ?>"><?= $txt['SEEDS'] ?></a></td>
+<td class=ttable_head><a href="?<?= $oldlink ?>sort=7&type=<?= $link7; ?>"><?= $txt['LEECH'] ?></a></td>
 <td class=ttable_head><?= $txt['HEALTH'] ?></td>
 
 <?php
-	print("</tr>\n");
+    print("</tr>\n");
 
-	while ($row = $res->fetch()) {
-            $id = $row["id"];
-            print("<tr>\n");
+    while ($row = $res->fetch()) {
+        $id = $row["id"];
+        print("<tr>\n");
 
-            print("<td class=ttable_col1 align=center>");
-            if (isset($row["cat_name"])) {
-                print("<a href=\"browse.php?cat=" . $row["category"] . "\">");
-                if (isset($row["cat_pic"]) && $row["cat_pic"] != "") {
-                    echo '<img border="0" src="' . $GLOBALS['SITEURL'] .
-                        '/images/categories/' . $row["cat_pic"] . '" alt="' . $row["cat_name"] . '">';
-                } else {
-                    print($row["cat_name"]);
-                }
-                print("</a>");
+        print("<td class=ttable_col1 align=center>");
+        if (isset($row["cat_name"])) {
+            print("<a href=\"browse.php?cat=" . $row["category"] . "\">");
+            if (isset($row["cat_pic"]) && $row["cat_pic"] != "") {
+                echo '<img border="0" src="' . $GLOBALS['SITEURL'] .
+                    '/images/categories/' . $row["cat_pic"] . '" alt="' . $row["cat_name"] . '">';
+            } else {
+                print($row["cat_name"]);
             }
-            else {
-                print("-");
-            }
-            print("</td>\n");
+            print("</a>");
+        } else {
+            print("-");
+        }
+        print("</td>\n");
 
-            // MODIFICATION TO DISPLAY ONLY x FIRST CHARACTERS IN TORRENT NAME !
+        // MODIFICATION TO DISPLAY ONLY x FIRST CHARACTERS IN TORRENT NAME !
 
         $smallname = substr(h($row["name"]), 0, $MAXDISPLAYLENGTH);
         if ($smallname != h($row["name"])) {
@@ -1077,26 +1096,26 @@ if ($MEMBERSONLY_WAIT) {
         }
 
         if ($variant == "mytorrents") {
-                print("<td class=ttable_colx align=center>");
-                if ($row["visible"] == "no")
-                    print("NO");
-                else
-                    print("YES");
-                print("</td>\n");
+            print("<td class=ttable_colx align=center>");
+            if ($row["visible"] == "no")
+                print("NO");
+            else
+                print("YES");
+            print("</td>\n");
         }
 
         if ($variant == "mytorrents") {
-                print("<td class=ttable_colx align=center>");
-                if ($row["banned"] == "no")
-                    print("NO");
-                else
-                    print("YES");
-                print("</td>\n");
+            print("<td class=ttable_colx align=center>");
+            if ($row["banned"] == "no")
+                print("NO");
+            else
+                print("YES");
+            print("</td>\n");
         }
 
         // START RATIO WAIT HACK
-        if ($MEMBERSONLY_WAIT){
-            if ($wait)	{
+        if ($MEMBERSONLY_WAIT) {
+            if ($wait) {
                 $elapsed = floor((gmtime() - strtotime($row["added"])) / 3600);
                 if ($elapsed < $wait) {
                     $color = dechex(floor(127*($wait - $elapsed)/48 + 128) * 65536);
@@ -1110,10 +1129,10 @@ if ($MEMBERSONLY_WAIT) {
         }
         // END RATIO WAIT HACK
 
-	print("<td class=ttable_col1 align=center><font size=1 face=Verdana><a href=torrents-comment.php?id=$id>" .
-            $row["comments"] . "</a></td>\n");
+        print("<td class=ttable_col1 align=center><font size=1 face=Verdana><a href=torrents-comment.php?id=$id>" .
+                $row["comments"] . "</a></td>\n");
 
-	print("<td class=ttable_col2 align=center><font size=1 face=Verdana>" . mksize($row["size"]) . "</td>\n");
+        print("<td class=ttable_col2 align=center><font size=1 face=Verdana>" . mksize($row["size"]) . "</td>\n");
 
         print("<td class=ttable_col1 align=center>" . $row["times_completed"] . "</td>\n");
 
@@ -1122,44 +1141,24 @@ if ($MEMBERSONLY_WAIT) {
                 print("<td class=ttable_col2 align=center><b><font color=green><B>" . $row["seeders"] . "</b></td>\n");
             else
                 print("<td class=ttable_col2 align=center><b><font color=green><B>" . $row["seeders"] . "</b></td>\n");
-        }
-        else {
+        } else {
             print("<td class=ttable_col2 align=center><font color=green><B>" . $row["seeders"] . "</b></td>\n");
         }
 
         if ($row["leechers"]) {
-                if ($variant == "index")
-                    print("<td class=ttable_col1 align=center><font color=red><b>" . $row["leechers"] . "</b></td>\n");
-                else
-                    print("<td class=ttable_col1 align=center><font color=red><b>" . $row["leechers"] . "</b></td>\n");
+            if ($variant == "index")
+                print("<td class=ttable_col1 align=center><font color=red><b>" . $row["leechers"] . "</b></td>\n");
+            else
+                print("<td class=ttable_col1 align=center><font color=red><b>" . $row["leechers"] . "</b></td>\n");
         } else {
             print("<td class=ttable_col1 align=center><font color=red><B>" . $row["leechers"] . "</b></td>\n");
         }
 
-        // Progressbar Mod
-        $seedersProgressbar = [];
-        $leechersProgressbar = [];
-        $resProgressbar = DB::query('
-            SELECT p.seeder, p.to_go, t.size
-            FROM torrents AS t
-                LEFT JOIN peers AS p ON t.id = p.torrent
-            WHERE p.torrent = ' . $id);
-        $progressPerTorrent = 0;
-        $iProgressbar = 0;
-        while ($rowpb = $resProgressbar->fetch()) {
-            $progressPerTorrent += 100 * (1 - ($rowpb["to_go"] / $rowpb["size"]));    
-            $iProgressbar++;
-        }
+        $progressTotal = health($row["leechers"], $row["seeders"]) * 10;
+        $picProgress = get_percent_completed_image($progressTotal)." (".$progressTotal."%)";
+        print("<td class=ttable_col2 align=left>" . $picProgress . "</td>
 
-        if (! $iProgressbar) {
-            $iProgressbar = 1;
-        }
-        $progressTotal = sprintf("%.2f", $progressPerTorrent / $iProgressbar);
-        $picProgress = get_percent_completed_image(floor($progressTotal))." (".round($progressTotal)."%)";
-        print("<td class=ttable_col2 align=left>$picProgress</td>\n");
-        // End of modification
-
-        print("</tr>
+        </tr>
             <tr><td class=alt1 colspan=11><div id=\"descr$id\" style=\"margin-left: 70px; display: none\">
             <table width=97% border=0 cellspacing=0 cellpadding=0>
             <tr><td><b>Date Added:</b></td>
@@ -1192,31 +1191,20 @@ if ($MEMBERSONLY_WAIT) {
         } else {
             // working fine
             echo '<font color=#008000><b>GOOD</b></font>- This release is active (<b>' . $row['seeders'] . '</b> seeds and <b>' .
-        $row['leechers'] . '</b> leechers) and should download within a few hours.';
+                $row['leechers'] . '</b> leechers) and should download within a few hours.';
         }
 
-	// speed mod
-        // todo: subquery
-	$rowTmp = DB::fetchArray("
-            SELECT seeders, leechers
-            FROM torrents
-            WHERE visible = 'yes'
-                AND id = $id
-            ORDER BY added DESC
-            LIMIT 15");
-
-	[$seedersTmp, $leechersTmp] = $rowTmp ? $rowTmp : [0, 0];
-
-	if ($seedersTmp && $leechersTmp) {
-            $a = DB::fetchAssoc("
+        // speed mod
+        // subquery
+        if ($row['seeders'] && $row['leechers']) {
+            $a = DB::fetchColumn('
                 SELECT (t.size * t.times_completed + SUM(p.downloaded)) / (UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(added)) AS totalspeed
                 FROM torrents AS t
                     LEFT JOIN peers AS p ON t.id = p.torrent
-                WHERE p.seeder = 'no'
-                AND p.torrent = '$id'
+                WHERE p.seeder = \'no\'
+                    AND p.torrent = '.$id.'
                 GROUP BY t.id
-                ORDER BY added ASC
-                LIMIT 15");
+                LIMIT 1');
             $totalspeed = mksize($a["totalspeed"]) . "/s";
         } else {
             $totalspeed = "Torrent inactive";
@@ -1257,17 +1245,17 @@ function get_row_count($table, $suffix = '')
 function show_error_msg($title, $message, $wrapper = "1")
 {
     if ($wrapper) {
-		stdhead($title);
+        stdhead($title);
     }
 
     begin_frame("<font color=red>". h($title) ."</font>");
-	echo "<p><CENTER><B>$message</B></CENTER></p>";
-	end_frame();
+    echo "<p><CENTER><B>$message</B></CENTER></p>";
+    end_frame();
 
     if ($wrapper) {
-		stdfoot();
-		exit;
-	}
+        stdfoot();
+        exit;
+    }
 }
 
 
@@ -1293,24 +1281,25 @@ function bark($heading = "Error", $text, $sort = "Error")
 
 function bark2($heading = "Error", $text, $sort = "Error")
 {
-	print("<div align=\"center\"><br><table border=\"0\" width=\"500\" cellspacing=\"0\" cellpadding=\"0\"><tr>\n");
-	print("<td bgcolor=\"#FFFFFF\" align=\"center\" style=\"border-style: dotted; border-width: 1px\" bordercolor=\"#CC0000\">\n");
-	print("<font face=\"Verdana\" size=\"1\"><font color=\"#CC0000\"><b>$heading</b></font><br>$text</font></td>\n");
-	print("</tr></table></div><br>\n");
+    print("<div align=\"center\"><br><table border=\"0\" width=\"500\" cellspacing=\"0\" cellpadding=\"0\"><tr>
+    <td bgcolor=\"#FFFFFF\" align=\"center\" style=\"border-style: dotted; border-width: 1px\" bordercolor=\"#CC0000\">
+    <font face=\"Verdana\" size=\"1\"><font color=\"#CC0000\"><b>$heading</b></font><br>$text</font></td>
+    </tr></table></div><br>\n");
 }
 
 function sqlerr($query = "")
 {
-	stdhead();
-	begin_frame("MYSQL Error");
-	print("<div align=center><br><table border=0 width=500 cellspacing=0 cellpadding=0><tr>\n");
-	print("<td bgcolor=#FFFFFF align=center style=border-style: dotted; border-width: 1px bordercolor=#CC0000>\n");
-	print("<font face=Verdana size=1><b>MYSQL Error has occurred!</b><br><BR>There is a problem with the database, possibly a corrupt table, missing field/column or bad syntax.</font></td>\n");
-	print("</tr></table></div><br>\n");
-	//print("<BR><b>MySQL error occured</b>.\n<br>Query: " . $query . "<br>\nError: (" . mysql_errno() . ") " . mysql_error());
-	end_frame();
-	stdfoot();
-	die;
+    stdhead();
+    begin_frame("MYSQL Error");
+    print("<div align=center><br><table border=0 width=500 cellspacing=0 cellpadding=0><tr>
+    <td bgcolor=#FFFFFF align=center style=border-style: dotted; border-width: 1px bordercolor=#CC0000>
+    <font face=Verdana size=1><b>MYSQL Error has occurred!</b>
+    <br><BR>There is a problem with the database, possibly a corrupt table, missing field/column or bad syntax.</font></td>
+    </tr></table></div><br>\n");
+    // print("<BR><b>MySQL error occured</b>.\n<br>Query: " . $query . "<br>\nError: (" . mysql_errno() . ") " . mysql_error());
+    end_frame();
+    stdfoot();
+    die;
 }
 
 // @todo: check: ??? не используется?
@@ -1399,7 +1388,7 @@ function encodehtml($s, $linebreaks = true)
 
 function get_dt_num()
 {
-  return gmdate("YmdHis");
+    return gmdate("YmdHis");
 }
 
 function format_urls($s)
@@ -1412,114 +1401,116 @@ function format_urls($s)
 
 function format_comment($text, $strip_html = true, $strip_slash = true)
 {
-	global $smilies, $privatesmilies;
+    global $smilies, $privatesmilies;
 
-	$s = $text;
+    $s = $text;
 
-	if ($strip_html)
-		$s = h($s);
+    if ($strip_html)
+        $s = h($s);
 
-	if ($strip_slash)
-		$s = stripslashes($s);
+    if ($strip_slash)
+        $s = stripslashes($s);
 
-	// [*]
-	$s = preg_replace("/\[\*\]/", "<li>", $s);
+    // [*]
+    $s = preg_replace("/\[\*\]/", "<li>", $s);
 
-	// [b]Bold[/b]
-	$s = preg_replace("/\[b\]((\s|.)+?)\[\/b\]/", "<b>\\1</b>", $s);
+    // [b]Bold[/b]
+    $s = preg_replace("/\[b\]((\s|.)+?)\[\/b\]/", "<b>\\1</b>", $s);
 
-	// [i]Italic[/i]
-	$s = preg_replace("/\[i\]((\s|.)+?)\[\/i\]/", "<i>\\1</i>", $s);
+    // [i]Italic[/i]
+    $s = preg_replace("/\[i\]((\s|.)+?)\[\/i\]/", "<i>\\1</i>", $s);
 
-	// [u]Underline[/u]
-	$s = preg_replace("/\[u\]((\s|.)+?)\[\/u\]/", "<u>\\1</u>", $s);
+    // [u]Underline[/u]
+    $s = preg_replace("/\[u\]((\s|.)+?)\[\/u\]/", "<u>\\1</u>", $s);
 
-	// [u]Underline[/u]
-	$s = preg_replace("/\[u\]((\s|.)+?)\[\/u\]/i", "<u>\\1</u>", $s);
+    // [u]Underline[/u]
+    $s = preg_replace("/\[u\]((\s|.)+?)\[\/u\]/i", "<u>\\1</u>", $s);
 
-	// [img]http://www/image.gif[/img]
-	$s = preg_replace("/\[img\](http:\/\/[^\s'\"<>]+(\.gif|\.jpg|\.png|\.bmp|\.jpeg))\[\/img\]/i", "<img border=0 src=\"\\1\">", $s);
+    // [img]http://www/image.gif[/img]
+    $s = preg_replace("/\[img\](http:\/\/[^\s'\"<>]+(\.gif|\.jpg|\.png|\.bmp|\.jpeg))\[\/img\]/i", "<img border=0 src=\"\\1\">", $s);
 
-	// [img=http://www/image.gif]
-	$s = preg_replace("/\[img=(http:\/\/[^\s'\"<>]+(\.gif|\.jpg|\.png|\.bmp|\.jpeg))\]/i", "<img border=0 src=\"\\1\">", $s);
+    // [img=http://www/image.gif]
+    $s = preg_replace("/\[img=(http:\/\/[^\s'\"<>]+(\.gif|\.jpg|\.png|\.bmp|\.jpeg))\]/i", "<img border=0 src=\"\\1\">", $s);
 
-	// [color=blue]Text[/color]
-	$s = preg_replace(
-		"/\[color=([a-zA-Z]+)\]((\s|.)+?)\[\/color\]/i",
-		"<font color=\\1>\\2</font>", $s);
+    // [color=blue]Text[/color]
+    $s = preg_replace(
+        "/\[color=([a-zA-Z]+)\]((\s|.)+?)\[\/color\]/i",
+        "<font color=\\1>\\2</font>", $s);
 
-	// [color=#ffcc99]Text[/color]
-	$s = preg_replace(
-		"/\[color=(#[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9])\]((\s|.)+?)\[\/color\]/i",
-		"<font color=\\1>\\2</font>", $s);
+    // [color=#ffcc99]Text[/color]
+    $s = preg_replace(
+        "/\[color=(#[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9])\]((\s|.)+?)\[\/color\]/i",
+        "<font color=\\1>\\2</font>", $s);
 
-	// [url=http://www.example.com]Text[/url]
-	$s = preg_replace(
-		"/\[url=((http|ftp|https|ftps|irc):\/\/[^<>\s]+?)\]((\s|.)+?)\[\/url\]/i",
-		"<a href=redirect.php?url=\\1>\\3</a>", $s);
+    // [url=http://www.example.com]Text[/url]
+    $s = preg_replace(
+        "/\[url=((http|ftp|https|ftps|irc):\/\/[^<>\s]+?)\]((\s|.)+?)\[\/url\]/i",
+        "<a href=redirect.php?url=\\1>\\3</a>", $s);
 
-	// [url]http://www.example.com[/url]
-	$s = preg_replace(
-		"/\[url\]((http|ftp|https|ftps|irc):\/\/[^<>\s]+?)\[\/url\]/i",
-		"<a href=redirect.php?url=\\1>\\1</a>", $s);
+    // [url]http://www.example.com[/url]
+    $s = preg_replace(
+        "/\[url\]((http|ftp|https|ftps|irc):\/\/[^<>\s]+?)\[\/url\]/i",
+        "<a href=redirect.php?url=\\1>\\1</a>", $s);
 
     // [url=account-details.php?id=2]bandito[/url]
-	$s = preg_replace(
-		"/\[url=([^<>\s]+?)\]((\s|.)+?)\[\/url\]/i",
-		"<a href=\"\\1\">\\2</a>", $s);
+    $s = preg_replace(
+        "/\[url=([^<>\s]+?)\]((\s|.)+?)\[\/url\]/i",
+        "<a href=\"\\1\">\\2</a>", $s);
 
-	// [size=4]Text[/size]
-	$s = preg_replace(
-		"/\[size=([1-7])\]((\s|.)+?)\[\/size\]/i",
-		"<font size=\\1>\\2</font>", $s);
+    // [size=4]Text[/size]
+    $s = preg_replace(
+        "/\[size=([1-7])\]((\s|.)+?)\[\/size\]/i",
+        "<font size=\\1>\\2</font>", $s);
 
-	// [font=Arial]Text[/font]
-	$s = preg_replace(
-		"/\[font=([a-zA-Z ,]+)\]((\s|.)+?)\[\/font\]/i",
-		"<font face=\"\\1\">\\2</font>", $s);
+    // [font=Arial]Text[/font]
+    $s = preg_replace(
+        "/\[font=([a-zA-Z ,]+)\]((\s|.)+?)\[\/font\]/i",
+        "<font face=\"\\1\">\\2</font>", $s);
 
-	//[quote]Text[/quote]
-	$s = preg_replace(
-		"/\[quote\]\s*((\s|.)+?)\s*\[\/quote\]\s*/i",
-		"<p class=sub><b>Quote:</b></p><table class=main border=1 cellspacing=0 cellpadding=10><tr><td style='border: 1px black dotted'>\\1</td></tr></table><br>", $s);
+    //[quote]Text[/quote]
+    $s = preg_replace(
+        "/\[quote\]\s*((\s|.)+?)\s*\[\/quote\]\s*/i",
+        "<p class=sub><b>Quote:</b></p><table class=main border=1 cellspacing=0 cellpadding=10>
+        <tr><td style='border: 1px black dotted'>\\1</td></tr></table><br>", $s);
 
-	//[quote=Author]Text[/quote]
-	$s = preg_replace(
-		"/\[quote=(.+?)\]\s*((\s|.)+?)\s*\[\/quote\]\s*/i",
-		"<p class=sub><b>\\1 wrote:</b></p><table class=main border=1 cellspacing=0 cellpadding=10><tr><td style='border: 1px black dotted'>\\2</td></tr></table><br>", $s);
+    //[quote=Author]Text[/quote]
+    $s = preg_replace(
+        "/\[quote=(.+?)\]\s*((\s|.)+?)\s*\[\/quote\]\s*/i",
+        "<p class=sub><b>\\1 wrote:</b></p><table class=main border=1 cellspacing=0 cellpadding=10>
+        <tr><td style='border: 1px black dotted'>\\2</td></tr></table><br>", $s);
                 
-        //[hr]
-        $s = preg_replace("/\[hr\]/i", "<hr>", $s);
+    //[hr]
+    $s = preg_replace("/\[hr\]/i", "<hr>", $s);
 
-        //[hr=#ffffff] [hr=red]
-        $s = preg_replace("/\[hr=((#[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9])|([a-zA-z]+))\]/i", "<hr color=\"\\1\"/>", $s);
+    //[hr=#ffffff] [hr=red]
+    $s = preg_replace("/\[hr=((#[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9])|([a-zA-z]+))\]/i", "<hr color=\"\\1\"/>", $s);
 
-        //[swf]http://somesite.com/test.swf[/swf]
-        $s = preg_replace("/\[swf\]((www.|http:\/\/|https:\/\/)[^\s]+(\.swf))\[\/swf\]/i",
+    //[swf]http://somesite.com/test.swf[/swf]
+    $s = preg_replace("/\[swf\]((www.|http:\/\/|https:\/\/)[^\s]+(\.swf))\[\/swf\]/i",
         "<param name=movie value=\\1/><embed width=470 height=310 src=\\1></embed>", $s);
 
-        //[swf=http://somesite.com/test.swf]
-        $s = preg_replace("/\[swf=((www.|http:\/\/|https:\/\/)[^\s]+(\.swf))\]/i",
+    //[swf=http://somesite.com/test.swf]
+    $s = preg_replace("/\[swf=((www.|http:\/\/|https:\/\/)[^\s]+(\.swf))\]/i",
         "<param name=movie value=\\1/><embed width=470 height=310 src=\\1></embed>", $s);
 
-	// URLs
-	$s = format_urls($s);
+    // URLs
+    $s = format_urls($s);
 
-	// Linebreaks
-	$s = nl2br($s);
+    // Linebreaks
+    $s = nl2br($s);
 
-	// Maintain spacing
-	$s = str_replace("  ", " &nbsp;", $s);
+    // Maintain spacing
+    $s = str_replace("  ", " &nbsp;", $s);
 
     foreach ($smilies as $code => $url) {
-		$s = str_replace($code, "<img border=0 src=" . $GLOBALS['SITEURL'] . "/images/smilies/$url>", $s);
+        $s = str_replace($code, "<img border=0 src=" . $GLOBALS['SITEURL'] . "/images/smilies/$url>", $s);
     }
 
     foreach ($smilies as $code => $url) {
-		$s = str_replace($code, "<img border=0 src=" . $GLOBALS['SITEURL'] . "/images/smilies/$url>", $s);
+        $s = str_replace($code, "<img border=0 src=" . $GLOBALS['SITEURL'] . "/images/smilies/$url>", $s);
     }
 
-	return $s;
+    return $s;
 }
 
 const UC_USER = 0;
@@ -1682,8 +1673,8 @@ function getguests()
 {
     $ip = $_SERVER["REMOTE_ADDR"];
     $past = time()-2400;
-	DB::executeUpdate("DELETE FROM guests WHERE time < $past");
-	$guests = number_format(get_row_count("guests"));
+    DB::executeUpdate("DELETE FROM guests WHERE time < $past");
+    $guests = number_format(get_row_count("guests"));
 
     return $guests;
 }
@@ -1708,9 +1699,9 @@ function time_ago($addtime)
 
 function CutName ($vTxt, $Car)
 {
-	while(strlen($vTxt) > $Car) {
-		return substr($vTxt, 0, $Car) . "...";
-	}
+    while(strlen($vTxt) > $Car) {
+        return substr($vTxt, 0, $Car) . "...";
+    }
 
     return $vTxt;
 }

@@ -52,7 +52,7 @@ if ($a) {
 
 $secret = mksecret();
 $editsecret = mksecret();
-$username = generateRandomString(13);
+$username = 'User-'. generateRandomString(15);
 
 $password = generateRandomString(15);
 $password = password_hash($password, PASSWORD_DEFAULT);

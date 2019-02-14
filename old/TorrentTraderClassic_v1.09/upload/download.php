@@ -2,7 +2,7 @@
 
 ob_start();
 require_once("backend/functions.php");
-
+require_once("backend/benc.php");
 dbconn();
 
 $id = (int) ($_GET["id"] ?? 0);
@@ -31,4 +31,20 @@ DB::query("UPDATE torrents SET hits = hits + 1 WHERE id = $id");
 header("Content-Type: application/x-bittorrent");
 header("Content-Disposition: attachment; filename=\"$name\"");
 
-readfile($fn);
+// readfile($fn);
+
+$dict = bdec_file($fn, filesize($fn));
+if ($MEMBERSONLY && $CURUSER) {
+    $announce_url = $announce_urls[0].'?passkey='.$CURUSER['passkey'];
+} else {
+    $announce_url = $announce_urls[0];
+}
+
+unset($dict['value']['announce-list']);
+
+$dict['value']['announce']['value'] = $announce_url;
+
+$dict['value']['comment'] = ['type' => 'string', 'value' => $SITEURL . '/torrents-details.php?id=' . $id];
+
+echo benc($dict);
+

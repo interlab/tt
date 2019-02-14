@@ -10,6 +10,9 @@
 // SUPPORT FOR OLD "WHO COMPLETED" MOD ON LINE 409-413 
 //
 //
+
+// https://wiki.theory.org/index.php/BitTorrentSpecification#Tracker_Request_Parameters
+
 require_once 'backend/config.php';
 
 ignore_user_abort(1);
@@ -233,7 +236,7 @@ function portblacklisted($port)
 	|| ($port == 6699);
 }
 
-//////////////////////// NOW WE DO THE ANNOUNCE CODE ////////////////////////
+// NOW WE DO THE ANNOUNCE CODE
 
 // BLOCK ACCESS WITH WEB BROWSERS
 $agent = $_SERVER["HTTP_USER_AGENT"];
@@ -267,6 +270,8 @@ if (empty($ip) || !validip($ip))
 $port = (int) ($_GET['port'] ?? 0);
 $downloaded = (int) ($_GET['downloaded'] ?? 0);
 $uploaded = (int) ($_GET['uploaded'] ?? 0);
+
+// The number of bytes this client still has to download in base ten ASCII
 $left = (int) ($_GET['left'] ?? 0);
 
 $event = $_GET['event'] ?? '';

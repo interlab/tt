@@ -217,6 +217,87 @@ background-image: url("images/block_bottom_right.gif"); width: 15px; height: 23p
 
 /* 110 */
 
+.tt-block {
+    background-image:
+        url('images/block_top_right.gif'),
+        url('images/block_top_left.gif');
+    background-position: right top, left top;
+    background-repeat: no-repeat, no-repeat;
+    width: 180px;
+    /*width: 95%;*/
+    margin: 0 5px;
+}
+.tt-block-center-top {
+    background-image: url('images/block_top.gif');
+    background-position: top;
+    background-repeat: repeat-x;
+
+    height: 27px;
+    margin: 0 15px;
+
+    text-align: center;
+    font-family: 'Verdana';
+    font-size: 8pt;
+    font-weight: bold;
+    line-height: 1.4;
+}
+.tt-block-content {
+    background-image:
+        url('images/block_middle_right.gif'),
+        url('images/block_middle_left.gif');
+    background-position: right, left;
+    background-repeat: repeat-y, repeat-y;
+
+    margin: 0;
+    padding: 0 15px;
+    padding-block-end: 5px;
+    /*width: 150px;*/
+}
+.tt-block-bottom {
+    background-image:
+        url('images/block_bottom_right.gif'),
+        url('images/block_bottom_left.gif');
+    background-position: right bottom, left bottom;
+    background-repeat: no-repeat, no-repeat;
+    /*width: 180px;*/
+    height: 23px;
+}
+.tt-block-center-bottom {
+    background-image: url('images/block_bottom.gif');
+    background-position: bottom;
+    background-repeat: repeat-x;
+
+    height: 23px;
+    margin: 0 15px;
+}
+
+.tt-header-page {
+    height: 132px;
+    width: 100%;
+    background-image: url('images/template1_03.jpg');
+}
+
+.tt-top-user-menu {
+    color: #FFFFFF;
+    height: 24px;
+    background-image: url('images/template1_04.jpg');
+    line-height: 200%;
+}
+
+.tt-top-menu {
+    background: url('images/template1_05.jpg');
+    width: 497px;
+    height: 28px;
+    line-height: 210%;
+}
+
+.tt-top-right {
+    width: 141px;
+    height: 132px;
+    float: left;
+    background: url('images/template1_02.jpg');
+}
+
 .ttable_col1, .ttable_col2 {
     padding: 3px 5px;
 }

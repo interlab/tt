@@ -5,35 +5,40 @@ if (!$CURUSER) {
 begin_block($txt['LOGIN']);
 
 ?>
-<table border=0 width=100% cellspacing=0 cellpadding=0>
-	<tr>
-		<form method=post action=account-login.php><td>
-		<div align=center>
-		<table border=0 cellpadding=5">
-			<tr><td>
-				<p align=center><font face=Verdana size=1><b><?= $txt['USER'] ?>:</b></font></td><td align=left>
-				<input type=text size=10 name=username style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px; background-color: #C0C0C0" /></td>
-            </tr>
-			<tr>
-            <td><font face=Verdana size=1><b><?= $txt['PASS'] ?>:</b></font></td>
-            <td align=left>
-				<input type=password size=10 name=password style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px; background-color: #C0C0C0" /></td>
-                </tr>
-			<tr>
-            <td>&nbsp;</td><td align=left>
-				<input type=submit value=Verify style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px"></td>
-            </tr>
-		</table>
-		</td>
-        </form>
-	</tr>
-	<tr>
-        <td align="center">
-            <a href="account-delete.php"><?= $txt['DELETE_ACCOUNT'] ?></a><br>
-            <a href="account-recover.php"><?= $txt['RECOVER_ACCOUNT'] ?></a>
-        </td>
+
+<div align=center>
+<form method=post action=account-login.php>
+<table border=0 cellpadding=5 width=100%>
+    <tr><td>
+        <font face=Verdana size=1><b><?= $txt['USER'] ?>:</b></font>
+    </td>
+    <td align=left>
+        <input type=text size=10 name=username style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px; background-color: #C0C0C0" />
+    </td>
     </tr>
-	</table>
+    <tr>
+    <td>
+        <font face=Verdana size=1><b><?= $txt['PASS'] ?>:</b></font>
+    </td>
+    <td align=left>
+        <input type=password size=10 name=password style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px; background-color: #C0C0C0" />
+    </td>
+    </tr>
+    <tr>
+    <td>&nbsp;</td>
+    <td align=left>
+        <input type=submit value=Verify style="font-family: Verdana; font-size: 8pt; font-weight: bold; border-style: solid; border-width: 1px">
+    </td>
+    </tr>
+</table>
+</td>
+</form>
+</div>
+<div align="center">
+    <a href="account-delete.php"><?= $txt['DELETE_ACCOUNT'] ?></a><br>
+    <a href="account-recover.php"><?= $txt['RECOVER_ACCOUNT'] ?></a>
+</div>
+
 <?php
 end_block();
 
@@ -132,9 +137,14 @@ end_block();
 if ($DONATEON) {
     begin_block($txt['DONATIONS'], 'center');
     $row = getDonations();
-    echo "<br><b>". $txt['TARGET'] .": </b><font color=\"red\">$" . $row['requireddonations'] . "</font><br><b>".
-        $txt['DONATIONS'] . ": </b><font color=\"green\">$" . $row['donations'] . "</font></center><br>
-        <div align=left><B><font color=#FF6600>&#187;</font></B> <a href=\"donate.php\">". $txt['DONATE'] ."</a><br>";
+    echo "
+    <b>". $txt['TARGET'] .": </b><font color=\"red\">$" . $row['requireddonations'] . "</font>
+    <br><b>".
+        $txt['DONATIONS'] . ": </b><font color=\"green\">$" . $row['donations'] . "</font></center>
+    <br>
+        <div align=left><B><font color=#FF6600>&#187;</font></B> <a href=\"donate.php\">". $txt['DONATE'] ."</a>
+    <br>
+    </div>";
     end_block();
 }
 

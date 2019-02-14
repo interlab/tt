@@ -13,40 +13,33 @@ echo isset($st['js_files']) ? $st['js_files'] : '';
 ?>
 </head>
 
-<BODY LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0" align="center">
+<body>
 
+<div class="tt-header-page">
+    <div style="width: 497px; height: 132px; float: left;">
+        <div style="height: 80px; width: 497px">
+            <a href="index.php"><img src="themes/default/images/template1_01.jpg" border=0 alt="Logo" ></a>
+        </div>
+        <div class="tt-top-user-menu">
+        &nbsp;
+            <?php if ($CURUSER) {
+                echo $CURUSER['username'], '(<a href=account-logout.php><font color=#ffffff><b>Logout</b></font></a>)';
 
-<TABLE WIDTH=100% BORDER=0 CELLPADDING=0 CELLSPACING=0>
-	<TR>
-<!-- THIS IS THE TOP LOGO AREA 3 CELLS -->
-		<TD WIDTH=497><a href="index.php"><IMG SRC="themes/default/images/template1_01.jpg" WIDTH=497 HEIGHT=80 border=0 ALT="<?= $SITENAME  ?> logo" ></a></TD>
-		<TD ROWSPAN=3 WIDTH=141><IMG SRC="themes/default/images/template1_02.jpg" WIDTH=141 HEIGHT=132 ALT=""></TD>
-		<TD ROWSPAN=3 WIDTH=100%><IMG SRC="themes/default/images/template1_03.jpg" WIDTH=100% HEIGHT=132 ALT=""></TD>
-<!-- END TOP LOGO AREA -->	
-	</TR>
-	<TR>
-<!-- TOP NAV MENU AND USER RATIO AREA -->
-		<TD background="themes/default/images/template1_04.jpg" WIDTH=497 HEIGHT=24>
-			<div style="color: #FFFFFF;">&nbsp;
-			<?php if ($CURUSER) {
-				print $CURUSER['username']; 
-				echo "(<a href=account-logout.php><font color=#ffffff><b>Logout</b></font></a>)";
+        // ger user ratio
+        if ($CURUSER["downloaded"] > 0){
+            $userratio = number_format($CURUSER["uploaded"] / $CURUSER["downloaded"], 2);
+        } else {
+            $userratio = $CURUSER["uploaded"] > 0 ? "Inf." : "NA";
+        }
+        //end
 
-		// ger user ratio
-		if ($CURUSER["downloaded"] > 0){
-			$userratio = number_format($CURUSER["uploaded"] / $CURUSER["downloaded"], 2);
-		} else {
-			$userratio = $CURUSER["uploaded"] > 0 ? "Inf." : "NA";
-		}
-		//end
-
-		// get unread messages
+        // get unread messages
         $nmessages = numUserMsg();
-		$unread = numUnreadUserMsg();
-		// end
-			?>
+        $unread = numUnreadUserMsg();
+        // end
+            ?>
 
-			&nbsp;&#8595;&nbsp;<font color=red><?= mksize($CURUSER['downloaded']) ?></font> - <b>&#8593;&nbsp;</b>
+        &nbsp;&#8595;&nbsp;<font color=red><?= mksize($CURUSER['downloaded']) ?></font> - <b>&#8593;&nbsp;</b>
             <font color=green><?= mksize($CURUSER['uploaded']) ?></font> - <?= $txt['RATIO'] ?>: <?= $userratio ?> &nbsp;
             <?php
 
@@ -54,22 +47,22 @@ echo isset($st['js_files']) ? $st['js_files'] : '';
                 echo '<a href="account-messages.php"><b><font color=#FF0000>New PM' . ($nmessages != 1 ? 's' : '') . ' (' . $unread . ')</b></a></font>';
             } 
             } else {
-				echo "<a href=account-login.php><font color=#FF0000>". $txt['LOGIN'] .
+                echo "<a href=account-login.php><font color=#FF0000>". $txt['LOGIN'] .
                     "</font></a> <B>:</B> <a href=account-signup.php><font color=#FF0000>". $txt['REGISTERNEW'] ."</font></a>";
-			}
-			?>
-			</div></TD>
-	</TR>
-	<TR>
-		<TD background="themes/default/images/template1_05.jpg" WIDTH=497 HEIGHT=28>
-			&nbsp; <a href=index.php><?= $txt['HOME'] ?></a> • 
-			<?php if ($FORUMS) { ?><a href=forums.php><?= $txt['FORUMS'] ?></a> • <?php } ?>
-			<a href=browse.php><?= $txt['BROWSE_TORRENTS'] ?></a> • 
-			<a href=torrents-search.php><?= $txt['SEARCH'] ?></a> • 
-			<a href=torrents-upload.php><?= $txt['UPLOADT'] ?></a> • 
-			<a href=faq.php><?= $txt['FAQ'] ?></a> </TD>
-	</TR>
-</TABLE>
+            }
+            ?>
+        </div>
+        <div class="tt-top-menu">
+            &nbsp; <a href=index.php><?= $txt['HOME'] ?></a> <span>•</span> 
+            <?php if ($FORUMS) { ?><a href=forums.php><?= $txt['FORUMS'] ?></a> <span>•</span> <?php } ?>
+            <a href=browse.php><?= $txt['BROWSE_TORRENTS'] ?></a> <span>•</span> 
+            <a href=torrents-search.php><?= $txt['SEARCH'] ?></a> <span>•</span> 
+            <a href=torrents-upload.php><?= $txt['UPLOADT'] ?></a> <span>•</span> 
+            <a href=faq.php><?= $txt['FAQ'] ?></a>
+        </div>
+    </div>
+    <div class="tt-top-right"></div>
+</div>
 
 
 
