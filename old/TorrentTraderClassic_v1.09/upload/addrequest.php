@@ -15,7 +15,7 @@ $voted = DB::fetchAssoc("SELECT * FROM addedrequests WHERE requestid = $requesti
 if ($voted) {
 ?>
 <br><p>You've already voted for this request, only 1 vote for each request is allowed</p>
-<p>Back to <a href=viewrequests.php><b>requests</b></a></p>
+<p>Back to <a href=requests.php?sa=view><b>requests</b></a></p>
 <br><br>
 <?php
 } else {
@@ -23,7 +23,7 @@ DB::query("UPDATE requests SET hits = hits + 1 WHERE id = $requestid");
 DB::query("INSERT INTO addedrequests VALUES(0, $requestid, $userid)");
 
 print("<br><p>Successfully voted for request $requestid</p>"
-        . "<p>Back to <a href=viewrequests.php><b>requests</b></a></p>"
+        . "<p>Back to <a href=requests.php?sa=view><b>requests</b></a></p>"
         . "<br><br>");
 }
 
