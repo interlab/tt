@@ -41,11 +41,11 @@ if (!empty($_POST['MAX_FILE_SIZE'])) {
         $message = "Missing form data";
 
     $f = $_FILES["file"];
-    $fname = unesc($f["name"]);
+    $fname = $f["name"];
     if (empty($fname))
         $message = "Empty filename!";
 
-    $descr = unesc($_POST["descr"]);
+    $descr = $_POST["descr"];
     if (!$descr)
         $message = "You must enter at least a short description";
 
@@ -61,7 +61,7 @@ if (!empty($_POST['MAX_FILE_SIZE'])) {
   
     $shortfname = $torrent = $matches[1];
     if (!empty($_POST["name"]))
-        $torrent = unesc($_POST["name"]);
+        $torrent = $_POST["name"];
 
     $tmpname = $f["tmp_name"];
     if (!is_uploaded_file($tmpname))

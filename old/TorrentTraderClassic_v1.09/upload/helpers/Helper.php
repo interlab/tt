@@ -81,7 +81,7 @@ class Helper
             }
 
             $orderby = 'ORDER BY torrents.' . $column . ' ' . $ascdesc;
-            $pagerlink = 'sort=' . $sort . '&type=' . $type . '&';
+            $pagerlink = b(['sort' => $sort, 'type' => $type]);
         } else {
             $column = 'id';
             $ascdesc = 'DESC';

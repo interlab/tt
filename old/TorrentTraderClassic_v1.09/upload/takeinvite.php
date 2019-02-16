@@ -15,7 +15,7 @@ if ($count >= $invites)
 if ($CURUSER["invites"] == 0)
     stderr("Sorry","No invites!");
 
-$mess = unesc($_POST["mess"]);
+$mess = $_POST["mess"];
 
 if (! $mess)
     barkmsg("You must enter a message!");
@@ -110,7 +110,7 @@ $SITEURL/faq.php
 
 To confirm your invitation, you have to follow this link:
 
-$SITEURL/confirminvite.php?id=$id&secret=$psecret
+$SITEURL/invite.php?confirm=1&id=$id&secret=$psecret
 
 After you do this, you will be able to use your new account. If you fail to
 do this, your account will be deleted within a few days. We urge you to read

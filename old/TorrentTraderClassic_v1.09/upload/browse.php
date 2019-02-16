@@ -22,7 +22,7 @@ $time_start = getmicrotime();
 
 $cats = genrelist();
 
-$searchstr = unesc($_GET["search"] ?? '');
+$searchstr = $_GET["search"] ?? '';
 $cleansearchstr = searchfield($searchstr);
 if (empty($cleansearchstr)) {
     unset($cleansearchstr);

@@ -1,8 +1,5 @@
 <?php
-//
-// - Theme And Language Updated 25.Nov.05
-//
-ob_start("ob_gzhandler");
+
 require_once("backend/functions.php");
 dbconn(false);
 loggedinorreturn();
@@ -13,7 +10,7 @@ if ($RATIO_WARNINGON && $CURUSER) {
     include("ratiowarn.php");
 }
 
-$searchstr = unesc($_GET["search"] ?? '');
+$searchstr = $_GET["search"] ?? '';
 $cleansearchstr = searchfield($searchstr);
 if (empty($cleansearchstr)) {
     unset($cleansearchstr);
@@ -22,11 +19,9 @@ if (empty($cleansearchstr)) {
 $_GET['incldead'] = (int) ($_GET['incldead'] ?? 0);
 $_GET['cat'] = (int) ($_GET['cat'] ?? 0);
 
-
 $sortmod = Helper::sortMod($_GET['sort'] ?? '', $_GET['type'] ?? '');
 $orderby = 'ORDER BY torrents.' . $sortmod['column'] . ' ' . $sortmod['by'];
 $pagerlink = $sortmod['pagerlink'];
-
 
 $addparam = '';
 $wherea = [];
@@ -103,19 +98,13 @@ if (!$count && isset($cleansearchstr)) {
 }
 
 if ($count) {
-// SORT MOD
-    if ($addparam != '') { 
-        if ($pagerlink != '') {
-            if ($addparam{strlen($addparam)-1} != ";") { // & = &amp;
-                $addparam = $addparam . "&" . $pagerlink;
-            } else {
-                $addparam = $addparam . $pagerlink;
-            }
-        }
+    // SORT MOD
+    if ($addparam != '' && $pagerlink != '') {
+        $addparam = $addparam . (endsWith($addparam, '&amp;') ? '' : '&amp;') . $pagerlink;
     } else {
         $addparam = $pagerlink;
     }
-// END SORT MOD
+    // END SORT MOD
 
     [$pagertop, $pagerbottom, $limit] = pager(13, $count, "torrents-search.php?$addparam");
 
@@ -131,16 +120,18 @@ if ($count) {
     $where
     $orderby
     $limit";
+
     $res = DB::executeQuery($query, $params);
 }
 else {
     unset($res);
 }
 
-if (isset($cleansearchstr))
-    stdhead("Search results for \"$searchstr\"");
-else
-    stdhead("Browse Torrents");
+if (isset($cleansearchstr)) {
+    stdhead('Search results for "'.$searchstr.'"');
+} else {
+    stdhead('Browse Torrents');
+}
 
 begin_frame($txt['SEARCH_TITLE'], 'center');
 
@@ -156,16 +147,16 @@ begin_frame($txt['SEARCH_TITLE'], 'center');
 $cats = genrelist();
 $catdropdown = '';
 foreach ($cats as $cat) {
-    $catdropdown .= "<option value=\"" . $cat["id"] . "\"";
-    if ($cat["id"] == $_GET["cat"])
-        $catdropdown .= " selected=\"selected\"";
-    $catdropdown .= ">" . h($cat["name"]) . "</option>\n";
+    $catdropdown .= '<option value="' . $cat['id'] . '"';
+    if ($cat['id'] == $_GET['cat'])
+        $catdropdown .= ' selected="selected"';
+    $catdropdown .= '>' . h($cat['name']) . '</option>';
 }
 
-$deadchkbox = "<input type=\"checkbox\" name=\"incldead\" value=\"1\"";
-if ($_GET["incldead"])
-    $deadchkbox .= " checked=\"checked\"";
-$deadchkbox .= " /> " . $txt['INC_DEAD'] . "\n";
+$deadchkbox = '<input type="checkbox" name="incldead" value="1"';
+if ($_GET['incldead'])
+    $deadchkbox .= ' checked="checked"';
+$deadchkbox .= '> ' . $txt['INC_DEAD'];
 
 ?>
 <?= $catdropdown ?>
@@ -181,13 +172,12 @@ $deadchkbox .= " /> " . $txt['INC_DEAD'] . "\n";
 </select>
 
 
-
-<select name=incldead>
+<select name="incldead">
 <option value="0">Active</option>
 <option value="1">Including dead</option>
 <option value="2">Only dead</option>
 </select>
-<input type="submit" class=btn value="<?= $txt['DISPLAY'] ?>" style="margin-left: 10px"/>
+<input type="submit" class="btn" value="<?= $txt['DISPLAY'] ?>" style="margin-left: 10px">
 </form>
 </CENTER>
 
@@ -199,8 +189,7 @@ if ($count) {
     print($pagertop);
     torrenttable($res);
     print($pagerbottom);
-}
-else {
+} else {
 	if (isset($cleansearchstr)) {
         bark2($txt['NOTHING_FOUND'], $txt['NO_UPLOADS']);
     } else {

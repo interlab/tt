@@ -62,9 +62,31 @@ if (!isset($HTTP_POST_VARS) && isset($_POST)) {
     $HTTP_POST_FILES = $_FILES;
 }
 
+function b(array $arr = [])
+{
+    return http_build_query($arr, '', '&amp;');
+}
+
 function h($str)
 {
     return htmlspecialchars($str, ENT_COMPAT, 'utf-8', false);
+}
+
+function startsWith($haystack, $needle)
+{
+    $length = strlen($needle);
+
+    return (substr($haystack, 0, $length) === $needle);
+}
+
+function endsWith($haystack, $needle)
+{
+    $length = strlen($needle);
+    if ($length == 0) {
+        return true;
+    }
+
+    return (substr($haystack, -$length) === $needle);
 }
 
 function getmicrotime()
@@ -238,14 +260,6 @@ function autoclean()
     docleanup();
 }
 
-function unesc($x)
-{
-    if (get_magic_quotes_gpc()) {
-        return stripslashes($x);
-    }
-    return $x;
-}
-
 function mksize($bytes)
 {
     if ($bytes < 1000 * 1024)
@@ -310,9 +324,9 @@ function mkglobal($vars)
         $vars = explode(':', $vars);
     foreach ($vars as $v) {
         if (isset($_GET[$v]))
-            $GLOBALS[$v] = unesc($_GET[$v]);
+            $GLOBALS[$v] = $_GET[$v];
         elseif (isset($_POST[$v]))
-            $GLOBALS[$v] = unesc($_POST[$v]);
+            $GLOBALS[$v] = $_POST[$v];
         else
             return 0;
     }
@@ -547,6 +561,10 @@ function pager($rpp, $count, $href, $opts = [])
 {
     $pages = ceil($count / $rpp);
 
+    if (!endsWith($href, '&amp;') && !endsWith($href, '&')) {
+        $href .= '&amp;';
+    }
+
     if (empty($opts["lastpagedefault"])) {
         $pagedefault = 0;
     } else {
@@ -738,8 +756,8 @@ function commenttable($rows)
         echo '<td><div class="tt-comment-table-date">';
         if ($CURUSER['id'] === $row["user"] || get_user_class() >= UC_JMODERATOR) {
             echo 'Posted: ' . $row["added"] . ' - <a href="torrents-comment.php?cid=' .
-                $row["id"] . '&sa=edit">[Edit]</a> - <a href="torrents-comment.php?cid=' . $row["id"] .
-                '&sa=delete">[Delete]</a>';
+                $row["id"] . '&amp;sa=edit">[Edit]</a> - <a href="torrents-comment.php?cid=' . $row["id"] .
+                '&amp;sa=delete">[Delete]</a>';
         } else {
             print("Posted: " . $row["added"]);
         }
@@ -759,7 +777,7 @@ function commenttable($rows)
 
 function searchfield($s)
 {
-    return preg_replace(array('/[^a-z0-9]/si', '/^\s*/s', '/\s*$/s', '/\s+/s'), array(" ", "", "", " "), $s);
+    return preg_replace(['/\W+/siu', '/^\s*/su', '/\s*$/su', '/\s+/su'], [' ', '', '', ' '], $s);
 }
 
 // todo: cache result
@@ -770,10 +788,10 @@ function genrelist()
 
 function linkcolor($num) {
     if (!$num)
-        return "red";
+        return 'red';
     if ($num == 1)
-        return "yellow";
-    return "green";
+        return 'yellow';
+    return 'green';
 }
 
 function ratingpic($num) {
@@ -1086,7 +1104,7 @@ if ($MEMBERSONLY_WAIT) {
         print("\">$dispname</a></td>\n");
 
         if ($variant == "index") {
-            print("<td class=ttable_col1 align=center><a href=\"download.php?id=$id&name=" .
+            print("<td class=ttable_col1 align=center><a href=\"download.php?id=$id&amp;name=" .
                 rawurlencode($row["filename"]) . "\"><img src=" . $GLOBALS['SITEURL'] .
                 "/images/icon_download.gif border=0 alt=\"Download .torrent\"></a></td>");
         } elseif ($variant == "mytorrents") {
@@ -1118,7 +1136,7 @@ if ($MEMBERSONLY_WAIT) {
             if ($wait) {
                 $elapsed = floor((gmtime() - strtotime($row["added"])) / 3600);
                 if ($elapsed < $wait) {
-                    $color = dechex(floor(127*($wait - $elapsed)/48 + 128) * 65536);
+                    $color = dechex(floor(127 * ($wait - $elapsed) / 48 + 128) * 65536);
                     print("<td align=center class=ttable_colx><nobr><a href=\"faq.php\"><font color=\"$color\">" .
                     number_format($wait - $elapsed) . " h</font></a></nobr></td>\n");
                 }
@@ -1163,7 +1181,7 @@ if ($MEMBERSONLY_WAIT) {
             <table width=97% border=0 cellspacing=0 cellpadding=0>
             <tr><td><b>Date Added:</b></td>
             <td>" . str_replace(" ", "&nbsp;at&nbsp;", $row["added"]) . "</td>\n");
-        if ($row["privacy"] == "strong" && get_user_class() < UC_JMODERATOR AND $CURUSER["id"] != $row["owner"]) {
+        if ($row["privacy"] == "strong" && get_user_class() < UC_JMODERATOR && $CURUSER["id"] != $row["owner"]) {
             print("</tr><tr><td><b>Added By:</b></td><td>Anonymous</td></tr><tr><td><b>Comments</b></td>\n");
         } else {
             print("</tr><tr><td><b>Added By:</b></td><td><a href=account-details.php?id=" . $row["owner"] .

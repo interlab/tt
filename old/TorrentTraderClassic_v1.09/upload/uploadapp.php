@@ -1,6 +1,6 @@
 <?php 
 
-require_once("backend/functions.php");
+require_once 'backend/functions.php';
 dbconn(false);
 loggedinorreturn();
 stdhead("Upload Application");
@@ -8,65 +8,69 @@ require_once("backend/admin-functions.php");
 
 ?>
 <STYLE>
-.popup
-{
-CURSOR: help;
-TEXT-DECORATION: none
+.popup {
+    CURSOR: help;
+    TEXT-DECORATION: none
 }
 </STYLE><?php 
 
-if ($_POST["form"]=="") {
- if($CURUSER["class"]<UC_MODERATOR)
-   $CURUSER["uploadpos"] == 'no'?0:2;
-else
-  $form=10;
-} else
-$form=$_POST["form"];
-if($form==0) {
- $res=mysql_query("SELECT * FROM uploadapp WHERE userid=".$CURUSER["id"]) or sqlerr(__FILE__, __LINE__);
- if(mysql_num_rows($res)) {
-  $row=mysql_fetch_array($res);
-  $form=4;
- }
+$_POST["form"] = $_POST["form"] ?? '';
+
+if ($_POST["form"] == "") {
+    if($CURUSER["class"] < UC_MODERATOR)
+        $CURUSER["uploadpos"] == 'no' ? 0 : 2;
+    else
+        $form = 10;
+} else {
+    $form = $_POST["form"];
 }
 
-$debug=0;
+if ($form == 0) {
+    $res = mysql_query("SELECT * FROM uploadapp WHERE userid=".$CURUSER["id"]);
+    if(mysql_num_rows($res)) {
+        $row = mysql_fetch_array($res);
+        $form = 4;
+    }
+}
+
+$debug = 0;
 $upreq = 1;
 $upreqn = $upreq * 1073741824;
 
 
-if($debug) {
-begin_frame("Debug Box");
-print("<table>");
- print("<form action=\"uploadapp.php\" method=\"post\" enctype=\"multipart/form-data\" name=\"debug\" id=\"uploadapp\">");
-tr("User Class","&nbsp;&nbsp;".get_user_class_name($CURUSER["class"]),1);
-tr("Variables",
- "form = " . $form. "<br>".
- "user = " . $_POST["user"]. "<br>".
- "groupacct = " . $_POST["groupacct"]. "<br>".
- "grouname = " . unesc($_POST["groupname"]). "<br>".
- "groupdes = " . unesc($_POST["groupdes"]). "<br>".
- "joined = " . unesc($_POST["joined"]). "<br>".
- "ratio = " . unesc($_POST["ratio"]). "<br>".
- "upk =". unesc($_POST["upk"]). "<br>".
- "rbseed = ".unesc($_POST["rbseed"]).
-  "<br>rbrelease = ".unesc($_POST["rbrelease"]).
-  "<br>rbstime = ".unesc($_POST["rbstime"]) . "<br>".
- "plans =". unesc($_POST["plans"]). "<br>".
- "comment =". unesc($_POST["comment"]). "<br>".
- "",1);
- tr("View forms","<input type=\"radio\" name=\"form\" value=\"0\" ". ($form==0?"checked":""). ">Upload App".
- "<input name=\"form\" type=\"radio\" value=\"3\" ".($form==3?"checked":"").">Moderator+ Page".
- "<input type=\"submit\" name=\"SubmitD\" value=\"Change Forms\">",1);
- print("</table> </form>");
+if ($debug) {
+    begin_frame("Debug Box");
+    print("<table>");
+    print("<form action=\"uploadapp.php\" method=\"post\" enctype=\"multipart/form-data\" name=\"debug\" id=\"uploadapp\">");
+    tr("User Class","&nbsp;&nbsp;".get_user_class_name($CURUSER["class"]),1);
+    tr("Variables",
+    "form = " . $form. "<br>".
+    "user = " . $_POST["user"]. "<br>".
+    "groupacct = " . $_POST["groupacct"]. "<br>".
+    "grouname = " . $_POST["groupname"]. "<br>".
+    "groupdes = " . $_POST["groupdes"]. "<br>".
+    "joined = " . $_POST["joined"]. "<br>".
+    "ratio = " . $_POST["ratio"]. "<br>".
+    "upk =". $_POST["upk"]. "<br>".
+    "rbseed = ".$_POST["rbseed"].
+     "<br>rbrelease = ".$_POST["rbrelease"].
+     "<br>rbstime = ".$_POST["rbstime"] . "<br>".
+    "plans =". $_POST["plans"]. "<br>".
+    "comment =". $_POST["comment"]. "<br>".
+    "",1);
+    tr("View forms","<input type=\"radio\" name=\"form\" value=\"0\" ". ($form==0?"checked":""). ">Upload App".
+    "<input name=\"form\" type=\"radio\" value=\"3\" ".($form==3?"checked":"").">Moderator+ Page".
+    "<input type=\"submit\" name=\"SubmitD\" value=\"Change Forms\">",1);
+    print("</table> </form>");
 
-end_frame();
+    end_frame();
 }
-if($form>=10 && $CURUSER["class"]<UC_MODERATOR) {
-begin_frame("Invalid Request");
-end_frame();
-} else if($form==0) {
-begin_frame("Uploaders Application");
+
+if ($form>=10 && $CURUSER["class"] < UC_MODERATOR) {
+    begin_frame("Invalid Request");
+    end_frame();
+} else if ($form == 0) {
+    begin_frame("Uploaders Application");
 ?>
 <Center><BR><BR><b>Please use the application form below to apply for the right to UPLOAD torrents to this tracker<br>once you have submitted please await our staff vote.<br><BR>You will receive a PM once the voting has completed.<BR><BR></b></center>
  <form action="uploadapp.php" method="post" enctype="multipart/form-data" name="uploadapp" id="uploadapp">
@@ -222,8 +226,9 @@ if($form==11) {
    
 }
 print("<h1>Recent Uploader Applications</h1>");
-$res=mysql_query("SELECT * FROM uploadapp ORDER BY applied DESC") or sqlerr(__FILE__, __LINE__);
-if(!mysql_num_rows($res)) print("<h1>None");
+$res = DB::fetchAll("SELECT * FROM uploadapp ORDER BY applied DESC");
+if (! $res)
+    print("<h1>None");
 else {
 ?>
  <table border=1 style='border-collapse: collapse' bordercolor=#646262>
@@ -241,10 +246,8 @@ else {
  <td>Voting Poll</td>
  </tr>
 <?php 
- while($row=mysql_fetch_array($res))
- {
-   $resu=mysql_query("SELECT * FROM users where id = ".$row["userid"])  or sqlerr(__FILE__, __LINE__);
-   $rowu=mysql_fetch_array($resu);
+foreach ($res as $row) {
+   $rowu = DB::fetchAssoc("SELECT * FROM users where id = ".$row["userid"]);
    $voted=$tvotes=$votesyes=$votesno=0;
    if($row["votes"]!="") {
     $votes=explode(" ",$row["votes"]);

@@ -75,7 +75,9 @@ if ($sa === 'create') {
 
     $newid = DB::lastInsertId();
 
-    DB::executeUpdate('UPDATE torrents SET comments = comments + 1 WHERE id = ' . $id);
+    $num = get_row_count('comments', 'where torrent = ' . $id);
+
+    DB::executeUpdate('UPDATE torrents SET comments = ? WHERE id = ' . $id, [$num]);
 
     // PM NOTIF
     $user = DB::fetchAssoc('SELECT commentpm FROM users WHERE id = ' . $arr['owner']);

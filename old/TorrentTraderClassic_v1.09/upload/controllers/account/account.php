@@ -7,18 +7,17 @@ loggedinorreturn();
 
 global $CURUSER, $txt;
 
-//GET ID
 $id = $CURUSER['id'];
 
-//DO SOME SQL CALC'S ETC
+// DO SOME SQL CALC'S ETC
 $user = DB::fetchAssoc('
     SELECT *
     FROM users
     WHERE id = '.$id);
 
 if ($user['downloaded'] > 0) {
-      $ratio = number_format($user['uploaded'] / $user['downloaded'], 2);
-      //$ratio = "<font color=" . get_ratio_color($ratio) . ">$ratio</font>";
+    $ratio = number_format($user['uploaded'] / $user['downloaded'], 2);
+    // $ratio = "<font color=" . get_ratio_color($ratio) . ">$ratio</font>";
 } elseif ($user['uploaded'] > 0) {
     $ratio = 'Inf.';
 } else {
@@ -31,7 +30,7 @@ $arr = DB::fetchAssoc('
     WHERE id = '.$user['country'].'
     LIMIT 1');
 if ($arr) {
-    $country = '<img src="/images/flag/'.$arr['flagpic'].'" alt="'.$arr['name'].'" style="margin-left: 8pt" />';
+    $country = '<img src="/images/flag/'.$arr['flagpic'].'" alt="'.$arr['name'].'" style="margin-left: 8pt">';
     $country1 = $arr['name'];
 }
 
@@ -47,7 +46,7 @@ if ($lastseen == "0000-00-00 00:00:00") {
     $torrenttorrents = get_row_count('torrents', 'WHERE owner = '.$CURUSER['id']);
 }
 
-//get days until ban, if warned by ratioban system
+// get days until ban, if warned by ratioban system
 $userid = $user['id'];
 $arr_rws = DB::fetchAssoc('
     SELECT *, TO_DAYS(NOW()) - TO_DAYS(warntime) as difference
@@ -65,9 +64,7 @@ if ($arr_rws) {
     }
 }
 
-//
-/////////// BEGIN PAGE LAYOUT ///////////
-//
+// BEGIN PAGE LAYOUT
 
 stdhead("User CP");
 begin_frame($txt['LOGGEDINAS'].' '.$CURUSER['username']);
@@ -101,11 +98,13 @@ $avatar = $CURUSER["avatar"];
 if (!$avatar) {
 	$avatar = "images/default_avatar.gif";
 }
-print("<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">
+
+echo '<table border="0" width="100%" cellspacing="0" cellpadding="2">
     <tr>
-    <td rowspan=\"2\" valign=\"top\">
-        <a href=\"account-settings.php\"><img src=\"$avatar\" border=\"0\" width=\"80\" height=\"80\"></a>
-    <br><br></td>\n");
+    <td rowspan="2" valign="top">
+        <a href="account-settings.php"><img src="'.$avatar.'" border="0" width="80" height="80"></a>
+    <br><br>
+    </td>';
 ?>
 <td width="90%" valign="top">
 <?= $country ?><br><br>
@@ -181,38 +180,40 @@ print("<a href=account.php?action=mytorrents><b>".$txt['VIEW_MYTORRENT']."</b></
 end_frame();
 
 
-//MY TORRENTS PAGE STARTS HERE
+// MY TORRENTS PAGE STARTS HERE
 if (isset($_GET['action']) && $_GET['action'] === "mytorrents") {
     begin_frame($txt['ACCOUNT_YOUR_TORRENTS'], 'center');
 
-$where = 'WHERE owner = ' . $CURUSER['id'];
-$count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
+    $where = 'WHERE owner = ' . $CURUSER['id'];
+    $count = DB::fetchColumn('SELECT COUNT(*) FROM torrents ' . $where);
 
-if (!$count) {
-?>
-<b><font color="#CC0000"><?= $txt['ACCOUNT_NO_UPLOADS_FOUND'] ?></font></b><br>
-<?= $txt['WHEN_YOU'] ?> <a href="torrents-upload.php"><?= $txt['UPLOAD'] ?></a><?= $txt['ACCOUNT_A_TORRENT_FILE'] ?>.<br>
-<?php
-}
-else {
-	list($pagertop, $pagerbottom, $limit) = pager(40, $count, "account.php?action=mytorrents&");
-	$res = DB::query("
-        SELECT torrents.type, torrents.comments, torrents.leechers, torrents.nfo,
-                torrents.seeders,torrents.owner,torrents.banned, IF(torrents.numratings < $minvotes,
+    if (!$count) {
+    ?>
+    <b><font color="#CC0000"><?= $txt['ACCOUNT_NO_UPLOADS_FOUND'] ?></font></b><br>
+    <?= $txt['WHEN_YOU'] ?> <a href="torrents-upload.php"><?= $txt['UPLOAD'] ?></a><?= $txt['ACCOUNT_A_TORRENT_FILE'] ?>.<br>
+    <?php
+    } else {
+        [$pagertop, $pagerbottom, $limit] = pager(40, $count, 'account.php?action=mytorrents');
+
+        $res = DB::query('
+            SELECT
+                torrents.type, torrents.comments, torrents.leechers, torrents.nfo,
+                torrents.seeders,torrents.owner,torrents.banned, IF(torrents.numratings < ' . $minvotes . ',
                 NULL, ROUND(torrents.ratingsum / torrents.numratings, 1)) AS rating,
                 torrents.id, categories.name AS cat_name, categories.image AS cat_pic,
-                torrents.name, save_as, numfiles, added, size, views, visible, hits,
-                times_completed, category
-        FROM torrents
-            LEFT JOIN categories ON torrents.category = categories.id
-        $where
-        ORDER BY id DESC
-        $limit");
-	torrenttable($res, "mytorrents");
-	print($pagerbottom);
-}
+                torrents.name, save_as, numfiles, torrents.added, size, views, visible, hits,
+                times_completed, category, users.privacy
+            FROM torrents
+                LEFT JOIN categories ON torrents.category = categories.id
+                LEFT JOIN users ON torrents.owner = users.id
+            ' . $where . '
+            ORDER BY id DESC
+            ' . $limit);
+        torrenttable($res, "mytorrents");
+        print($pagerbottom);
+    }
 
-end_frame();
+    end_frame();
 }
 
 stdfoot();

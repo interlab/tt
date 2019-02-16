@@ -593,7 +593,7 @@ $count = DB::fetchColumn('SELECT COUNT(*) FROM comments WHERE torrent = {int:id}
 if (!$count) {
     print("<BR><b><CENTER>" . $txt['NOCOMMENTS'] . "</CENTER></b><BR>\n");
 } else {
-    list($pagertop, $pagerbottom, $limit) = pager(20, $count, "torrents-details.php?id=$id&", ['lastpagedefault' => 1]);
+    [$pagertop, $pagerbottom, $limit] = pager(15, $count, 'torrents-details.php?id='.$id, ['lastpagedefault' => 1]);
 
     $allrows = DB::fetchAll('
         SELECT
