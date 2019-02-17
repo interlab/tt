@@ -1290,7 +1290,8 @@ function stderr($heading = "", $text, $sort = "")
 function bark($heading = "Error", $text, $sort = "Error")
 {
     stdhead("$sort: $heading");
-    begin_frame("<font color=red>$sort: $heading</font>", 'center');
+    $color = strtolower($sort) == 'success' ? 'green' : 'red';
+    begin_frame('<span style="color: '.$color.';">'.$sort.':</span> '.$heading, 'center');
     echo $text;
     end_frame();
     stdfoot();

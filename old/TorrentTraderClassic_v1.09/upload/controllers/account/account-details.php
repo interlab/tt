@@ -326,7 +326,7 @@ if (get_user_class() >= UC_JMODERATOR && $user['invitees'] > 0 || $user["id"] ==
             AND status = ?
         LIMIT 50', ['confirmed']);
     if ($compl_users) {
-        $last = count($compl_users[0]);
+        $last = count($compl_users);
         echo '<tr><td class=rowhead width=1%>Invited Users: </td><td>';
         $i = 0;
         foreach ($compl_users as $row) {

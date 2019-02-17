@@ -514,7 +514,7 @@ if ($action == "viewtopic") {
     print ("</td></tr></table>");
 
     //------ Print table of posts
-    $pc = count($res[0]);
+    $pc = count($res);
     $pn = 0;
     $lpr = DB::fetchColumn('
         SELECT lastpostread FROM forum_readposts WHERE userid = '
@@ -1234,7 +1234,7 @@ if ($action == "search") {
         $res = DB::fetchAll("SELECT * FROM forum_posts WHERE MATCH (body) AGAINST (?)", [$keywords]);
 
         // search and display results...
-        $num = count($res[0] ?? []);
+        $num = count($res);
 
         if ($num > $maxresults) {
             $num = $maxresults;

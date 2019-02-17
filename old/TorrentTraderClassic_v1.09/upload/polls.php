@@ -12,17 +12,17 @@ if ($action == "delete") {
   	if (get_user_class() < UC_MODERATOR)
   		stderr("Error", "Permission denied.");
 
-  	if (!is_valid_id($pollid))
+  	if (! is_valid_id($pollid))
 		stderr("Error", "Invalid ID.");
 
-   	$sure = (int)$_GET["sure"];
-   	if (!$sure) {
+   	$sure = (int) $_GET["sure"];
+   	if (! $sure) {
     	stderr("Delete poll","Do you really want to delete a poll? Click\n" .
     		"<a href=?action=delete&pollid=$pollid&returnto=$returnto&sure=1>here</a> if you are sure.");
     }
 
-    mysql_query("DELETE FROM pollanswers WHERE pollid = $pollid") or sqlerr();
-    mysql_query("DELETE FROM polls WHERE id = $pollid") or sqlerr();
+    DB::executeUpdate("DELETE FROM pollanswers WHERE pollid = $pollid");
+    DB::executeUpdate("DELETE FROM polls WHERE id = $pollid");
     if ($returnto == "main")
         header("Location: $SITEURL");
     else
@@ -32,7 +32,7 @@ if ($action == "delete") {
 
 $pollcount = DB::fetchColumn("SELECT COUNT(*) FROM polls");
 if (! $pollcount)
-  	stderr("Sorry...", "There are no polls!");
+    stderr("Sorry...", "There are no polls!");
 
 $polls = DB::query("SELECT * FROM polls ORDER BY id DESC");
 stdhead("Previous polls");
@@ -46,22 +46,19 @@ while ($poll = $polls->fetch()) {
     print("<p><table width=750 border=1 cellspacing=0 cellpadding=10 align=center><tr><td align=center>\n");
 
     print("<p class=sub>");
-    $added = gmdate("Y-m-d",strtotime($poll['added'])) . " GMT (" . (get_elapsed_time(sql_timestamp_to_unix_timestamp($poll["added"]))) . " ago)";
+    $added = gmdate("Y-m-d", strtotime($poll['added'])) . " GMT ("
+        . (get_elapsed_time(sql_timestamp_to_unix_timestamp($poll["added"]))) . " ago)";
 
-    print("$added");
+    echo $added;
 
-    if (get_user_class() >= UC_MODERATOR)
-    {
+    if (get_user_class() >= UC_MODERATOR) {
     	print(" - [<a href=makepoll.php?action=edit&pollid=$poll[id]><b>Edit</b></a>]\n");
-			print(" - [<a href=?action=delete&pollid=$poll[id]><b>Delete</b></a>]\n");
-		}
+		print(" - [<a href=?action=delete&pollid=$poll[id]><b>Delete</b></a>]\n");
+	}
 
-		print("<a name=$poll[id]>");
-
-		print("</p>\n");
-
+	print("<a name=$poll[id]></a>");
+	print("</p>\n");
     print("<table width=400 class=main border=1 cellspacing=0 cellpadding=5><tr><td class=text>\n");
-
     print("<p align=center><b>" . $poll["question"] . "</b></p>");
 
     // todo: subquery
@@ -84,8 +81,9 @@ while ($poll = $polls->fetch()) {
     }
 
     // now os is an array like this:
-    if ($poll["sort"] == "yes")
+    if ($poll["sort"] == "yes") {
     	usort($os, function($a, $b) { return $b[0] <=> $a[0]; });
+    }
 
     print("<table width=100% class=main border=0 cellspacing=0 cellpadding=0>\n");
     $i = 0;

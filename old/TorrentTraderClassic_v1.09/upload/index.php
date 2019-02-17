@@ -141,7 +141,7 @@ if ($POLLON) {
                 $uservote = isset($voted['selection']) ? $voted['selection'] : -1;
                 // we reserve 255 for blank vote.
                 $res = DB::fetchAll("SELECT selection FROM pollanswers WHERE pollid = $pollid AND selection < 20");
-                $tvotes = count($res[0] ?? []);
+                $tvotes = count($res);
 
                 $vs = []; // array of
                 $os = [];
