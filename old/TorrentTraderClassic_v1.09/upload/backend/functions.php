@@ -676,7 +676,7 @@ function downloaderdata($res)
     return [ $rows, $peerdata ];
 }
 
-function commenttable($rows)
+function commenttable($rows, $file='torrents-comment.php')
 {
     global $CURUSER;
 
@@ -755,8 +755,8 @@ function commenttable($rows)
         // echo '</tr><tr valign=top>';
         echo '<td><div class="tt-comment-table-date">';
         if ($CURUSER['id'] === $row["user"] || get_user_class() >= UC_JMODERATOR) {
-            echo 'Posted: ' . $row["added"] . ' - <a href="torrents-comment.php?cid=' .
-                $row["id"] . '&amp;sa=edit">[Edit]</a> - <a href="torrents-comment.php?cid=' . $row["id"] .
+            echo 'Posted: ' . $row["added"] . ' - <a href="'.$file.'?cid=' .
+                $row["id"] . '&amp;sa=edit">[Edit]</a> - <a href="'.$file.'?cid=' . $row["id"] .
                 '&amp;sa=delete">[Delete]</a>';
         } else {
             print("Posted: " . $row["added"]);
@@ -1289,8 +1289,10 @@ function stderr($heading = "", $text, $sort = "")
 
 function bark($heading = "Error", $text, $sort = "Error")
 {
+    global $txt;
+
     stdhead("$sort: $heading");
-    $color = strtolower($sort) == 'success' ? 'green' : 'red';
+    $color = strtolower($sort) == 'success' || $sort == $txt['SUCCESS'] ? 'green' : 'red';
     begin_frame('<span style="color: '.$color.';">'.$sort.':</span> '.$heading, 'center');
     echo $text;
     end_frame();

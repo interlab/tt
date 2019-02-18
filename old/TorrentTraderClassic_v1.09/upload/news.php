@@ -17,6 +17,7 @@ function toggle(nome) {
 
 <?php
 
+// todo: news settings merge with settings
 $opts = DB::fetchAssoc('SELECT max_display, comment FROM news_options');
 
 $res = DB::fetchAll('

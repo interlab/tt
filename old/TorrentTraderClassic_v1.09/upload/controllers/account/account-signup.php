@@ -73,22 +73,48 @@ if ($wantusername != "") {
         }
 
         // check username isnt in use
-        $a = DB::fetchColumn('
-            SELECT count(*)
-            from users
-            where real_name = ? OR username = ?',
-            [$wantusername, $wantusername]
+        $a = DB::fetchColumn('SELECT id FROM users WHERE real_name = ? LIMIT 1',
+            [$wantusername]
         );
         if ($a) {
-            $message = "The username $wantusername is already in use."; 
+            $a = DB::fetchColumn('
+                SELECT real_name
+                FROM users
+                WHERE real_name REGEXP ?
+                ORDER BY LENGTH(real_name), real_name DESC
+                LIMIT 1',
+                ['^' . $wantusername . '[[:digit:]]+$']
+            );
+            if (! $a) {
+                $wantusername .= '1';
+            } else {
+                $len = mb_strlen($wantusername, 'utf-8');
+                $len1 = mb_strlen($a, 'utf-8');
+                if ($len === $len1) {
+                    trigger_error('Error 1: username. stupid monkey logic in script. *'
+                        . $wantusername . '* - *'.$a.'*', E_USER_WARNING);
+                    die('Error: username. stupid monkey logic in script.');
+                } else {
+                    preg_match('~^\d+$~u', mb_substr($a, $len, $len1, 'utf-8'), $m);
+                    if ($m) {
+                        $wantusername .= intval($m[0]) + 1;
+                    } else {
+                        trigger_error('Error 2: username. stupid monkey logic in script. *'
+                            . $wantusername . '* - *' . $a . '*', E_USER_WARNING);
+                        die('Error 2: username. stupid monkey logic in script.');
+                    }
+                }
+                // $message = "The username $wantusername is already in use."; 
+            }
         }
 
         $secret = mksecret();
         // $wantpassword = md5($wantpassword);
         $wantpassword = password_hash($wantpassword, PASSWORD_DEFAULT);
 
-        if (! empty($message))
+        if (! empty($message)) {
             break;
+        }
 
         try {
             $ret = DB::executeUpdate('
@@ -96,7 +122,7 @@ if ($wantusername != "") {
                         added, age, country, gender, client, about_myself, passkey)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [$wantusername, $wantusername, $wantpassword, $secret, $email, 'pending',
-                get_date_time(), $age, $country, $gender, $client, '', generateRandomString(32)
+                 get_date_time(), $age, $country, $gender, $client, '', generateRandomString(32)
                 ]
             );
 
@@ -114,8 +140,9 @@ if ($wantusername != "") {
             }
         }
 
-        if (! empty($message))
+        if (! empty($message)) {
             break;
+        }
 
         // write_log("User account $id ($wantusername) was created");
 
@@ -183,8 +210,9 @@ if ($message != "")
                     $res = DB::query("SELECT id, name, domain from countries ORDER BY name");
                     while ($ct_a = $res->fetch()) {
                         $countries .= "\t\t\t\t\t\t<option value=\"$ct_a[id]\"";
-                        if ($dom == $ct_a["domain"])
-                            $countries .= " SELECTED";
+                        if ($dom == $ct_a["domain"]) {
+                            $countries .= ' selected';
+                        }
                         $countries .= ">$ct_a[name]</option>\n";
                     }
                     ?>
