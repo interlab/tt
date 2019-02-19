@@ -1,30 +1,30 @@
 <?php
 
-require "backend/functions.php";
+require 'backend/functions.php';
 dbconn(false);
 loggedinorreturn();
 
-$sa = $_GET["sa"] ?? '';
-$pollid = (int) ($_GET["pollid"] ?? 0);
-$returnto = $_GET["returnto"] ?? '';
+$sa = $_GET['sa'] ?? '';
+$pollid = (int) ($_GET['pollid'] ?? 0);
+$returnto = $_GET['returnto'] ?? '';
 
 function df($datetime)
 {
-    return gmdate("Y-m-d", strtotime($datetime)) . " GMT ("
-        . (get_elapsed_time(sql_timestamp_to_unix_timestamp($datetime))) . " ago)";
+    return gmdate('Y-m-d', strtotime($datetime)) . ' GMT ('
+        . (get_elapsed_time(sql_timestamp_to_unix_timestamp($datetime))) . ' ago)';
 }
 
-if ($sa == "delete") {
-  	if (get_user_class() < UC_MODERATOR)
-  		stderr("Error", "Permission denied.");
+if ($sa == 'delete') {
+    if (get_user_class() < UC_MODERATOR)
+        stderr('Error', 'Permission denied.');
 
-  	if (! is_valid_id($pollid))
-		stderr("Error", "Invalid ID.");
+    if (! is_valid_id($pollid))
+        stderr('Error', 'Invalid ID.');
 
-   	$sure = (int) $_GET["sure"];
-   	if (! $sure) {
-    	stderr("Delete poll","Do you really want to delete a poll? Click\n" .
-    		"<a href=?sa=delete&pollid=$pollid&returnto=$returnto&sure=1>here</a> if you are sure.");
+    $sure = (int) ($_GET['sure'] ?? 0);
+    if (! $sure) {
+        stderr('Delete poll', "Do you really want to delete a poll? Click\n" .
+            "<a href=?sa=delete&pollid=$pollid&returnto=$returnto&sure=1>here</a> if you are sure.");
     }
 
     DB::executeUpdate("DELETE FROM pollanswers WHERE pollid = $pollid");
@@ -35,7 +35,6 @@ if ($sa == "delete") {
         header("Location: $SITEURL/polls.php?deleted=1");
     die;
 } elseif ($sa === 'view') {
-
     // $quicktags
     require_once 'backend/quicktags.php';
 
@@ -193,8 +192,8 @@ if ($sa == "delete") {
         }
     }
     stdfoot();
-
 } else {
+    // GET
 
     $pollcount = DB::fetchColumn("SELECT COUNT(*) FROM polls");
     if (! $pollcount) {
@@ -206,8 +205,8 @@ if ($sa == "delete") {
     // todo: pager
     $polls = DB::query("SELECT * FROM polls ORDER BY id DESC");
 
-    stdhead("Previous polls");
-    begin_frame("Previous Polls");
+    stdhead("Polls");
+    begin_frame("Polls");
 
     echo '<style>
     .tt-poll-table {
@@ -229,9 +228,10 @@ if ($sa == "delete") {
         text-align: left;
     }
     </style>';
-    
+
+    echo '<div align="right">Moderator Options - [<a class=altlink href=makepoll.php?returnto=main><b>New</b></a>]</div>';
     echo $pagertop;
-    
+
     echo '<table class="tt-poll-table"><thead><th>Вопрос</th>
         <th>Голосовало</th>
         <th>Comments</th>
@@ -239,7 +239,6 @@ if ($sa == "delete") {
         <th>Окончание</th></thead><tbody>';
     while ($poll = $polls->fetch()) {
         // dump($poll, substr($poll['ending'], 0, 3));
-
         echo '<tr>';
 
         $added = df($poll['added']);
@@ -250,10 +249,12 @@ if ($sa == "delete") {
 
         echo '<td><b>' . $link . '</b>';
 
+        /*
         if (get_user_class() >= UC_MODERATOR) {
             print(" - [<a href=makepoll.php?action=edit&pollid=$poll[id]><b>Edit</b></a>]\n");
             print(" - [<a href=polls.php?action=delete&pollid=$poll[id]><b>Delete</b></a>]\n");
         }
+        */
 
         echo '
                 </td><td>', $count, '</td><td>', $poll['comments'], '</td><td>', $added, '</td><td>', $ending, '</td>
