@@ -121,15 +121,27 @@ elseif ($sa === "update") {
 }
 
 // get: delete by id comment
-elseif ($sa === "delete") {
-    $commentid = (int) ($_GET["cid"] ?? 0);
-    if (!is_valid_id($commentid)) {
+elseif ($sa === 'delete') {
+    $commentid = (int) ($_GET['cid'] ?? 0);
+    if (! is_valid_id($commentid)) {
         bark("Error", "Invalid ID $commentid.");
     }
+    $type = $_GET['type'] ?? '';
     $arr = _getCommentOrError($commentid);
     $query = 'DELETE FROM comments WHERE id = ' . $commentid;
     $result = DB::executeUpdate($query);
-    $file = $arr['news'] ? 'show-archived.php?id='.$arr['news'] : 'polls.php?sa=view&id='.$arr['poll'];
+    if ($result) {
+        if ($type === 'poll') {
+            $count = DB::fetchColumn('SELECT COUNT(*) FROM comments WHERE poll = ?', [$arr['poll']]);
+            $result = DB::executeUpdate('UPDATE polls SET comments = ? WHERE id = ?', [$count, $arr['poll']]);
+        } elseif ($type === 'news') {
+            $count = DB::fetchColumn('SELECT COUNT(*) FROM comments WHERE news = ?', [$arr['news']]);
+            $result = DB::executeUpdate('UPDATE news SET comments = ? WHERE id = ?', [$count, $arr['news']]);
+        }
+    }
+    
+    $file = $arr['news'] ? 'show-archived.php?id='.$arr['news']
+        : 'polls.php?sa=view&id='.$arr['poll'];
     $name = $arr['news'] ? 'news' : 'poll';
     stdhead("Delete comment:");
     begin_frame("Delete Comment");

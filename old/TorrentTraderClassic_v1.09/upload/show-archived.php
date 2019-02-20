@@ -1,6 +1,6 @@
 <?php
 
-require_once("backend/functions.php");
+require_once('backend/functions.php');
 
 $id = (int) ($_GET['id'] ?? 0);
 if (!$id) {
@@ -15,15 +15,16 @@ require_once 'backend/quicktags.php';
 
 $torrow = DB::fetchAssoc('SELECT title FROM news WHERE id = ' . $id . ' LIMIT 1');
 if (!$torrow) {
-    die('news not found');
+    bark('found error', 'news not found');
 }
 
-stdhead("Add a comment to \"" . $torrow["title"] . "\"");
-$query = 'SELECT title, user, date, text FROM news WHERE id=\'' . $_GET['id'] . '\'';
+stdhead('Add a comment to "' . $torrow['title'] . '"');
+$query = 'SELECT title, user, date, text, comments FROM news WHERE id=\'' . $_GET['id'] . '\'';
 $resu = DB::query($query);
 while ($row = $resu->fetch()) {
     begin_frame($row['title']);
-    print($row['text'] . " <br><br><I>Posted By " . $row['user'] . "</i> On " . $row['date'] . "\n");
+    echo $row['text'] . ' <br><br><I>Posted By ' . $row['user'] . '</i> On ' . $row['date'] . '
+    | Comments: '.$row['comments'];
     end_frame();
 }
 
@@ -33,7 +34,7 @@ $resu = DB::query($query);
 while ($row = $resu->fetch()) {
     if ($row['comment'] == 'on') {
         if ($CURUSER) {
-            begin_frame("Add a comment to \"" . h($torrow["title"]) . "\"", 'center');
+            begin_frame('Add a comment to "' . h($torrow['title']) . '"', 'center');
 ?>
 <p>
 
@@ -44,18 +45,18 @@ while ($row = $resu->fetch()) {
 <tr>
 <td><?= $quicktags?></td><td><textarea name="body" rows="10" cols="60"></textarea></td>
 </tr>
-<tr><td colspan=2><center><input type="submit" class=btn value="Add Comment" /></center></td></tr></table>
+<tr><td colspan=2><center><input type="submit" class=btn value="Add Comment"></center></td></tr></table>
 
 <?php
-            $res = DB::query("
+            $res = DB::query('
                 SELECT comments.id, text, comments.added,
                     username, users.id as user, users.avatar, users.downloaded,
                     users.uploaded, users.signature, users.title, users.privacy
                 FROM comments
                     LEFT JOIN users ON comments.user = users.id
-                WHERE news = $id
+                WHERE news = '.$id.'
                 ORDER BY comments.id DESC
-                LIMIT 5");
+                LIMIT 5');
 
             $allrows = [];
             while ($row = $res->fetch()) {
@@ -63,13 +64,13 @@ while ($row = $resu->fetch()) {
             }
 
             if (count($allrows)) {
-                commenttable($allrows, 'take-ncomment.php');
+                commenttable($allrows, 'take-ncomment.php', 'news');
             }
 
             end_frame();
         } else {
-            begin_frame("Error");
-            Print("You Must Be Logged In To View/Add Comments");
+            begin_frame('Error');
+            echo 'You Must Be Logged In To View/Add Comments';
             end_frame();
             stdfoot();
         }

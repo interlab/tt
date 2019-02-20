@@ -148,7 +148,6 @@ if ($sa == 'delete') {
                 print("<div align=center><input type=submit value='Vote' class=btn>
                 <br><a href=polls.php>View Results</a></div></table>");
             }
-
         }
         end_frame();
 
@@ -185,7 +184,7 @@ if ($sa == 'delete') {
             }
 
             if (count($allrows)) {
-                commenttable($allrows, 'take-ncomment.php');
+                commenttable($allrows, 'take-ncomment.php', 'poll');
             }
 
             end_frame();
@@ -257,7 +256,8 @@ if ($sa == 'delete') {
         */
 
         echo '
-                </td><td>', $count, '</td><td>', $poll['comments'], '</td><td>', $added, '</td><td>', $ending, '</td>
+                </td><td>', $count, '</td><td>', $poll['comments'], '</td>
+                <td>', $added, '</td><td>', $ending, '</td>
             </tr>';
     }
     echo '</tbody></table>';

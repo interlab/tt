@@ -1,8 +1,9 @@
 <?php
 
-// error_reporting(E_ALL ^ E_NOTICE);
 error_reporting(-1);
 // error_reporting(E_ALL ^ E_NOTICE);
+// error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 define('TT_START_TIME', microtime(true));
 
@@ -676,7 +677,7 @@ function downloaderdata($res)
     return [ $rows, $peerdata ];
 }
 
-function commenttable($rows, $file='torrents-comment.php')
+function commenttable($rows, $file='torrents-comment.php', $type='')
 {
     global $CURUSER;
 
@@ -757,7 +758,7 @@ function commenttable($rows, $file='torrents-comment.php')
         if ($CURUSER['id'] === $row["user"] || get_user_class() >= UC_JMODERATOR) {
             echo 'Posted: ' . $row["added"] . ' - <a href="'.$file.'?cid=' .
                 $row["id"] . '&amp;sa=edit">[Edit]</a> - <a href="'.$file.'?cid=' . $row["id"] .
-                '&amp;sa=delete">[Delete]</a>';
+                '&amp;sa=delete'.($type ? '&amp;type='.$type : '').'">[Delete]</a>';
         } else {
             print("Posted: " . $row["added"]);
         }
