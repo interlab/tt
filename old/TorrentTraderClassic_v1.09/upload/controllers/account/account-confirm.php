@@ -16,17 +16,17 @@ if (!$id || !$md5) {
 $row = DB::fetchAssoc('SELECT password, secret, status FROM users WHERE id = '.$id);
 
 if (! $row) {
-	bark('Error', 'user not found');
+    bark('Error', 'user not found');
 }
 
 if ($row['status'] != 'pending') {
-	header('Refresh: 0; url=account-confirm-ok.php?type=confirmed');
-	exit();
+    header('Refresh: 0; url=account-confirm-ok.php?type=confirmed');
+    exit();
 }
 
 $sec = hash_pad($row['secret']);
 if ($md5 != md5($sec)) {
-	bark('Error', 'bad secret');
+    bark('Error', 'bad secret');
 }
 
 $newsec = mksecret();
@@ -38,7 +38,7 @@ $aff_rows = DB::executeUpdate('
 );
 
 if (! $aff_rows) {
-	bark('Error', 'update error');
+    bark('Error', 'update error');
 }
 
 logincookie($id, $row['password'], $newsec);

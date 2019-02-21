@@ -120,6 +120,8 @@ if ($CURUSER) {
 //end invite block
 
 begin_block($txt['NAVIGATION']);
+
+global $POLLON, $NEWSON;
 ?>
 
 · <a href="index.php"><?= $txt['HOME'] ?></a><br>
@@ -127,7 +129,8 @@ begin_block($txt['NAVIGATION']);
 &nbsp;&nbsp;· <a href="torrents-upload.php"><?= $txt['UPLOADT'] ?></a><br>
 &nbsp;&nbsp;· <a href="torrents-needseed.php"><?= $txt['UNSEEDED'] ?></a><br>
 &nbsp;&nbsp;· <a href="requests.php?sa=view"><?= $txt['REQUESTED'] ?></a><br>
-&nbsp;&nbsp;· <a href="polls.php"><?= $txt['POLLS'] ?></a><br>
+<?php if ($POLLON) { ?>&nbsp;&nbsp;· <a href="polls.php"><?= $txt['POLLS'] ?></a><br><?php } ?>
+<?php if ($NEWSON) { ?>&nbsp;&nbsp;· <a href="news-archive.php"><?= $txt['NEWS'] ?></a><br><?php } ?>
 &nbsp;&nbsp;· <a href="torrents-today.php"><?= $txt['TODAYS_TORRENTS'] ?></a><br><br>
 <CENTER><a href="rssinfo.php"><img src="images/rss2.gif" border=0 alt="XML RSS Feed"></a></CENTER>
 <hr>

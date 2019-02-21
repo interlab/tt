@@ -1,15 +1,11 @@
 <?php
-//
-// - Theme And Language Updated 25.Nov.05
-//
-ob_start('ob_gzhandler');
-require_once('backend/functions.php');
+
+require_once 'backend/functions.php';
 dbconn(true);
 
-global $CURUSER, $RATIO_WARNINGON, $SHOUTBOX, $DISCLAIMERON, $minvotes;
+global $CURUSER, $RATIO_WARNINGON, $SHOUTBOX, $DISCLAIMERON, $minvotes, $POLLON;
 
-if ($RATIO_WARNINGON && $CURUSER)
-{
+if ($RATIO_WARNINGON && $CURUSER) {
     include('ratiowarn.php');
 }
 
@@ -17,8 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $choice = (int) ($_POST['choice'] ?? 0);
     if ($CURUSER && $choice > -1 && $choice < 256) {
         $arr = DB::fetchAssoc('SELECT * FROM polls ORDER BY added DESC LIMIT 1');
-        if (!$arr)
+        if (!$arr) {
             die('No poll');
+        }
         $pollid = $arr['id'];
         $userid = $CURUSER['id'];
         $arr = DB::fetchAssoc('SELECT * FROM pollanswers WHERE pollid = ? AND userid = ? LIMIT 1', [$pollid, $userid]);
