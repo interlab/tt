@@ -15,6 +15,8 @@ if ($RATIO_WARNINGON && $CURUSER) {
     require_once TT_ROOT_DIR.'/ratiowarn.php';
 }
 
+$_GET['c'] = $_GET['c'] ?? [];
+
 $cats = genrelist();
 
 $orderby = 'ORDER BY torrents.id DESC';
@@ -38,24 +40,22 @@ if (!$all && (!$_GET && $CURUSER['notifs'])) { // todo: check logik
         $all &= $cat['id'];
         if (strpos($CURUSER['notifs'], '[cat' . $cat['id'] . ']') !== false) {
             $wherecatina[] = (int) $cat['id'];
-            $addparam .= "c$cat[id]=1&amp;";
+            $addparam .= 'c[]='.$cat['id'].'&amp;';
         }
     }
-}
-elseif ($category) {
+} elseif ($category) {
     if (!is_valid_id($category)) {
         stderr('Error', 'Invalid category ID '.$category.'.');
     }
     $wherecatina[] = $category;
-    $addparam .= "cat=$category&amp;";
-}
-else {
+    $addparam .= 'cat='.$category.'&amp;';
+} else {
     $all = true;
     foreach ($cats as $cat) {
-        if (isset($_GET["c$cat[id]"])) {
+        if (in_array($cat['id'], $_GET['c'])) {
             $all = false;
             $wherecatina[] = (int) $cat['id'];
-            $addparam .= "c$cat[id]=1&amp;";
+            $addparam .= 'c[]='.$cat['id'].'&amp;';
         }
     }
 }
@@ -83,7 +83,7 @@ if ($wherecatin) {
 }
 
 if ($where != '') {
-    $where = "WHERE $where";
+    $where = 'WHERE '.$where;
 }
 
 // dump($where);
@@ -128,21 +128,21 @@ begin_frame($txt['BROWSE_TORRENTS'], 'center');
 <tr>
  <td class=bottom>
   <table class=bottom align="center">
-   <tr align='right'>
+   <tr align="right">
 
 <?php
 $i = 0;
 foreach ($cats as $cat) {
     $catsperrow = 7;
-    echo ($i && $i % $catsperrow == 0) ? "</tr><tr align='right'>" : '';
-    print("<td style=\"padding-bottom: 2px;padding-left: 2px\">
-        <a class=catlink href=browse.php?cat={$cat["id"]}>" . 
-    h($cat["name"]) . "</a><input name=c{$cat["id"]} type=\"checkbox\" "
-        . (in_array($cat["id"], $wherecatina) ? "checked " : '') . "value=1></td>\n");
+    echo ($i && $i % $catsperrow == 0) ? '</tr><tr align="right">' : '';
+    echo '<td style="padding-bottom: 2px;padding-left: 2px">
+        <a class="catlink" href="browse.php?cat='.$cat['id'].'">' . 
+        h($cat['name']) . '</a><input name="c[]" type="checkbox" '
+        . (in_array($cat['id'], $wherecatina) ? 'checked ' : '') . 'value="'.$cat["id"].'"></td>';
     $i++;
 }
 
-$alllink = "<div align=left>(<a href=browse.php?all=1><b>Show all</b></a>)</div>";
+$alllink = '<div align=left>(<a href=browse.php?all=1><b>Show all</b></a>)</div>';
 
 $ncats = count($cats);
 $nrows = ceil($ncats / $catsperrow);
@@ -153,24 +153,27 @@ if ($lastrowcols != 0) {
         print("<td class=bottom rowspan=" . ($catsperrow  - $lastrowcols - 1)
             . ">&nbsp;</td>");
     }
-    print("<td class=bottom style=\"padding-left: 5px\">$alllink</td>\n");
+    echo '<td class=bottom style="padding-left: 5px;">'.$alllink.'</td>';
 }
 ?>
    </tr>
   </table>
  </td>
-</tr> 
+</tr>
 <?php
-if ($ncats % $catsperrow == 0)
-print("<tr><td class=bottom style=\"padding-left: 15px\" rowspan=$nrows valign=center align=right>$alllink</td></tr>\n");
+if ($ncats % $catsperrow == 0) {
+    echo '<tr><td class=bottom style="padding-left: 15px" rowspan='.$nrows.' valign=center align=right>
+        '.$alllink.'
+        </td></tr>';
+}
 ?>  
- <tr>
-  <td class=bottom style="padding: 1px;padding-left: 10px">
-  <div align=center>
-   <input type="submit" class=btn value="Go!"/>
-  </div>
-  </td>
- </tr>
+<tr>
+    <td class=bottom style="padding: 1px;padding-left: 10px">
+    <div align=center>
+    <input type="submit" class=btn value="Go!"/>
+    </div>
+    </td>
+</tr>
 </table>
 </form>
 

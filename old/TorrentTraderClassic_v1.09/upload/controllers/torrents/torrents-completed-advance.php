@@ -6,9 +6,6 @@ dbconn(false);
 
 loggedinorreturn();
 
-ob_start("ob_gzhandler");
-
-
 stdhead("Completed Details");
 
 $id = (int) ($_GET['id'] ?? 0);

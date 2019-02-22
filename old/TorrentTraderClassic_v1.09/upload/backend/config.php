@@ -75,7 +75,7 @@ $RATIOWARN_TIME = "10";   //ammount of time for user have have poor ratio before
 $RATIOWARN_BAN = "5";     //ammount of time after warning to auto-ban user.
 
 // Tracker Settings
-$torrent_dir = str_replace("\\","/",getcwd()."/uploads/");
+$torrent_dir = __DIR__ . '/../uploads';
 $nfo_dir = str_replace("\\","/",getcwd()."/uploads/");
 $image_dir = str_replace("\\","/",getcwd()."/uploads/");
 $announce_urls = [];

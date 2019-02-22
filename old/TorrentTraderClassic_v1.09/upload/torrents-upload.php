@@ -132,7 +132,7 @@ if (!empty($_POST['MAX_FILE_SIZE'])) {
     $filelist = [];
     $totallen = dict_get($info, "length", "integer");
     if (isset($totallen)) {
-        $filelist[] = array($dname, $totallen);
+        $filelist[] = [$dname, $totallen];
         $type = "single";
     } else {
         $flist = dict_get($info, "files", "list");
@@ -159,7 +159,7 @@ if (!empty($_POST['MAX_FILE_SIZE'])) {
                 $message = "Filename error";
 
             $ffe = implode("/", $ffa);
-            $filelist[] = array($ffe, $ll);
+            $filelist[] = [$ffe, $ll];
         }
         $type = "multi";
     }

@@ -7,9 +7,13 @@ IF ($LOGGEDINONLY){
 	loggedinorreturn();
 }
 
+addJsFile('vue/dist/vue.min.js');
+addJsFile('axios/dist/axios.min.js');
+addJsFile('tt-torrent-files-app.js');
+
 global $minvotes;
 
-//AGENT DETECT
+// AGENT DETECT
 function getagent($httpagent, $peer_id="")
 {
 if (preg_match("/^Azureus ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]\_B([0-9][0-9|*])(.+)$)/", $httpagent, $matches))
@@ -188,7 +192,7 @@ function dltable($name, $arr, $torrent)
 	$s .= "</table>\n";
 	return $s;
 }
-//END PEERS TABLE FUNCTION
+// END PEERS TABLE FUNCTION
 
 //************ DO SOME "GET" STUFF BEFORE PAGE LAYOUT ***************
 
@@ -258,8 +262,9 @@ if (!empty($_GET["uploaded"])) {
 }
 elseif (!empty($_GET["edited"])) {
     bark2("Success", "Edited OK!");
-    if (isset($_GET["returnto"]))
-        print("<p><b>Go back to <a href=\"" . h($_GET["returnto"]) . "\">previous page</a>.</b></p>\n");
+    if (isset($_GET["returnto"])) {
+        echo '<p><b>Go back to <a href="' . h($_GET['returnto']) . '">previous page</a>.</b></p>';
+    }
 }
 elseif (isset($_GET["searched"])) {
     bark2("Success", "Your search for \"" . h($_GET["searched"]) . "\" gave a single result:");
@@ -294,16 +299,17 @@ elseif (!empty($_GET["rated"])) {
 		}
 		$s .= "\n";
 		$s .= "</td><td class=embedded>$spacer</td><td valign=\"top\" class=embedded>";
-		if (!isset($CURUSER))
-			$s .= "(<a href=\"account-login.php?returnto=" . urlencode($_SERVER["REQUEST_URI"]) . "&amp;nowarn=1\">Log in</a> to rate it)";
-		else {
-			$ratings = array(
-					5 => "Cool!",
-					4 => "Pretty good",
-					3 => "Decent",
-					2 => "Pretty bad",
-					1 => "Sucks!",
-			);
+		if (!isset($CURUSER)) {
+			$s .= "(<a href=\"account-login.php?returnto=" . urlencode($_SERVER["REQUEST_URI"])
+                . "&amp;nowarn=1\">Log in</a> to rate it)";
+		} else {
+			$ratings = [
+                5 => "Cool!",
+                4 => "Pretty good",
+                3 => "Decent",
+                2 => "Pretty bad",
+                1 => "Sucks!",
+			];
 			if (!$owned || $moderator) {
 				$xrow = DB::fetchAssoc("SELECT rating, added FROM ratings WHERE torrent = $id AND user = " . $CURUSER["id"]);
 				if ($xrow)
@@ -362,20 +368,25 @@ if (! $iProgressbar) {
 $progressTotal = sprintf("%.2f", $progressPerTorrent / $iProgressbar);
 // end progress bar
 
-//START OF PAGE LAYOUT HERE
-begin_frame($txt['TORRENT_DETAILS_FOR'] . " \"" . $row["name"] . "\"");
+// START OF PAGE LAYOUT HERE
+begin_frame($txt['TORRENT_DETAILS_FOR'] . ' "' . $row['name'] . '"');
 
-echo "<TABLE BORDER=0 WIDTH=100%><TR><TD ALIGN=RIGHT><a href=report.php?torrent=$id>" . $txt['REPORT_TORRENT'] . "</a> " . $editit . "</TD></TR></TABLE>";
-
-echo "<BR><table cellpadding=3 width=100% border=0>";
-echo "<TR><TD width=70% align=left valign=top><table width=100% cellspacing=0 cellpadding=3 border=0>";
+echo "<TABLE BORDER=0 WIDTH=100%><TR><TD ALIGN=RIGHT><a href=report.php?torrent=$id>"
+    . $txt['REPORT_TORRENT'] . "</a> " . $editit . "</TD></TR></TABLE>";
 ?>
-<tr><td align=left colspan=2 class="tt-descr-box"><b><?= $txt['TDESC'] ?>:</b><br><?= format_comment($row['descr']) ?></td></tr>
+<BR>
+<table cellpadding=3 width=100% border=0>
+<TR><TD width=70% align=left valign=top>
+    <table width=100% cellspacing=0 cellpadding=3 border=0>
+        <tr><td align=left colspan=2 class="tt-descr-box"><b><?= $txt['TDESC'] ?>:</b>
+        <br><?= format_comment($row['descr']) ?></td></tr>
 
 <?php
-print("<tr><td align=left><b>" . $txt['NAME'] . ":</b></td><td>" . h($row["name"]) . "</td></tr>");
+print("<tr><td align=left><b>" . $txt['NAME'] . ":</b></td>
+    <td>" . h($row["name"]) . "</td></tr>");
 
-echo '<tr><td align=left><b>' . $txt['TORRENT'] . ':</b></td><td><a href="download.php?id=' . $id . '">' . h($row["filename"]) . '</a></td></tr>';
+echo '<tr><td align=left><b>' . $txt['TORRENT'] . ':</b></td>
+    <td><a href="download.php?id=' . $id . '">' . h($row["filename"]) . '</a></td></tr>';
 
 print("<tr><td align=left><b>" . $txt['TTYPE'] . ":</b></td><td>" . $row["cat_name"] . "</td></tr>");
 
@@ -403,7 +414,8 @@ if ($row["banned"] == "yes"){
 	echo '<tr><td valign=top align=right><a href="download.php?id=' . $id. '"><img src=images/download.png border=0></td></tr>';
 }
 
-print("<tr><td valign=top align=right><B>" . $txt['AVAILABILITY'] . ":</B><br>" . get_percent_completed_image(floor($progressTotal)) .
+print("<tr><td valign=top align=right><B>" . $txt['AVAILABILITY']
+    . ":</B><br>" . get_percent_completed_image(floor($progressTotal)) .
     " (".round($progressTotal)."%)</td></tr>");
 print("<tr><td valign=top align=right><B>" . $txt['SEEDS'] . ": <font color=green>" . $row["seeders"] . "</font></B></td></tr>");
 print("<tr><td valign=top align=right><B>" . $txt['LEECH'] . ": <font color=red>" . $row["leechers"] . "</font></B></td></tr>");
@@ -457,7 +469,7 @@ if (get_user_class() >= UC_JMODERATOR) {
 	print("<tr><td valign=top align=left><B>" . $txt['BANNED'] . ": </B>" . $row["banned"] . "<br><B>" . $txt['VISIBLE'] .
         ": </B>" . $row["visible"] . "</td></tr>");
 
-////////
+
 	if (get_user_class() >= UC_JMODERATOR) {        
 		if (!isset($_GET["ratings"])) {
             print("<tr><td valign=top align=left><B>" . $txt['RATINGS'] . "</B> (" . $row["numratings"] .
@@ -485,36 +497,36 @@ if (get_user_class() >= UC_JMODERATOR) {
                 <BR><a name=\"filelist\"><a href=\"torrents-details.php?id=$id$keepget\">[Hide list]</a>");
         }
 	}
-/////////
+
 	echo "</table>";
 }
 
 echo "</td></tr></table>";
 
+// Filelist
+echo '
+<div id="tt-filelist-app" style="display:none;">
+    <strong>Список файлов:</strong> 
+    <button v-on:click="tt_load_filelist('.$id.')" v-if="!open">' . $txt['SHOW'] . '</button>
+    <button v-on:click="tt_load_filelist('.$id.')" v-else>' . $txt['HIDE'] . '</button>
+    <div id="tt-filelist-result" v-if="open">
+        <div v-if="numfiles < 1"><h2 style="color: green;">Loading ...</h2></div>
+        <div v-else style="overflow: auto; max-height: 400px;">
+        <table class="main" border="1" cellspacing=0 cellpadding="5">
+        <tr>
+            <td class=colhead>' . $txt['PATH'] . '</td>
+            <td class=colhead align=left>' . $txt['SIZE'] . '</td>
+        </tr>
+        <tr v-for="item in files">
+            <td>{{ item[0] }}</td>
+            <td class=table_col2>{{ item[1] }}</td>
+        </tr>
+        </table>
+        </div>
+    </div>
+</div>';
+
 echo "<table width=100%>";
-//DO FILE LIST STUFF
-if ($row["type"] == "multi") {
-	if (empty($_GET["filelist"])){
-		print("<tr><td valign=top align=left><B>" . $txt['FILE_LIST'] . ": </b><a href=\"torrents-details.php?id=$id&amp;filelist=1$keepget#filelist\" class=\"sublink\">[" . $txt['SHOW'] . "]</a></td></tr>");
-	} else {
-		print("<tr><td valign=top align=left><B>" . $txt['FILE_LIST'] . ": </b></tr>");
-
-		$s = "<table class=main border=\"1\" cellspacing=0 cellpadding=\"5\">\n";
-
-        $subres = DB::query("SELECT * FROM files WHERE torrent = $id ORDER BY id");
-        
-        $s .= "<tr><td class=colhead>" . $txt['PATH'] . "</td><td class=colhead align=left>" . $txt['SIZE'] . "</td></tr>\n";
-
-        while ($subrow = $subres->fetch()) {
-            $s .= "<tr><td>" . $subrow["filename"] .
-                  "</td><td class=table_col2>" . mksize($subrow["size"]) . "</td></tr>\n";
-        }
-
-		$s .= "</table>\n";
-		tr("<a name=\"filelist\">" . $txt['FILE_LIST'] . "</a><br /><a href=\"torrents-details.php?id=$id$keepget\" class=\"sublink\">["
-            . $txt['HIDE'] . "]</a>", $s, 1);
-	}
-}
 
 //DO PEERS LIST STUFF
 if (empty($_GET["dllist"])) {

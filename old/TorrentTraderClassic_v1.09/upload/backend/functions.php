@@ -997,18 +997,22 @@ function torrenttable($res, $variant = "index")
 $oldlink = '';
 $count_get = 0;
 foreach ($_GET as $get_name => $get_value) {
-    if ($get_name !== 'sort' && $get_name !== 'type') {
-        if ($count_get > 0) {
-            $oldlink = $oldlink . '&' . $get_name . '=' . $get_value;
-        } else {
-            $oldlink = $oldlink . $get_name . '=' . $get_value;
-        }
-        $count_get++;
+    if ($get_name === 'sort' || $get_name === 'type') {
+        continue;
     }
+    if ($get_name === 'c' && is_array($get_value)) {
+        if (empty($get_value)) {
+            continue;
+        }
+        $oldlink = $oldlink .($count_get > 0 ? '&amp;' : ''). ('c[]=' . implode('&amp;c[]=', $get_value));
+    } else {
+        $oldlink = $oldlink .($count_get > 0 ? '&amp;' : ''). $get_name . '=' . $get_value;
+    }
+    $count_get++;
 }
 
 if ($count_get > 0) {
-    $oldlink = $oldlink . '&';
+    $oldlink = $oldlink . '&amp;';
 }
 
 $col = (int) ($_GET['sort'] ?? 0);
