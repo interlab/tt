@@ -1,11 +1,8 @@
 
-
-
 window.addEventListener('load', function(event){
     var ttfilelistapp = new Vue({
         el: '#tt-filelist-app',
         data: {
-            counter: 0,
             numfiles: 0,
             files: [],
             open: false,
