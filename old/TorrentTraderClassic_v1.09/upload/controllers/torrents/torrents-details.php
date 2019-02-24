@@ -213,9 +213,11 @@ if (!isset($id) || !$id) {
 
 function torrent_404()
 {
+    global $txt;
+
     stdhead();
-    begin_frame("Error");
-    print("<br><BR><center>".TORRENT_NOT_FOUND."</center><br><BR>");
+    begin_frame('Error');
+    print('<br><BR><center>'.$txt['TORRENT_NOT_FOUND'].'</center><br><BR>');
     end_frame();
     stdfoot();
     die;
@@ -245,12 +247,12 @@ if (!$row) {
 $owned = $moderator = 0;
 if (get_user_class() >= UC_MODERATOR) {
     $owned = $moderator = 1;
-} elseif ($CURUSER["id"] == $row["owner"]) {
+} elseif ($CURUSER['id'] == $row['owner']) {
     $owned = 1;
 }
 
 // DECIDE IF TORRENT EXISTS
-if (!$row || ($row["banned"] == "yes" && !$moderator)) {
+if (!$row || ($row['banned'] == 'yes' && !$moderator)) {
     torrent_404();
 }
 
@@ -265,22 +267,22 @@ if (empty($_SESSION['last_read_torrent'])
 
 stdhead('Details for torrent "' . $row['name'] . '"');
 
-$spacer = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+$spacer = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 
-if (!empty($_GET["uploaded"])) {
-    bark2("Successfully uploaded!", "You can start seeding now. <b>Note</b> that the torrent won't be visible until you do that!");
+if (!empty($_GET['uploaded'])) {
+    bark2('Successfully uploaded!', "You can start seeding now. <b>Note</b> that the torrent won't be visible until you do that!");
 }
-elseif (!empty($_GET["edited"])) {
-    bark2("Success", "Edited OK!");
-    if (isset($_GET["returnto"])) {
+elseif (!empty($_GET['edited'])) {
+    bark2('Success', 'Edited OK!');
+    if (isset($_GET['returnto'])) {
         echo '<p><b>Go back to <a href="' . h($_GET['returnto']) . '">previous page</a>.</b></p>';
     }
 }
-elseif (isset($_GET["searched"])) {
-    bark2("Success", "Your search for \"" . h($_GET["searched"]) . "\" gave a single result:");
+elseif (isset($_GET['searched'])) {
+    bark2('Success', 'Your search for "' . h($_GET['searched']) . '" gave a single result:');
 }
-elseif (!empty($_GET["rated"])) {
-    bark2("Success", $txt['RATING_THANK']);
+elseif (!empty($_GET['rated'])) {
+    bark2('Success', $txt['RATING_THANK']);
 }
 // END "GET" STUFF
 
@@ -524,14 +526,25 @@ echo '
         <div v-if="numfiles < 1"><h2 style="color: green;">Loading ...</h2></div>
         <div v-else style="overflow: auto; max-height: 400px;">
         <table class="main" border="1" cellspacing=0 cellpadding="5">
+        <thead>
         <tr>
-            <td class=colhead>' . $txt['PATH'] . '</td>
-            <td class=colhead align=left>' . $txt['SIZE'] . '</td>
+            <th>ID</th>
+            <th class=colhead>' . $txt['PATH'] . '</th>
+            <th class=colhead align=left>' . $txt['SIZE'] . '</th>
         </tr>
+        </thead>
+        <tbody>
         <tr v-for="item in files">
             <td>{{ item[0] }}</td>
-            <td class=table_col2>{{ item[1] }}</td>
+            <td>{{ item[1] }}</td>
+            <td class=table_col2>{{ item[2] }}</td>
         </tr>
+        </tbody>
+        <tfoot>
+        <tr><td colspan="3">Всего файлов: {{ numfiles }}<br>
+        Общий размер: {{ fullhumansize }}<br>
+        Точный размер раздачи: {{ fullsize }}<br></td></tr>
+        </tfoot>
         </table>
         </div>
     </div>

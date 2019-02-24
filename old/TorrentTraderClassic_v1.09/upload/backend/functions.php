@@ -545,16 +545,12 @@ function deletetorrent($id)
 
     DB::query('DELETE FROM torrents WHERE id = ' . $id);
     DB::query('DELETE FROM snatched WHERE torrentid = ' . $id);
-    foreach(explode('.', 'peers.files.comments.ratings') as $x) {
+    foreach (explode('.', 'peers.files.comments.ratings') as $x) {
         DB::query('DELETE FROM ' . $x . ' WHERE torrent = ' . $id);
     }
     $path_tor = $torrent_dir . '/' . $id . '.torrent';
     if (file_exists($path_tor)) {
         unlink($path_tor);
-    }
-    $path_nfo = $nfo_dir . '/' . $id . '.nfo';
-    if (file_exists($path_nfo)) {
-        @unlink($path_nfo);
     }
 }
 

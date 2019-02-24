@@ -20,11 +20,14 @@ function tt_file_list(int $id)
         $d = [];
         $res = DB::query('SELECT * FROM files WHERE torrent = ' . $id . ' ORDER BY filename ASC');
         $i = 0;
+        $allsize = 0;
         while ($row = $res->fetch()) {
-            $d[$i++] = [$row['filename'], mksize($row['size'])];
+            $d[$i++] = [$i, $row['filename'], mksize($row['size'])];
+            $allsize += $row['size'];
         }
+        $ret = [$d, mksize($allsize), $allsize];
 
-        return $d;
+        return $ret;
     });
     // dump($data);
 
