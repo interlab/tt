@@ -1,6 +1,6 @@
 <?php
 
-function _write_error_to_file($file, Exception $exc)
+function _write_error_to_file($file, Throwable $exc)
 {
     $err_msg = "\n" .
         'Message: ' . $exc->getMessage() . "\n" .
@@ -10,7 +10,7 @@ function _write_error_to_file($file, Exception $exc)
     file_put_contents($file, $err_msg, FILE_APPEND);
 }
 
-function unknown_exception_handler(Exception $exc)
+function unknown_exception_handler(Throwable $exc)
 {
     _write_error_to_file(TT_EXCEPTIONS_FILE, $exc);
     error('Error #' . __LINE__);
