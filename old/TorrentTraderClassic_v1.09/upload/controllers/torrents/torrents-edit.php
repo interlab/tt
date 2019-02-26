@@ -146,10 +146,10 @@ if (!isset($CURUSER) || ($CURUSER["id"] != $row["owner"] && get_user_class() < U
 	if (isset($_GET["returnto"])) {
 		print("<input type=\"hidden\" name=\"returnto\" value=\"" . h($_GET["returnto"]) . "\" />\n");
     }
-  	print("<B>" . $txt['REASON_FOR_DELETE'] . " </B> <input type=text size=40 name=reason> <input type=submit value='"
-        . $txt['DELETE_IT'] . "' style='height: 25px'>\n");
-	print("</form>\n");
-	print("</p>\n");
+  	echo '<B>' . $txt['REASON_FOR_DELETE'] . ' </B> <input type=text size=40 name=reason> 
+        <input type=submit value="' . $txt['DELETE_IT'] . '" style="height: 25px">
+        </form>
+    </p>';
 }
 
 end_frame();

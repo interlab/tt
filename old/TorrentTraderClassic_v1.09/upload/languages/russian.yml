@@ -193,6 +193,7 @@ PROFILE_UPDATED: 'Профиль обновлён'
 POLLS: 'Опросы'
 NEWS: 'Новости'
 TORRENT_DELETED: 'Торрент удалён'
+ADDED: Added
 
 # Phrases
 WELCOME_NEW: 'Приветствуем нашего последнего новичка:'

@@ -199,6 +199,7 @@ POLLS: 'Polls'
 NEWS: 'News'
 # PROFILE_UPDATED: 'Profile has been updated'
 TORRENT_DELETED: 'Torrent deleted'
+ADDED: Added
 
 # Phrases
 WELCOME_NEW: 'Welcome to our newest member'
