@@ -6,7 +6,6 @@ dbconn();
 loggedinorreturn();
 
 stdhead('Confirm');
-
 begin_frame();
 
 
@@ -16,10 +15,26 @@ $takeforumid = (int) ($_POST['forumid'] ?? 0);
 $takeforumpost = (int) ($_POST['forumpost'] ?? 0);
 $takereason = ($_POST['reason'] ?? '');
 
+
 $user = (int) ($_GET['user'] ?? 0);
 $torrent = (int) ($_GET['torrent'] ?? 0);
 $forumid = (int) ($_GET['forumid'] ?? 0);
 $forumpost = (int) ($_GET['forumpost'] ?? 0);
+
+
+if (! empty($_POST['delreport'])) {
+    jmodonly();
+
+    $_POST['delreport'] = array_map('intval', $_POST['delreport']);
+    $res = DB::query('SELECT id FROM reports WHERE dealtwith = 0 AND id IN (' . implode(', ', $_POST['delreport']) . ')');
+    while ($arr = $res->fetch()) {
+        DB::executeUpdate('UPDATE reports SET dealtwith = 1, dealtby = ' . $CURUSER['id'] . ' WHERE id = ' . $arr['id']);
+    }
+
+    ob_end_clean();
+    header('Location: ' . $GLOBALS['SITEURL'] . '/admin.php');
+    die('');
+}
 
 if (!empty($takeuser)) {
     if (empty($takereason)){

@@ -50,7 +50,7 @@ if (get_user_class() >= UC_MODERATOR)
     printf("<td class=table_head align=center>Delete</td>");
 
 print("</tr>");
-print("<form method=post action=takedelreport.php>");
+echo '<form method="post" action="report.php">';
 
 $res = DB::executeQuery('
     SELECT reports.id, reports.dealtwith, reports.dealtby, reports.addedby, reports.votedfor, reports.votedfor_xtra,

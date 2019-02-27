@@ -22,7 +22,7 @@ else
 $count = DB::fetchColumn('SELECT count(id) FROM reports ' . $where);
 
 $perpage = 25;
-list($pagertop, $pagerbottom, $limit) = pager($perpage, $count, $_SERVER['PHP_SELF'] . '?type=' . $_GET['type'] . '&' );
+[$pagertop, $pagerbottom, $limit] = pager($perpage, $count, $_SERVER['PHP_SELF'] . '?type=' . $_GET['type'] . '&' );
 
 echo $pagertop;
 
@@ -38,7 +38,7 @@ if (get_user_class() >= UC_MODERATOR) {
     echo '<td class=colhead align=center>Delete</td>';
 }
 
-echo '</tr><form method="post" action="takedelreport.php">';
+echo '</tr><form method="post" action="report.php">';
 
 $res = DB::query('
     SELECT r.id, r.dealtwith, r.dealtby, r.addedby, r.votedfor, r.reason, r.type, u.username
@@ -51,10 +51,11 @@ $res = DB::query('
 
 while ($arr = $res->fetch()) {
     if ($arr['dealtwith']) {
-        $arr3 = DB::fetchAssoc("SELECT username FROM users WHERE id = $arr[dealtby]");
-        $dealtwith = "<font color=green><b>Yes - <a href=account-details.php?id=$arr[dealtby]><b>$arr3[username]</b></a></font>";
+        $arr3 = DB::fetchAssoc('SELECT username FROM users WHERE id = '.$arr['dealtby']);
+        $dealtwith = '<font color=green><b>Yes - <a href=account-details.php?id='.$arr['dealtby'].'>'
+            .'<b>'.$arr3['username'].'</b></a></font>';
     } else {
-        $dealtwith = "<font color=red><div align=center><b>No</b></div></font>";
+        $dealtwith = '<div align=center><font color=red><b>No</b></font></div>';
     }
 
     if ($arr['type'] === 'user') {
@@ -64,7 +65,7 @@ while ($arr = $res->fetch()) {
     } elseif ($arr['type'] === 'forum') {
         $type = 'forums';
         $arr2 = DB::fetchAssoc('SELECT subject FROM forum_topics WHERE id = ' . $arr['votedfor']);
-        $subject = $arr2['subject'];
+        $name = $arr2['subject'];
     } elseif ($arr['type'] === 'torrent') {
         $type = 'torrents-details';
         $arr2 = DB::fetchAssoc('SELECT name FROM torrents WHERE id = ' . $arr['votedfor']);
@@ -74,27 +75,21 @@ while ($arr = $res->fetch()) {
         }
     }
 
-    if ($arr['type'] === 'forum') {
-        print("<tr><td align=center><a href=account-details.php?id=$arr[addedby]><b>$arr[username]</b></a></td>
-        <td align=center><a href=$type.php?action=viewtopic&topicid=$arr[votedfor]&page=p#$arr[votedfor_xtra]><b>$subject</b></a></td>
-        <td align=center>$arr[type]</td>
-        <td align=center>$arr[reason]</td>
-        <td align=center>$dealtwith</td>
-        <td align=center><input type=\"checkbox\" name=\"delreport[]\" value=\"" . $arr['id'] . "\" /></td></tr>\n");
-    } else {
-        print("<tr><td align=center><a href=account-details.php?id=$arr[addedby]><b>$arr[username]</b></a></td>
-        <td align=center><a href=$type.php?id=$arr[votedfor]><b>$name</b></a></td>
-        <td align=center>$arr[type]</td>
-        <td align=center>$arr[reason]</td>
-        <td align=center>$dealtwith</td>
-        <td align=center><input type=\"checkbox\" name=\"delreport[]\" value=\"" . $arr[id] . "\" /></td>\n");
+    echo '
+    <tr><td align=center>
+        <a href=account-details.php?id='.$arr['addedby'].'><b>'.$arr['username'].'</b></a>
+    </td>
+    <td align=center><a href='.$type.'.php?id='.$arr['votedfor'].'><b>'.$name.'</b></a></td>
+    <td align=center>'.$arr['type'].'</td>
+    <td align=center>'.$arr['reason'].'</td>
+    <td align=center>'.$dealtwith.'</td>
+    <td align=center><input type="checkbox" name="delreport[]" value="' . $arr['id'] . '"></td>';
 
-        if (get_user_class() >= UC_MODERATOR) {
-            printf("<td align=center><a href=admin-delreport.php?id=$arr[id]>Delete</a></td>");
-        }
-
-        print("</tr>");
+    if (get_user_class() >= UC_MODERATOR) {
+        echo '<td align=center><a href="admin-delreport.php?id='.$arr['id'].'">Delete</a></td>';
     }
+
+    echo '</tr>';
 }
 
 echo '</table>

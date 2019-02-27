@@ -5,12 +5,12 @@ require_once("backend/functions.php");
 dbconn();
 
  // Enter your MySQL access data 
- $host = $mysql_host;       
- $user = $mysql_user;             
+ $host = $mysql_host;
+ $user = $mysql_user;
  $pass = $mysql_pass;
  $db = $mysql_db;
 
- $backupdir = '/backups'; 
+ $backupdir = '/backups';
 
  // Compute day, month, year, hour and min.
  $today = getdate();
@@ -31,8 +31,8 @@ dbconn();
 // It will produce a file named $db-$year$month$day-$hour$min.gz
 // under $DOCUMENT_ROOT/$backupdir
 system(sprintf(
-    // 'mysqldump --opt -h %s -u %s -p%s %s > %s/%s/%s-%s-%s-%s.sql',    
-    'mysqldump --opt -h %s -u %s -p%s %s | gzip > %s/%s/%s-%s-%s-%s.gz',                                    
+    // 'mysqldump --opt -h %s -u %s -p%s %s > %s/%s/%s-%s-%s-%s.sql',
+    'mysqldump --opt -h %s -u %s -p%s %s | gzip > %s/%s/%s-%s-%s-%s.gz',                              
 
     $host,
     $user,
@@ -44,7 +44,7 @@ system(sprintf(
     $day,
     $month,
     $year
-)); 
+));
 
 
 $name = $db."-".$day."-".$month."-".$year.".gz";
@@ -52,6 +52,6 @@ $date = date("Y-m-d");
 $day = date("d");
 DB::executeQuery('INSERT INTO dbbackup (name, added, day) VALUES (?, ?, ?)',
     [$name, $date, $day]
-); 
-echo 'Database backup successful, entry inserted into database.'; 
+);
+echo 'Database backup successful, entry inserted into database.';
 
