@@ -5,6 +5,7 @@ define('TT_DIR', dirname(__DIR__));
 define('TT_URL', $GLOBALS['SITEURL']);
 
 const TT_LIBS_DIR = TT_ROOT_DIR.'/libs';
+const TT_BACKEND_DIR = TT_ROOT_DIR.'/backend';
 const TT_CONFIG_DIR = TT_ROOT_DIR.'/backend/config';
 const TT_HELP_DIR = TT_ROOT_DIR.'/helpers';
 

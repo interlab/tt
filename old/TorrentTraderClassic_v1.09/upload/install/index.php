@@ -7,9 +7,8 @@
 $installed = false;
 $PHP_SELF = '';
 
-
 if (PHP_MAJOR_VERSION < 7) {
-    die ('Your version not support. You will should be used php >= 7');
+    die('Your version not support. You will should be used php >= 7');
 }
 
 @session_start();
@@ -18,9 +17,16 @@ $_SESSION['MYSQL_HOST'] = $_SESSION['MYSQL_HOST'] ?? '';
 $_SESSION['MYSQL_USER'] = $_SESSION['MYSQL_USER'] ?? '';
 $_SESSION['MYSQL_PASS'] = $_SESSION['MYSQL_PASS'] ?? '';
 $_SESSION['MYSQL_DB'] = $_SESSION['MYSQL_DB'] ?? '';
+$_SESSION['ADMIN_COUNTRY'] = $_SESSION['ADMIN_COUNTRY'] ?? '';
+$_SESSION['ADMIN_NAME'] = $_SESSION['ADMIN_NAME'] ?? '';
+$_SESSION['ADMIN_PASS'] = $_SESSION['ADMIN_PASS'] ?? '';
+$_SESSION['ADMIN_PASS2'] = $_SESSION['ADMIN_PASS2'] ?? '';
+$_SESSION['ADMIN_EMAIL'] = $_SESSION['ADMIN_EMAIL'] ?? '';
+$_SESSION['ADMIN_AGE'] = $_SESSION['ADMIN_AGE'] ?? '';
+$_SESSION['ADMIN_CLIENT'] = $_SESSION['ADMIN_CLIENT'] ?? '';
 
 
-require("includes/functions.php");
+require_once 'includes/functions.php';
 if (empty($_POST['page']))
     $_POST['page'] = '';
 
@@ -30,30 +36,29 @@ require("includes/config.php");
 if ($installed) {
     head("Failed");
     begin_frame("Error");
-    echo "<center><h1>The installer has already been completed.</h1><h3>If you need to run it again empty includes/config.php</h3></center>";
+    echo "<center><h1>The installer has already been completed.</h1>
+    <h3>If you need to run it again empty includes/config.php</h3></center>";
     end_frame();
     die;
 }
 
-switch($_POST['page']) {
-        case 'environment':
-            $phpver = phpversion();
-            if ($phpver >= 4.1)
-                $phpver = "<font color=green>OK</font> - Your PHP version is $phpver";
-            elseif ($phpver >= 5)
-                $phpver = "<font color=orange>OK</font>, Known issues with PHP5 - Your PHP version is $phpver";
-            else
-                $phpver = "<font color=red>BAD</font>, Only PHP 4.1+ is supported - Your PHP version is $phpver";
+switch ($_POST['page']) {
+    case 'environment':
+        $phpver = phpversion();
+        if ($phpver >= 7)
+            $phpver = "<font color=green>OK</font> - Your PHP version is $phpver";
+        else
+            $phpver = "<font color=red>BAD</font>, Only PHP 7.0+ is supported - Your PHP version is $phpver";
 
-            $registerglobals = ini_get('register_globals');
-            if ($registerglobals)
-                $registerglobals = "<font color=green>ON</font>";
-            else
-                $registerglobals = "<font color=orange>OFF - If off TorrentTrader will emulate them</font>";
-            
-            head("Server Environment");
-            begin_frame("Server Environment");
-            echo <<<EOD
+        $registerglobals = ini_get('register_globals');
+        if (!$registerglobals)
+            $registerglobals = "<font color=green>OFF</font>";
+        else
+            $registerglobals = "<font color=red>ON</font>";
+
+        head("Server Environment");
+        begin_frame("Server Environment");
+        echo <<<EOD
     <table>
       <tr>
         <td><b>PHP Version:</b></td>
@@ -167,8 +172,7 @@ EOD;
       <input name="page" type="hidden" value="create-database"> <input type="submit"
       name="submit" value="Continue">
     </form>';
-                }
-                else {
+                } else {
                     echo '
     <h1>Database Settings</h1>
     <img src="images/yes.gif"> Connection to database server established successfully.
@@ -187,11 +191,11 @@ EOD;
         case 'create-database':
             head("Creating Database");
             begin_frame("");
-            $link = mysql_connect($_SESSION['MYSQL_HOST'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS']);
-            $create = @mysql_query("CREATE DATABASE {$_SESSION['MYSQL_DB']}");
-            mysql_close($link);
+            $conn = new mysqli($_SESSION['MYSQL_HOST'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS']);
+            $create = $conn->query('CREATE DATABASE ' . $_SESSION['MYSQL_DB']);
+            $conn->close();
 
-            if (!$create)
+            if (!$create) {
                 echo <<<EOD
     <h1>Create Database</h1>
     <img src="images/no.gif"> The database '<b>{$_SESSION['MYSQL_DB']}</b>' could not
@@ -202,7 +206,7 @@ EOD;
       <input type='submit' name='submit' value='Back'>
     </form>
 EOD;
-            else {
+            } else {
                 echo <<<EOD
     <h1>Create Database</h1>
     <img src='images/yes.gif'> The database "<b>{$_SESSION['MYSQL_DB']}</b>" has been
@@ -219,8 +223,8 @@ EOD;
         case 'write-database':
             head("Writing Database");
             $message = null;
-            $link = mysql_connect($_SESSION['MYSQL_HOST'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS']);
-            if (!$link)
+            $conn = new mysqli($_SESSION['MYSQL_HOST'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'], $_SESSION['MYSQL_DB']);
+            if (!$conn) {
                 echo <<<EOD
     <h1>Write Database</h1>
     Couldn't connect to the database..<br>
@@ -231,14 +235,14 @@ EOD;
       <input type="submit" name="submit" value="Recheck">
     </form>
 EOD;
-            else {
-                mysql_select_db($_SESSION['MYSQL_DB']);
-
-                foreach(explode("||", file_get_contents("./includes/database.sql")) as $query) {
+            } else {
+                foreach(explode('||', file_get_contents('./includes/database.sql')) as $query) {
                     $query = trim($query);
-                    if (!mysql_query($query)) $message .= "<img src='images/no.gif'>". mysql_error() ."<BR>";
+                    if (!$conn->query($query)) {
+                        $message .= "<img src='images/no.gif'>". $conn->error ."<BR>";
+                    }
                 }
-                mysql_close($link);
+                $conn->close();
             }
 
             if (!empty($message)) {
@@ -252,7 +256,7 @@ EOD;
       <input type="submit" name="submit" value='Refresh'>
     </form>
 EOD;
-            }else{
+            } else {
                 echo <<<EOD
     <h1>Write Database</h1>
     <img src="images/yes.gif">All tables have been written successfully.<br>
@@ -268,8 +272,7 @@ EOD;
         
         case 'setup-admin':
             head("Create Admin Account");
-            $link = mysql_connect($_SESSION['MYSQL_HOST'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS']);
-            mysql_select_db($_SESSION['MYSQL_DB']);
+            $link = new mysqli($_SESSION['MYSQL_HOST'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'], $_SESSION['MYSQL_DB']);
 
             $nuIP = getip();
             $dom = @gethostbyaddr($nuIP);
@@ -282,8 +285,8 @@ EOD;
             }
 
             $countries = "<option value='0'>---- None selected ----</option>\n";
-            $ct_r = mysql_query("SELECT id,name,domain from countries ORDER BY name") or die;
-            while ($ct_a = mysql_fetch_array($ct_r)) {
+            $ct_r = $link->query("SELECT id, name, domain from countries ORDER BY name") or die;
+            while ($ct_a = $ct_r->fetch_assoc()) {
                 $countries .= "\t\t\t\t\t\t<option value=\"$ct_a[id]\"";
                 if ($dom == $ct_a["domain"] || $_SESSION['ADMIN_COUNTRY'] == $ct_a['id']) $countries .= " SELECTED";
                 $countries .= ">$ct_a[name]</option>\n";
@@ -346,9 +349,9 @@ EOD;
     </form>
 EOD;
 
-            mysql_close($link);
+            $link->close();
         break;
-        
+
         case 'create-admin':
             $_SESSION['ADMIN_NAME'] = $_POST['admin_name'];
             $_SESSION['ADMIN_PASS'] = $_POST['admin_pass'];
@@ -356,17 +359,25 @@ EOD;
             $_SESSION['ADMIN_EMAIL'] = $_POST['admin_email'];
             $_SESSION['ADMIN_AGE'] = $_POST['admin_age'];
             $_SESSION['ADMIN_CLIENT'] = $_POST['admin_client'];
-            $_SESSION['ADMIN_GENDER'] = $_POST['admin_gender'];
+            $_SESSION['ADMIN_GENDER'] = $_POST['admin_gender'] ?? 'Male';
             $_SESSION['ADMIN_COUNTRY'] = $_POST['admin_country'];
-            
+
             head("Writing Admin Account");
-            $link = mysql_connect($_SESSION['MYSQL_HOST'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS']);
-            mysql_select_db($_SESSION['MYSQL_DB']);
+            require_once __DIR__ . '/../libs/vendor/autoload.php';
+            require_once __DIR__ . '/../helpers/DB.php';
+            my_pdo_connect($_SESSION['MYSQL_DB'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'], $_SESSION['MYSQL_HOST']);
 
             $message = null;
 
-            if (empty($_SESSION['ADMIN_PASS']) || empty($_SESSION['ADMIN_EMAIL']) || empty($_SESSION['ADMIN_AGE']) || empty($_SESSION['ADMIN_CLIENT']) || empty($_SESSION['ADMIN_GENDER']) || $_SESSION['ADMIN_COUNTRY'] == 0)
+            if (empty($_SESSION['ADMIN_PASS'])
+                || empty($_SESSION['ADMIN_EMAIL'])
+                || empty($_SESSION['ADMIN_AGE'])
+                || empty($_SESSION['ADMIN_CLIENT'])
+                || empty($_SESSION['ADMIN_GENDER'])
+                || $_SESSION['ADMIN_COUNTRY'] == 0
+            ) {
                 $message = "Don't leave any required field blank.<BR>";
+            }
             if (strlen($_SESSION['ADMIN_NAME']) > 12)
                 $message .= "Sorry, the username is too long (max is 12 chars)<BR>";
             if ($_SESSION['ADMIN_PASS'] != $_SESSION['ADMIN_PASS2'])
@@ -375,20 +386,32 @@ EOD;
                 $message .= "Sorry, the password is too short (min is 6 chars)<BR>";
             if (strlen($_SESSION['ADMIN_PASS']) > 40)
                 $message .= "Sorry, the password is too long (max is 40 chars)<BR>";
-            if ($wantpassword == $_SESSION['ADMIN_NAME'])
+            if ($_SESSION['ADMIN_PASS'] == $_SESSION['ADMIN_NAME'])
                 $message .= "Sorry, the password cannot be same as username.<BR>";
             if (!validusername($_SESSION['ADMIN_NAME']))
                 $message .= "The username is not valid.";
 
-            $secret = addslashes(mksecret());
-            $wantpassword = md5($_SESSION['ADMIN_PASS']);
+            $secret = mksecret();
+            $wantpassword = password_hash($_SESSION['ADMIN_PASS'], PASSWORD_DEFAULT);
+            $now = date('Y-m-d H:i:s');
 
             if (empty($message)) {
-                $ret = @mysql_query("INSERT INTO users (username, password, secret, email, status, added, age, country, gender, client, class)
-                VALUES('".$_SESSION['ADMIN_NAME']."', '$wantpassword', '$secret', '".$_SESSION['ADMIN_EMAIL']."', 'confirmed', NOW(), '".$_SESSION['ADMIN_AGE']."',
-                '".$_SESSION['ADMIN_COUNTRY']."', '".$_SESSION['ADMIN_GENDER']."', '".$_SESSION['ADMIN_CLIENT']."', '5')");
-                if(!$ret) {
-                    $error = mysql_error();
+                $ret = false;
+                try {
+                    $ret = DB::executeUpdate('
+                        INSERT INTO users (username, real_name, password, secret, email, status, added, age,
+                            country, gender, client, class, about_myself, passkey)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                        [$_SESSION['ADMIN_NAME'], $_SESSION['ADMIN_NAME'], $wantpassword,
+                        $secret, $_SESSION['ADMIN_EMAIL'], 'confirmed',
+                        $now, $_SESSION['ADMIN_AGE'], $_SESSION['ADMIN_COUNTRY'],
+                        $_SESSION['ADMIN_GENDER'], $_SESSION['ADMIN_CLIENT'], 5,
+                        '', generateRandomString(32)]
+                    );
+                } catch (Exception $e) {
+                    $error = 'Error occurred:' . nl2br($e);
+                }
+                if (!$ret) {
                     echo <<<EOD
 <h1>Admin Account</h1>
 The account has NOT been saved into the database.<br>
@@ -399,7 +422,7 @@ The account has NOT been saved into the database.<br>
 
 </form>
 EOD;
-                }else {
+                } else {
                     $_SESSION['ADMIN_PASS'] = null;
                     $_SESSION['ADMIN_PASS2'] = null;
                     echo <<<EOD
@@ -411,7 +434,7 @@ EOD;
     </form>
 EOD;
                 }
-            }else
+            } else {
                 echo <<<EOD
     <h1>Admin Account</h1>
     The account has NOT been saved into the database.<br>
@@ -421,11 +444,10 @@ EOD;
       <input type="submit" name="submit" value="Back">
     </form>
 EOD;
+            }
 
-
-      mysql_close($link);
         break;
-        
+
         case 'setup-config':
             @chmod("../backend/config.php", 0777);
             @chmod("../backend/oldconfig.php", 0777);
@@ -434,12 +456,13 @@ EOD;
             @chmod("../disclaimer.txt", 0777);
             @chmod("../sponsors.txt", 0777);
             @chmod("../banners.txt", 0777);
-                        
-            require($_SESSION['ROOT_PATH']."/backend/config.php");
-            if (empty($_SESSION['SITENAME'])) $_SESSION['SITENAME'] = $SITENAME;
+
+            require_once($_SESSION['ROOT_PATH']."/backend/config.php");
+
+            $_SESSION['SITENAME'] = $_SESSION['SITENAME'] ?? '';
             $_SESSION['SITEURL'] = "http://".$_SERVER['HTTP_HOST'].preg_replace("/\/install\/*/", "", $_SERVER['REQUEST_URI']);
-            if (empty($_SESSION['SITEEMAIL'])) $_SESSION['SITEEMAIL'] = $SITEEMAIL;
-            
+            $_SESSION['SITEEMAIL'] = $_SESSION['SITEEMAIL'] ?? '';
+
             head("Setup Config");
             echo <<<EOD
     <h1>Final Stage: Tracker Configuration</h1>
@@ -482,7 +505,7 @@ EOD;
 
             if (empty($message)) {
                 $newconfig = <<<EOD
-<?
+<?php
 
 // MySQL Settings (please change these to reflect your MYSQL settings, all other settings can be changed via adminCP)
 \$mysql_host = "{$_SESSION['MYSQL_HOST']}";
@@ -579,8 +602,6 @@ Please remember to keep your ratio at 1.00 or greater :)";
 \$maxsiteusers = "10000";
 \$max_dead_torrent_time = "21600";
 
-
-?>
 EOD;
 
                 $_SESSION['newconfig'] = $newconfig;
@@ -614,7 +635,7 @@ EOD;
     </form>
 EOD;
 
-            }else
+            } else
                 echo <<<EOD
     <h1>Setup Configuration</h1>
     The data has NOT been saved into the config file.<BR>
@@ -636,6 +657,7 @@ EOD;
         break;
 
         case 'goodbye':
+            $siteurl = $_SESSION['SITEURL'];
             session_unset();
             session_destroy();
             head("Success");
@@ -645,6 +667,7 @@ EOD;
             @fclose($conf);
 echo <<<EOD
     <h1>Success!</h1>
+    Your site <b><a href="{$siteurl}">here</a></b>
     <br>
     TorrentTrader Classic is now installed.<br>
     A few tips before you leave the installer: <br>
@@ -678,8 +701,7 @@ EOD;
     You should also make sure that your server meets all the requirements of
     TorrentTrader, the installer will check these when you continue.<br>
     <ul>
-      <li>Register_Globals must be set to ON in your php.ini</li>
-      <li>PHP Version 4</li>
+      <li>PHP Version 7</li>
       <li>MySQL</li>
     </ul>
     <br>
@@ -688,9 +710,9 @@ EOD;
       <input type='submit' name='submit' value='Continue'>
     </form>
 EOD;
-            end_frame();
+           end_frame();
         break;
 }
 
 foot();
-?>
+

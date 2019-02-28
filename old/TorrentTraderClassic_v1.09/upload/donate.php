@@ -1,11 +1,9 @@
 <?php
-//
-// - Theme And Language Updated 25.Nov.05
-//
-require "backend/functions.php";
+
+require_once 'backend/functions.php';
 
 dbconn(false);
-stdhead("Donate");
+stdhead('Donate');
 
 begin_frame($txt['DONATE']);
 
@@ -14,9 +12,9 @@ $mothlydonated = $res['donations'];
 $requireddonations = $res['requireddonations'];
 $donatepagecontents = $res['donatepage'];
 
-echo "<br><b>" . $txt['TARGET'] . ": </b><font color=\"red\">$" . $requireddonations . "</font><br><b>" . $txt['DONATIONS'] 
-    . ": </b><font color=\"green\">$" . $mothlydonated . "</font></center><br>
-    <br><br><br>";
+echo '<br><b>' . $txt['TARGET'] . ': </b><span style="color: red;">$' . $requireddonations . '</span>
+    <br><b>' . $txt['DONATIONS'] . ': </b><span style="color: green;">$' . $mothlydonated . '</span>
+    <br><br><br><br>';
 
 echo $donatepagecontents;
 

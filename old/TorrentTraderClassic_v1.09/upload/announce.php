@@ -26,12 +26,12 @@ function db_run($db, $sql, array $params=[])
     return $q;
 }
 
-function is_valid_id($id)
+function is_valid_id($id) : bool
 {
-  return is_numeric($id) && ($id > 0) && (floor($id) == $id);
+    return is_numeric($id) && ($id > 0) && (floor($id) == $id);
 }
 
-function validip($ip)
+function validip($ip) : bool
 {
     if (!empty($ip) && ip2long($ip)!=-1) {
         $reserved_ips = [

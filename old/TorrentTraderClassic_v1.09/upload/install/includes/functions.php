@@ -1,10 +1,9 @@
 <?php
-   // =================================== //
-  // TorrentTrader v1.05+ Installer v1.0 //
- //           by TorrentialStorm        //
-// =================================== //
 
-//error_reporting(E_ALL ^ E_NOTICE);
+function h($str)
+{
+    return htmlspecialchars($str, ENT_COMPAT, 'utf-8', false);
+}
 
 function getip() {
    if (isset($_SERVER)) {
@@ -56,6 +55,21 @@ function validip($ip)
 	else return false;
 }
 
+function validusername($username)
+{
+    if ($username == "") {
+        return false;
+    }
+
+    $allowedchars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    for ($i = 0; $i < strlen($username); ++$i) {
+        if (strpos($allowedchars, $username[$i]) === false) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 function begin_frame($caption='-', $align='justify')
 {
@@ -158,13 +172,22 @@ function foot() {
 EOD;
 }
 
+function generateRandomString($length = 20)
+{
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+
+    return $randomString;
+}
+
+
 function mksecret($len = 20)
 {
-    $ret = "";
-    for ($i = 0; $i < $len; $i++)
-        $ret .= chr(mt_rand(0, 255));
-
-    return $ret;
+    return generateRandomString(20);
 }
 
 function bark($heading = "Error", $text, $sort = "Error") {

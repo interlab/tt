@@ -32,7 +32,6 @@ $arr = DB::fetchAssoc('
 $country = !$arr ? '' : '<img src="/images/flag/'.$arr['flagpic'].'" alt="'.$arr['name'].'" style="margin-left: 8pt">';
 $country1 = !$arr ? '' : $arr['name'];
 
-
 $joindate = "$user[added] (" . get_elapsed_time(sql_timestamp_to_unix_timestamp($user["added"])) . " ago)";
 $lastseen = $user["last_access"];
 if ($lastseen == "0000-00-00 00:00:00") {
@@ -107,7 +106,7 @@ echo '<table border="0" width="100%" cellspacing="0" cellpadding="2">
 
 ?>
 <td width="90%" valign="top">
-<?= $country ? $coutry . '<br><br>' : '' ?>
+<?= $country ? $country . '<br><br>' : '' ?>
 <table width="100%">
 <tr><td><?php
 print ($txt['USERNAME'].": <b>" . $CURUSER["username"] . "</b><br>");

@@ -1,6 +1,6 @@
 <?php
 
-require_once '../../backend/functions.php';
+require_once __DIR__ . '/../../backend/functions.php';
 
 dbconn(false);
 loggedinorreturn();
@@ -120,8 +120,8 @@ end_frame();
 # Donations Code
 #======================================================================#
 if ($act == "donations") {
-	if ($do == "update") {
-		DB::executeUpdate('
+    if ($do == "update") {
+        DB::executeUpdate('
             UPDATE site_settings SET requireddonations = ?, donations = ?, donatepage = ?',
             [$_POST['ed_requireddonations'], $_POST['ed_donations'], $_POST['ed_donatepage']
         ]);
@@ -129,23 +129,23 @@ if ($act == "donations") {
     }
     $row = DB::fetchAssoc("SELECT * FROM site_settings");
 
-	adminonly();
-	adminmenu();
-	begin_frame("Donation Management", 'center');
-	?>
-	<form action='admin.php' method='post'>
-	<input type='hidden' name='act' value='donations'>
-	<input type='hidden' name='do' value='update'>
-	Monthly Required:<br>
-	<input type='text' value='<?= $row['requireddonations'] ?>' size='5' maxlength='5' name='ed_requireddonations'><br>
-	Donations:<br>
-	<input type='text' value='<?= $row['donations'] ?>' size='5' maxlength='5' name='ed_donations'><br>
-	Donate Page Contents:<br>
+    adminonly();
+    adminmenu();
+    begin_frame("Donation Management", 'center');
+    ?>
+    <form action='admin.php' method='post'>
+    <input type='hidden' name='act' value='donations'>
+    <input type='hidden' name='do' value='update'>
+    Monthly Required:<br>
+    <input type='text' value='<?= $row['requireddonations'] ?>' size='5' maxlength='5' name='ed_requireddonations'><br>
+    Donations:<br>
+    <input type='text' value='<?= $row['donations'] ?>' size='5' maxlength='5' name='ed_donations'><br>
+    Donate Page Contents:<br>
     <textarea name='ed_donatepage' cols="50" rows="8"><?= $row['donatepage'] ?></textarea><br>
-	<input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;
+    <input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;
     <input type='reset' value='  Reset  ' style='background:#eeeeee'>
-	</form>
-	<?php 
+    </form>
+    <?php 
 
     end_frame();
 }
@@ -155,7 +155,7 @@ if ($act == "donations") {
 #======================================================================#
 if($act == "trackerload")
 {
-	adminmenu();
+    adminmenu();
 begin_frame("Tracker Load");
 ?>
 <table width=100% border=0 cellspacing=0 cellpadding=10><tr><td align=center>
@@ -187,9 +187,9 @@ end_frame();
 #======================================================================#
 if ($act === 'userdonations') {
     adminonly();
-	adminmenu();
-	begin_frame("View Donations", 'center');
-	$res = DB::query('SELECT * FROM users WHERE donated > 0 ORDER BY username');
+    adminmenu();
+    begin_frame("View Donations", 'center');
+    $res = DB::query('SELECT * FROM users WHERE donated > 0 ORDER BY username');
 
     print("<center><br><br><table border=1 width=95% cellspacing=0 cellpadding=1>
         <tr align=center><td class=table_head width=90>User Name</td>
@@ -247,12 +247,12 @@ if ($act === 'userdonations') {
 #======================================================================#
 if($act == "peerg")
 {
-	adminonly();
-	adminmenu();
-	begin_frame("Peer Guardian Importer", 'center');
+    adminonly();
+    adminmenu();
+    begin_frame("Peer Guardian Importer", 'center');
 
-	// change the following to your  .p2p location
-	$f = fopen("hxxp://homepage.ntlworld.com/tim.leonard1/guarding.p2p", "r");
+    // change the following to your  .p2p location
+    $f = fopen("hxxp://homepage.ntlworld.com/tim.leonard1/guarding.p2p", "r");
 if (!$f)
   die("Cannot download guarding.p2p!");
 
@@ -287,14 +287,14 @@ end_frame();
 #======================================================================#
 if($act == "disabledaccounts")
 {
-	adminmenu();
-	begin_frame("Disabled Accounts", 'center');
+    adminmenu();
+    begin_frame("Disabled Accounts", 'center');
 
     // todo
     $pagemenu = '';
     $browsemenu = '';
 
-	$res = DB::query("SELECT * FROM users WHERE enabled = 'no' ORDER BY username");
+    $res = DB::query("SELECT * FROM users WHERE enabled = 'no' ORDER BY username");
 
     print("<center><br><br>
         <table border=1 width=95% cellspacing=0 cellpadding=1>
@@ -348,10 +348,10 @@ if($act == "disabledaccounts")
 # Warned Accounts
 #======================================================================#
 if ($act == "warneddaccounts") {
-	adminmenu();
-	begin_frame("Warned Accounts", 'center');
+    adminmenu();
+    begin_frame("Warned Accounts", 'center');
     // todo: limit?
-	$res = DB::query("SELECT * FROM users WHERE enabled = 'yes' AND warned = 'yes' ORDER BY username");
+    $res = DB::query("SELECT * FROM users WHERE enabled = 'yes' AND warned = 'yes' ORDER BY username");
 
     print("<center><br><br><table border=1 width=95% cellspacing=0 cellpadding=1>\n");
     print("<tr align=center><td class=table_head width=90>User Name</td>
@@ -413,8 +413,8 @@ if ($act == "databaseadmin") {
         $cmd = "SELECT * FROM $tablename";
     }
 
-	begin_frame("Database Administration");
-	echo "<BR><center><B><a href=admin.php?act=database>Backup / Optimise Database</a></b></center><BR><BR>";
+    begin_frame("Database Administration");
+    echo "<BR><center><B><a href=admin.php?act=database>Backup / Optimise Database</a></b></center><BR><BR>";
     echo "<i>WARNING: This area is for <u>advanced users only</u>! Do not send commands of which you do not know the meaning!
         <br><br>This is for performing manual database tasks.<br>Visit <a href=http://dev.mysql.com/doc/>http://dev.mysql.com/doc/</a>
         for syntax documentation.</i>";
@@ -480,7 +480,7 @@ if ($act == "databaseadmin") {
         // ---- END TABLE DISPLAY
     }
     
-	end_frame();
+    end_frame();
 }
 
 #======================================================================#
@@ -498,32 +498,32 @@ if($act === "database") {
     }
     modonly();
     adminmenu();
-	begin_frame("Database Management");
-	?>
-	<b>Optimize Database: </b><a href='admin.php?act=database&do=opt'>CLICK HERE</a><br>
-	<br>
+    begin_frame("Database Management");
+    ?>
+    <b>Optimize Database: </b><a href='admin.php?act=database&do=opt'>CLICK HERE</a><br>
+    <br>
     <b>Manual Backup Database: </b><a href='backup-database.php'>CLICK HERE</a><br>
-	<i>(To set a automatic backup set a CRON task on backup-database.php)</i><BR>
-	<br>
-	<?php 
-	end_frame();
-	begin_frame("Backup History");
-	?>
-	<center><table width="500" cellpadding="1" cellspacing="0" border="2">
-	<tr><b><td><b>DATE</b></TD><td><b>DAY</b></TD><td><b>FILENAME</b></TD></tr>
-	<?php 
-		// print the news titles, with links to the edit page 
-		$res = DB::query('select * from dbbackup ORDER BY id DESC'); 
-		while ($backupr = $res->fetch()) { 
+    <i>(To set a automatic backup set a CRON task on backup-database.php)</i><BR>
+    <br>
+    <?php 
+    end_frame();
+    begin_frame("Backup History");
+    ?>
+    <center><table width="500" cellpadding="1" cellspacing="0" border="2">
+    <tr><b><td><b>DATE</b></TD><td><b>DAY</b></TD><td><b>FILENAME</b></TD></tr>
+    <?php 
+        // print the news titles, with links to the edit page 
+        $res = DB::query('select * from dbbackup ORDER BY id DESC'); 
+        while ($backupr = $res->fetch()) { 
             extract($backupr); 
             echo("<TR><TD>$added</TD><td>$day</td><td>$name</TD></TR>"); 
-		} 
-		echo("<br><br></TABLE></center>"); 
+        } 
+        echo("<br><br></TABLE></center>"); 
         end_frame();
 }
 
 #======================================================================#
-#	Site Texts Edit
+#    Site Texts Edit
 #======================================================================#
 if ($act === 'sitetexts') {
     // disclaimer
@@ -538,38 +538,38 @@ if ($act === 'sitetexts') {
         }
     }
 
-	adminmenu();
-	begin_frame('Disclaimer Text Management', 'center');
-	echo "<br><br>
+    adminmenu();
+    begin_frame('Disclaimer Text Management', 'center');
+    echo "<br><br>
         <form action='admin.php' method='post'>
         <input type='hidden' name='sid' value='$sid'>
         <input type='hidden' name='act' value='sitetexts'>
         <input type='hidden' name='do' value='save_disclaimer'>
         <textarea wrap='on' name='descr' cols='100' rows='20'
         style='border:1px black solid; background:#eeeeee; font-family:verdana,arial; font-size: 12px; color:#000000;'>\n";
-	include("disclaimer.txt");
-	echo "</textarea>\n<p>
+    include("disclaimer.txt");
+    echo "</textarea>\n<p>
         <input style='background:#eeeeee' type='submit' value='   SAVE   '>
         <input style='background:#eeeeee' type='reset' value='  RESET   '>
         </form>\n";
-	end_frame();
+    end_frame();
 }
 //news
 
 #======================================================================#
-#	Language Settings
+#    Language Settings
 #======================================================================#
 if ($act === 'lang')
 {
-	// delete language
+    // delete language
     $lid = (int) ($_POST['lid'] ?? 0);
-	if ($do === 'del_lang' && $lid !== 1) {
-		$dl = DB::executeUpdate('DELETE FROM languages WHERE id = ' . $lid);
-		if ($dl)
+    if ($do === 'del_lang' && $lid !== 1) {
+        $dl = DB::executeUpdate('DELETE FROM languages WHERE id = ' . $lid);
+        if ($dl)
             autolink('admin.php?act=lang', 'Language deleted ...');
-		else
+        else
             die('<h2>mySQL-Error: Could not delete language-name (check connection & settings)</h2></body></html>');
-	}
+    }
 
 // add language
 if ($do === 'add_lang')
@@ -586,93 +586,93 @@ if ($do === 'add_lang')
     bark2('Success', 'New Language Added');
 }
 
-	//show lang's in <table>
-	adminonly();
-	adminmenu();
-	begin_frame();
-	?>
-	<p>
-	<font size='2'>Add a new language-name:</font>
-	<form action='admin.php' method='post'>
-	 <input type='hidden' name='act' value='lang'>
-	<input type='hidden' name='do' value='add_lang'> 
-	File Name: <input type='text' name='uri' size='30'>
-	&nbsp;&nbsp;Language: <input type='text' name='name' size='30'>
-	<input type='submit' value=' Add ' style='background:#eeeeee'>
-	</form>
-	<p>
-	<?php 
-	// get lang's from db
-	$res = DB::query("SELECT * FROM languages ORDER BY id");
-	// show them
+    //show lang's in <table>
+    adminonly();
+    adminmenu();
+    begin_frame();
+    ?>
+    <p>
+    <font size='2'>Add a new language-name:</font>
+    <form action='admin.php' method='post'>
+     <input type='hidden' name='act' value='lang'>
+    <input type='hidden' name='do' value='add_lang'> 
+    File Name: <input type='text' name='uri' size='30'>
+    &nbsp;&nbsp;Language: <input type='text' name='name' size='30'>
+    <input type='submit' value=' Add ' style='background:#eeeeee'>
+    </form>
+    <p>
+    <?php 
+    // get lang's from db
+    $res = DB::query("SELECT * FROM languages ORDER BY id");
+    // show them
 
-	echo "<p>\n<font size='2'>Available language-names (sorted by id):</font>\n<p>
+    echo "<p>\n<font size='2'>Available language-names (sorted by id):</font>\n<p>
         <table width='200' border='1' cellspacing='0'>
         <tr bgcolor='#cecece'>\n<td align='center'><b>ID</b></td>
         <td align='center'><b>Name</b></td>\n<td align='center'><b>Delete?</b></td></tr>\n";
 
-	while ($row = $res->fetch()) {
-		if ($row['id'] == 1) {
+    while ($row = $res->fetch()) {
+        if ($row['id'] == 1) {
             echo "
             <tr bgcolor='#ffffff' align='center'>
             <td>$row[id]</td><td>$row[name]</td>
             <td align='center'>[ --- ]</td></tr>";
-		} else {
+        } else {
             echo "
         <tr bgcolor='#eeeeee' align='center'>\n<td>".$row['id']."</td>
         <td>".$row['name']."</td>\n
         <td align='center'>[ <a href='admin.php?act=lang&do=del_lang&lid=".$row['id']."' title='delete this entry'>del</a> ]</td>\n</tr>\n";
         }
-	}
+    }
 
-	echo "</table>\n";
-	end_frame();
+    echo "</table>\n";
+    end_frame();
 }
 
 #======================================================================#
-#	Banner Options
+#    Banner Options
 #======================================================================#
 if($act == "banner" && $do == "")
 {
-	adminonly();
-	adminmenu();
-	begin_frame("Top Banner Ads", 'center');
-	echo "Use the box below to edit the contents of&nbsp; banners.txt and sponsors.txt to control which banners are displayed on your site.
+    adminonly();
+    adminmenu();
+    begin_frame("Top Banner Ads", 'center');
+    echo "Use the box below to edit the contents of&nbsp; banners.txt and sponsors.txt to control which banners are displayed on your site.
     <br>Each banner entry must be separated with a '~'. To increase the display rate of a banner enter its data multiple times.
     <br>To disable the banners, simply remove all data from both areas.\n";
-	echo "<form action='admin.php' method='post'>\n";
-	echo "<input type='hidden' name='sid' value='$sid'>\n";
-	echo "<input type='hidden' name='act' value='baner'>\n";
-	echo "<input type='hidden' name='do' value='save_banner'>\n";
-	echo "<textarea name='css' cols='100' rows='20' style='border:1px black solid;background:#eeeeee;font-family:verdana,arial; font-size: 12px; color:#000000;'>\n";
-	include("banners.txt");
-	echo "</textarea>\n<p>\n";
-	echo "<input style='background:#eeeeee' type='submit' value='   SAVE   '>\n";
-	echo "<input style='background:#eeeeee' type='reset' value='  RESET   '>\n";
-	echo "</form>\n";
-	end_frame();
+    echo "<form action='admin.php' method='post'>\n";
+    echo "<input type='hidden' name='sid' value='$sid'>\n";
+    echo "<input type='hidden' name='act' value='baner'>\n";
+    echo "<input type='hidden' name='do' value='save_banner'>\n";
+    echo "<textarea name='css' cols='100' rows='20' style='border:1px black solid;background:#eeeeee;font-family:verdana,arial; font-size: 12px; color:#000000;'>\n";
+    include("banners.txt");
+    echo "</textarea>\n<p>\n";
+    echo "<input style='background:#eeeeee' type='submit' value='   SAVE   '>\n";
+    echo "<input style='background:#eeeeee' type='reset' value='  RESET   '>\n";
+    echo "</form>\n";
+    end_frame();
 
-	begin_frame("Side Sponsor Adverts", 'center');
-	echo "Use the box below to edit the contents of&nbsp; sponsors.txt\n";
-	echo "<form action='admin.php' method='post'>\n";
-	echo "<input type='hidden' name='sid' value='$sid'>\n";
-	echo "<input type='hidden' name='act' value='baner'>\n";
-	echo "<input type='hidden' name='do' value='save_sponsor'>\n";
-	echo "<textarea name='cssa' cols='100' rows='10' style='border:1px black solid;background:#eeeeee;font-family:verdana,arial; font-size: 12px; color:#000000;'>\n";
-	include("sponsors.txt");
-	echo "</textarea>\n<p>\n";
-	echo "<input style='background:#eeeeee' type='submit' value='   SAVE   '>\n";
-	echo "<input style='background:#eeeeee' type='reset' value='  RESET   '>\n";
-	echo "</form>\n";
-	end_frame();
+    begin_frame("Side Sponsor Adverts", 'center');
+    echo "Use the box below to edit the contents of&nbsp; sponsors.txt\n";
+    echo "<form action='admin.php' method='post'>\n";
+    echo "<input type='hidden' name='sid' value='$sid'>\n";
+    echo "<input type='hidden' name='act' value='baner'>\n";
+    echo "<input type='hidden' name='do' value='save_sponsor'>\n";
+    echo "<textarea name='cssa' cols='100' rows='10' style='border:1px black solid;background:#eeeeee;font-family:verdana,arial; font-size: 12px; color:#000000;'>\n";
+    include("sponsors.txt");
+    echo "</textarea>\n<p>\n";
+    echo "<input style='background:#eeeeee' type='submit' value='   SAVE   '>\n";
+    echo "<input style='background:#eeeeee' type='reset' value='  RESET   '>\n";
+    echo "</form>\n";
+    end_frame();
 }
 
 if($do == "save_banner") {
-	$fp = fopen("banners.txt", "w");
-	$css = stripslashes($css);
-	$written = fwrite($fp,$css);
-	fclose($fp);
-	if($written) bark2("Success", "Banners Updated OK");
+    $fp = fopen("banners.txt", "w");
+    $css = stripslashes($css);
+    $written = fwrite($fp,$css);
+    fclose($fp);
+    if($written) bark2("Success", "Banners Updated OK");
 
 }
 if ($do == "save_sponsor") {
@@ -689,27 +689,27 @@ if ($do == "save_sponsor") {
 
 
 #======================================================================#
-#	Tracker (Settings) Settings
+#    Tracker (Settings) Settings
 #======================================================================#
 if ($act === 'settings') {
     require_once TT_CONTR_DIR . '/admin/admin-action-settings.php';
 }
 
 #======================================================================#
-#	Tracker Log
+#    Tracker Log
 #======================================================================#
 if ($act === "view_log") {
-	adminmenu();	// show menu
-	// output
+    adminmenu();    // show menu
+    // output
 
     /*
-	if ($do === "del_log" && $arr['id'] != 1) {
-		$dl = DB::query("DELETE FROM log WHERE id = $arr[id]");
-		if ($dl)
+    if ($do === "del_log" && $arr['id'] != 1) {
+        $dl = DB::query("DELETE FROM log WHERE id = $arr[id]");
+        if ($dl)
             autolink("admin.php?act=view_log", "Entry deleted ...");
-		else
+        else
             die("<h2>mySQL-Error: Could not delete language-name (check connection & settings)</h2></body></html>");
-	}
+    }
     */
 
     // delete items older than a week - Should be a variable in db and should be changeable in AdminCP
@@ -747,8 +747,8 @@ if ($act === "view_log") {
 #======================================================================#
 if($act === 'ircannounce') {
     adminonly();
-	adminmenu();
-	// output
+    adminmenu();
+    // output
     begin_frame('IRC Announce Config', 'left');
     echo 'IRC Annonce is <i>removed</i> from this version';
     end_frame();
@@ -763,12 +763,12 @@ if ($act === 'news') {
 }
 
 #======================================================================#
-#	Bans
+#    Bans
 #======================================================================#
 if($act === 'bans')
-	{
-		adminmenu();	// show menu
-		//output
+    {
+        adminmenu();    // show menu
+        //output
 $remove = $HTTP_GET_VARS['remove'];
 
 if (is_valid_id($remove))
@@ -779,20 +779,20 @@ if (is_valid_id($remove))
 
 if ($do === 'add')
 {
-	$first = trim($HTTP_POST_VARS["first"]);
-	$last = trim($HTTP_POST_VARS["last"]);
-	$comment = trim($HTTP_POST_VARS["comment"]);
-	if (!$first || !$last || !$comment)
-		stderr("Error", "Missing form data.");
-	$first = ip2long($first);
-	$last = ip2long($last);
-	if ($first == -1 || $last == -1)
-		stderr("Error", "Bad IP address.");
-	$comment = sqlesc($comment);
-	$added = sqlesc(get_date_time());
-	mysql_query("INSERT INTO bans (added, addedby, first, last, comment) VALUES($added, $CURUSER[id], $first, $last, $comment)") or sqlerr(__FILE__, __LINE__);
-	bark2("Success", "The ban has been added!");
-	die;
+    $first = trim($HTTP_POST_VARS["first"]);
+    $last = trim($HTTP_POST_VARS["last"]);
+    $comment = trim($HTTP_POST_VARS["comment"]);
+    if (!$first || !$last || !$comment)
+        stderr("Error", "Missing form data.");
+    $first = ip2long($first);
+    $last = ip2long($last);
+    if ($first == -1 || $last == -1)
+        stderr("Error", "Bad IP address.");
+    $comment = sqlesc($comment);
+    $added = sqlesc(get_date_time());
+    mysql_query("INSERT INTO bans (added, addedby, first, last, comment) VALUES($added, $CURUSER[id], $first, $last, $comment)") or sqlerr(__FILE__, __LINE__);
+    bark2("Success", "The ban has been added!");
+    die;
 }
 
 begin_frame("Blocklist", justify);
@@ -819,26 +819,26 @@ else
   $arr = mysql_fetch_row($cnt);
   $pages = floor($arr[0] / $perpage);
   if ($pages * $perpage < $arr[0])
-  	++$pages;
+      ++$pages;
   if ($page < 1)
-  	$page = 1;
+      $page = 1;
   else
-  	if ($page > $pages)
-    	  $page = $pages;
+      if ($page > $pages)
+          $page = $pages;
   for ($i = 1; $i <= $pages; ++$i)
      if ($i == $page)
-  	$pagemenu .= "<b>$i</b>\n";
+      $pagemenu .= "<b>$i</b>\n";
      else
-  	$pagemenu .= "<a href=admin.php?act=bans&page=$i><b>$i</b></a>\n";
+      $pagemenu .= "<a href=admin.php?act=bans&page=$i><b>$i</b></a>\n";
   if ($page == 1)
-  	$browsemenu .= "<b>&lt;&lt; Prev</b>";
+      $browsemenu .= "<b>&lt;&lt; Prev</b>";
   else
-  	$browsemenu .= "<a href=admin.php?act=bans&$q&page=" . ($page - 1) . "><b>&lt;&lt; Prev</b></a>";
+      $browsemenu .= "<a href=admin.php?act=bans&$q&page=" . ($page - 1) . "><b>&lt;&lt; Prev</b></a>";
   $browsemenu .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
   if ($page == $pages)
-  	$browsemenu .= "<b>Next &gt;&gt;</b>";
+      $browsemenu .= "<b>Next &gt;&gt;</b>";
   else
-  	$browsemenu .= "<a href=admin.php?act=bans&$q&page=" . ($page + 1) . "><b>Next &gt;&gt;</b></a>";
+      $browsemenu .= "<a href=admin.php?act=bans&$q&page=" . ($page + 1) . "><b>Next &gt;&gt;</b></a>";
   $offset = ($page * $perpage) - $perpage;
   print("<p>$browsemenu<br><br>$pagemenu</p>");
   $res = mysql_query("SELECT * FROM bans ORDER BY added LIMIT $offset,$perpage") or sqlerr();
@@ -847,12 +847,12 @@ else
   {
    while ($arr = mysql_fetch_assoc($res))
    {
-  	$r2 = mysql_query("SELECT username FROM users WHERE id=$arr[addedby]") or sqlerr();
-  	$a2 = mysql_fetch_assoc($r2);
-	$arr["first"] = long2ip($arr["first"]);
-	$arr["last"] = long2ip($arr["last"]);
- 	  print("<tr><td>$arr[added]</td><td align=left>$arr[first]</td><td align=left>$arr[last]</td><td align=left><a href=account-details.php?id=$arr[addedby]>$a2[username]".
- 	    "</a></td><td align=left>$arr[comment]</td><td><a href=admin.php?act=bans&remove=$arr[id]>Remove</a></td></tr>\n");
+      $r2 = mysql_query("SELECT username FROM users WHERE id=$arr[addedby]") or sqlerr();
+      $a2 = mysql_fetch_assoc($r2);
+    $arr["first"] = long2ip($arr["first"]);
+    $arr["last"] = long2ip($arr["last"]);
+       print("<tr><td>$arr[added]</td><td align=left>$arr[first]</td><td align=left>$arr[last]</td><td align=left><a href=account-details.php?id=$arr[addedby]>$a2[username]".
+         "</a></td><td align=left>$arr[comment]</td><td><a href=admin.php?act=bans&remove=$arr[id]>Remove</a></td></tr>\n");
    }
   }
   print("</table>\n");
@@ -862,22 +862,22 @@ end_frame();
 
 if (get_user_class() >= UC_JMODERATOR)
 {
-	begin_frame("Add Ban", 'center');
-	print("<table border=1 cellspacing=0 cellpadding=5>\n");
-	print("<form method=post action=admin.php?act=bans&do=add>\n");
-	print("<tr><td class=rowhead>First IP</td><td><input type=text name=first size=40></td>\n");
-	print("<tr><td class=rowhead>Last IP</td><td><input type=text name=last size=40></td>\n");
-	print("<tr><td class=rowhead>Comment</td><td><input type=text name=comment size=40></td>\n");
-	print("<tr><td colspan=2><input type=submit value='Okay' class=btn></td></tr>\n");
-	print("</form>\n</table>\n");
-	end_frame();
+    begin_frame("Add Ban", 'center');
+    print("<table border=1 cellspacing=0 cellpadding=5>\n");
+    print("<form method=post action=admin.php?act=bans&do=add>\n");
+    print("<tr><td class=rowhead>First IP</td><td><input type=text name=first size=40></td>\n");
+    print("<tr><td class=rowhead>Last IP</td><td><input type=text name=last size=40></td>\n");
+    print("<tr><td class=rowhead>Comment</td><td><input type=text name=comment size=40></td>\n");
+    print("<tr><td colspan=2><input type=submit value='Okay' class=btn></td></tr>\n");
+    print("</form>\n</table>\n");
+    end_frame();
 }
 
-	print("</form>");
-	}
+    print("</form>");
+    }
 
 #======================================================================#
-#	User Settings
+#    User Settings
 #======================================================================#
 if ($act == "users") {
 
@@ -1036,7 +1036,7 @@ if($act == "deluser")
  end_frame();
 }
 #======================================================================#
-#	Manual Conf Reg
+#    Manual Conf Reg
 #======================================================================#
 if ($act == "confirmreg") {
     adminmenu(); 
@@ -1071,37 +1071,37 @@ if ($act == "confirmreg") {
 
 // SAVE THEME EDIT FUNCTION
 if ($do == "save_editreg") {
-	mysql_query("UPDATE users SET status = '$ed_status' WHERE id = $id");
+    mysql_query("UPDATE users SET status = '$ed_status' WHERE id = $id");
     echo "<br><br><center><b>Updated Completed</b></center>";
 }
 
 // EDIT USER REG FORM
 if ($act == "editreg" && $id != "") {
-	$ee = DB::fetchAssoc("SELECT * FROM users WHERE id = $id");
-	adminmenu();
-	begin_frame();
-	?>
+    $ee = DB::fetchAssoc("SELECT * FROM users WHERE id = $id");
+    adminmenu();
+    begin_frame();
+    ?>
 
-	<form action='admin.php' method='post'>
-	<input type='hidden' name='sid' value='<?= $sid ?>'>
-	<input type='hidden' name='id' value='<?= $id ?>'>
-	<input type='hidden' name='do' value='save_editreg'>
-	Name: <?= $ee['username'] ?><br>
-	Surrent Status: <?=$ee['status'] ?><br>
-	<select name='ed_status'>
-		<option value='pending' <?= $status == "pending" ? "selected" : '' ?>>pending
-		<option value='confirmed' <?= $status == "confirmed" ? "selected" : '' ?>>confirmed
-		</select>
-	<input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
-	</form>
-	<?php 
-	end_frame();
+    <form action='admin.php' method='post'>
+    <input type='hidden' name='sid' value='<?= $sid ?>'>
+    <input type='hidden' name='id' value='<?= $id ?>'>
+    <input type='hidden' name='do' value='save_editreg'>
+    Name: <?= $ee['username'] ?><br>
+    Surrent Status: <?=$ee['status'] ?><br>
+    <select name='ed_status'>
+        <option value='pending' <?= $status == "pending" ? "selected" : '' ?>>pending
+        <option value='confirmed' <?= $status == "confirmed" ? "selected" : '' ?>>confirmed
+        </select>
+    <input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
+    </form>
+    <?php 
+    end_frame();
 }
 
 
 // Torrent Management
 if ($act === 'torrents') {
-	adminmenu(); 
+    adminmenu(); 
     begin_frame('TORRENT MANAGEMENT', 'center');
 
     $count = DB::fetchColumn('SELECT COUNT(*) FROM torrents LIMIT 1');
@@ -1138,13 +1138,13 @@ if ($act === 'torrents') {
         echo $pagerbottom;
     }
 
-	end_frame();
+    end_frame();
 }
 
 
 // Banned Torrents List
 if ($act === 'bannedtorrents') {
-	adminmenu(); 
+    adminmenu(); 
     begin_frame('BANNED TORRENT MANAGEMENT', 'center');
 
     $count = DB::fetchColumn('SELECT COUNT(*) FROM torrents WHERE banned = \'yes\' LIMIT 1');
@@ -1181,13 +1181,13 @@ if ($act === 'bannedtorrents') {
         echo $pagerbottom;
     }
 
-	end_frame();
+    end_frame();
 }
 
 
 // Message Spy
 if ($act === 'msgspy') {
-	adminonly();
+    adminonly();
 
     $url = $GLOBALS['SITEURL'] . '/admin.php?act=msgspy';
 
@@ -1272,37 +1272,37 @@ if ($act === 'msgspy') {
 
 
 #======================================================================#
-#	Manual Added Banned Torrents List
+#    Manual Added Banned Torrents List
 #======================================================================#
 if ($act == "bannedtorrentsmanual") {
-	adminmenu(); 
+    adminmenu(); 
     begin_frame("BANNED TORRENT MANUAL ADDED LIST", 'center');
-	?>
+    ?>
 AHA not yet matey...
 
 <?php 
-	end_frame();
+    end_frame();
 }
 
 #======================================================================#
-#	Theme Settings
+#    Theme Settings
 #======================================================================#
 if ($act == "style") {
-	adminonly();
-	adminmenu();
-	begin_frame("Themes Management", 'center');
-	?>
-	<b>Add A Theme: </b><a href='admin.php?act=add_theme'>CLICK HERE</a><br><br>
-	<b>Delete A Theme: </b><a href='admin.php?act=del_theme'>CLICK HERE</a><br><br>
-	<h5>Current Themes:</h5>
-	Click a theme to edit<br><br>
-	<table width='60%'>
-	<tr>
-	<TD><b>Theme Name</b></td><TD><b>Folder Name</b></td><TD><b>ID</b></td></tr>
-	<?php 
-	// LIST THEME
-	$querya = DB::query("SELECT * FROM stylesheets ORDER BY name");
-	$allthemes = 0;
+    adminonly();
+    adminmenu();
+    begin_frame("Themes Management", 'center');
+    ?>
+    <b>Add A Theme: </b><a href='admin.php?act=add_theme'>CLICK HERE</a><br><br>
+    <b>Delete A Theme: </b><a href='admin.php?act=del_theme'>CLICK HERE</a><br><br>
+    <h5>Current Themes:</h5>
+    Click a theme to edit<br><br>
+    <table width='60%'>
+    <tr>
+    <TD><b>Theme Name</b></td><TD><b>Folder Name</b></td><TD><b>ID</b></td></tr>
+    <?php 
+    // LIST THEME
+    $querya = DB::query("SELECT * FROM stylesheets ORDER BY name");
+    $allthemes = 0;
     while ($row = $querya->fetch()) {
         echo "<tr>
             <td><font size='2'><b><a href='admin.php?do=edtheme&id=$row[id]'>$row[name]</b></a></font></td>
@@ -1313,72 +1313,75 @@ if ($act == "style") {
         echo "<h4>None</h4>\n";
     }
 
-	echo "</table>\n";
-	end_frame();
+    echo "</table>\n";
+    end_frame();
 }
 
 // ADD THEME TO DATABASE FUNCTION
 if ($do == "add_this_theme") {
-	adminmenu();
+    adminmenu();
     $new_theme_name = $_POST['new_theme_name'] ?? '';
-	$new_uri = $_POST['new_uri'] ?? '';
-    $error_ac == "";
-	if ($new_theme_name == "")
-        $error_ac .= "<br><br><li>Theme Name was empty\n";
-	if ($new_uri == "")
-        $error_ac .= "<br><br><li>Folder Name was empty\n";
+    $new_uri = $_POST['new_uri'] ?? '';
+    $error_ac = "";
+    if ($new_theme_name == "")
+        $error_ac .= "<br><br>Theme Name was empty";
+    if ($new_uri == "")
+        $error_ac .= "<br><br>Folder Name was empty";
 
-	if ($error_ac == "") {
-		DB::insert('stylesheets', ['name' => $new_theme_name, 'uri' => $new_uri]);
+    if ($error_ac == "") {
+        DB::insert('stylesheets', ['name' => $new_theme_name, 'uri' => $new_uri]);
         echo "<br><br><center><b>Theme Added OK</b></center>";
-	} else {
+    } else {
         echo "ERROR! Please fill out all fields!<p>:: <a href='javascript:history.back()'>back</a>\n";
     }
 }
 
 // ADD THEME FORM
 if ($act == "add_theme" || $error_ac != "") {
-	adminmenu();
-	begin_frame();
+    adminmenu();
+    begin_frame();
     $new_theme_name = $_POST['new_theme_name'] ?? '';
-	$new_uri = $_POST['new_uri'] ?? '';
-	?>
-	<p>
-	<table align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2' style='border: 1px solid black'>
-	<form action='admin.php' method='post'>
-	<input type='hidden' name='sid' value='<?=$sid?>'>
-	<input type='hidden' name='act' value='sql'>
-	<input type='hidden' name='do' value='add_this_theme'>
-	<tr>
-	<td>Name of the new Theme:</td>
-	<td align='right'><input type='text' name='new_theme_name' size='30' maxlength='30' value='<?= $new_theme_name ?>'></td>
-	</tr>
-	<tr>
-	<td>Folder Name (case SenSiTive):</td>
-	<td align='right'><input type='text' name='new_uri' size='30' maxlength='30' value='<?= $new_uri ?>'></td>
-	</tr>
-	<tr>
-	<td colspan='2' align='center'>
-	<input type='submit' value='Add new theme'>
-	<input type='reset' value='Reset'>
-	</td>
-	</tr>
-	<?php 
-	if($error_ac != "") echo "<tr><td colspan='2' align='center' style='background:#eeeeee;border:2px red solid'><b>COULD NOT ADD NEW THEME:</b><br>$error_ac</tr></td>\n";
-	?>
-	</table>
-		<br>Please note: All themes must be uploaded to the /themes/ folder.  Please make sure all folder names are EXACT.
-	<?php 
-		end_frame();
+    $new_uri = $_POST['new_uri'] ?? '';
+    ?>
+    <p>
+    <table align='center' width='80%' bgcolor='#cecece' cellspacing='2' cellpadding='2' style='border: 1px solid black'>
+    <form action='admin.php' method='post'>
+    <input type='hidden' name='sid' value='<?=$sid?>'>
+    <input type='hidden' name='act' value='sql'>
+    <input type='hidden' name='do' value='add_this_theme'>
+    <tr>
+    <td>Name of the new Theme:</td>
+    <td align='right'><input type='text' name='new_theme_name' size='30' maxlength='30' value='<?= $new_theme_name ?>'></td>
+    </tr>
+    <tr>
+    <td>Folder Name (case SenSiTive):</td>
+    <td align='right'><input type='text' name='new_uri' size='30' maxlength='30' value='<?= $new_uri ?>'></td>
+    </tr>
+    <tr>
+    <td colspan='2' align='center'>
+    <input type='submit' value='Add new theme'>
+    <input type='reset' value='Reset'>
+    </td>
+    </tr>
+    <?php 
+    if ($error_ac != "") {
+        echo "<tr><td colspan='2' align='center' style='background:#eeeeee;border:2px red solid'><b>COULD NOT ADD NEW THEME:</b>
+            <br>$error_ac</tr></td>\n";
+    }
+    ?>
+    </table>
+        <br>Please note: All themes must be uploaded to the /themes/ folder.  Please make sure all folder names are EXACT.
+    <?php 
+        end_frame();
 }
 
 if($do == "save_edtheme")
 // SAVE THEME EDIT FUNCTION
 {
-	if ($ed_name != "" && $ed_uri != "") {
-		mysql_query(" UPDATE stylesheets SET name='$ed_name' ,uri='$ed_uri' WHERE id=$id");
+    if ($ed_name != "" && $ed_uri != "") {
+        mysql_query(" UPDATE stylesheets SET name='$ed_name' ,uri='$ed_uri' WHERE id=$id");
         bark2("Success", "Theme Updated");
-	} else {
+    } else {
         bark2("ERROR", "Please fill out all fields");
     }
 }
@@ -1386,36 +1389,37 @@ if($do == "save_edtheme")
 if($do == "edtheme" && $id != "")
 // EDIT THEME FORM
 {
-	begin_frame();
-	$q = MYSQL_QUERY("SELECT * FROM stylesheets WHERE id = $id");
-	$r = MYSQL_FETCH_ARRAY($q);
+    begin_frame();
+    $q = MYSQL_QUERY("SELECT * FROM stylesheets WHERE id = $id");
+    $r = MYSQL_FETCH_ARRAY($q);
 
-	?>
-	<form action='admin.php' method='post'>
-	<input type='hidden' name='sid' value='<?= $sid ?>'>
-	<input type='hidden' name='id' value='<?= $id ?>'>
-	<input type='hidden' name='do' value='save_edtheme'>
-	Name:<br>
-	<input type='text' value='<?=$r['name']?>' size='30' maxlength='30' name='ed_name'><br>
-	Folder Name (case SenSiTive):<br>
-	<input type='text' value='<?=$r['uri']?>' size='30' maxlength='30' name='ed_uri'><br>
-	<input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
-	</form>
-	<br>Please note: All themes must be uploaded to the /themes/ folder.  Please make sure all folder names are EXACT.
-	<?php 
-		end_frame();
+    ?>
+    <form action='admin.php' method='post'>
+    <input type='hidden' name='sid' value='<?= $sid ?>'>
+    <input type='hidden' name='id' value='<?= $id ?>'>
+    <input type='hidden' name='do' value='save_edtheme'>
+    Name:<br>
+    <input type='text' value='<?=$r['name']?>' size='30' maxlength='30' name='ed_name'><br>
+    Folder Name (case SenSiTive):<br>
+    <input type='text' value='<?=$r['uri']?>' size='30' maxlength='30' name='ed_uri'><br>
+    <input type='submit' value='   Save   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
+    </form>
+    <br>Please note: All themes must be uploaded to the /themes/ folder.  Please make sure all folder names are EXACT.
+    <?php 
+        end_frame();
 }
 
 if ($do == "del_this_theme")
 //DELETE THEME FROM DATABASE FUNCTION
 {
-	$error_ac == "";
-	if($ed_id == "") $error_ac .= "<br><br><li>Theme ID was empty\n";
+    $error_ac = "";
+    if ($ed_id == "")
+        $error_ac .= "<br><br>Theme ID was empty\n";
 
-	if ($error_ac == "") {
-		mysql_query("DELETE FROM stylesheets WHERE id = $ed_id");
+    if ($error_ac == "") {
+        DB::query("DELETE FROM stylesheets WHERE id = $ed_id");
         bark2("Success", "Theme Deleted OK");
-	} else {
+    } else {
         bark2("ERROR", "Please fill out all fields");
     }
 }
@@ -1423,21 +1427,21 @@ if ($do == "del_this_theme")
 if($act == "del_theme" || $error_ac != "")
 // DELETE THEME FORM
 {
-	adminmenu();
-	begin_frame();
-	?>
-	<p>
-	<form action='admin.php' method='post'>
-	<input type='hidden' name='sid' value='<?=$sid?>'>
-	<input type='hidden' name='id' value='<?=$id?>'>
-	<input type='hidden' name='do' value='del_this_theme'>
-	Enter Theme ID to Delete:<br>
-	<input type='text' value='' size='30' maxlength='30' name='ed_id'><br>
-	<input type='submit' value='   Delete   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
-	</form><br>
-	<b>NOTE: DELETING A THEME DOES NOT REMOVE THE THEME FROM THE SERVER, IT ONLY REMOVES IT FROM BEING SELECTABLE</b>
-	<?php 
-		end_frame();
+    adminmenu();
+    begin_frame();
+    ?>
+    <p>
+    <form action='admin.php' method='post'>
+    <input type='hidden' name='sid' value='<?=$sid?>'>
+    <input type='hidden' name='id' value='<?=$id?>'>
+    <input type='hidden' name='do' value='del_this_theme'>
+    Enter Theme ID to Delete:<br>
+    <input type='text' value='' size='30' maxlength='30' name='ed_id'><br>
+    <input type='submit' value='   Delete   ' style='background:#eeeeee'>&nbsp;&nbsp;&nbsp;<input type='reset' value='  Reset  ' style='background:#eeeeee'>
+    </form><br>
+    <b>NOTE: DELETING A THEME DOES NOT REMOVE THE THEME FROM THE SERVER, IT ONLY REMOVES IT FROM BEING SELECTABLE</b>
+    <?php 
+        end_frame();
 }
 
 #======================================================================#
@@ -1445,38 +1449,59 @@ if($act == "del_theme" || $error_ac != "")
 # Last Edited: TorrentialStorm 01/2/07 @ 14:27 GMT
 #======================================================================#
 
-if($do == "add_this_forum")
-//add to db & create autolink
-{
-$error_ac == "";
-if($new_forum_name == "") $error_ac .= "<li>Forum-name was empty\n";
-if($new_desc == "") $error_ac .= "<li>Forum-description was empty\n";
-if($new_forum_sort == "") $error_ac .= "<li>Forum sort order was empty\n";
-if($new_forum_cat == "") $error_ac .= "<li>Forum category was empty\n";
+if ($do == "add_this_forum") {
+    $error_ac = "";
+    $new_forum_name = $_POST['new_forum_name'] ?? '';
+    if ($new_forum_name == "")
+        $error_ac .= "<li>Forum-name was empty\n";
 
-if($error_ac == "")
-{
-  $sql = "INSERT INTO forum_forums (`name`, `description`, `sort`, `category`, `minclassread`, `minclasswrite`) VALUES ('$new_forum_name', '$new_desc', '$new_forum_sort', '$new_forum_cat', '$minclassread', '$minclasswrite')";
-  $ok = MYSQL_QUERY($sql);
-  if($ok) autolink("admin.php?act=forum", "Thank you, new forum added to db ...");
-  else echo "<h4>Could not save to DB - check your connection & settings!</h4>";
-}
+    $new_desc = $_POST['new_desc'] ?? '';
+    if ($new_desc == "")
+        $error_ac .= "<li>Forum-description was empty\n";
+
+    $new_forum_sort = $_POST['new_forum_sort'] ?? '';
+    if ($new_forum_sort == "")
+        $error_ac .= "<li>Forum sort order was empty\n";
+
+    $new_forum_cat = $_POST['new_forum_cat'] ?? '';
+    if ($new_forum_cat == "")
+        $error_ac .= "<li>Forum category was empty\n";
+
+    $minclassread = $_POST['minclassread'] ?? '';
+    $minclasswrite = $_POST['minclasswrite'] ?? '';
+
+    if ($error_ac == "") {
+        $ok = DB::executeUpdate('INSERT INTO forum_forums
+            (`name`, `description`, `sort`, `category`, `minclassread`, `minclasswrite`)
+            VALUES (?, ?, ?, ?, ?, ?)',
+            [$new_forum_name, $new_desc, $new_forum_sort, $new_forum_cat, $minclassread, $minclasswrite]
+        );
+        if ($ok) {
+            autolink("admin.php?act=forum", "Thank you, new forum added to db ...");
+        } else {
+            echo "<h4>Could not save to DB - check your connection & settings!</h4>";
+        }
+    }
 }
 
-if($do == "add_this_forumcat")
-//add to db & create autolink
-{
-$error_ac == "";
-if($new_forumcat_name == "") $error_ac .= "<li>Forum cat name was empty\n";
-if($new_forumcat_sort == "") $error_ac .= "<li>Forum cat sort order was empty\n";
+if ($do == "add_this_forumcat") {
+    $error_ac = "";
+    $new_forumcat_name = $_POST['new_forumcat_name'] ?? '';
+    $new_forumcat_sort = $_POST['new_forumcat_sort'] ?? '';
+    if ($new_forumcat_name == "")
+        $error_ac .= "<li>Forum cat name was empty\n";
+    if ($new_forumcat_sort == "")
+        $error_ac .= "<li>Forum cat sort order was empty\n";
 
-if($error_ac == "")
-{
-  $sql = "INSERT INTO forumcats (`name`, `sort`) VALUES ('$new_forumcat_name', '$new_forumcat_sort')";
-  $ok = MYSQL_QUERY($sql);
-  if($ok) autolink("admin.php?act=forum", "Thank you, new forum cat added to db ...");
-  else echo "<h4>Could not save to DB - check your connection & settings!</h4>";
-}
+    if ($error_ac == "") {
+        $ok = DB::executeUpdate('INSERT INTO forumcats (`name`, `sort`) VALUES (?, ?)',
+            [$new_forumcat_name, $new_forumcat_sort]
+        );
+        if ($ok)
+            autolink("admin.php?act=forum", "Thank you, new forum cat added to db ...");
+        else
+            echo "<h4>Could not save to DB - check your connection & settings!</h4>";
+    }
 }
 
 //save edited data
@@ -1582,9 +1607,10 @@ foreach ($forumcat as $row) {
 </td>
 </tr>
 <?php 
-if ($error_ac != "")
+if ($error_ac != "") {
     echo "<tr><td colspan='2' align='center' style='background:#eeeeee;border:2px red solid'><b>COULD  NOT ADD NEW forum:</b>
-            <br>$error_ac</tr></td>\n";
+        <br>$error_ac</tr></td>\n";
+}
 ?>
 </table>
 </form>
@@ -1838,9 +1864,9 @@ end_frame();
 #======================================================================#
 if ($act == "rws-watched") {
     $resrws = mysql_query("SELECT * FROM ratiowarn WHERE warned='no'");
-	$reqrws = mysql_fetch_assoc($resrws);
-	adminmenu();
-	begin_frame("Ratio Warn System - Watched Users", 'center');
+    $reqrws = mysql_fetch_assoc($resrws);
+    adminmenu();
+    begin_frame("Ratio Warn System - Watched Users", 'center');
     if ($reqrws < 1){
         echo "There are no users currently being watched for poor ratios.";
     }else{
@@ -1855,11 +1881,11 @@ if ($act == "rws-watched") {
             $userr = mysql_query("SELECT username, uploaded, downloaded FROM users WHERE id='$userid'");
             $userq = mysql_fetch_assoc($userr);
             $user = $userq['username'];
-			if ($userq["downloaded"] > 0) {
-				$ratio = number_format($userq["uploaded"] / $userq["downloaded"], 2);
-			}else{
-				$ratio = "---";
-			}
+            if ($userq["downloaded"] > 0) {
+                $ratio = number_format($userq["uploaded"] / $userq["downloaded"], 2);
+            }else{
+                $ratio = "---";
+            }
             
             $timeleft = ($arr['difference'] - $RATIOWARN_TIME)/-1;
             print("<tr><td class=alt1><a href=account-details.php?id=$userid>$user</a></td><td class=alt2>$ratio</td><td class=alt1 align=left>no</td><td class=alt2>$timeleft days</td></tr>\n");
@@ -1876,9 +1902,9 @@ if ($act == "rws-watched") {
 if($act == "rws-warned")
 {
     $resrws = mysql_query("SELECT * FROM ratiowarn WHERE warned='yes'");
-	$reqrws = mysql_fetch_assoc($resrws);
-	adminmenu();
-	begin_frame("Ratio Warn System - Warned Users", 'center');
+    $reqrws = mysql_fetch_assoc($resrws);
+    adminmenu();
+    begin_frame("Ratio Warn System - Warned Users", 'center');
     if ($reqrws < 1){
         echo "No users have been warned for maintaining poor ratios.";
     }else{
@@ -1893,11 +1919,11 @@ if($act == "rws-warned")
             $userr = mysql_query("SELECT username, uploaded, downloaded FROM users WHERE id='$userid'");
             $userq = mysql_fetch_assoc($userr);
             $user = $userq['username'];
-			if ($userq["downloaded"] > 0) {
-				$ratio = number_format($userq["uploaded"] / $userq["downloaded"], 2);
-			}else{
-				$ratio = "---";
-			}
+            if ($userq["downloaded"] > 0) {
+                $ratio = number_format($userq["uploaded"] / $userq["downloaded"], 2);
+            }else{
+                $ratio = "---";
+            }
             $banned = $arr['banned'];
             
             if($banned == 'no'){

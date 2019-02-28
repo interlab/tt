@@ -57,7 +57,7 @@ begin_block($CURUSER['username']);
 
 <div align="center" class="avat_m">
 <?php
-$avatar = $CURUSER["avatar"];
+$avatar = $CURUSER['avatar'];
 $uname = $CURUSER['username'];
 if (!$avatar) {
     $avatar = 'images/default_avatar.gif';
@@ -104,20 +104,20 @@ echo '<img src="' . $avatar . '" alt="' . $uname . '" name="' . $uname . '" titl
 // invite block
 if ($CURUSER) {
     if ($INVITEONLY) {
-        $invites = $CURUSER["invites"];
-        begin_block("". $txt['INVITES'] ."");
+        $invites = $CURUSER['invites'];
+        begin_block($txt['INVITES']);
         ?>
         <table border="0" width="100%" cellspacing="0" cellpadding="0">
         <tr><td align="center"><?= $txt['YOUHAVE'] ?> <?=$invites?> <?= $txt['INVITES'] ?><br></td></tr>
-        <?php if ($invites > 0 ){?>
-        <tr><td align="center"><a href=invite.php><?= $txt['SENDANINVITE'] ?></a><br></td></tr>
-        <?php }?>
+        <?php if ($invites > 0 ) { ?>
+        <tr><td align="center"><a href="invite.php"><?= $txt['SENDANINVITE'] ?></a><br></td></tr>
+        <?php } ?>
         </table>
         <?php
         end_block();
     }
 }
-//end invite block
+// end invite block
 
 begin_block($txt['NAVIGATION']);
 
@@ -150,29 +150,28 @@ global $POLLON, $NEWSON;
 · <a href="admin.php"><?= $txt['STAFFCP'] ?></a><br><?php } ?>
 <br>
 
- <?php
+<?php
 end_block();
 
 if ($DONATEON) {
     begin_block($txt['DONATIONS'], 'center');
     $row = getDonations();
-    echo "
-    <b>". $txt['TARGET'] .": </b><font color=\"red\">$" . $row['requireddonations'] . "</font>
-    <br><b>".
-        $txt['DONATIONS'] . ": </b><font color=\"green\">$" . $row['donations'] . "</font></center>
+    echo '
+    <b>'. $txt['TARGET'] .': </b><font color="red">$' . $row['requireddonations'] . '</font>
+    <br><b>'.
+        $txt['DONATIONS'] . ': </b><font color="green">$' . $row['donations'] . '</font>
     <br>
-        <div align=left><B><font color=#FF6600>&#187;</font></B> <a href=\"donate.php\">". $txt['DONATE'] ."</a>
+    <div align=left><B><font color=#FF6600>&#187;</font></B> <a href="donate.php">'. $txt['DONATE'] .'</a>
     <br>
-    </div>";
+    </div>';
     end_block();
 }
 
 // start side banner
-echo "<br><CENTER>";
+echo '<br><CENTER>';
 $contents = file_get_contents(TT_ROOT_DIR . '/sponsors.txt');
 $s_cons = preg_split('/~/', $contents);
 $bannerss = rand(0,(count($s_cons)-1));
 echo $s_cons[$bannerss], '
     </CENTER><br>';
 // end side banner
-?>

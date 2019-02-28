@@ -273,7 +273,7 @@ foreach ($res as $row) {
  <td><?=$row["id"]?></td>
  <td><a href=account-details.php?id=<?=$row["userid"]?>><?=$rowu["username"]?></a></td>
  <td><?=$row["applied"]?></td>
- <td <?=($row["grpacct"]?"bgcolor=\"#FFFF00\">(".unesc($row["grpdes"]).")&nbsp;".unesc($row["grpname"]):">N/A")?></td>
+ <td <?= ($row["grpacct"] ? "bgcolor=\"#FFFF00\">(".unesc($row["grpdes"]).")&nbsp;".unesc($row["grpname"]) : ">N/A") ?></td>
  <td><?=$row["content"]?></td>
  <td><?=$row["comment"]?></td>
  <td bgcolor="<?=($ratio>=1?"#00FF00":"#FF0000")?>"></td>

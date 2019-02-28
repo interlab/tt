@@ -1,83 +1,54 @@
--- phpMyAdmin SQL Dump
--- version 4.8.3
--- https://www.phpmyadmin.net/
---
--- Хост: localhost
--- Время создания: Янв 22 2019 г., 11:06
--- Версия сервера: 5.7.22-log
--- Версия PHP: 7.2.6
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- База данных: `ttpmr`
---
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `addedrequests`
---
 
 CREATE TABLE `addedrequests` (
   `id` int(10) UNSIGNED NOT NULL,
   `requestid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+||
 
---
--- Структура таблицы `avps`
---
+INSERT INTO `addedrequests` (`id`, `requestid`, `userid`) VALUES
+(1, 1, 2),
+(2, 2, 2),
+(3, 3, 2),
+(4, 4, 2),
+(5, 5, 2),
+(6, 6, 2),
+(7, 7, 2),
+(10, 10, 2),
+(11, 11, 1),
+(13, 11, 2);
+
+||
 
 CREATE TABLE `avps` (
-  `arg` varchar(20) NOT NULL DEFAULT '',
-  `value_s` mediumtext NOT NULL,
+  `arg` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `value_s` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `value_i` int(11) NOT NULL DEFAULT '0',
   `value_u` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `bans`
---
+||
 
 CREATE TABLE `bans` (
   `id` int(10) UNSIGNED NOT NULL,
   `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `addedby` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `comment` varchar(255) NOT NULL DEFAULT '',
+  `comment` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `first` int(11) DEFAULT NULL,
   `last` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `categories`
---
+||
 
 CREATE TABLE `categories` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(30) NOT NULL DEFAULT '',
+  `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `sort_index` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `image` varchar(255) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `categories`
---
+||
 
 INSERT INTO `categories` (`id`, `name`, `sort_index`, `image`) VALUES
 (1, 'Games', 1, 'games.jpg'),
@@ -90,57 +61,41 @@ INSERT INTO `categories` (`id`, `name`, `sort_index`, `image`) VALUES
 (9, 'Anime', 9, 'anime.jpg'),
 (10, 'TV', 10, 'tv.jpg');
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `censor`
---
+||
 
 CREATE TABLE `censor` (
-  `word` varchar(10) NOT NULL DEFAULT '',
-  `censor` varchar(10) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `word` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `censor` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `censor`
---
+||
 
 INSERT INTO `censor` (`word`, `censor`) VALUES
 ('fuck', 'f**k');
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `comments`
---
+||
 
 CREATE TABLE `comments` (
   `id` int(10) UNSIGNED NOT NULL,
   `user` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `text` mediumtext NOT NULL,
-  `ori_text` mediumtext NOT NULL,
+  `text` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ori_text` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `news` int(10) NOT NULL DEFAULT '0',
-  `nzb` int(10) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `poll` int(10) UNSIGNED NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `countries`
---
+||
 
 CREATE TABLE `countries` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(50) DEFAULT NULL,
-  `flagpic` varchar(50) DEFAULT NULL,
-  `domain` char(3) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `flagpic` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `domain` char(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `countries`
---
+||
 
 INSERT INTO `countries` (`id`, `name`, `flagpic`, `domain`) VALUES
 (1, 'Sweden', 'sweden.gif', 'SE'),
@@ -241,49 +196,46 @@ INSERT INTO `countries` (`id`, `name`, `flagpic`, `domain`) VALUES
 (100, 'England', 'england.gif', 'GB'),
 (101, 'Egypt', 'egypt.gif', 'EG');
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `dbbackup`
---
+||
 
 CREATE TABLE `dbbackup` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(40) DEFAULT NULL,
+  `name` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `added` date DEFAULT '0000-00-00',
   `day` int(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+||
 
---
--- Структура таблицы `downloaded`
---
+INSERT INTO `dbbackup` (`id`, `name`, `added`, `day`) VALUES
+(1, 'ttpmr-26-02-2019.gz', '2019-02-26', 26);
+
+||
 
 CREATE TABLE `downloaded` (
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `user` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `user` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+||
 
---
--- Структура таблицы `faq`
---
+INSERT INTO `downloaded` (`torrent`, `user`, `added`) VALUES
+(16, 0, '2019-02-12 20:44:44');
+
+||
 
 CREATE TABLE `faq` (
   `id` int(10) NOT NULL,
-  `type` set('categ','item') NOT NULL DEFAULT 'item',
-  `question` mediumtext NOT NULL,
-  `answer` mediumtext NOT NULL,
-  `flag` set('0','1','2','3') NOT NULL DEFAULT '1',
+  `type` set('categ','item') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'item',
+  `question` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `answer` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `flag` set('0','1','2','3') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
   `categ` int(10) NOT NULL DEFAULT '0',
   `order` int(10) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `faq`
---
+||
 
 INSERT INTO `faq` (`id`, `type`, `question`, `answer`, `flag`, `categ`, `order`) VALUES
 (1, 'categ', 'Site information', '', '1', 0, 1),
@@ -340,158 +292,118 @@ INSERT INTO `faq` (`id`, `type`, `question`, `answer`, `flag`, `categ`, `order`)
 (63, 'item', 'Your ISP blocks the site\'s address', '(In first place, it\'s unlikely your ISP is doing so. DNS name resolution and/or network problems are the usual culprits.)\r\n<br>\r\nThere\'s nothing we can do.\r\nYou should contact your ISP (or get a new one). Note that you can still visit the site via a proxy, follow the instructions\r\nin the relevant section. In this case it doesn\'t matter if the proxy is anonymous or not, or which port it listens to.<br>\r\n<br>\r\nNotice that you will always be listed as an &quot;unconnectable&quot; client because the tracker will be unable to\r\ncheck that you\'re capable of accepting incoming connections.', '1', 8, 2),
 (65, 'item', 'You can try these:', 'Post in the <a class=\"altlink\" href=\"forums.php\">Forums</a>, by all means. You\'ll find they\r\nare usually a friendly and helpful place,\r\nprovided you follow a few basic guidelines:\r\n<ul>\r\n<li>Make sure your problem is not really in this FAQ. There\'s no point in posting just to be sent\r\nback here.\r\n<li>Before posting read the sticky topics (the ones at the top). Many times new information that\r\nstill hasn\'t been incorporated in the FAQ can be found there.</li>\r\n<li>Help us in helping you. Do not just say \"it doesn\'t work!\". Provide details so that we don\'t\r\nhave to guess or waste time asking. What client do you use? What\'s your OS? What\'s your network setup? What\'s the exact\r\nerror message you get, if any? What are the torrents you are having problems with? The more\r\nyou tell the easiest it will be for us, and the more probable your post will get a reply.</li>\r\n<li>And needless to say: be polite. Demanding help rarely works, asking for it usually does\r\nthe trick.', '1', 9, 1);
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `files`
---
+||
 
 CREATE TABLE `files` (
   `id` int(10) UNSIGNED NOT NULL,
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `filename` varchar(255) NOT NULL DEFAULT '',
+  `filename` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `size` bigint(20) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `forumcats`
---
+||
 
 CREATE TABLE `forumcats` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(60) NOT NULL DEFAULT '',
+  `name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `sort` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `forumcats`
---
+||
 
 INSERT INTO `forumcats` (`id`, `name`, `sort`) VALUES
 (1, 'Test Cat 1', 1),
 (3, 'Test Cat 2', 3),
 (4, 'Test Cat 3', 4);
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `forum_forums`
---
+||
 
 CREATE TABLE `forum_forums` (
   `sort` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(60) NOT NULL DEFAULT '',
-  `description` varchar(200) DEFAULT NULL,
+  `name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `description` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `minclassread` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `minclasswrite` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `category` tinyint(2) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `forum_forums`
---
+||
 
 INSERT INTO `forum_forums` (`sort`, `id`, `name`, `description`, `minclassread`, `minclasswrite`, `category`) VALUES
 (1, 1, 'Example Forum', 'Here is a example forum, you can edit the forums via the control panel', 0, 0, 1),
 (0, 2, 'Test Forum 2', 'test2', 0, 0, 3),
 (0, 3, 'Test Forum 3', 'test', 0, 0, 4);
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `forum_posts`
---
+||
 
 CREATE TABLE `forum_posts` (
   `id` int(10) UNSIGNED NOT NULL,
   `topicid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `added` datetime DEFAULT NULL,
-  `body` mediumtext,
+  `body` longtext COLLATE utf8mb4_unicode_ci,
   `editedby` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `editedat` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `forum_posts`
---
+||
 
 INSERT INTO `forum_posts` (`id`, `topicid`, `userid`, `added`, `body`, `editedby`, `editedat`) VALUES
 (5, 3, 1, '2005-02-27 19:40:38', 'Here is a example post', 0, '0000-00-00 00:00:00'),
 (8, 3, 1, '2005-05-18 08:18:22', 'test 2', 1, '2005-11-11 14:40:44'),
 (9, 6, 1, '2005-07-11 18:49:27', 'test 3', 0, '0000-00-00 00:00:00');
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `forum_readposts`
---
+||
 
 CREATE TABLE `forum_readposts` (
   `id` int(10) UNSIGNED NOT NULL,
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `topicid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `lastpostread` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `forum_topics`
---
+||
 
 CREATE TABLE `forum_topics` (
   `id` int(10) UNSIGNED NOT NULL,
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `subject` varchar(40) DEFAULT NULL,
-  `locked` enum('yes','no') NOT NULL DEFAULT 'no',
+  `subject` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `locked` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
   `forumid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `lastpost` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `moved` enum('yes','no') NOT NULL DEFAULT 'no',
-  `sticky` enum('yes','no') NOT NULL DEFAULT 'no',
+  `moved` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
+  `sticky` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
   `views` int(10) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `forum_topics`
---
+||
 
 INSERT INTO `forum_topics` (`id`, `userid`, `subject`, `locked`, `forumid`, `lastpost`, `moved`, `sticky`, `views`) VALUES
-(3, 1, 'Test Topic', 'no', 2, 8, 'no', 'no', 15),
-(6, 1, 'Test Topic 2', 'no', 3, 9, 'no', 'no', 1);
+(3, 1, 'Test Topic', 'no', 2, 8, 'no', 'no', 35),
+(6, 1, 'Test Topic 2', 'no', 3, 9, 'no', 'no', 4),
+(11, 2, '123', 'no', 1, 11, 'no', 'no', 3),
+(12, 2, 'qwertyuio', 'no', 1, 13, 'no', 'no', 5);
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `guests`
---
+||
 
 CREATE TABLE `guests` (
-  `ip` varchar(15) NOT NULL DEFAULT '',
+  `ip` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `time` decimal(20,0) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `languages`
---
+||
 
 CREATE TABLE `languages` (
   `id` int(10) UNSIGNED NOT NULL,
-  `uri` varchar(255) NOT NULL DEFAULT '',
-  `name` varchar(64) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `uri` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `languages`
---
+||
 
 INSERT INTO `languages` (`id`, `uri`, `name`) VALUES
-(1, 'english.lang', 'English'),
+(1, 'english.yml', 'English'),
 (2, 'french.lang', 'French'),
 (3, 'dutch.lang', 'Dutch'),
 (4, 'portuguese.lang', 'Portuguese'),
@@ -502,258 +414,208 @@ INSERT INTO `languages` (`id`, `uri`, `name`) VALUES
 (9, 'italian.lang', 'Italian'),
 (10, 'lithuanian.lang', 'Lithuanian'),
 (11, 'hungarian.lang', 'Hungarian'),
-(13, 'russian.lang', 'Russian'),
+(13, 'russian.yml', 'Russian'),
 (14, 'spanish.lang', 'Spanish');
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `log`
---
+||
 
 CREATE TABLE `log` (
   `id` int(10) UNSIGNED NOT NULL,
   `added` datetime DEFAULT NULL,
-  `txt` mediumtext
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `txt` longtext COLLATE utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `messages`
---
+||
 
 CREATE TABLE `messages` (
   `id` int(10) UNSIGNED NOT NULL,
   `sender` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `receiver` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `added` datetime DEFAULT NULL,
-  `msg` mediumtext,
-  `unread` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `poster` bigint(20) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `msg` longtext COLLATE utf8mb4_unicode_ci,
+  `unread` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
+  `poster` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
+  `deleted_by_sender` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  `deleted_by_receiver` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `news`
---
+||
 
 CREATE TABLE `news` (
   `id` int(2) NOT NULL,
-  `title` varchar(255) NOT NULL DEFAULT '',
-  `user` varchar(255) NOT NULL DEFAULT '',
-  `date` varchar(255) NOT NULL DEFAULT '0000-00-00',
-  `text` mediumtext NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `user` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `date` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0000-00-00',
+  `text` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `comments` int(10) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+||
 
---
--- Структура таблицы `news_options`
---
+INSERT INTO `news` (`id`, `title`, `user`, `date`, `text`, `comments`) VALUES
+(1, 'Hello, World!', 'Admin', 'January 30, 3:37 pm', 'News Text...', 2),
+(2, 'news 2 ', 'Admin', 'January 30, 3:37 pm', 'News Text', 0),
+(3, 'stupid monkey', 'Admin', 'January 30, 7:14 pm', 'hello, gays!', 3),
+(4, 'Bublegum', 'Admin', 'January 31, 12:16 pm', 'bla-bla-bla\r<br>\r<br>abracadabra\r<br>\r<br>1234567890\r<br>\r<br>:lol: ', 5);
+
+||
 
 CREATE TABLE `news_options` (
   `max_display` int(3) NOT NULL DEFAULT '0',
-  `scrolling` varchar(100) NOT NULL DEFAULT '',
-  `archive` char(3) NOT NULL DEFAULT '',
-  `comment` char(3) NOT NULL DEFAULT '',
-  `titles` char(3) NOT NULL DEFAULT '',
-  `subc` varchar(255) NOT NULL DEFAULT '',
-  `subs` char(3) NOT NULL DEFAULT '',
-  `sspeed` char(3) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `scrolling` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `archive` char(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `comment` char(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `titles` char(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `subc` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `subs` char(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `sspeed` char(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `news_options`
---
+||
 
 INSERT INTO `news_options` (`max_display`, `scrolling`, `archive`, `comment`, `titles`, `subc`, `subs`, `sspeed`) VALUES
 (3, 'on', 'on', 'on', '2', 'red', '1', '2');
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `peers`
---
+||
 
 CREATE TABLE `peers` (
   `id` int(10) UNSIGNED NOT NULL,
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `peer_id` varchar(20) NOT NULL DEFAULT '',
-  `ip` varchar(64) NOT NULL DEFAULT '',
+  `peer_id` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `ip` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `port` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
   `uploaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `downloaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `to_go` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `seeder` enum('yes','no') NOT NULL DEFAULT 'no',
+  `seeder` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
   `started` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_action` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `connectable` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `client` varchar(60) NOT NULL DEFAULT '',
-  `userid` varchar(32) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `connectable` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
+  `client` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `userid` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `pollanswers`
---
+||
 
 CREATE TABLE `pollanswers` (
   `id` int(10) UNSIGNED NOT NULL,
   `pollid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `selection` tinyint(3) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `polls`
---
+||
 
 CREATE TABLE `polls` (
   `id` int(10) UNSIGNED NOT NULL,
   `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `question` varchar(255) NOT NULL DEFAULT '',
-  `option0` varchar(40) NOT NULL DEFAULT '',
-  `option1` varchar(40) NOT NULL DEFAULT '',
-  `option2` varchar(40) NOT NULL DEFAULT '',
-  `option3` varchar(40) NOT NULL DEFAULT '',
-  `option4` varchar(40) NOT NULL DEFAULT '',
-  `option5` varchar(40) NOT NULL DEFAULT '',
-  `option6` varchar(40) NOT NULL DEFAULT '',
-  `option7` varchar(40) NOT NULL DEFAULT '',
-  `option8` varchar(40) NOT NULL DEFAULT '',
-  `option9` varchar(40) NOT NULL DEFAULT '',
-  `sort` enum('yes','no') NOT NULL DEFAULT 'yes'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `ending` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `question` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `option0` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `option1` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `option2` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `option3` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `option4` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `option5` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `option6` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `option7` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `option8` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `option9` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `sort` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
+  `comments` int(10) UNSIGNED NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `polls`
---
+||
 
-INSERT INTO `polls` (`id`, `added`, `question`, `option0`, `option1`, `option2`, `option3`, `option4`, `option5`, `option6`, `option7`, `option8`, `option9`, `sort`) VALUES
-(4, '2006-01-01 18:25:58', 'So... how are things?', 'Good', 'Bad', 'Ugly', '', '', '', '', '', '', '', 'yes');
+INSERT INTO `polls` (`id`, `added`, `ending`, `question`, `option0`, `option1`, `option2`, `option3`, `option4`, `option5`, `option6`, `option7`, `option8`, `option9`, `sort`, `comments`) VALUES
+(4, '2006-01-01 18:25:58', '0000-00-00 00:00:00', 'So... how are things?', 'Good', 'Bad', 'Ugly', '', '', '', '', '', '', '', 'yes', 0),
+(6, '2019-01-30 21:25:18', '0000-00-00 00:00:00', 'what your real name?', 'Homer Simpson', 'Fred Flinstone', 'Karlson', 'Julia Roberts', '', '', '', '', '', '', 'yes', 3),
+(7, '2019-02-18 20:46:54', '0000-00-00 00:00:00', 'how are you?', 'Normal life', 'Stupid life', 'Bad life', '', '', '', '', '', '', '', 'yes', 4);
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `ratings`
---
+||
 
 CREATE TABLE `ratings` (
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `user` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `rating` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `ratiowarn`
---
+||
 
 CREATE TABLE `ratiowarn` (
   `id` int(10) UNSIGNED NOT NULL,
   `userid` int(11) NOT NULL DEFAULT '0',
-  `warned` enum('yes','no') NOT NULL DEFAULT 'no',
-  `banned` enum('yes','no') NOT NULL DEFAULT 'no',
+  `warned` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
+  `banned` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
   `ratiodate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `warntime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `reports`
---
+||
 
 CREATE TABLE `reports` (
   `id` int(10) UNSIGNED NOT NULL,
   `addedby` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `votedfor` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `votedfor_xtra` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `type` enum('torrent','user','forum','tc_comment') NOT NULL DEFAULT 'torrent',
-  `reason` varchar(255) NOT NULL DEFAULT '',
+  `type` enum('torrent','user','forum','tc_comment') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'torrent',
+  `reason` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `dealtby` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `dealtwith` tinyint(1) NOT NULL DEFAULT '0',
   `complete` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `requests`
---
+||
 
 CREATE TABLE `requests` (
   `id` int(10) UNSIGNED NOT NULL,
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `request` varchar(225) DEFAULT NULL,
-  `descr` mediumtext NOT NULL,
+  `request` varchar(225) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `descr` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `hits` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `cat` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `filled` varchar(75) DEFAULT NULL,
+  `filled` varchar(75) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `filledby` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `rules`
---
+||
 
 CREATE TABLE `rules` (
   `id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL DEFAULT '',
-  `text` mediumtext NOT NULL,
-  `public` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `text` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `public` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
   `class` int(11) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `rules`
---
+||
 
 INSERT INTO `rules` (`id`, `title`, `text`, `public`, `class`) VALUES
-(1, 'General rules - Breaking these rules can and will get you banned!', '? We are a English only site, so please only talk in english! \r\n\r\n? Keep your overall ratio at or above 0.5 at all times! \r\n\r\n? Do not defy the moderators expressed wishes! ', 'yes', 0),
+(1, 'General rules - Breaking these rules can and will get you banned!', '? We are a English only site, so please only talk in english! \r\n\r\n? Keep your overall ratio at or above 0.5 at all times! \r\n\r\n? Do not defy the moderators expressed wishes! \r\n\r\ntest', 'yes', 0),
 (2, 'General Forum Guidelines', '? No aggressive behaviour or flaming in the forums. \r\n? No trashing of other peoples topics (i.e. SPAM). \r\n? No language other than English in the forums. \r\n? No links to warez or crack sites in the forums. \r\n? No serials, CD keys, passwords or cracks in the forums. \r\n? No requesting if the release is over 7 days old. \r\n? No bumping... (All bumped threads will be deleted.) \r\n? No double posting. If you wish to post again, and yours is the last post\r\nin the thread please use the EDIT function, instead of posting a double. \r\n? Please ensure all questions are posted in the correct section!\r\n(eg; Game questions in the Game section, Apps questions in the Apps section. etc.) \r\n? Last, Please read the FAQ before asking any questions!  \r\n', 'yes', 0),
 (3, 'Moderating Rules', '? The most important rule!; Use your better judgement! \r\n? Don\'t defy another mod in public, instead send a PM or make a post in the \\\"Site admin\\\". \r\n? Be tolerant! give the user(s) a chance to reform. \r\n? Don\'t act prematurely, Let the users make their mistake and THEN correct them. \r\n? Try correcting any \\\"off topics\\\" rather then closing the thread. \r\n? Move topics rather than locking / deleting them. \r\n? Be tolerant when moderating the Chit-chat section. (give them some slack) \r\n? If you lock a topic, Give a brief explanation as to why you\'re locking it. \r\n? Before banning a user, Send him/her a PM and If they reply, put them on a 2 week trial. \r\n? Don\'t ban a user until he or she has been a member for at least 4 weeks. \r\n? Always state a reason (in the user comment box) as to why the user is being banned. \r\n', 'no', 4);
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `shoutbox`
---
+||
 
 CREATE TABLE `shoutbox` (
   `msgid` int(10) UNSIGNED NOT NULL,
-  `user` varchar(50) NOT NULL DEFAULT '0',
-  `message` mediumtext,
+  `user` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  `message` text COLLATE utf8mb4_unicode_ci,
   `date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `userid` int(8) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `shoutbox_emoticons`
---
+||
 
 CREATE TABLE `shoutbox_emoticons` (
   `id` int(9) NOT NULL,
-  `text` varchar(20) NOT NULL DEFAULT '',
-  `image` varchar(50) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `text` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `image` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `shoutbox_emoticons`
---
+||
 
 INSERT INTO `shoutbox_emoticons` (`id`, `text`, `image`) VALUES
 (1, '%-|', 'confused.gif'),
@@ -780,102 +642,73 @@ INSERT INTO `shoutbox_emoticons` (`id`, `text`, `image`) VALUES
 (22, ':D', 'biggrin.gif'),
 (23, ':(', 'sad.gif');
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `site2`
---
-
-CREATE TABLE `site2` (
-  `maxusers` int(10) NOT NULL DEFAULT '0',
-  `maxusersdate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Структура таблицы `site_settings`
---
+||
 
 CREATE TABLE `site_settings` (
   `donations` decimal(5,2) UNSIGNED NOT NULL DEFAULT '0.00',
   `requireddonations` decimal(5,2) UNSIGNED NOT NULL DEFAULT '0.00',
-  `donatepage` longtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `donatepage` longtext COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `site_settings`
---
+||
 
 INSERT INTO `site_settings` (`donations`, `requireddonations`, `donatepage`) VALUES
 ('10.00', '100.00', 'Place your donation infomation text here, paypal worldpay etc etc\r\n<br><br>\r\nHTML code is accepted so you can have paypal donate buttons and what-not\r\n<br><br>\r\nThis text can be edited via the Admin CP under Donation Settings');
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `snatched`
---
+||
 
 CREATE TABLE `snatched` (
   `id` int(10) UNSIGNED NOT NULL,
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `torrentid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `torrent_name` varchar(255) NOT NULL DEFAULT '',
+  `torrent_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `torrent_category` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `port` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
   `uploaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `downloaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `to_go` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `seeder` enum('yes','no') NOT NULL DEFAULT 'no',
+  `seeder` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
   `last_action` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `startdat` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `completedat` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `connectable` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `agent` varchar(60) NOT NULL DEFAULT '',
-  `finished` enum('yes','no') NOT NULL DEFAULT 'no'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `connectable` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
+  `agent` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `finished` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `stylesheets`
---
+||
 
 CREATE TABLE `stylesheets` (
   `id` int(10) UNSIGNED NOT NULL,
-  `uri` varchar(255) NOT NULL DEFAULT '',
-  `name` varchar(64) NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `uri` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Дамп данных таблицы `stylesheets`
---
+||
 
 INSERT INTO `stylesheets` (`id`, `uri`, `name`) VALUES
 (1, 'default', 'Default'),
 (2, 'moobile_attract', 'Attract'),
-(3, 'troots2', 'TorrentRoots');
+(3, 'troots2', 'TorrentRoots'),
+(4, 'NB-Leo', 'NB-Leo'),
+(5, 'NB-Xmas', 'NB-Xmas');
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `torrents`
---
+||
 
 CREATE TABLE `torrents` (
   `id` int(10) UNSIGNED NOT NULL,
-  `info_hash` blob,
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `filename` varchar(255) NOT NULL DEFAULT '',
-  `save_as` varchar(255) NOT NULL DEFAULT '',
-  `search_text` mediumtext NOT NULL,
-  `descr` mediumtext NOT NULL,
-  `ori_descr` mediumtext NOT NULL,
+  `info_hash` varbinary(40) NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `filename` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `save_as` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `search_text` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descr` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ori_descr` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `category` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `size` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `type` enum('single','multi') NOT NULL DEFAULT 'single',
+  `type` enum('single','multi') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'single',
   `numfiles` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `comments` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `views` int(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -884,19 +717,15 @@ CREATE TABLE `torrents` (
   `leechers` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `seeders` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `last_action` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `visible` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `banned` enum('yes','no') NOT NULL DEFAULT 'no',
+  `visible` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
+  `banned` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
   `owner` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `numratings` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `ratingsum` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `nfo` mediumtext
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `nfo` longtext COLLATE utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `uploadapp`
---
+||
 
 CREATE TABLE `uploadapp` (
   `id` int(10) UNSIGNED NOT NULL,
@@ -904,518 +733,321 @@ CREATE TABLE `uploadapp` (
   `userid` int(10) NOT NULL DEFAULT '0',
   `applied` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `grpacct` tinyint(1) NOT NULL DEFAULT '0',
-  `grpname` varchar(100) NOT NULL DEFAULT '',
-  `grpdes` varchar(4) NOT NULL DEFAULT '',
-  `content` longtext NOT NULL,
-  `comment` longtext NOT NULL,
+  `grpname` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `grpdes` varchar(4) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `content` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `comment` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `seeding` tinyint(1) NOT NULL DEFAULT '0',
   `othergrps` tinyint(1) NOT NULL DEFAULT '0',
-  `seedtime` varchar(100) NOT NULL DEFAULT '',
-  `modcomments` mediumtext NOT NULL,
-  `votes` mediumtext NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `seedtime` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `modcomments` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `votes` longtext COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Структура таблицы `users`
---
+||
 
 CREATE TABLE `users` (
   `id` int(10) UNSIGNED NOT NULL,
-  `username` varchar(40) NOT NULL DEFAULT '',
-  `password` varchar(40) NOT NULL DEFAULT '',
-  `secret` varchar(20) NOT NULL DEFAULT '',
-  `email` varchar(80) NOT NULL DEFAULT '',
-  `status` enum('pending','confirmed') NOT NULL DEFAULT 'pending',
+  `username` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `real_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `secret` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `email` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `status` enum('pending','confirmed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `passkey` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_login` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_access` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `editsecret` varchar(20) NOT NULL DEFAULT '',
-  `privacy` enum('strong','normal','low') NOT NULL DEFAULT 'normal',
+  `editsecret` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `privacy` enum('strong','normal','low') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'normal',
   `stylesheet` int(10) DEFAULT '1',
-  `language` varchar(20) NOT NULL DEFAULT '1',
-  `info` mediumtext,
-  `acceptpms` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `ip` varchar(15) NOT NULL DEFAULT '',
+  `language` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
+  `info` longtext COLLATE utf8mb4_unicode_ci,
+  `acceptpms` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
+  `ip` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `class` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
-  `avatar` varchar(100) NOT NULL DEFAULT '',
+  `avatar` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `uploaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `downloaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `ircnick` varchar(30) NOT NULL DEFAULT '',
-  `ircpass` varchar(30) NOT NULL DEFAULT '',
-  `title` varchar(30) NOT NULL DEFAULT '',
+  `ircnick` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `ircpass` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `title` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `donated` decimal(5,2) UNSIGNED NOT NULL DEFAULT '0.00',
   `country` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `notifs` varchar(100) NOT NULL DEFAULT '',
-  `enabled` varchar(10) NOT NULL DEFAULT 'yes',
-  `modcomment` varchar(100) DEFAULT NULL,
-  `gender` varchar(6) NOT NULL DEFAULT '',
-  `client` varchar(25) NOT NULL DEFAULT '',
+  `notifs` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `enabled` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
+  `modcomment` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gender` varchar(6) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `client` varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `age` int(3) NOT NULL DEFAULT '0',
-  `warned` char(3) NOT NULL DEFAULT 'no',
-  `signature` varchar(200) NOT NULL DEFAULT '',
+  `warned` char(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
+  `signature` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `last_browse` int(11) NOT NULL DEFAULT '0',
-  `forumbanned` char(3) NOT NULL DEFAULT 'no',
+  `forumbanned` char(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
   `invited_by` int(10) NOT NULL DEFAULT '0',
-  `invitees` varchar(100) NOT NULL DEFAULT '',
+  `invitees` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `invites` smallint(5) NOT NULL DEFAULT '0',
   `invitedate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `tzoffset` smallint(4) NOT NULL DEFAULT '0',
-  `commentpm` enum('yes','no') NOT NULL DEFAULT 'yes',
-  `dob` date NOT NULL DEFAULT '0000-00-00'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 PACK_KEYS=0;
+  `commentpm` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
+  `dob` date NOT NULL DEFAULT '0000-00-00',
+  `birthdate` date NOT NULL DEFAULT '0001-01-01',
+  `about_myself` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci PACK_KEYS=0;
 
---
--- Дамп данных таблицы `users`
---
+||
 
-INSERT INTO `users` (`id`, `username`, `password`, `secret`, `email`, `status`, `added`, `last_login`, `last_access`, `editsecret`, `privacy`, `stylesheet`, `language`, `info`, `acceptpms`, `ip`, `class`, `avatar`, `uploaded`, `downloaded`, `ircnick`, `ircpass`, `title`, `donated`, `country`, `notifs`, `enabled`, `modcomment`, `gender`, `client`, `age`, `warned`, `signature`, `last_browse`, `forumbanned`, `invited_by`, `invitees`, `invites`, `invitedate`, `tzoffset`, `commentpm`, `dob`) VALUES
-(1, 'Admin', '21232f297a57a5a743894a0e4a801fc3', 'ì[Ó+\\Z–/A»HßÎeT;', 'email@address.com', 'confirmed', '2005-07-06 12:03:29', '2006-09-27 21:35:45', '2006-09-29 10:57:44', '', 'strong', 1, '1', NULL, 'no', '86.134.184.202', 5, '', 1070000000, 100000000, '', '', 'System Admin', '0.00', 12, '', 'yes', '', 'Female', 'mine', 10, 'no', 'Site Admin', 1159527454, 'no', 2, '', 5, '0000-00-00 00:00:00', 0, 'no', '0000-00-00');
-
---
--- Индексы сохранённых таблиц
---
-
---
--- Индексы таблицы `addedrequests`
---
 ALTER TABLE `addedrequests`
   ADD PRIMARY KEY (`id`),
   ADD KEY `pollid` (`id`),
   ADD KEY `userid` (`userid`);
 
---
--- Индексы таблицы `avps`
---
+||
+
 ALTER TABLE `avps`
   ADD PRIMARY KEY (`arg`);
 
---
--- Индексы таблицы `bans`
---
+||
+
 ALTER TABLE `bans`
   ADD PRIMARY KEY (`id`),
   ADD KEY `first_last` (`first`,`last`);
 
---
--- Индексы таблицы `categories`
---
+||
+
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`id`);
 
---
--- Индексы таблицы `comments`
---
+||
+
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user` (`user`),
-  ADD KEY `torrent` (`torrent`);
+  ADD KEY `torrent` (`torrent`),
+  ADD KEY `news` (`news`),
+  ADD KEY `poll` (`poll`) USING BTREE;
 
---
--- Индексы таблицы `countries`
---
+||
+
 ALTER TABLE `countries`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `dbbackup`
---
 ALTER TABLE `dbbackup`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `faq`
---
 ALTER TABLE `faq`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `files`
---
 ALTER TABLE `files`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `torrent` (`torrent`);
+  ADD KEY `torrent` (`torrent`); ||
 
---
--- Индексы таблицы `forumcats`
---
 ALTER TABLE `forumcats`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `forum_forums`
---
 ALTER TABLE `forum_forums`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `forum_posts`
---
 ALTER TABLE `forum_posts`
   ADD PRIMARY KEY (`id`),
   ADD KEY `topicid` (`topicid`),
-  ADD KEY `userid` (`userid`);
-ALTER TABLE `forum_posts` ADD FULLTEXT KEY `body` (`body`);
+  ADD KEY `userid` (`userid`); ||
+ALTER TABLE `forum_posts` ADD FULLTEXT KEY `body` (`body`); ||
 
---
--- Индексы таблицы `forum_readposts`
---
 ALTER TABLE `forum_readposts`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `userid_2` (`userid`,`topicid`),
   ADD KEY `userid` (`id`),
-  ADD KEY `topicid` (`topicid`);
+  ADD KEY `topicid` (`topicid`); ||
 
---
--- Индексы таблицы `forum_topics`
---
 ALTER TABLE `forum_topics`
   ADD PRIMARY KEY (`id`),
   ADD KEY `userid` (`userid`),
   ADD KEY `subject` (`subject`),
-  ADD KEY `lastpost` (`lastpost`);
+  ADD KEY `lastpost` (`lastpost`); ||
 
---
--- Индексы таблицы `guests`
---
 ALTER TABLE `guests`
   ADD PRIMARY KEY (`ip`),
-  ADD UNIQUE KEY `IP` (`ip`);
+  ADD UNIQUE KEY `IP` (`ip`); ||
 
---
--- Индексы таблицы `languages`
---
 ALTER TABLE `languages`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `log`
---
 ALTER TABLE `log`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `added` (`added`);
+  ADD KEY `added` (`added`); ||
 
---
--- Индексы таблицы `messages`
---
 ALTER TABLE `messages`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `receiver` (`receiver`);
+  ADD KEY `receiver` (`receiver`); ||
 
---
--- Индексы таблицы `news`
---
 ALTER TABLE `news`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `peers`
---
 ALTER TABLE `peers`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `torrent_peer_id` (`torrent`,`peer_id`),
   ADD KEY `torrent` (`torrent`),
   ADD KEY `torrent_seeder` (`torrent`,`seeder`),
-  ADD KEY `last_action` (`last_action`);
+  ADD KEY `last_action` (`last_action`); ||
 
---
--- Индексы таблицы `pollanswers`
---
 ALTER TABLE `pollanswers`
   ADD PRIMARY KEY (`id`),
   ADD KEY `pollid` (`pollid`),
   ADD KEY `selection` (`selection`),
-  ADD KEY `userid` (`userid`);
+  ADD KEY `userid` (`userid`); ||
 
---
--- Индексы таблицы `polls`
---
 ALTER TABLE `polls`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `ratings`
---
 ALTER TABLE `ratings`
   ADD PRIMARY KEY (`torrent`,`user`),
-  ADD KEY `user` (`user`);
+  ADD KEY `user` (`user`); ||
 
---
--- Индексы таблицы `ratiowarn`
---
 ALTER TABLE `ratiowarn`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `reports`
---
 ALTER TABLE `reports`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `requests`
---
 ALTER TABLE `requests`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `userid` (`userid`);
+  ADD KEY `userid` (`userid`); ||
 
---
--- Индексы таблицы `rules`
---
 ALTER TABLE `rules`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `shoutbox`
---
 ALTER TABLE `shoutbox`
   ADD PRIMARY KEY (`msgid`),
-  ADD KEY `msgid` (`msgid`);
+  ADD KEY `msgid` (`msgid`); ||
 
---
--- Индексы таблицы `shoutbox_emoticons`
---
 ALTER TABLE `shoutbox_emoticons`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `snatched`
---
 ALTER TABLE `snatched`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `torrentid_3` (`torrentid`,`userid`),
   ADD KEY `finished` (`finished`,`torrentid`),
   ADD KEY `torrentid` (`userid`),
   ADD KEY `torrentid_2` (`torrentid`),
-  ADD KEY `userid` (`userid`,`torrentid`);
+  ADD KEY `userid` (`userid`,`torrentid`); ||
 
---
--- Индексы таблицы `stylesheets`
---
 ALTER TABLE `stylesheets`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`); ||
 
---
--- Индексы таблицы `torrents`
---
 ALTER TABLE `torrents`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `info_hash` (`info_hash`(20)),
   ADD KEY `owner` (`owner`),
   ADD KEY `visible` (`visible`),
-  ADD KEY `category_visible` (`category`,`visible`);
-ALTER TABLE `torrents` ADD FULLTEXT KEY `ft_search` (`search_text`,`ori_descr`);
+  ADD KEY `category_visible` (`category`,`visible`); ||
+ALTER TABLE `torrents` ADD FULLTEXT KEY `ft_search` (`search_text`,`ori_descr`); ||
 
---
--- Индексы таблицы `uploadapp`
---
 ALTER TABLE `uploadapp`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `users` (`userid`);
+  ADD UNIQUE KEY `users` (`userid`); ||
 
---
--- Индексы таблицы `users`
---
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `real_name` (`real_name`),
   ADD KEY `status_added` (`status`,`added`),
   ADD KEY `ip` (`ip`),
   ADD KEY `uploaded` (`uploaded`),
   ADD KEY `downloaded` (`downloaded`),
-  ADD KEY `country` (`country`);
+  ADD KEY `country` (`country`),
+  ADD KEY `passkey` (`passkey`) USING BTREE; ||
 
---
--- AUTO_INCREMENT для сохранённых таблиц
---
 
---
--- AUTO_INCREMENT для таблицы `addedrequests`
---
 ALTER TABLE `addedrequests`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14; ||
 
---
--- AUTO_INCREMENT для таблицы `bans`
---
 ALTER TABLE `bans`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT; ||
 
---
--- AUTO_INCREMENT для таблицы `categories`
---
 ALTER TABLE `categories`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11; ||
 
---
--- AUTO_INCREMENT для таблицы `comments`
---
 ALTER TABLE `comments`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85; ||
 
---
--- AUTO_INCREMENT для таблицы `countries`
---
 ALTER TABLE `countries`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102; ||
 
---
--- AUTO_INCREMENT для таблицы `dbbackup`
---
 ALTER TABLE `dbbackup`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2; ||
 
---
--- AUTO_INCREMENT для таблицы `faq`
---
 ALTER TABLE `faq`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66; ||
 
---
--- AUTO_INCREMENT для таблицы `files`
---
 ALTER TABLE `files`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=701; ||
 
---
--- AUTO_INCREMENT для таблицы `forumcats`
---
 ALTER TABLE `forumcats`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5; ||
 
---
--- AUTO_INCREMENT для таблицы `forum_forums`
---
 ALTER TABLE `forum_forums`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4; ||
 
---
--- AUTO_INCREMENT для таблицы `forum_posts`
---
 ALTER TABLE `forum_posts`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14; ||
 
---
--- AUTO_INCREMENT для таблицы `forum_readposts`
---
 ALTER TABLE `forum_readposts`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25; ||
 
---
--- AUTO_INCREMENT для таблицы `forum_topics`
---
 ALTER TABLE `forum_topics`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13; ||
 
---
--- AUTO_INCREMENT для таблицы `languages`
---
 ALTER TABLE `languages`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15; ||
 
---
--- AUTO_INCREMENT для таблицы `log`
---
 ALTER TABLE `log`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7; ||
 
---
--- AUTO_INCREMENT для таблицы `messages`
---
 ALTER TABLE `messages`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64; ||
 
---
--- AUTO_INCREMENT для таблицы `news`
---
 ALTER TABLE `news`
-  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5; ||
 
---
--- AUTO_INCREMENT для таблицы `peers`
---
 ALTER TABLE `peers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11; ||
 
---
--- AUTO_INCREMENT для таблицы `pollanswers`
---
 ALTER TABLE `pollanswers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10; ||
 
---
--- AUTO_INCREMENT для таблицы `polls`
---
 ALTER TABLE `polls`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8; ||
 
---
--- AUTO_INCREMENT для таблицы `ratiowarn`
---
 ALTER TABLE `ratiowarn`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT; ||
 
---
--- AUTO_INCREMENT для таблицы `reports`
---
 ALTER TABLE `reports`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5; ||
 
---
--- AUTO_INCREMENT для таблицы `requests`
---
 ALTER TABLE `requests`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12; ||
 
---
--- AUTO_INCREMENT для таблицы `rules`
---
 ALTER TABLE `rules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5; ||
 
---
--- AUTO_INCREMENT для таблицы `shoutbox`
---
 ALTER TABLE `shoutbox`
-  MODIFY `msgid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `msgid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34; ||
 
---
--- AUTO_INCREMENT для таблицы `shoutbox_emoticons`
---
 ALTER TABLE `shoutbox_emoticons`
-  MODIFY `id` int(9) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(9) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24; ||
 
---
--- AUTO_INCREMENT для таблицы `snatched`
---
 ALTER TABLE `snatched`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3; ||
 
---
--- AUTO_INCREMENT для таблицы `stylesheets`
---
 ALTER TABLE `stylesheets`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6; ||
 
---
--- AUTO_INCREMENT для таблицы `torrents`
---
 ALTER TABLE `torrents`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18; ||
 
---
--- AUTO_INCREMENT для таблицы `uploadapp`
---
 ALTER TABLE `uploadapp`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT; ||
 
---
--- AUTO_INCREMENT для таблицы `users`
---
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;

@@ -7,6 +7,20 @@ ini_set('display_errors', 1);
 
 define('TT_START_TIME', microtime(true));
 
+set_exception_handler('tt_exception_handler');
+
+function tt_exception_handler(Throwable $exc)
+{
+    $err_msg = "\n" .
+        '<h4>Message: </h4>' . $exc->getMessage() .
+        '<h4>Date: </h4>' . date('d M Y H:i:s') .
+        '<h4>Line: </h4>' . $exc->getLine() .
+        '<h4>File: </h4>' . $exc->getFile() .
+        '<h4>Trace: </h4>' . nl2br($exc->getTraceAsString());
+    // dump($exc);
+    echo $err_msg;
+}
+
 session_start();
 ob_start();
 
@@ -107,8 +121,7 @@ function addJsFile($file)
     $st['js_files'] = ($st['js_files'] ?? '') . $file;
 }
 
-// IP Validation
-function validip($ip)
+function validip($ip) : bool
 {
     if (!empty($ip) && $ip == long2ip(ip2long($ip))) {
         // reserved IANA IPv4 addresses
@@ -127,12 +140,15 @@ function validip($ip)
         foreach ($reserved_ips as $r) {
             $min = ip2long($r[0]);
             $max = ip2long($r[1]);
-            if ((ip2long($ip) >= $min) && (ip2long($ip) <= $max)) return false;
+            if ((ip2long($ip) >= $min) && (ip2long($ip) <= $max)) {
+                return false;
+            }
         }
 
         return true;
     }
-    else return false;
+
+    return false;
 }
 
 // Patched function to detect REAL IP address if it's valid
@@ -154,6 +170,11 @@ function getip()
         } else {
             $ip = getenv('REMOTE_ADDR');
         }
+    }
+
+    // fix for ip2long
+    if ($ip === '::1') {
+        $ip = '127.0.0.1';
     }
 
     return $ip;

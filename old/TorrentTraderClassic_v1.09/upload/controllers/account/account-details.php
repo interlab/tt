@@ -1,10 +1,10 @@
 <?php
 
-ob_start("ob_gzhandler");
 require_once __DIR__ . '/../../backend/functions.php';
 dbconn(false);
 
 loggedinorreturn();
+loadLanguage();
 
 global $CURUSER, $txt;
 
@@ -12,11 +12,13 @@ function maketable($res)
 {
     global $txt;
 
-    $ret = "<table class=table_table border=1 cellspacing=0 cellpadding=2>" .
-        "<tr><td class=table_head>" . $txt['NAME'] . "</td><td class=table_head align=center>" . $txt['SIZE'] .
-        "</td><td class=table_head align=center>" . $txt['UPLOADED'] . "</td>\n" .
-        "<td class=table_head align=center>" . $txt['DOWNLOADED'] . "</td><td class=table_head align=center>" .
-        $txt['RATIO'] . "</td></tr>\n";
+    $ret = '<table class=table_table border=1 cellspacing=0 cellpadding=2>
+        <tr><td class=table_head>'.$txt['NAME'].'</td>
+        <td class=table_head align=center>'.$txt['SIZE'].'</td>
+        <td class=table_head align=center>'.$txt['UPLOADED'].'</td>
+        <td class=table_head align=center>'.$txt['DOWNLOADED'].'</td>
+        <td class=table_head align=center>'.$txt['RATIO'].'</td></tr>';
+
     foreach ($res as $arr) {
         // @todo: subquery
         $arr2 = DB::fetchAssoc('
@@ -25,15 +27,15 @@ function maketable($res)
             WHERE id = ' . $arr['torrent'] . '
             ORDER BY name'
         );
-        if ($arr["downloaded"] > 0) {
-            $ratio = number_format($arr["uploaded"] / $arr["downloaded"], 2);
-            $ratio = "<font color=" . get_ratio_color($ratio) . ">$ratio</font>";
+        if ($arr['downloaded'] > 0) {
+            $ratio = number_format($arr['uploaded'] / $arr['downloaded'], 2);
+            $ratio = '<font color=' . get_ratio_color($ratio) . '>'.$ratio.'</font>';
         }
         else {
-            if ($arr["uploaded"] > 0)
-                $ratio = "Inf.";
+            if ($arr['uploaded'] > 0)
+                $ratio = 'Inf.';
             else
-                $ratio = "---";
+                $ratio = '---';
         }
         $ret .= "<tr><td class=table_col1><a href=torrents-details.php?id=$arr[torrent]><b>" .
             h($arr2['name']) . "</b></a></td><td align=center class=table_col2>" . mksize($arr2["size"]) .
@@ -41,15 +43,15 @@ function maketable($res)
             "</td><td align=center class=table_col2>" . mksize($arr["downloaded"]) .
             "</td><td align=center class=table_col1>$ratio</td></tr>\n";
     }
-    $ret .= "</table>\n";
+    $ret .= '</table>';
 
     return $ret;
 }
 
 $id = (int) ($_GET['id'] ?? 0);
 
-if (!is_valid_id($id)) {
-    bark("Can't show details", "Bad ID.");
+if (! is_valid_id($id)) {
+    bark("Can't show details", 'Bad ID.');
 }
 
 $user = DB::fetchAssoc('SELECT * FROM users WHERE id = ' . $id . ' LIMIT 1');
@@ -57,11 +59,11 @@ if (!$user) {
     bark("Can't show details", "No user with ID $id.");
 }
 
-if ($user["status"] == "pending") {
+if ($user['status'] == 'pending') {
     die('User is pending');
 }
 
-$_GET["ratings"] = $_GET["ratings"] ?? '';
+$_GET['ratings'] = $_GET['ratings'] ?? '';
 
 $num_torrents = DB::fetchColumn('
     SELECT COUNT(*)
@@ -70,71 +72,77 @@ $num_torrents = DB::fetchColumn('
     LIMIT 1',
     ['id' => $id]
 );
+
 $torrents = '';
 if ($num_torrents > 0) {
+    // todo: limit
     $r = DB::executeQuery('SELECT * FROM torrents WHERE owner = {int:id} ORDER BY name ASC', ['id' => $id]);
     if ($r) {
-        $torrents = "
-        <table class=table_table border=1 cellspacing=0 cellpadding=2>\n" .
-            "<tr>
-            <td class=table_head>" . $txt['NAME'] . "</td>
-            <td class=table_head>" . $txt['SEEDS'] . "</td>
-            <td class=table_head>" . $txt['LEECH'] . "</td>
-            </tr>\n";
+        $torrents = '
+        <table class=table_table border=1 cellspacing=0 cellpadding=2>
+            <tr>
+            <td class=table_head>' . $txt['NAME'] . '</td>
+            <td class=table_head>' . $txt['SEEDS'] . '</td>
+            <td class=table_head>' . $txt['LEECH'] . '</td>
+            </tr>';
         while ($a = $r->fetch()) {
-            $torrents .= "<tr><td class=table_col1><a href=torrents-details.php?id=" . $a["id"] . "><b>" . h($a["name"]) . "</b></a></td>" .
-            "<td align=right class=table_col2>$a[seeders]</td><td align=right class=table_col1>$a[leechers]</td></tr>\n";
+            $torrents .= '
+            <tr>
+            <td class=table_col1><a href=torrents-details.php?id=' . $a['id'] . '><b>' . h($a['name']) . '</b></a></td>
+            <td align=right class=table_col2>'.$a['seeders'].'</td>
+            <td align=right class=table_col1>'.$a['leechers'].'</td>
+            </tr>';
         }
-        $torrents .= "</table>";
+        $torrents .= '</table>';
     }
 }
 
-if ($user["ip"] && !(get_user_class() < UC_JMODERATOR && $user["class"] >= UC_UPLOADER)) {
+if ($user['ip'] && !(get_user_class() < UC_JMODERATOR && $user['class'] >= UC_UPLOADER)) {
     $limited = $CURUSER['id'] != $id && get_user_class() < UC_JMODERATOR;
     if ($limited) {
-        $ip = substr($user["ip"], 0, strrpos($user["ip"], ".") + 1) . "xxx";
+        $ip = substr($user['ip'], 0, strrpos($user['ip'], '.') + 1) . 'xxx';
     } else {
-        $ip = $user["ip"];
+        $ip = $user['ip'];
     }
-    $dom = @gethostbyaddr($user["ip"]);
-    if ($dom == $user["ip"] || @gethostbyname($dom) != $user["ip"]) {
+    $dom = @gethostbyaddr($user['ip']);
+    if ($dom == $user['ip'] || @gethostbyname($dom) != $user['ip']) {
         $addr = $ip;
     } else {
         $dom = strtoupper($dom);
-        $domparts = explode(".", $dom);
+        $domparts = explode('.', $dom);
         $domain = $domparts[count($domparts) - 2];
-        if ($domain == "COM" || $domain == "CO" || $domain == "NET" ||
-                $domain == "NE" || $domain == "ORG" || $domain == "OR" ) {
+        if ($domain == 'COM' || $domain == 'CO' || $domain == 'NET' ||
+                $domain == 'NE' || $domain == 'ORG' || $domain == 'OR' ) {
             $l = 2;
         } else {
             $l = 1;
         }
         if ($limited) {
-            while (substr_count($dom, ".") > $l) {
-                $dom = substr($dom, strpos($dom, ".") + 1);
+            while (substr_count($dom, '.') > $l) {
+                $dom = substr($dom, strpos($dom, '.') + 1);
             }
         }
         $addr = "$ip ($dom)";
     }
 }
 
-if ($user['added'] == "0000-00-00 00:00:00")
+if ($user['added'] == '0000-00-00 00:00:00')
     $joindate = 'N/A';
 else
     $joindate = "$user[added] (" . get_elapsed_time(sql_timestamp_to_unix_timestamp($user["added"])) . " ago)";
 
-$lastseen = $user["last_access"];
-if ($lastseen == "0000-00-00 00:00:00")
-    $lastseen = "never";
+$lastseen = $user['last_access'];
+if ($lastseen == '0000-00-00 00:00:00')
+    $lastseen = 'never';
 else {
-    $lastseen .= " (" . get_elapsed_time(sql_timestamp_to_unix_timestamp($lastseen)) . " ago)";
-    $torrentcomments = DB::fetchColumn('SELECT COUNT(*) FROM comments WHERE user = ' . $user["id"]);
+    $lastseen .= ' (' . get_elapsed_time(sql_timestamp_to_unix_timestamp($lastseen)) . ' ago)';
+    $torrentcomments = DB::fetchColumn('SELECT COUNT(*) FROM comments WHERE user = ' . $user['id']);
 }
 
 $forumposts = DB::fetchColumn('SELECT COUNT(*) FROM forum_posts WHERE userid = ' . $user['id']);
 
 if ($user['donated'] > 0) {
-    $don = "<img src=pic/starbig.gif>";
+    $don = '<img src=pic/starbig.gif>';
 }
 
 $country = DB::fetchColumn('SELECT name FROM countries WHERE id = ' . $user['country'] . ' LIMIT 1');
@@ -146,20 +154,20 @@ if ($res) {
 }
 
 $seeding = null;
-$res = DB::fetchAll("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = $id AND seeder='yes' group by torrent");
+$res = DB::fetchAll("SELECT torrent, uploaded, downloaded FROM peers WHERE userid = $id AND seeder='yes' GROUP BY torrent");
 if ($res) {
     $seeding = maketable($res);
 }
 
-$avatar = $user["avatar"];
+$avatar = $user['avatar'];
 if (!$avatar) {
-	$avatar = "images/default_avatar.gif";
+	$avatar = 'images/default_avatar.gif';
 }
 
-$enabled = $user["enabled"] == 'yes';
-$warned = $user["warned"] == 'yes';
-$forumbanned = $user["forumbanned"] == 'yes';
-$privacylevel = $user["privacy"];
+$enabled = $user['enabled'] == 'yes';
+$warned = $user['warned'] == 'yes';
+$forumbanned = $user['forumbanned'] == 'yes';
+$privacylevel = $user['privacy'];
 //END PRE SQL's
 
 //get days until ban, if warned by ratioban system
@@ -172,20 +180,20 @@ if ($arr_rws) {
         if ($banned == 'no') {
             $timeleft = ($arr_rws['difference'] - $RATIOWARN_BAN)/-1;
         } else {
-            $timeleft = "null";
+            $timeleft = 'null';
         }
     }
 }
 
 //Table formatting starts here ***************************
-stdhead("User Details for " . $user["username"]);
-begin_frame("User Details for " . $user["username"] . "");
+stdhead('User Details for ' . $user['username']);
+begin_frame('User Details for ' . $user['username']);
 ?>
 <table width=100% border=0><tr><td width=50% valign=top>
 	<table width=100% border=0 cellpadding=0 cellspacing=0><tr><td width=100% valign=top>
 
 <table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
-<TR><TD width=100% valign=middle class=table_head height=30><b>Viewing Profile: <?=$user["username"]?> </b>
+<TR><TD width=100% valign=middle class=table_head height=30><b>Viewing Profile: <?= $user['username'] ?> </b>
 [<a href="report.php?user=<?= $user['id'] ?>">Report User</a>]</TD></TR>
 <TR><TD><DIV style="margin-left: 8pt">
 
@@ -195,12 +203,12 @@ begin_frame("User Details for " . $user["username"] . "");
 
 <?php
 if (!$enabled) {
-    print("<br><b>" . $txt['ACCOUNT_DISABLED'] . "</b>");
+    echo '<br><b>' . $txt['ACCOUNT_DISABLED'] . '</b>';
 }
 ?>
 <BR>Joined: <?= $joindate ?><br>
 <br>
-User Class: <?=get_user_class_name($user["class"]) ?>
+User Class: <?=get_user_class_name($user['class']) ?>
 <?php
 print("<br><a href=account-history.php?id=$user[id]&action=viewposts><b>" . $txt['VIEW_POSTS'] . "</b></a><BR>");
 print("<a href=account-torrents.php?id=$user[id]><b>View File Upload/Download Details</b></a><BR>");
@@ -212,7 +220,7 @@ print("<BR><br><a href=account-inbox.php?receiver=$user[id]>" . $txt['ACCOUNT_SE
 <BR><BR></div>
 <!--  -->
 </TD></TR></TABLE>
-<Br>
+<br>
 		<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
         <TR><TD width=100% valign=middle class=table_head height=30><B>Information:</B></TD></TR>
 		<TR><TD>

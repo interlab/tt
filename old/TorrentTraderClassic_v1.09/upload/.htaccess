@@ -7,6 +7,11 @@
 # RewriteCond %{REQUEST_FILENAME} -f
 # RewriteRule ^(.+)\.pdf$  /cgi-bin/pdf.php?file=$1 [L,NC,QSA]
 
+Options All -Indexes -MultiViews
+RewriteEngine on
+
+# RewriteBase /tt109/www/
+
 RewriteRule ^(lambada\.php)$  /controllers/$1 [L,NC]
 RewriteRule ^(videoformats\.php)$  /controllers/$1 [L,NC]
 RewriteRule ^(faq\.php)$  /controllers/$1 [L,NC]
@@ -52,3 +57,4 @@ RewriteRule ^(report\.php)$  /controllers/$1 [L,NC]
 RewriteRule ^(rules\.php)$  /controllers/$1 [L,NC]
 RewriteRule ^(staff\.php)$  /controllers/$1 [L,NC]
 RewriteRule ^(extras-stats\.php)$  /controllers/$1 [L,NC]
+RewriteRule ^(extras-users\.php)$  /controllers/$1 [L,NC]
