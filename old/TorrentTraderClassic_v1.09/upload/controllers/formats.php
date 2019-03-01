@@ -1,23 +1,23 @@
 <?php
 
-require_once __DIR__ . '/../backend/functions.php';
-
 dbconn(false);
 stdhead("Downloaded Files");
+
+begin_frame("A Handy Guide to Using the Files You've Downloaded")
 ?>
-
-<?php begin_frame("A Handy Guide to Using the Files You've Downloaded");?>
-
 
 Hey guys, here's some info about common files that you can download from the internet,
 and a little bit about using these files for their intended purposes. If you're stuck
 on what exactly a file is or how to open it maybe your answer lies ahead. If you dont'
 find your answer here, then please post in the "Forum". So without further adieu lets
 get the show on the road!<br>
-<?php end_frame();?>
 
+<?php
+end_frame();
 
-<?php begin_frame("Compression Files");?>
+begin_frame("Compression Files");
+?>
+
 <b>.rar .zip .ace .r01 .001</b><br>
 <br>
 These extensions are quite common and mean that your file[s] is compressed into an

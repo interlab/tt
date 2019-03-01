@@ -65,7 +65,7 @@ class MyController
 
     public static function anyaction($file, $ext)
     {
-        $m = ['account', 'admin', 'torrents', 'forum'];
+        $m = ['account', 'admin', 'torrents'];
         $path = '';
         foreach ($m as $row) {
             if (strpos($file, $row) === 0) {

@@ -62,7 +62,7 @@ function adminmenu()
         <br>Main Settings</a> [A]
     </td>
     <td width=%20 align=center>
-        <a href='mysql_stats.php'>
+        <a href='admin-mysql-stats.php'>
         <img src="images/admin/mysqlstats.gif" border=0 width=32 height=32>
         <br>Mysql Stats</a>
     </td>
@@ -191,7 +191,7 @@ function adminmenu()
     <td width=%20 align=center><a href='uploadapp.php'><img src="images/admin/uploadervote.gif" border=0 width=32 height=32>
         <br>Uploader Applications</a>
     </td>
-    <td width=%20 align=center><a href='uploaders.php'><img src="images/admin/uploaders.gif" border=0 width=32 height=32>
+    <td width=%20 align=center><a href='admin-uploaders.php'><img src="images/admin/uploaders.gif" border=0 width=32 height=32>
         <br>Uploaders Management</a>
     </td>
     <td width=%20 align=center><a href='admin-delreq.php'><img src="images/admin/requests.gif" border=0 width=32 height=32>

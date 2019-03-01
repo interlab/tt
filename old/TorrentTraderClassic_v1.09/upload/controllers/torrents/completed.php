@@ -1,25 +1,22 @@
 <?php
 
-require "backend/functions.php";
 dbconn(false);
 loggedinorreturn();
 stdhead();
 
 begin_frame("Recorded Downloads", 'center');
 
-$id = $_GET["id"];
-$id = 0 + $id;
+$id = $_GET["id"] ?? 0;
+$id = (int) $id;
 
-$r1 = mysql_query("SELECT name FROM torrents WHERE id='$id'");
-$a1 = mysql_fetch_assoc($r1);
-$torrentname = $a1["name"];
+$torrentname = DB::fetchColumn("SELECT name FROM torrents WHERE id = $id");
 
 echo "<h3>" . $torrentname . "</h3>\n";
 
 $r1 = mysql_query("SELECT user FROM downloaded where torrent='$id'");
 if (mysql_num_rows($r1) == 0)
 {
-	echo "<br><b>No downloads recorded.</b><br>If this torrent is EXTERNAL we are unable to tell who has completed it.<br>\n";	
+    echo "<br><b>No downloads recorded.</b><br>If this torrent is EXTERNAL we are unable to tell who has completed it.<br>\n";	
 }
 else
 {

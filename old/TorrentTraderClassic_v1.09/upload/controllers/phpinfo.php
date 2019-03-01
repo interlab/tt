@@ -1,0 +1,7 @@
+<?php
+
+dbconn();
+
+adminonly();
+
+phpinfo();

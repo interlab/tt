@@ -1,13 +1,13 @@
 <?php
 
-require_once '../../backend/functions.php';
+require_once TT_BACKEND_DIR . '/functions.php';
 
 dbconn(false);
 
 loggedinorreturn();
 adminonly();
 stdhead("Statistics");
-require_once '../../backend/admin-functions.php';
+require_once TT_BACKEND_DIR . '/admin-functions.php';
 adminmenu();
 begin_frame("STATISTICS");
 

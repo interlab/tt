@@ -1,12 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../backend/functions.php';
 dbconn(true);
 
 global $CURUSER, $RATIO_WARNINGON, $SHOUTBOX, $DISCLAIMERON, $minvotes, $POLLON;
 
 if ($RATIO_WARNINGON && $CURUSER) {
-    include_once __DIR__ . '/../ratiowarn.php';
+    include_once TT_ROOT_DIR . '/ratiowarn.php';
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -92,7 +91,7 @@ if ($SITENOTICEON) {
 // NEWS BLOCK
 if ($NEWSON) {
     begin_frame($txt['SITENEWS'], 'center');
-    include_once __DIR__ . '/../news.php';
+    include_once TT_BACKEND_DIR . '/news.php';
     end_frame();
 }
 

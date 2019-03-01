@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../../backend/functions.php';
+require_once TT_BACKEND_DIR . '/functions.php';
 
 dbconn(false);
 loggedinorreturn();
