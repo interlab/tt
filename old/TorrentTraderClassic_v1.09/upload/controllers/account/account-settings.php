@@ -1,8 +1,5 @@
 <?php
-//
-// CSS and language updated 30.11.05
-//
-require_once __DIR__ . '/../../backend/functions.php';
+
 dbconn(false);
 loggedinorreturn();
 

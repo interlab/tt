@@ -1,10 +1,4 @@
 <?php
-//
-// CSS and Language updated 29.NOV.05
-//
-
-chdir(dirname(dirname(__DIR__)));
-require_once 'backend/functions.php';
 
 dbconn(false);
 

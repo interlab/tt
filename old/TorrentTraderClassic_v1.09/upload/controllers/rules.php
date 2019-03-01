@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../backend/functions.php';
-
 dbconn();
 stdhead('Rules');
 begin_frame($txt['SITE_RULES']);

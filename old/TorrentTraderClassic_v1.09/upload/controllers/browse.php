@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../backend/functions.php';
-
 dbconn(false);
 
 global $CURUSER, $LOGGEDINONLY, $SPECIAL_FREE_VIEW, $no_check_referer, $RATIO_WARNINGON;

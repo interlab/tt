@@ -48,9 +48,9 @@ function local_user()
     return $HTTP_SERVER_VARS["SERVER_ADDR"] == $HTTP_SERVER_VARS["REMOTE_ADDR"];
 }
 
-require_once("config.php");
-require_once("cleanup.php");
-require_once("extras.php");
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/cleanup.php';
+require_once __DIR__ . '/extras.php';
 
 require_once __DIR__ . '/constants.php';
 require_once TT_ROOT_DIR . '/helpers/DB.php';
@@ -196,8 +196,6 @@ function dbconn($autoclean = false)
 
 function userlogin()
 {
-    global $GLOBALBAN, $HTTP_SERVER_VARS, $SITE_ONLINE;
-
     unset($GLOBALS['CURUSER']);
 
     $ip = getip();

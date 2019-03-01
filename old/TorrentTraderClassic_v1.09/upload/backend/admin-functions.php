@@ -37,7 +37,7 @@ function adminmenu()
 
     begin_frame("Admin Menu");
     print "<CENTER><b>Users Awaiting Validation: <a href=admin.php?act=confirmreg>".
-        $pusers."</a></b><BR><a href=cheats.php>Check For Possible Cheaters</a><BR><BR>";
+        $pusers."</a></b><BR><a href=admin-cheats.php>Check For Possible Cheaters</a><BR><BR>";
 
     print "Last cleanup performed: ".$lastclean." - <a href=".$GLOBALS['SITEURL'].
         "/backend/force-cleanup.php>[FORCE CLEAN]</a><br><br>[A] Admin Only - [S] Super Moderator Only<br></CENTER>\n";

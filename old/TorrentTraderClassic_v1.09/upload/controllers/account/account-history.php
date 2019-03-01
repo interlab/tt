@@ -1,7 +1,5 @@
 <?php
 
-require '../../backend/functions.php';
-
 dbconn(false);
 loggedinorreturn();
 

@@ -1,6 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../../backend/functions.php';
 dbconn();
 
 // Here we decide if the invite system is needed

@@ -3,8 +3,8 @@
 if (!empty($_GET["changechmod"])){
 	dochmod();
 }
-	
-	
+
+
 function dochmod()
 {
     error_reporting(0);
@@ -93,7 +93,7 @@ This system check is designed for unix based servers, windows based servers may 
 <tr>
 <td>PHP version >= 4.3.0</td>
 <td align="left">
-								<?php
+<?php
 				  define(_PHP_VERSION, phpversion());
 				if (phpversion() < '5'){
 					echo phpversion() < '4.3' ? '<b><font color="red">No</font> 4.3 or above required</b>' : '<b><font color="green">Yes</font></b>';

@@ -1,6 +1,4 @@
-<?php 
-
-require_once __DIR__ . '/../backend/functions.php';
+<?php
 
 dbconn();
 loggedinorreturn();

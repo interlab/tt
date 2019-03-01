@@ -5,8 +5,6 @@
     // die(json_encode(['fail' => 'Bad request'], JSON_UNESCAPED_UNICODE));
 // }
 
-require_once __DIR__ . '/../backend/functions.php';
-
 dbconn(false);
 
 if (isset($_GET['filelist'], $_GET['id'])) {

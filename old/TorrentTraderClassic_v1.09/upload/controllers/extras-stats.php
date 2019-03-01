@@ -1,9 +1,6 @@
 <?php
 
 // If anyone wants the old stats page back, it's called extra-stats.old.php
-ob_start("ob_gzhandler");
-
-require_once __DIR__ . '/../backend/functions.php';
 
 dbconn(false);
 loggedinorreturn();

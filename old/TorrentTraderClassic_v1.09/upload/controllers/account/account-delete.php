@@ -1,6 +1,5 @@
 <?php
 
-require_once '../../backend/functions.php';
 dbconn();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

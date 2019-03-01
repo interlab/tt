@@ -1,11 +1,6 @@
 <?php
 
-ob_start("ob_gzhandler");
 header("Content-Type: text/html; charset=UTF-8");
-
-chdir(dirname(dirname(__DIR__)));
-require_once 'backend/functions.php';
-// require_once 'backend/language.php';
 
 dbconn();
 

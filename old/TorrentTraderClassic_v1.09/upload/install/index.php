@@ -482,7 +482,7 @@ EOD;
         </tr>
         <tr>
           <td>Tracker Email: <font class="small"><font color="#FF0000">*</font></font></td>
-          <td><input type="text" size="40" name="SITEEMAIL" value="{$_SESSION['$SITENAME']}">
+          <td><input type="text" size="40" name="SITEEMAIL" value="{$_SESSION['SITEEMAIL']}">
           </td>
         </tr>
         <tr>

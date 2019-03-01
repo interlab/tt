@@ -2,8 +2,6 @@
 
 // Confirm account Via email and send PM
 
-require_once __DIR__ . '/../../backend/functions.php';
-
 dbconn();
 
 $id = (int) ($_GET['id'] ?? 0);

@@ -1,10 +1,4 @@
 <?php
-//
-// - Theme And Language Updated 27.Nov.05
-//
-
-ob_start("ob_gzhandler");
-require_once __DIR__ . '/../backend/functions.php';
 
 dbconn(false);
 

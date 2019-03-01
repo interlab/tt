@@ -2,6 +2,9 @@
     "require": {
         "doctrine/dbal": "^2.9",
         "symfony/yaml": "^4.2",
-        "symfony/var-dumper": "^4.2"
+        "symfony/var-dumper": "^4.2",
+        "doctrine/cache": "^1.8",
+        "symfony/http-foundation": "^4.2",
+        "symfony/routing": "^4.2"
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
-require_once __DIR__.'/../backend/functions.php';
-require_once __DIR__.'/../backend/benc.php';
+require_once TT_BACKEND_DIR .'/benc.php';
 dbconn();
 
 $id = (int) ($_GET["id"] ?? 0);

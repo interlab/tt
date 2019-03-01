@@ -1,13 +1,11 @@
 <?php
 
-require_once __DIR__ . '/../../backend/functions.php';
-
 dbconn(false);
 loggedinorreturn();
 
 jmodonly();
 stdhead("Staff CP");
-require_once '../../backend/admin-functions.php';
+require_once TT_BACKEND_DIR . '/admin-functions.php';
 
 $act = $_REQUEST['act'] ?? '';
 $_POST['submit'] = $_POST['submit'] ?? '';
@@ -880,161 +878,158 @@ if (get_user_class() >= UC_JMODERATOR)
 #    User Settings
 #======================================================================#
 if ($act == "users") {
+    $search = trim($search);
+    $class = $class;
+    if ($class == '-' || !is_valid_id($class))
+        $class = '';
 
-$search = trim($search);
-$class = $class;
-if ($class == '-' || !is_valid_id($class))
- $class = '';
-
-if ($search != '' || $class)
-{
- $query = "username LIKE " . sqlesc("%$search%") . " AND status='confirmed'";
- $q = 'search=' . h($search);
-}
-else
-{
-$letter = trim($letter);
- if (strlen($letter) > 1)
-   die;
-
- if ($letter == "" || strpos("abcdefghijklmnopqrstuvwxyz", $letter) === false)
-   $query = "status='confirmed'";
- else
-  $query = "username LIKE '$letter%' AND status='confirmed'";
- $q = "letter=$letter";
-}
-
-if ($class)
-{
- $query .= " AND class=$class";
- $q .= '&class=$class';
-}
-
-stdhead("Users");
-adminmenu();
-begin_frame($txt['MEMBERS'], 'center');
-print("<center><a href='admin.php?act=confirmreg'>Manual Confirm User Registration</a></center><br>\n");
-print("<center><a href='cheats.php'>Check For Possible Cheaters</a></center><br>\n");
-print("<br><form method=get action=?>\n");
-print("<input type=hidden name=act value=users>\n");
-print("" . SEARCH . ": <input type=text size=30 name=search>\n");
-print("<select name=class>\n");
-print("<option value='-'>(any class)</option>\n");
-for ($i = 0;;++$i)
-{
-if ($c = get_user_class_name($i))
-  print("<option value=$i" . ($class && $class == $i ? " selected" : "") . ">$c</option>\n");
-else
-  break;
-}
-print("</select>\n");
-print("<input type=submit value='Okay'>\n");
-print("</form>\n");
-
-print("<p>\n");
-
-print("<a href=admin.php?act=users><b>ALL</b></a> - \n");
-for ($i = 97; $i < 123; ++$i)
-{
-$l = chr($i);
-$L = chr($i - 32);
-if ($l == $letter)
-   print("<b>$L</b>\n");
-else
-   print("<a href=?letter=$l&act=users><b>$L</b></a>\n");
-}
-
-print("</p>\n");
-
-$page = $_GET['page'];
-$perpage = 100;
-
-$res = mysql_query("SELECT COUNT(*) FROM users WHERE $query") or sqlerr();
-$arr = mysql_fetch_row($res);
-$pages = floor($arr[0] / $perpage);
-if ($pages * $perpage < $arr[0])
- ++$pages;
-
-if ($page < 1)
- $page = 1;
-else
- if ($page > $pages)
-   $page = $pages;
-$pagemenu .= "<center>";
-for ($i = 1; $i <= $pages; ++$i)
- if ($i == $page)
-   $pagemenu .= "$i\n";
- else
-   $pagemenu .= "<a href=?$q&page=$i&act=users>$i</a>\n";
-
-if ($page == 1)
-    $browsemenu .= "";
-//  $browsemenu .= "[Prev]";
-else
- $browsemenu .= "<a href=?$q&page=" . ($page - 1) . "&act=users>[Prev]</a>";
-
-$browsemenu .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-
-if ($page == $pages)
- $browsemenu .= "";
-//  $browsemenu .= "[Next]";
-else
-    $browsemenu .= "<a href=?$q&page=" . ($page + 1) . "&act=users>[Next]</a>";
-
-$browsemenu .= "</center>";
-
-$offset = ($page * $perpage) - $perpage;
-
-$res = mysql_query("SELECT * FROM users WHERE $query ORDER BY username LIMIT $offset,$perpage") or sqlerr();
-$num = mysql_num_rows($res);
-
-begin_table();
-print("<tr><td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>" . USERNAME . "</td><td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>Delete</td><td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . REGISTERED . "</td><td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . LAST_ACCESS . "</td><td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>" . RANK . "</td><td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . COUNTRY . "</td></tr>\n");
-for ($i = 0; $i < $num; ++$i) {
-    $arr = mysql_fetch_assoc($res);
-    if ($arr['country'] > 0) {
-        $cres = mysql_query("SELECT name,flagpic FROM countries WHERE id=$arr[country]");
-        if (mysql_num_rows($cres) == 1) {
-            $carr = mysql_fetch_assoc($cres);
-            $country = "<td align=\"center\"  class=alt1 style='padding: 0px' align='center'><img src="
-                . $SITEURL ."/images/flag/$carr[flagpic] alt='$carr[name]' /></td>";
-        }
+    if ($search != '' || $class) {
+        $query = "username LIKE " . sqlesc("%$search%") . " AND status='confirmed'";
+        $q = 'search=' . h($search);
     } else {
-        $country = "<td align=\"center\"  class=alt1 style='padding: 0px' align='center'><img src="
-            . $SITEURL ."/images/flag/unknown.gif alt=Unknown /></td>";
+        $letter = trim($letter);
+        if (strlen($letter) > 1)
+            die;
+
+        if ($letter == "" || strpos("abcdefghijklmnopqrstuvwxyz", $letter) === false)
+            $query = "status='confirmed'";
+        else
+            $query = "username LIKE '$letter%' AND status='confirmed'";
+        $q = "letter=$letter";
     }
-    if ($arr['added'] == '0000-00-00 00:00:00')
-        $arr['added'] = '-';
-    if ($arr['last_access'] == '0000-00-00 00:00:00')
-        $arr['last_access'] = '-';
-    print("<tr><td align=\"center\"  class=alt1 align=left><a href=account-details.php?id=$arr[id]>"
-        .($arr["class"] > 1 ? "<font color=#A83838>" : "")."<b>$arr[username]</b></font></a>"
-        .($arr["donated"] > 0 ? "<img src=$SITEURL/images/star.gif border=0 alt='Donated $$arr[donated]'>" : "")."</td>"
-        ."<td align=\"center\"  class=alt1 align=left><a href=admin.php?act=deluser&id=$arr[id]>Delete User</a></td>"
-        ."<td align=\"center\"  class=alt2>$arr[added]</td><td align=\"center\"  class=alt1>$arr[last_access]</td>"
-        ."<td align=\"center\"  class=alt2 align=left>" . get_user_class_name($arr["class"]) . "</td>$country</tr>\n");
+
+    if ($class) {
+        $query .= " AND class=$class";
+        $q .= '&class=$class';
+    }
+
+    stdhead("Users");
+    adminmenu();
+    begin_frame($txt['MEMBERS'], 'center');
+    print("<center><a href='admin.php?act=confirmreg'>Manual Confirm User Registration</a></center><br>\n");
+    print("<center><a href='admin-cheats.php'>Check For Possible Cheaters</a></center><br>\n");
+    print("<br><form method=get action=?>\n");
+    print("<input type=hidden name=act value=users>\n");
+    print($txt['SEARCH'] . ": <input type=text size=30 name=search>\n");
+    print("<select name=class>\n");
+    print("<option value='-'>(any class)</option>\n");
+    for ($i = 0;;++$i) {
+        if ($c = get_user_class_name($i))
+            print("<option value=$i" . ($class && $class == $i ? " selected" : "") . ">$c</option>\n");
+        else
+            break;
+    }
+    print("</select>\n");
+    print("<input type=submit value='Okay'>\n");
+    print("</form>\n");
+
+    print("<p>\n");
+
+    print("<a href=admin.php?act=users><b>ALL</b></a> - \n");
+    for ($i = 97; $i < 123; ++$i) {
+        $l = chr($i);
+        $L = chr($i - 32);
+        if ($l == $letter)
+            print("<b>$L</b>\n");
+        else
+            print("<a href=?letter=$l&act=users><b>$L</b></a>\n");
+    }
+
+    print("</p>\n");
+
+    $page = $_GET['page'];
+    $perpage = 100;
+
+    $num = DB::fetchColumn("SELECT COUNT(*) FROM users WHERE $query");
+    $pages = floor($arr[0] / $perpage);
+    if ($pages * $perpage < $num) {
+        ++$pages;
+    }
+
+    if ($page < 1)
+        $page = 1;
+    elseif ($page > $pages)
+        $page = $pages;
+    $pagemenu .= "<center>";
+    for ($i = 1; $i <= $pages; ++$i) {
+        if ($i == $page)
+            $pagemenu .= "$i\n";
+        else
+            $pagemenu .= "<a href=?$q&page=$i&act=users>$i</a>\n";
+    }
+
+    if ($page == 1)
+        $browsemenu .= "";
+    //  $browsemenu .= "[Prev]";
+    else
+        $browsemenu .= "<a href=?$q&page=" . ($page - 1) . "&act=users>[Prev]</a>";
+
+    $browsemenu .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+
+    if ($page == $pages)
+        $browsemenu .= "";
+    //  $browsemenu .= "[Next]";
+    else
+        $browsemenu .= "<a href=?$q&page=" . ($page + 1) . "&act=users>[Next]</a>";
+
+    $browsemenu .= "</center>";
+
+    $offset = ($page * $perpage) - $perpage;
+
+    $res = DB::query("SELECT * FROM users WHERE $query ORDER BY username LIMIT $offset, $perpage");
+
+    begin_table();
+    print("<tr><td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>"
+            . USERNAME . "</td><td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>Delete</td>"
+            . "<td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . REGISTERED . "</td>"
+            . "<td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . LAST_ACCESS . "</td>"
+            . "<td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>" . RANK . "</td>"
+            . "<td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . COUNTRY . "</td></tr>\n");
+    while ($arr = $res->fetch()) {
+        if ($arr['country'] > 0) {
+            // todo: subquery
+            $carr = DB::fetchAssoc("SELECT name, flagpic FROM countries WHERE id = $arr[country]");
+            if ($carr) {
+                $country = "<td align=\"center\"  class=alt1 style='padding: 0px' align='center'><img src="
+                    . $SITEURL ."/images/flag/$carr[flagpic] alt='$carr[name]' /></td>";
+            }
+        } else {
+            $country = "<td align=\"center\"  class=alt1 style='padding: 0px' align='center'><img src="
+                . $SITEURL ."/images/flag/unknown.gif alt=Unknown /></td>";
+        }
+        if ($arr['added'] == '0000-00-00 00:00:00')
+            $arr['added'] = '-';
+        if ($arr['last_access'] == '0000-00-00 00:00:00')
+            $arr['last_access'] = '-';
+        print("<tr><td align=\"center\"  class=alt1 align=left><a href=account-details.php?id=$arr[id]>"
+            .($arr["class"] > 1 ? "<font color=#A83838>" : "")."<b>$arr[username]</b></font></a>"
+            .($arr["donated"] > 0 ? "<img src=$SITEURL/images/star.gif border=0 alt='Donated $$arr[donated]'>" : "")."</td>"
+            ."<td align=\"center\"  class=alt1 align=left><a href=admin.php?act=deluser&id=$arr[id]>Delete User</a></td>"
+            ."<td align=\"center\"  class=alt2>$arr[added]</td>"
+            . "<td align=\"center\"  class=alt1>$arr[last_access]</td>"
+            ."<td align=\"center\"  class=alt2 align=left>" . get_user_class_name($arr["class"]) . "</td>"
+            . "$country</tr>\n");
+    }
+
+    end_table();
+    end_frame();
+
+    print("<p>$pagemenu<br>$browsemenu</p>");
 }
 
-end_table();
-end_frame();
-
-print("<p>$pagemenu<br>$browsemenu</p>");
+if ($act === 'deluser') {
+    $id = (int) ($_GET['id'] ?? 0);
+    $res = DB::executeUpdate('DELETE FROM users WHERE id = ' . $id . ' AND class < \'1\'');
+    begin_frame("Delete User", 'center');
+    if ($res) {
+        print("<b>User Nr: ".$id." deleted </b>");
+    } else {
+        stderr("User doesn't exist or is superior to you");
+    }
+    print("<br><br><a href='admin.php?act=users'> Go Back </a>");
+    end_frame();
 }
 
-if($act == "deluser")
-{
- $id = (int) $id;
- $res = mysql_query("DELETE FROM users WHERE id = ".$id." AND class < '1'");
- 
- begin_frame("Delete User", 'center');
- if (mysql_affected_rows() > 0) {
- print("<b>User Nr: ".$id." deleted </b>");
- }else{
- stderr("User doesn't exist or is superior to you");
- }
- print("<br><br><a href='admin.php?act=users'> Go Back </a>");
- end_frame();
-}
 #======================================================================#
 #    Manual Conf Reg
 #======================================================================#

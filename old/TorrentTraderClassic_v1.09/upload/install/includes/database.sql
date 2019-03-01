@@ -1,52 +1,45 @@
 
-CREATE TABLE `addedrequests` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `addedrequests` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `requestid` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `userid` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `pollid` (`id`),
+  KEY `userid` (`userid`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-INSERT INTO `addedrequests` (`id`, `requestid`, `userid`) VALUES
-(1, 1, 2),
-(2, 2, 2),
-(3, 3, 2),
-(4, 4, 2),
-(5, 5, 2),
-(6, 6, 2),
-(7, 7, 2),
-(10, 10, 2),
-(11, 11, 1),
-(13, 11, 2);
-
-||
-
-CREATE TABLE `avps` (
+CREATE TABLE IF NOT EXISTS `avps` (
   `arg` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `value_s` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `value_i` int(11) NOT NULL DEFAULT '0',
-  `value_u` int(10) UNSIGNED NOT NULL DEFAULT '0'
+  `value_u` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`arg`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `bans` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `bans` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `addedby` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `comment` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `first` int(11) DEFAULT NULL,
-  `last` int(11) DEFAULT NULL
+  `last` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `first_last` (`first`,`last`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `categories` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `categories` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `sort_index` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -63,7 +56,7 @@ INSERT INTO `categories` (`id`, `name`, `sort_index`, `image`) VALUES
 
 ||
 
-CREATE TABLE `censor` (
+CREATE TABLE IF NOT EXISTS `censor` (
   `word` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `censor` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -75,25 +68,31 @@ INSERT INTO `censor` (`word`, `censor`) VALUES
 
 ||
 
-CREATE TABLE `comments` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `comments` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `text` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `ori_text` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `news` int(10) NOT NULL DEFAULT '0',
-  `poll` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `poll` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `user` (`user`),
+  KEY `torrent` (`torrent`),
+  KEY `news` (`news`),
+  KEY `poll` (`poll`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `countries` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `countries` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `flagpic` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `domain` char(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `domain` char(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -198,21 +197,17 @@ INSERT INTO `countries` (`id`, `name`, `flagpic`, `domain`) VALUES
 
 ||
 
-CREATE TABLE `dbbackup` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `dbbackup` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `added` date DEFAULT '0000-00-00',
-  `day` int(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `day` int(10) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-INSERT INTO `dbbackup` (`id`, `name`, `added`, `day`) VALUES
-(1, 'ttpmr-26-02-2019.gz', '2019-02-26', 26);
-
-||
-
-CREATE TABLE `downloaded` (
+CREATE TABLE IF NOT EXISTS `downloaded` (
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `user` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
@@ -220,20 +215,16 @@ CREATE TABLE `downloaded` (
 
 ||
 
-INSERT INTO `downloaded` (`torrent`, `user`, `added`) VALUES
-(16, 0, '2019-02-12 20:44:44');
-
-||
-
-CREATE TABLE `faq` (
-  `id` int(10) NOT NULL,
+CREATE TABLE IF NOT EXISTS `faq` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `type` set('categ','item') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'item',
   `question` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `answer` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `flag` set('0','1','2','3') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
   `categ` int(10) NOT NULL DEFAULT '0',
-  `order` int(10) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `order` int(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -294,20 +285,23 @@ INSERT INTO `faq` (`id`, `type`, `question`, `answer`, `flag`, `categ`, `order`)
 
 ||
 
-CREATE TABLE `files` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `files` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `filename` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `size` bigint(20) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `size` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `torrent` (`torrent`)
+) ENGINE=InnoDB AUTO_INCREMENT=701 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `forumcats` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `forumcats` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `sort` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `sort` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -318,15 +312,16 @@ INSERT INTO `forumcats` (`id`, `name`, `sort`) VALUES
 
 ||
 
-CREATE TABLE `forum_forums` (
+CREATE TABLE IF NOT EXISTS `forum_forums` (
   `sort` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `description` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `minclassread` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
   `minclasswrite` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
-  `category` tinyint(2) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `category` tinyint(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -337,15 +332,18 @@ INSERT INTO `forum_forums` (`sort`, `id`, `name`, `description`, `minclassread`,
 
 ||
 
-CREATE TABLE `forum_posts` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `forum_posts` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `topicid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `added` datetime DEFAULT NULL,
   `body` longtext COLLATE utf8mb4_unicode_ci,
   `editedby` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `editedat` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `editedat` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `topicid` (`topicid`),
+  KEY `userid` (`userid`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -356,17 +354,21 @@ INSERT INTO `forum_posts` (`id`, `topicid`, `userid`, `added`, `body`, `editedby
 
 ||
 
-CREATE TABLE `forum_readposts` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `forum_readposts` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `topicid` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `lastpostread` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `lastpostread` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `userid_2` (`userid`,`topicid`),
+  KEY `userid` (`id`),
+  KEY `topicid` (`topicid`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `forum_topics` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `forum_topics` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `subject` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `locked` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
@@ -374,8 +376,12 @@ CREATE TABLE `forum_topics` (
   `lastpost` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `moved` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
   `sticky` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
-  `views` int(10) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `views` int(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `userid` (`userid`),
+  KEY `subject` (`subject`),
+  KEY `lastpost` (`lastpost`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -387,18 +393,21 @@ INSERT INTO `forum_topics` (`id`, `userid`, `subject`, `locked`, `forumid`, `las
 
 ||
 
-CREATE TABLE `guests` (
+CREATE TABLE IF NOT EXISTS `guests` (
   `ip` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `time` decimal(20,0) UNSIGNED NOT NULL DEFAULT '0'
+  `time` decimal(20,0) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ip`),
+  UNIQUE KEY `IP` (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `languages` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `languages` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `uri` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -419,16 +428,18 @@ INSERT INTO `languages` (`id`, `uri`, `name`) VALUES
 
 ||
 
-CREATE TABLE `log` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `log` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `added` datetime DEFAULT NULL,
-  `txt` longtext COLLATE utf8mb4_unicode_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `txt` longtext COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  KEY `added` (`added`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `messages` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `messages` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `sender` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `receiver` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `added` datetime DEFAULT NULL,
@@ -436,19 +447,22 @@ CREATE TABLE `messages` (
   `unread` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
   `poster` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `deleted_by_sender` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
-  `deleted_by_receiver` tinyint(1) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `deleted_by_receiver` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `receiver` (`receiver`)
+) ENGINE=InnoDB AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `news` (
-  `id` int(2) NOT NULL,
+CREATE TABLE IF NOT EXISTS `news` (
+  `id` int(2) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `user` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `date` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0000-00-00',
   `text` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `comments` int(10) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `comments` int(10) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -460,7 +474,7 @@ INSERT INTO `news` (`id`, `title`, `user`, `date`, `text`, `comments`) VALUES
 
 ||
 
-CREATE TABLE `news_options` (
+CREATE TABLE IF NOT EXISTS `news_options` (
   `max_display` int(3) NOT NULL DEFAULT '0',
   `scrolling` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `archive` char(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
@@ -478,8 +492,8 @@ INSERT INTO `news_options` (`max_display`, `scrolling`, `archive`, `comment`, `t
 
 ||
 
-CREATE TABLE `peers` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `peers` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `peer_id` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `ip` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
@@ -492,22 +506,31 @@ CREATE TABLE `peers` (
   `last_action` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `connectable` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
   `client` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `userid` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `userid` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `torrent_peer_id` (`torrent`,`peer_id`),
+  KEY `torrent` (`torrent`),
+  KEY `torrent_seeder` (`torrent`,`seeder`),
+  KEY `last_action` (`last_action`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `pollanswers` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `pollanswers` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `pollid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `selection` tinyint(3) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `selection` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `pollid` (`pollid`),
+  KEY `selection` (`selection`),
+  KEY `userid` (`userid`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `polls` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `polls` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `ending` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `question` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
@@ -522,8 +545,9 @@ CREATE TABLE `polls` (
   `option8` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `option9` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `sort` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
-  `comments` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `comments` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -534,28 +558,31 @@ INSERT INTO `polls` (`id`, `added`, `ending`, `question`, `option0`, `option1`, 
 
 ||
 
-CREATE TABLE `ratings` (
+CREATE TABLE IF NOT EXISTS `ratings` (
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `user` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `rating` tinyint(3) UNSIGNED NOT NULL DEFAULT '0',
-  `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
+  `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`torrent`,`user`),
+  KEY `user` (`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `ratiowarn` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `ratiowarn` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `userid` int(11) NOT NULL DEFAULT '0',
   `warned` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
   `banned` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
   `ratiodate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `warntime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
+  `warntime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `reports` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `reports` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `addedby` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `votedfor` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `votedfor_xtra` int(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -563,13 +590,14 @@ CREATE TABLE `reports` (
   `reason` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `dealtby` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `dealtwith` tinyint(1) NOT NULL DEFAULT '0',
-  `complete` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `complete` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `requests` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `requests` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `request` varchar(225) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `descr` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -577,18 +605,21 @@ CREATE TABLE `requests` (
   `hits` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `cat` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `filled` varchar(75) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `filledby` int(10) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `filledby` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `userid` (`userid`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `rules` (
-  `id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `rules` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `text` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `public` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
-  `class` int(11) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `class` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -599,21 +630,24 @@ INSERT INTO `rules` (`id`, `title`, `text`, `public`, `class`) VALUES
 
 ||
 
-CREATE TABLE `shoutbox` (
-  `msgid` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `shoutbox` (
+  `msgid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
   `message` text COLLATE utf8mb4_unicode_ci,
   `date` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `userid` int(8) UNSIGNED NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `userid` int(8) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`msgid`),
+  KEY `msgid` (`msgid`)
+) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `shoutbox_emoticons` (
-  `id` int(9) NOT NULL,
+CREATE TABLE IF NOT EXISTS `shoutbox_emoticons` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
   `text` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `image` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `image` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -644,7 +678,7 @@ INSERT INTO `shoutbox_emoticons` (`id`, `text`, `image`) VALUES
 
 ||
 
-CREATE TABLE `site_settings` (
+CREATE TABLE IF NOT EXISTS `site_settings` (
   `donations` decimal(5,2) UNSIGNED NOT NULL DEFAULT '0.00',
   `requireddonations` decimal(5,2) UNSIGNED NOT NULL DEFAULT '0.00',
   `donatepage` longtext COLLATE utf8mb4_unicode_ci NOT NULL
@@ -657,8 +691,8 @@ INSERT INTO `site_settings` (`donations`, `requireddonations`, `donatepage`) VAL
 
 ||
 
-CREATE TABLE `snatched` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `snatched` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `torrentid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -674,16 +708,23 @@ CREATE TABLE `snatched` (
   `completedat` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `connectable` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
   `agent` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `finished` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `finished` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'no',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `torrentid_3` (`torrentid`,`userid`),
+  KEY `finished` (`finished`,`torrentid`),
+  KEY `torrentid` (`userid`),
+  KEY `torrentid_2` (`torrentid`),
+  KEY `userid` (`userid`,`torrentid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `stylesheets` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `stylesheets` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `uri` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT ''
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
@@ -696,8 +737,8 @@ INSERT INTO `stylesheets` (`id`, `uri`, `name`) VALUES
 
 ||
 
-CREATE TABLE `torrents` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `torrents` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `info_hash` varbinary(40) NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `filename` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
@@ -722,13 +763,18 @@ CREATE TABLE `torrents` (
   `owner` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `numratings` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `ratingsum` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `nfo` longtext COLLATE utf8mb4_unicode_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `nfo` longtext COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `info_hash` (`info_hash`(20)),
+  KEY `owner` (`owner`),
+  KEY `visible` (`visible`),
+  KEY `category_visible` (`category`,`visible`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `uploadapp` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `uploadapp` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `active` tinyint(1) NOT NULL DEFAULT '1',
   `userid` int(10) NOT NULL DEFAULT '0',
   `applied` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -741,13 +787,15 @@ CREATE TABLE `uploadapp` (
   `othergrps` tinyint(1) NOT NULL DEFAULT '0',
   `seedtime` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `modcomments` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `votes` longtext COLLATE utf8mb4_unicode_ci NOT NULL
+  `votes` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `users` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
-CREATE TABLE `users` (
-  `id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
   `real_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -792,262 +840,23 @@ CREATE TABLE `users` (
   `commentpm` enum('yes','no') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'yes',
   `dob` date NOT NULL DEFAULT '0000-00-00',
   `birthdate` date NOT NULL DEFAULT '0001-01-01',
-  `about_myself` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci PACK_KEYS=0;
+  `about_myself` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `real_name` (`real_name`),
+  KEY `status_added` (`status`,`added`),
+  KEY `ip` (`ip`),
+  KEY `uploaded` (`uploaded`),
+  KEY `downloaded` (`downloaded`),
+  KEY `country` (`country`),
+  KEY `passkey` (`passkey`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci PACK_KEYS=0;
 
 ||
 
-ALTER TABLE `addedrequests`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `pollid` (`id`),
-  ADD KEY `userid` (`userid`);
+ALTER TABLE `forum_posts` ADD FULLTEXT KEY `body` (`body`);
 
 ||
 
-ALTER TABLE `avps`
-  ADD PRIMARY KEY (`arg`);
+ALTER TABLE `torrents` ADD FULLTEXT KEY `ft_search` (`search_text`,`ori_descr`);
 
-||
-
-ALTER TABLE `bans`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `first_last` (`first`,`last`);
-
-||
-
-ALTER TABLE `categories`
-  ADD PRIMARY KEY (`id`);
-
-||
-
-ALTER TABLE `comments`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user` (`user`),
-  ADD KEY `torrent` (`torrent`),
-  ADD KEY `news` (`news`),
-  ADD KEY `poll` (`poll`) USING BTREE;
-
-||
-
-ALTER TABLE `countries`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `dbbackup`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `faq`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `files`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `torrent` (`torrent`); ||
-
-ALTER TABLE `forumcats`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `forum_forums`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `forum_posts`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `topicid` (`topicid`),
-  ADD KEY `userid` (`userid`); ||
-ALTER TABLE `forum_posts` ADD FULLTEXT KEY `body` (`body`); ||
-
-ALTER TABLE `forum_readposts`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `userid_2` (`userid`,`topicid`),
-  ADD KEY `userid` (`id`),
-  ADD KEY `topicid` (`topicid`); ||
-
-ALTER TABLE `forum_topics`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `userid` (`userid`),
-  ADD KEY `subject` (`subject`),
-  ADD KEY `lastpost` (`lastpost`); ||
-
-ALTER TABLE `guests`
-  ADD PRIMARY KEY (`ip`),
-  ADD UNIQUE KEY `IP` (`ip`); ||
-
-ALTER TABLE `languages`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `log`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `added` (`added`); ||
-
-ALTER TABLE `messages`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `receiver` (`receiver`); ||
-
-ALTER TABLE `news`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `peers`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `torrent_peer_id` (`torrent`,`peer_id`),
-  ADD KEY `torrent` (`torrent`),
-  ADD KEY `torrent_seeder` (`torrent`,`seeder`),
-  ADD KEY `last_action` (`last_action`); ||
-
-ALTER TABLE `pollanswers`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `pollid` (`pollid`),
-  ADD KEY `selection` (`selection`),
-  ADD KEY `userid` (`userid`); ||
-
-ALTER TABLE `polls`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `ratings`
-  ADD PRIMARY KEY (`torrent`,`user`),
-  ADD KEY `user` (`user`); ||
-
-ALTER TABLE `ratiowarn`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `reports`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `requests`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `userid` (`userid`); ||
-
-ALTER TABLE `rules`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `shoutbox`
-  ADD PRIMARY KEY (`msgid`),
-  ADD KEY `msgid` (`msgid`); ||
-
-ALTER TABLE `shoutbox_emoticons`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `snatched`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `torrentid_3` (`torrentid`,`userid`),
-  ADD KEY `finished` (`finished`,`torrentid`),
-  ADD KEY `torrentid` (`userid`),
-  ADD KEY `torrentid_2` (`torrentid`),
-  ADD KEY `userid` (`userid`,`torrentid`); ||
-
-ALTER TABLE `stylesheets`
-  ADD PRIMARY KEY (`id`); ||
-
-ALTER TABLE `torrents`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `info_hash` (`info_hash`(20)),
-  ADD KEY `owner` (`owner`),
-  ADD KEY `visible` (`visible`),
-  ADD KEY `category_visible` (`category`,`visible`); ||
-ALTER TABLE `torrents` ADD FULLTEXT KEY `ft_search` (`search_text`,`ori_descr`); ||
-
-ALTER TABLE `uploadapp`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `users` (`userid`); ||
-
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`),
-  ADD UNIQUE KEY `real_name` (`real_name`),
-  ADD KEY `status_added` (`status`,`added`),
-  ADD KEY `ip` (`ip`),
-  ADD KEY `uploaded` (`uploaded`),
-  ADD KEY `downloaded` (`downloaded`),
-  ADD KEY `country` (`country`),
-  ADD KEY `passkey` (`passkey`) USING BTREE; ||
-
-
-ALTER TABLE `addedrequests`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14; ||
-
-ALTER TABLE `bans`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT; ||
-
-ALTER TABLE `categories`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11; ||
-
-ALTER TABLE `comments`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85; ||
-
-ALTER TABLE `countries`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102; ||
-
-ALTER TABLE `dbbackup`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2; ||
-
-ALTER TABLE `faq`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66; ||
-
-ALTER TABLE `files`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=701; ||
-
-ALTER TABLE `forumcats`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5; ||
-
-ALTER TABLE `forum_forums`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4; ||
-
-ALTER TABLE `forum_posts`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14; ||
-
-ALTER TABLE `forum_readposts`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25; ||
-
-ALTER TABLE `forum_topics`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13; ||
-
-ALTER TABLE `languages`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15; ||
-
-ALTER TABLE `log`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7; ||
-
-ALTER TABLE `messages`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64; ||
-
-ALTER TABLE `news`
-  MODIFY `id` int(2) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5; ||
-
-ALTER TABLE `peers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11; ||
-
-ALTER TABLE `pollanswers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10; ||
-
-ALTER TABLE `polls`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8; ||
-
-ALTER TABLE `ratiowarn`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT; ||
-
-ALTER TABLE `reports`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5; ||
-
-ALTER TABLE `requests`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12; ||
-
-ALTER TABLE `rules`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5; ||
-
-ALTER TABLE `shoutbox`
-  MODIFY `msgid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34; ||
-
-ALTER TABLE `shoutbox_emoticons`
-  MODIFY `id` int(9) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24; ||
-
-ALTER TABLE `snatched`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3; ||
-
-ALTER TABLE `stylesheets`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6; ||
-
-ALTER TABLE `torrents`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18; ||
-
-ALTER TABLE `uploadapp`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT; ||
-
-ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;

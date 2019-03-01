@@ -1,10 +1,8 @@
 <?php
 
-require_once '../backend/functions.php';
-
 dbconn();
 
-$sa = $_REQUEST["sa"] ?? '';
+$sa = $_REQUEST['sa'] ?? '';
 $fname = 'take-ncomment.php';
 
 function _getCommentOrError(int $id)
