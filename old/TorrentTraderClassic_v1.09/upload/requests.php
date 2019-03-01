@@ -378,7 +378,7 @@ if (isset($_GET['details'])) {
     print("<tr><td align=left><B>" . $txt['ADDED_BY'] . ": </B></td>
         <td width=70% align=left>$username</td></tr>
         <tr><td align=left><B>" . $txt['VOTE_FOR_THIS'] . ": </B></td>
-        <td width=50% align=left><a href=addrequest.php?id=$id><b>" . $txt['VOTES'] . "</b></a></td></tr>");
+        <td width=50% align=left><a href=requests.php?sa=addvote&id=$id><b>" . $txt['VOTES'] . "</b></a></td></tr>");
 
     if (! $num["filled"]) {
         print("<form method=post action=requests.php>
@@ -428,6 +428,40 @@ if (isset($_GET['reset'])) {
     die('');
 }
 
+if (isset($_GET['sa']) && $_GET['sa'] === 'addvote') {
+    stdhead("Vote");
+
+    begin_frame($txt['VOTES']);
+
+    $requestid = (int) ($_GET["id"] ?? 0);
+    $userid = (int) ($CURUSER["id"] ?? 0);
+
+    if (!$requestid || !$userid) {
+        bark('error', 'bad id');
+    }
+
+    $voted = DB::fetchAssoc("SELECT * FROM addedrequests WHERE requestid = $requestid and userid = $userid");
+
+    if ($voted) {
+    ?>
+    <br><p>You've already voted for this request, only 1 vote for each request is allowed</p>
+    <p>Back to <a href=requests.php?sa=view><b>requests</b></a></p>
+    <br><br>
+    <?php
+    } else {
+        DB::query("UPDATE requests SET hits = hits + 1 WHERE id = $requestid");
+        DB::query("INSERT INTO addedrequests VALUES(0, $requestid, $userid)");
+
+        print("<br><p>Successfully voted for request $requestid</p>"
+            . "<p>Back to <a href=requests.php?sa=view><b>requests</b></a></p>"
+            . "<br><br>");
+    }
+
+    end_frame();
+    stdfoot();
+    die('');
+}
+
 stdhead("Requests Page");
 
 begin_frame($txt['MAKE_REQUEST']);
@@ -437,7 +471,6 @@ print("<br>\n");
 $_GET["cat"] = (int) ($_GET["cat"] ?? 0);
 
 ?>
-
 <table border=0 width=100% cellspacing=0 cellpadding=3>
 <tr><td class=colhead align=left><?= $txt['SEARCH'] . ' ' . $txt['TORRENT'] ?></td></tr>
 <tr><td align=left><form method="get" action=torrents-search.php>

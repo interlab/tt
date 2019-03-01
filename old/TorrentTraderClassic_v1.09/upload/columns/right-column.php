@@ -13,7 +13,6 @@ end_block();
 begin_block("Site Stats");
 
 $arr = Cache::rise('right-column-site-stats', function() {
-    // $a = @mysql_fetch_assoc(@mysql_query("SELECT connectable FROM peers WHERE status='confirmed' ORDER BY id DESC LIMIT 1")) or die(mysql_error());
     $male = number_format(get_row_count("users", "WHERE gender='Male'"));
     $female = number_format(get_row_count("users", "WHERE gender='Female'"));
     $registered = number_format(get_row_count("users", "WHERE status='confirmed'"));

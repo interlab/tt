@@ -125,51 +125,40 @@ echo '<h2>' . "\n"
    . '</h2>' . "\n";
 
 
-
-
-
 /**
  * Sends the query and buffers the result
  */
-$res = @mysql_query('SHOW STATUS') or Die(mysql_error());
-	while ($row = mysql_fetch_row($res)) {
-		$serverStatus[$row[0]] = $row[1];
-	}
-@mysql_free_result($res);
-unset($res);
-unset($row);
+$res = DB::query('SHOW STATUS');
+while ($row = $res->fetch(PDO::FETCH_NUM)) {
+    $serverStatus[$row[0]] = $row[1];
+}
 
 
 /**
  * Displays the page
  */
 //Uptime calculation
-$res = @mysql_query('SELECT UNIX_TIMESTAMP() - ' . $serverStatus['Uptime']);
-$row = mysql_fetch_row($res);
+$row = DB::fetchColumn('SELECT UNIX_TIMESTAMP() - ' . $serverStatus['Uptime']);
+
 //echo sprintf("Server Status Uptime", timespanFormat($serverStatus['Uptime']), localisedDate($row[0])) . "\n";
 ?>
-
-	<table id="torrenttable" border="1"><tr><td>
-
-<?
-print("This MySQL server has been running for ". timespanFormat($serverStatus['Uptime']) .". It started up on ". localisedDate($row[0])) . "\n";
+<table id="torrenttable" border="1"><tr><td>
+<?php
+print("This MySQL server has been running for ". timespanFormat($serverStatus['Uptime'])
+        .". It started up on ". localisedDate($row)) . "\n";
 ?>
+</td></tr></table>
+<?php
 
-	</td></tr></table>
-
-<?
-mysql_free_result($res);
-unset($res);
-unset($row);
-//Get query statistics
-$queryStats = array();
+// Get query statistics
+$queryStats = [];
 $tmp_array = $serverStatus;
-	foreach($tmp_array AS $name => $value) {
-		if (substr($name, 0, 4) == 'Com_') {
-			$queryStats[str_replace('_', ' ', substr($name, 4))] = $value;
-			unset($serverStatus[$name]);
-		}
-	}
+foreach($tmp_array as $name => $value) {
+    if (substr($name, 0, 4) == 'Com_') {
+        $queryStats[str_replace('_', ' ', substr($name, 4))] = $value;
+        unset($serverStatus[$name]);
+    }
+}
 unset($tmp_array);
 ?>
 
@@ -275,12 +264,12 @@ foreach ($queryStats as $name => $value) {
 // the number of connections is not an item of the Query types
 // but is included in Questions. Then the total of the percentages is 100.
 ?>
-                        <tr>
-                            <td bgcolor="#EFF3FF">&nbsp;<?php echo htmlspecialchars($name); ?>&nbsp;</td>
-                            <td bgcolor="#EFF3FF" align="right">&nbsp;<?php echo number_format($value, 0, '.', ','); ?>&nbsp;</td>
-                            <td bgcolor="#EFF3FF" align="right">&nbsp;<?php echo number_format(($value * 3600 / $serverStatus['Uptime']), 2, '.', ','); ?>&nbsp;</td>
-                            <td bgcolor="#EFF3FF" align="right">&nbsp;<?php echo number_format(($value * 100 / ($serverStatus['Questions'] - $serverStatus['Connections'])), 2, '.', ','); ?>&nbsp;%&nbsp;</td>
-                        </tr>
+    <tr>
+        <td bgcolor="#EFF3FF">&nbsp;<?php echo htmlspecialchars($name); ?>&nbsp;</td>
+        <td bgcolor="#EFF3FF" align="right">&nbsp;<?php echo number_format($value, 0, '.', ','); ?>&nbsp;</td>
+        <td bgcolor="#EFF3FF" align="right">&nbsp;<?php echo number_format(($value * 3600 / $serverStatus['Uptime']), 2, '.', ','); ?>&nbsp;</td>
+        <td bgcolor="#EFF3FF" align="right">&nbsp;<?php echo number_format(($value * 100 / ($serverStatus['Questions'] - $serverStatus['Connections'])), 2, '.', ','); ?>&nbsp;%&nbsp;</td>
+    </tr>
 <?php
     $useBgcolorOne = !$useBgcolorOne;
     if (++$countRows == ceil(count($queryStats) / 2)) {
@@ -335,10 +324,10 @@ if (!empty($serverStatus)) {
     $countRows = 0;
     foreach($serverStatus AS $name => $value) {
 ?>
-                        <tr>
-                            <td bgcolor="#EFF3FF">&nbsp;<?php echo htmlspecialchars(str_replace('_', ' ', $name)); ?>&nbsp;</td>
-                            <td bgcolor="#EFF3FF" align="right">&nbsp;<?php echo htmlspecialchars($value); ?>&nbsp;</td>
-                        </tr>
+        <tr>
+            <td bgcolor="#EFF3FF">&nbsp;<?php echo h(str_replace('_', ' ', $name)); ?>&nbsp;</td>
+            <td bgcolor="#EFF3FF" align="right">&nbsp;<?php echo h($value); ?>&nbsp;</td>
+        </tr>
 <?php
         $useBgcolorOne = !$useBgcolorOne;
         if (++$countRows == ceil(count($serverStatus) / 3) || $countRows == ceil(count($serverStatus) * 2 / 3)) {

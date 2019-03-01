@@ -17,13 +17,16 @@ if ($CURUSER) {
 
     $userid = $CURUSER["id"];
 
-    // $warningmsg ="This is a warning. Your ratio is too low and has been low for $RATIOWARN_TIME days. You have $RATIOWARN_BAN days to get your ratio above $RATIOWARN_AMMOUNT or you will be banned!";
-    $warningmsg = 'Это предупреждение. Ваш рейтинг слишком низкий уже более ' . $RATIOWARN_TIME . 
-        ' дней. У вас есть ' . $RATIOWARN_BAN . ' дней чтобы поднять ваш рейтинг выше ' . $RATIOWARN_AMMOUNT . ' или вы будете забанены!';
+    // $warningmsg ="This is a warning. Your ratio is too low and has been low for $RATIOWARN_TIME days.
+    // You have $RATIOWARN_BAN days to get your ratio above $RATIOWARN_AMMOUNT or you will be banned!";
+    $warningmsg = 'Это предупреждение. Ваш рейтинг слишком низкий уже более ' . $RATIOWARN_TIME
+        .  ' дней. У вас есть ' . $RATIOWARN_BAN . ' дней чтобы поднять ваш рейтинг выше '
+        . $RATIOWARN_AMMOUNT . ' или вы будете забанены!';
 
     if ($userratio <= $RATIOWARN_AMMOUNT && $userratio && (get_user_class() == UC_USER) && !$CURUSER["donated"]) {
-        if ($DEBUGMODE){
-            echo "RATIOWARN MODULE LOADED :: POOR RATIO (Current Ratio: $userratio) - (Minimum Ratio: $RATIOWARN_AMMOUNT)<br>"; ###DEBUG PURPOSES
+        if ($DEBUGMODE) {
+            # DEBUG PURPOSES
+            echo "RATIOWARN MODULE LOADED :: POOR RATIO (Current Ratio: $userratio) - (Minimum Ratio: $RATIOWARN_AMMOUNT)<br>";
         }
 
         // CHECK TO SEE IF USER IS ALREADY IN RATIOWARN TABLE

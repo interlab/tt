@@ -500,8 +500,8 @@ if($act === "database") {
     ?>
     <b>Optimize Database: </b><a href='admin.php?act=database&do=opt'>CLICK HERE</a><br>
     <br>
-    <b>Manual Backup Database: </b><a href='backup-database.php'>CLICK HERE</a><br>
-    <i>(To set a automatic backup set a CRON task on backup-database.php)</i><BR>
+    <b>Manual Backup Database: </b><a href='admin-backup-database.php'>CLICK HERE</a><br>
+    <i>(To set a automatic backup set a CRON task on admin-backup-database.php)</i><BR>
     <br>
     <?php 
     end_frame();

@@ -1,3 +1,4 @@
 /old/TorrentTraderClassic_v1.09/upload/*.bak
 /old/TorrentTraderClassic_v1.09/upload/uploads/*.torrent
 /old/TorrentTraderClassic_v1.09/upload/storage/cache/**/*.foo
+/old/TorrentTraderClassic_v1.09/upload/tools/*
