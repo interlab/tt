@@ -248,7 +248,7 @@ EOD;
                     try {
                         $conn->query($query);
                     } catch (Exception $e) {
-                        $message .= "<img src='images/no.gif'>". $conn->getMessage() ."<BR>";
+                        $message .= '<img src="images/no.gif">'. $conn->getMessage() .'<br>';
                     }
                 }
                 $conn->close();
@@ -377,7 +377,7 @@ EOD;
 
             my_pdo_connect($_SESSION['MYSQL_DB'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'], $_SESSION['MYSQL_HOST']);
 
-            $message = null;
+            $message = '';
 
             if (empty($_SESSION['ADMIN_PASS'])
                 || empty($_SESSION['ADMIN_EMAIL'])
