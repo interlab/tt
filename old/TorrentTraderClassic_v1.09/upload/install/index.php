@@ -26,12 +26,16 @@ $_SESSION['ADMIN_AGE'] = $_SESSION['ADMIN_AGE'] ?? '';
 $_SESSION['ADMIN_CLIENT'] = $_SESSION['ADMIN_CLIENT'] ?? '';
 
 
-require_once 'includes/functions.php';
-if (empty($_POST['page']))
+require_once __DIR__ . '/includes/functions.php';
+if (empty($_POST['page'])) {
     $_POST['page'] = '';
+}
 
 $docroot = str_replace('/install', '', str_replace('\\', '/', getcwd()));
-require("includes/config.php");
+require_once __DIR__ . '/includes/config.php';
+
+require_once __DIR__ . '/../libs/vendor/autoload.php';
+require_once __DIR__ . '/../helpers/DB.php';
 
 if ($installed) {
     head("Failed");
@@ -112,7 +116,7 @@ EOD;
 EOD;
             end_frame();
         break;
-        
+
         case 'sql-connection':
             $message = null;
             if (!$_POST['MYSQL_HOST'])
@@ -141,24 +145,28 @@ EOD;
             head("Verifying Database Settings");
             begin_frame('');
 
-            $conn = new mysqli($_POST['MYSQL_HOST'], $_POST['MYSQL_USER'], $_POST['MYSQL_PASS']);
-            if ($conn->connect_error) {
-                // die("Connection failed: " . $conn->connect_error);
-
+            try {
+                my_pdo_connect('INFORMATION_SCHEMA', $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'], $_SESSION['MYSQL_HOST']);
+            } catch (Exception $e) {
                 echo '
                     <h1>Database Settings</h1>
                     <img src="images/no.gif"> Error connecting to database server
                     <b>' . $_SESSION['MYSQL_HOST'] . '</b> using username <b>' . $_SESSION['MYSQL_USER'] . '</b> and
                     password <b>' . $_SESSION['MYSQL_PASS'] . '</b> :<br>
-                    error ' . $conn->connect_error . '
+                    error ' . $e->getMessage() . '
                     <BR><BR>Click \'Back\' and check your settings
                     <form action="." method="post">
                         <input type="hidden" name="page" value="sql-config">
                         <input type="submit" value="Back">
                      </form>';
-            } else {
+            }
 
-                if ( ! $conn->select_db($_SESSION['MYSQL_DB'])) {
+            if (DB::conn()) {
+                $res = DB::fetchColumn('SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?',
+                    [$_SESSION['MYSQL_DB']]
+                );
+
+                if (!$res) {
                     echo '
     <h1>Database Settings</h1>
     <img src="images/no.gif"> Could not select database "' . $_SESSION['MYSQL_DB'] . '".<br>
@@ -180,8 +188,6 @@ EOD;
       <input name="page" type="hidden" value="write-database"> <input type="submit" name="submit" value="Continue">
     </form>';
                 }
-
-                $conn->close();
             }
 
             end_frame();
@@ -191,9 +197,11 @@ EOD;
         case 'create-database':
             head("Creating Database");
             begin_frame("");
-            $conn = new mysqli($_SESSION['MYSQL_HOST'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS']);
-            $create = $conn->query('CREATE DATABASE ' . $_SESSION['MYSQL_DB']);
-            $conn->close();
+            my_pdo_connect('INFORMATION_SCHEMA', $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'], $_SESSION['MYSQL_HOST']);
+            DB::executeQuery('CREATE DATABASE `'.$_SESSION['MYSQL_DB'].'`');
+            $create = DB::fetchColumn('SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?',
+                [$_SESSION['MYSQL_DB']]
+            );
 
             if (!$create) {
                 echo <<<EOD
@@ -222,14 +230,13 @@ EOD;
 
         case 'write-database':
             head("Writing Database");
-            $message = null;
-            $conn = new mysqli($_SESSION['MYSQL_HOST'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'], $_SESSION['MYSQL_DB']);
+            $message = '';
+            $conn = my_pdo_connect($_SESSION['MYSQL_DB'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'], $_SESSION['MYSQL_HOST']);
             if (!$conn) {
                 echo <<<EOD
     <h1>Write Database</h1>
     Couldn't connect to the database..<br>
     (This is strange, because the same test was passed a few steps ago.)<br>
-    
     <form action="." method="post">
       <input name="nextpage" type="hidden" value='write-database'>
       <input type="submit" name="submit" value="Recheck">
@@ -238,8 +245,10 @@ EOD;
             } else {
                 foreach(explode('||', file_get_contents('./includes/database.sql')) as $query) {
                     $query = trim($query);
-                    if (!$conn->query($query)) {
-                        $message .= "<img src='images/no.gif'>". $conn->error ."<BR>";
+                    try {
+                        $conn->query($query);
+                    } catch (Exception $e) {
+                        $message .= "<img src='images/no.gif'>". $conn->getMessage() ."<BR>";
                     }
                 }
                 $conn->close();
@@ -269,10 +278,11 @@ EOD;
             }
 
         break;
-        
+
         case 'setup-admin':
             head("Create Admin Account");
-            $link = new mysqli($_SESSION['MYSQL_HOST'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'], $_SESSION['MYSQL_DB']);
+
+            $conn = my_pdo_connect($_SESSION['MYSQL_DB'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'], $_SESSION['MYSQL_HOST']);
 
             $nuIP = getip();
             $dom = @gethostbyaddr($nuIP);
@@ -285,12 +295,15 @@ EOD;
             }
 
             $countries = "<option value='0'>---- None selected ----</option>\n";
-            $ct_r = $link->query("SELECT id, name, domain from countries ORDER BY name") or die;
-            while ($ct_a = $ct_r->fetch_assoc()) {
+            $res = $conn->query('SELECT id, name, domain FROM countries ORDER BY name');
+            while ($ct_a = $res->fetch()) {
                 $countries .= "\t\t\t\t\t\t<option value=\"$ct_a[id]\"";
-                if ($dom == $ct_a["domain"] || $_SESSION['ADMIN_COUNTRY'] == $ct_a['id']) $countries .= " SELECTED";
+                if ($dom == $ct_a["domain"] || $_SESSION['ADMIN_COUNTRY'] == $ct_a['id']) {
+                    $countries .= " SELECTED";
+                }
                 $countries .= ">$ct_a[name]</option>\n";
             }
+            $conn->close();
             $date = date("D dS M, Y h:i a");
             echo <<<EOD
     <h1>Creating Administrator Account</h1>
@@ -348,8 +361,6 @@ EOD;
       </table>
     </form>
 EOD;
-
-            $link->close();
         break;
 
         case 'create-admin':
@@ -363,8 +374,7 @@ EOD;
             $_SESSION['ADMIN_COUNTRY'] = $_POST['admin_country'];
 
             head("Writing Admin Account");
-            require_once __DIR__ . '/../libs/vendor/autoload.php';
-            require_once __DIR__ . '/../helpers/DB.php';
+
             my_pdo_connect($_SESSION['MYSQL_DB'], $_SESSION['MYSQL_USER'], $_SESSION['MYSQL_PASS'], $_SESSION['MYSQL_HOST']);
 
             $message = null;
@@ -457,7 +467,7 @@ EOD;
             @chmod("../sponsors.txt", 0777);
             @chmod("../banners.txt", 0777);
 
-            require_once($_SESSION['ROOT_PATH']."/backend/config.php");
+            require_once $_SESSION['ROOT_PATH'].'/backend/config.php';
 
             $_SESSION['SITENAME'] = $_SESSION['SITENAME'] ?? '';
             $_SESSION['SITEURL'] = "http://".$_SERVER['HTTP_HOST'].preg_replace("/\/install\/*/", "", $_SERVER['REQUEST_URI']);
@@ -495,7 +505,7 @@ EOD;
             break;
 
         case 'write-config':
-            head("Writing Config");
+            head('Writing Config');
             $_SESSION['SITENAME'] = $_POST['SITENAME'];
             $_SESSION['SITEURL'] = $_POST['SITEURL'];
             $_SESSION['SITEEMAIL'] = $_POST['SITEEMAIL'];

@@ -118,7 +118,7 @@ function my_pdo_connect($name, $user, $passwd, $host)
             'port' => 3306,
         ];
 
-        DB::setConn(DBAL\DriverManager::getConnection($params, $config));
+        return DB::setConn(DBAL\DriverManager::getConnection($params, $config));
 
         // $dbal_conn->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, FALSE);
 
