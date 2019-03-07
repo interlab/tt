@@ -61,9 +61,9 @@ if (! $res) {
                 $nip = ip2long($arr['ip']);
                 $bans = DB::fetchColumn("SELECT COUNT(*) FROM bans WHERE $nip >= first AND $nip <= last");
                 if (! $bans)
-                    $ipstr = "<a href='/iptest.php?ip=" . $arr['ip'] . "'><font color=darkgreen><b>Not Banned</b></font></a>";
+                    $ipstr = "<a href='/admin-iptest.php?ip=" . $arr['ip'] . "'><font color=darkgreen><b>Not Banned</b></font></a>";
                 else
-                    $ipstr = "<a href='/iptest.php?ip=" . $arr['ip'] . "'><font color='#FF0000'><b>IP Banned</b></font></a>";
+                    $ipstr = "<a href='/admin-iptest.php?ip=" . $arr['ip'] . "'><font color='#FF0000'><b>IP Banned</b></font></a>";
 
                 if ($arr['downloaded'] > 0) {
                     $ratio = number_format($arr['uploaded'] / $arr['downloaded'], 3);

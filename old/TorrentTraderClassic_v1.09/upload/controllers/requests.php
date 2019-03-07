@@ -1,12 +1,10 @@
 <?php
 
-require_once 'backend/functions.php';
-
 dbconn();
 
 loggedinorreturn();
 
-if (isset($_GET['sa']) && $_GET['sa'] == 'view') {
+if (isset($_GET['sa']) && $_GET['sa'] === 'view') {
 
     stdhead("Requests Page");
     begin_frame($txt['REQUESTS']);

@@ -159,7 +159,7 @@ function adminmenu()
 <!-- needs imgs -->
 <TR>
     <td width=%20 align=center>
-        <a href='iptest.php'><img src="images/admin/ipchecker.gif" border=0 width=32 height=32>
+        <a href='admin-iptest.php'><img src="images/admin/ipchecker.gif" border=0 width=32 height=32>
         <br>IP Checker</a>
     </td>
     <td width=%20 align=center>
