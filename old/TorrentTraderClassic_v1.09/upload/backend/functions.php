@@ -111,6 +111,18 @@ function getmicrotime()
     return ((float)$usec + (float)$sec);
 }
 
+function fix_avatar($url)
+{
+    if (!$url) {
+        return TT_IMG_URL.'/images/default_avatar.gif';
+    }
+
+    $url = h($url);
+
+    // return TT_AVATARS_URL.'/'.pathinfo($url)['filename'];
+    return $url;
+}
+
 function addJsFile($file)
 {
     global $st;

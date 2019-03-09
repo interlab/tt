@@ -209,11 +209,12 @@ if (!$enabled) {
 <br>
 User Class: <?=get_user_class_name($user['class']) ?>
 <?php
-print("<br><a href=account-history.php?id=$user[id]&action=viewposts><b>" . $txt['VIEW_POSTS'] . "</b></a><BR>");
-print("<a href=account-torrents.php?id=$user[id]><b>View File Upload/Download Details</b></a><BR>");
-print("<a href=account-history.php?id=$user[id]&action=viewcomments><b>" . $txt['VIEW_COMMENTS'] . "</b></a>");
-
-print("<BR><br><a href=account-inbox.php?receiver=$user[id]>" . $txt['ACCOUNT_SEND_MSG'] . "</a>");
+// todo: if user in friend-list?
+echo '<br><a href=account-history.php?id='.$user['id'].'&action=viewposts><b>' . $txt['VIEW_POSTS'] . '</b></a>
+    <BR><a href=account-torrents.php?id='.$user['id'].'><b>View File Upload/Download Details</b></a>
+    <BR><a href=account-history.php?id='.$user['id'].'&action=viewcomments><b>' . $txt['VIEW_COMMENTS'] . '</b></a>
+    <BR><br><a href=account-inbox.php?receiver='.$user['id'].'>' . $txt['ACCOUNT_SEND_MSG'] . '</a>
+    <br><a href=account-friends2.php?user='.$user['id'].'>Добавить в друзья</a>';
 
 ?>
 <BR><BR></div>

@@ -164,6 +164,7 @@ print("<a href=account-history.php?id=$CURUSER[id]&action=viewposts><b>".$txt['V
 print("<a href=account-history.php?id=$CURUSER[id]&action=viewcomments><b>".$txt['VIEW_COMMENTS']."</b></a><br>");
 print("<a href=account.php?action=mytorrents><b>".$txt['VIEW_MYTORRENT']."</b></a><br>");
 ?>
+<a href="account-friends.php"><b>Мои друзья</b></a><br>
 <br>
 </td>
 </tr>

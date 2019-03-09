@@ -393,6 +393,15 @@ INSERT INTO `forum_topics` (`id`, `userid`, `subject`, `locked`, `forumid`, `las
 
 ||
 
+CREATE TABLE IF NOT EXISTS `friends` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `friendid` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+||
+
 CREATE TABLE IF NOT EXISTS `guests` (
   `ip` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `time` decimal(20,0) UNSIGNED NOT NULL DEFAULT '0',
