@@ -7,9 +7,10 @@
 <link rel="stylesheet" type="text/css" href="themes/default/theme.css" />
 <script src="<?= TT_JS_URL ?>/theme.js"></script>
 <?php
-global $st;
+global $tt;
 
-echo isset($st['js_files']) ? $st['js_files'] : '';
+echo isset($tt['css_files']) ? $tt['css_files'] : '';
+echo isset($tt['js_files']) ? $tt['js_files'] : '';
 ?>
 </head>
 

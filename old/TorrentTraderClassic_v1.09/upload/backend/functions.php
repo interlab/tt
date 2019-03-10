@@ -40,6 +40,7 @@ if (version_compare(PHP_VERSION, '7.3.0', '>')) {
 }
 
 $GLOBALS['ttversion'] = '1.09';
+$tt = [];
 
 function local_user()
 {
@@ -123,14 +124,26 @@ function fix_avatar($url)
     return $url;
 }
 
+function addCssFile($file)
+{
+    global $tt;
+
+    $uri = getThemeUri();
+
+    $file = '
+    <link rel="stylesheet" type="text/css" href="' . TT_THEMES_URL . '/' . $uri . '/' . $file . '" />';
+
+    $tt['css_files'] = ($tt['css_files'] ?? '') . $file;
+}
+
 function addJsFile($file)
 {
-    global $st;
+    global $tt;
 
     $file = '
     <script type="text/javascript" src="'. TT_JS_URL .'/'.$file.'"></script>';
 
-    $st['js_files'] = ($st['js_files'] ?? '') . $file;
+    $tt['js_files'] = ($tt['js_files'] ?? '') . $file;
 }
 
 function validip($ip) : bool
@@ -589,11 +602,11 @@ function pager($rpp, $count, $href, $opts = [])
 {
     $pages = ceil($count / $rpp);
 
-    if (!endsWith($href, '&amp;') && !endsWith($href, '&')) {
+    if (!endsWith($href, '&amp;') && !endsWith($href, '&') && !endsWith($href, '?')) {
         $href .= '&amp;';
     }
 
-    if (empty($opts["lastpagedefault"])) {
+    if (empty($opts['lastpagedefault'])) {
         $pagedefault = 0;
     } else {
         $pagedefault = floor(($count - 1) / $rpp);
@@ -602,8 +615,8 @@ function pager($rpp, $count, $href, $opts = [])
         }
     }
 
-    if (isset($_GET["page"])) {
-        $page = (int) $_GET["page"];
+    if (isset($_GET['page'])) {
+        $page = (int) $_GET['page'];
         if ($page < 0) {
             $page = $pagedefault;
         }
@@ -614,11 +627,11 @@ function pager($rpp, $count, $href, $opts = [])
     $pager = '';
 
     $mp = $pages - 1;
-    $as = "<b>&lt;&lt;&nbsp;Prev</b>";
+    $as = '<b>&lt;&lt;&nbsp;Prev</b>';
     if ($page >= 1) {
-        $pager .= "<a href=\"{$href}page=" . ($page - 1) . "\">";
+        $pager .= '<a href="'.$href.'page=' . ($page - 1) . '">';
         $pager .= $as;
-        $pager .= "</a>";
+        $pager .= '</a>';
     }
     else
         $pager .= $as;
@@ -874,10 +887,10 @@ function stdhead($title = "", $msgalert = true)
 
 function getThemeUri()
 {
-    global $CURUSER, $st;
+    global $CURUSER, $tt;
 
-    if (isset($st['cache']['styleUri'])) {
-        return $st['cache']['styleUri'];
+    if (isset($tt['styleUri'])) {
+        return $tt['styleUri'];
     }
 
     $res = DB::fetchAssoc('
@@ -890,7 +903,7 @@ function getThemeUri()
 
     $uri = $res['uri'] ?? 'default';
 
-    $st['cache']['styleUri'] = $uri;
+    $tt['styleUri'] = $uri;
 
     return $uri;
 }
@@ -1377,10 +1390,10 @@ function get_user_timezone($id)
 
 function numUserMsg()
 {
-    global $CURUSER, $st;
+    global $CURUSER, $tt;
 
-    if (isset($st['cache']['user_num_msg'])) {
-        return $st['cache']['user_num_msg'];
+    if (isset($tt['user_num_msg'])) {
+        return $tt['user_num_msg'];
     }
 
     $id = (int) $CURUSER['id'];
@@ -1391,17 +1404,17 @@ function numUserMsg()
         LIMIT 1',
         [$id]
     );
-    $st['cache']['user_num_msg'] = $num;
+    $tt['user_num_msg'] = $num;
 
     return $num;
 }
 
 function numUnreadUserMsg()
 {
-    global $CURUSER, $st;
+    global $CURUSER, $tt;
 
-    if (isset($st['cache']['numUnreadMsg']))
-        return $st['cache']['numUnreadMsg'];
+    if (isset($tt['numUnreadMsg']))
+        return $tt['numUnreadMsg'];
 
     $id = (int) $CURUSER['id'];
     $num = DB::fetchColumn('
@@ -1409,7 +1422,7 @@ function numUnreadUserMsg()
     FROM messages
     WHERE receiver = '.$id.'
         AND unread = ?', ['yes'], 0);
-    $st['cache']['numUnreadMsg'] = $num;
+    $tt['numUnreadMsg'] = $num;
 
     return $num;
 }

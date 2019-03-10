@@ -397,7 +397,8 @@ CREATE TABLE IF NOT EXISTS `friends` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `userid` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `friendid` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_friend` (`userid`,`friendid`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
