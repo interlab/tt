@@ -851,7 +851,7 @@ function stdhead($title = "", $msgalert = true)
 
     header("Content-Type: text/html; charset=UTF-8");
 
-    loadLanguage();
+    loadLanguage(); // todo: move to bootstrap?
     global $txt;
     // dump($GLOBALS);
 
