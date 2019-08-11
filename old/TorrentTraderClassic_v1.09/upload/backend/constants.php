@@ -1,5 +1,12 @@
 <?php
 
+const UC_USER = 0;
+const UC_UPLOADER = 1;
+const UC_VIP = 2;
+const UC_JMODERATOR = 3;
+const UC_MODERATOR = 4;
+const UC_ADMINISTRATOR = 5;
+
 define('TT_ROOT_DIR', dirname(__DIR__));
 define('TT_DIR', dirname(__DIR__));
 define('TT_URL', $GLOBALS['SITEURL']);

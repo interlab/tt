@@ -278,7 +278,9 @@ function userlogin()
 
     $row['ip'] = $ip;
     $row['id'] = (int) $row['id'];
+    $row['class'] = (int) $row['class'];
     $GLOBALS['CURUSER'] = $row;
+    $GLOBALS['CURUSER']['is_admin'] = $row['class'] === UC_ADMINISTRATOR;
 }
 
 function autoclean()
@@ -305,15 +307,16 @@ function autoclean()
     docleanup();
 }
 
+function formatBytes($size, $precision = 2)
+{
+    $base = log($size, 1024);
+    $suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    return number_format(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
+}
+
 function mksize($bytes)
 {
-    if ($bytes < 1000 * 1024)
-        return number_format($bytes / 1024, 2) . ' KB';
-    if ($bytes < 1000 * 1048576)
-        return number_format($bytes / 1048576, 2) . ' MB';
-    if ($bytes < 1000 * 1073741824)
-        return number_format($bytes / 1073741824, 2) . ' GB';
-    return number_format($bytes / 1099511627776, 2) . ' TB';
+    return formatBytes($bytes);
 }
 
 function mksizekb($bytes)
@@ -323,12 +326,12 @@ function mksizekb($bytes)
 
 function mksizemb($bytes)
 {
-    return number_format($bytes / 1048576,2) . ' MiB';
+    return number_format($bytes / 1048576, 2) . ' MiB';
 }
 
 function mksizegb($bytes)
 {
-    return number_format($bytes / 1073741824,2) . ' GiB';
+    return number_format($bytes / 1073741824, 2) . ' GiB';
 }
 
 function deadtime()
@@ -1579,13 +1582,6 @@ function format_comment($text, $strip_html = true, $strip_slash = true)
     return $s;
 }
 
-const UC_USER = 0;
-const UC_UPLOADER = 1;
-const UC_VIP = 2;
-const UC_JMODERATOR = 3;
-const UC_MODERATOR = 4;
-const UC_ADMINISTRATOR = 5;
-
 function get_user_class()
 {
     global $CURUSER;
@@ -1597,25 +1593,20 @@ function get_user_class_name($class)
 {
     switch ($class) {
         case UC_USER: return "User";
-
         case UC_UPLOADER: return "Uploader";
-
         case UC_VIP: return "VIP";
-
         case UC_JMODERATOR: return "Moderator";
-
         case UC_MODERATOR: return "Super Moderator";
-
         case UC_ADMINISTRATOR: return "Administrator";
-
     }
-  
+
     return "";
 }
 
 function is_valid_user_class($class)
 {
-    return is_numeric($class) && floor($class) == $class && $class >= UC_USER && $class <= UC_ADMINISTRATOR;
+    return is_numeric($class) && floor($class) == $class
+        && $class >= UC_USER && $class <= UC_ADMINISTRATOR;
 }
 
 function is_valid_id($id)
