@@ -24,13 +24,13 @@ echo isset($tt['js_files']) ? $tt['js_files'] : '';
         <div class="tt-top-user-menu">
         &nbsp;
             <?php if ($CURUSER) {
-                echo $CURUSER['username'], '(<a href=account-logout.php><font color=#ffffff><b>Logout</b></font></a>)';
+                echo $CURUSER['username'], '(<a href=account-logout.php><span class="tt-logout">', $txt['LOGOUT'], '</span></a>)';
 
         // ger user ratio
-        if ($CURUSER["downloaded"] > 0){
-            $userratio = number_format($CURUSER["uploaded"] / $CURUSER["downloaded"], 2);
+        if ($CURUSER['downloaded'] > 0){
+            $userratio = number_format($CURUSER['uploaded'] / $CURUSER['downloaded'], 2);
         } else {
-            $userratio = $CURUSER["uploaded"] > 0 ? "Inf." : "NA";
+            $userratio = $CURUSER['uploaded'] > 0 ? 'Inf.' : 'NA';
         }
         //end
 
@@ -45,11 +45,11 @@ echo isset($tt['js_files']) ? $tt['js_files'] : '';
             <?php
 
             if ($unread) {
-                echo '<a href="account-messages.php"><b><font color=#FF0000>New PM' . ($nmessages != 1 ? 's' : '') . ' (' . $unread . ')</b></a></font>';
+                echo '<a href="account-messages.php"><span class="tt-newpm">'. $txt['NEW_PM'] . ($nmessages != 1 ? 's' : '') . ' (' . $unread . ')</span></a>';
             } 
             } else {
-                echo "<a href=account-login.php><font color=#FF0000>". $txt['LOGIN'] .
-                    "</font></a> <B>:</B> <a href=account-signup.php><font color=#FF0000>". $txt['REGISTERNEW'] ."</font></a>";
+                echo '<a href=account-login.php><span class="tt-login">'. $txt['LOGIN'] .
+                    '</span></a> <B>:</B> <a href=account-signup.php><span class="tt-login">'. $txt['REGISTERNEW'] .'</span></a>';
             }
             ?>
         </div>

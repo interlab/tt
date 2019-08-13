@@ -83,6 +83,7 @@ LOGOUT: 'Выход'
 ACCOUNT: 'Мой аккаунт'
 STATS: 'Расширеная статистика'
 ADMIN_CP: 'Администрация'
+NEW_PM: 'New PM'
 
 # Errors
 NO_UPLOADS: 'Ни один торрент еще не добавлен.'

@@ -388,4 +388,14 @@ ul#tabnav a:hover {
     margin: 2rem 0 3.6rem 0;
 }
 
+.tt-login, .tt-newpm {
+    color: #ff0000;
+}
 
+.tt-logout {
+    color: #ffffff;
+}
+
+.tt-newpm, .tt-logout {
+    font-weight: bold;
+}

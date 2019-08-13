@@ -87,6 +87,7 @@ LOGOUT: 'Logout'
 ACCOUNT: 'Your Account'
 STATS: 'Advanced Statistics'
 ADMIN_CP: 'Admin CP'
+NEW_PM: 'New PM'
 
 # Errors
 NO_UPLOADS: 'No .torrents have been uploaded yet.'
