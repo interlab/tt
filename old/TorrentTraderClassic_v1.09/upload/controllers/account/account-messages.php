@@ -147,9 +147,16 @@ function switchType( show, hide, s )
 }
 --></script>
 
+<style>
+#tabnav li a {
+    cursor:pointer;
+    cursor:hand;
+}
+</style>
+
 <ul id="tabnav">
-    <li id="tab-m-inbox" class="selected"><a style="cursor:pointer;cursor:hand" onclick="switchType('m-inbox','m-outbox',0)">Принятые</a></li>
-    <li id="tab-m-outbox" ><a style="cursor:pointer;cursor:hand" onclick="switchType('m-outbox','m-inbox',1)">Отправленные</a></li>
+    <li id="tab-m-inbox" class="selected"><a onclick="switchType('m-inbox','m-outbox',0)">Принятые</a></li>
+    <li id="tab-m-outbox" ><a onclick="switchType('m-outbox','m-inbox',1)">Отправленные</a></li>
 </ul>
 
 <table border='0' width='100%'>

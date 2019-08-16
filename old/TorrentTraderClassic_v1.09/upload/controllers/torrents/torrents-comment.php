@@ -26,16 +26,16 @@ function _getCommentOrError(int $id)
 }
 
 // $quicktags
-require_once '../../backend/quicktags.php';
+require_once TT_BACKEND_DIR . '/quicktags.php';
 
-$sa = $_REQUEST["sa"] ?? '';
+$sa = $_REQUEST['sa'] ?? '';
 
 // post: create new comment
 // if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if ($sa === 'create') {
-    $body = trim($_POST["body"] ?? '');
+    $body = trim($_POST['body'] ?? '');
     if (! $body) {
-        bark("Oops...", "You must enter something!");
+        bark('Oops...', 'You must enter something!');
         exit;
     }
 
@@ -48,7 +48,7 @@ if ($sa === 'create') {
         die('bad id.');
     }
 
-    $arr = DB::fetchAssoc("SELECT name, owner FROM torrents WHERE id = $id LIMIT 1");
+    $arr = DB::fetchAssoc('SELECT name, owner FROM torrents WHERE id = '.$id.' LIMIT 1');
     if (! $arr) {
         die('Torrent not found!');
     }
@@ -68,7 +68,7 @@ if ($sa === 'create') {
     // PM NOTIF
     $user = DB::fetchAssoc('SELECT commentpm FROM users WHERE id = ' . $arr['owner']);
 
-    if ($user["commentpm"] === 'yes' && $CURUSER['id'] != $arr["owner"]) {
+    if ($user['commentpm'] === 'yes' && $CURUSER['id'] != $arr['owner']) {
         $msg = 'You have received a comment on your torrent [url='. $SITEURL. '/torrents-details.php?id=' . $id . ']here[/url]';
         DB::executeUpdate('
             INSERT INTO messages (poster, sender, receiver, msg, added) VALUES(?, ?, ?, ?, ?)',
@@ -84,14 +84,14 @@ if ($sa === 'create') {
 
 // get: edit form by id comment
 elseif ($sa === 'edit') {
-    $commentid = (int) ($_GET["cid"] ?? 0);
+    $commentid = (int) ($_GET['cid'] ?? 0);
     if (!is_valid_id($commentid)) {
-        bark("Error", "Invalid ID $commentid.");
+        bark('Error', 'Invalid ID '.$commentid.'.');
     }
     $arr = _getCommentOrError($commentid);
 
-    stdhead("Edit comment:");
-    begin_frame("Edit Comment");
+    stdhead('Edit comment:');
+    begin_frame('Edit Comment');
 ?>
     <div align="center">
     <p style="margin: 0;">Please type your comment here, please remember to obey the <a href="rules.php">Rules</a>.</p>
@@ -117,10 +117,10 @@ elseif ($sa === 'edit') {
 }
 
 // post: update by id comment
-elseif ($sa === "update") {
+elseif ($sa === 'update') {
     $text = $_POST['body'] ?? '';
     if ($text === '') {
-        bark("Error", "Empty message");
+        bark('Error', 'Empty message');
     }
     $commentid = (int) ($_POST['cid'] ?? 0);
     $returnto = $_POST['returnto'] ?? '';
@@ -129,7 +129,7 @@ elseif ($sa === "update") {
     $result = DB::executeUpdate($query, [$text]);
 
     if ($returnto) {
-        header("Location: $returnto");
+        header('Location: '.$returnto);
     } else {
         header('Location: ' . $SITEURL . '/torrents-details.php?id=' . $commentid);
     }
@@ -137,16 +137,16 @@ elseif ($sa === "update") {
 }
 
 // get: delete by id comment
-elseif ($sa === "delete") {
-    $commentid = (int) ($_GET["cid"] ?? 0);
+elseif ($sa === 'delete') {
+    $commentid = (int) ($_GET['cid'] ?? 0);
     if (!is_valid_id($commentid)) {
-        bark("Error", "Invalid ID $commentid.");
+        bark('Error', 'Invalid ID '.$commentid.'.');
     }
     $arr = _getCommentOrError($commentid);
     $query = 'DELETE FROM comments WHERE id = ' . $commentid;
     $result = DB::executeUpdate($query);
-    stdhead("Delete comment:");
-    begin_frame("Delete Comment");
+    stdhead('Delete comment:');
+    begin_frame('Delete Comment');
     echo '<br><br>Comment Deleted OK<br><br>
     Return to torrent <a href="torrents-details.php?id=' . $arr['torrent'] . '">' . $arr['tname'] . '</a>';
     end_frame();
@@ -161,12 +161,12 @@ else {
         die('bad id');
     }
 
-    $torrow = DB::fetchAssoc("SELECT name FROM torrents WHERE id = $id");
+    $torrow = DB::fetchAssoc('SELECT name FROM torrents WHERE id = '.$id);
     if (!$torrow) {
         die('torrent not found!');
     }
 
-    stdhead("Add a comment to \"" . $torrow["name"] . "\"");
+    stdhead('Add a comment to "' . $torrow['name'] . '"');
 
     begin_frame('Add a comment to "<a href="torrents-details.php?id=' . $id . '">' . h($torrow['name']) . '</a>"', 'center');
     ?>

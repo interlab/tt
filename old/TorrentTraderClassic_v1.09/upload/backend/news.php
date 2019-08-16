@@ -4,10 +4,10 @@ function toggle(nome) {
     if (document.getElementById(nome).style.display=='none')
     {
         document.getElementById(nome).style.display = '';
-        document.getElementById(nome+"img").src="/images/noncross.gif";
+        document.getElementById(nome+"img").src="<?= TT_IMG_URL ?>/noncross.gif";
     } else {
         document.getElementById(nome).style.display = 'none';
-        document.getElementById(nome+"img").src="/images/cross.gif";
+        document.getElementById(nome+"img").src="<?= TT_IMG_URL ?>/cross.gif";
     }
 }
 </script>
@@ -46,7 +46,7 @@ if ($res) {
         echo '
             <a id="', $nid, '"></a>
             <a style="cursor: hand;" onClick="toggle(\'n', $nid, '\');">
-<img id="n', $nid, 'img" src="/images/', $img, '.gif">
+<img id="n', $nid, 'img" src="', TT_IMG_URL, '/', $img, '.gif">
 <strong> ', $title, '</strong></a> (By ', $username, '</a> at <em>', $date, '</em>)</a>
             <div id="n', $nid, '" style="display:', $mostrar, '">
             <table align="center" width="95%"><tr><td >', $text, '';

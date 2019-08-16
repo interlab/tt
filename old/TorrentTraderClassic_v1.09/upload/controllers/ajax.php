@@ -45,102 +45,100 @@ function tt_file_list(int $id)
 // AGENT DETECT
 function getagent($httpagent, $peer_id="")
 {
-if (preg_match("/^Azureus ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]\_B([0-9][0-9|*])(.+)$)/", $httpagent, $matches))
-    return "Azureus/$matches[1]";
-elseif (preg_match("/^Azureus ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]\_CVS)/", $httpagent, $matches))
-    return "Azureus/$matches[1]";
-elseif (preg_match("/^Java\/([0-9]+\.[0-9]+\.[0-9]+)/", $httpagent, $matches))
-    return "Azureus/<2.0.7.0";
-elseif (preg_match("/^Azureus ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/", $httpagent, $matches))
-    return "Azureus/$matches[1]";
-elseif (preg_match("/BitTorrent\/S-([0-9]+\.[0-9]+(\.[0-9]+)*)/", $httpagent, $matches))
-    return "Shadow's/$matches[1]";
-elseif (preg_match("/BitTorrent\/U-([0-9]+\.[0-9]+\.[0-9]+)/", $httpagent, $matches))
-    return "UPnP/$matches[1]";
-elseif (preg_match("/^BitTor(rent|nado)\\/T-(.+)$/", $httpagent, $matches))
-    return "BitTornado/$matches[2]";
-elseif (preg_match("/^BitTornado\\/T-(.+)$/", $httpagent, $matches))
-    return "BitTornado/$matches[1]";
-elseif (preg_match("/^BitTorrent\/ABC-([0-9]+\.[0-9]+(\.[0-9]+)*)/", $httpagent, $matches))
-    return "ABC/$matches[1]";
-elseif (preg_match("/^ABC ([0-9]+\.[0-9]+(\.[0-9]+)*)\/ABC-([0-9]+\.[0-9]+(\.[0-9]+)*)/", $httpagent, $matches))
-    return "ABC/$matches[1]";
-elseif (preg_match("/^ABC\/ABC-([0-9]+\.[0-9]+(\.[0-9]+)*)/", $httpagent, $matches))
-    return "ABC $matches[1]";
-elseif (preg_match("/^Python-urllib\/.+?, BitTorrent\/([0-9]+\.[0-9]+(\.[0-9]+)*)/", $httpagent, $matches))
-    return "BitTorrent/$matches[1]";
-elseif (preg_match('~^BitTorrent\/BitSpirit$~', $httpagent))
-    return "BitSpirit";
-elseif (substr($peer_id, 0, 5) == "-BB09")
-    return "BitBuddy/0.9xx";
-elseif (preg_match('~^DansClient~', $httpagent))
-    return "XanTorrent";
-elseif (substr($peer_id, 0, 8) == "-KT1100-")
-    return "KTorrent/1.1";
-elseif (preg_match("/^BitTorrent\/brst(.+)/", $httpagent, $matches))
-    return "Burst/$matches[1]";
-elseif (preg_match("/^RAZA (.+)$/", $httpagent, $matches))
-    return "Shareaza/$matches[1]";
-elseif (preg_match("/Rufus\/([0-9]+\.[0-9]+\.[0-9]+)/", $httpagent, $matches))
-    return "Rufus/$matches[1]";
-elseif (preg_match("/^BitTorrent\\/([0-9]+\\.[0-9]+(\\.[0-9]+)*)/", $httpagent, $matches))
-{
-if(substr($peer_id, 0, 6) == "exbc\08")
-    return "BitComet/0.56";
-elseif(substr($peer_id, 0, 6) == "exbc\09")
-    return "BitComet/0.57";
-elseif(substr($peer_id, 0, 6) == "exbc\0:")
-    return "BitComet/0.58";
-elseif(substr($peer_id, 0, 8) == "-BC0059-")
-    return "BitComet/0.59";
-elseif(substr($peer_id, 0, 8) == "-BC0060-")
-    return "BitComet/0.60";
-elseif(substr($peer_id, 0, 8) == "-BC0061-")
-    return "BitComet/0.61";
-elseif ((strpos($httpagent, 'BitTorrent/4.1.2')!== false) && (substr($peer_id, 2, 2) == "BS"))
-    return "BitSpirit/v3";
-elseif(substr($peer_id, 0, 7) == "exbc\0L")
-    return "BitLord/1.0";
-elseif(substr($peer_id, 0, 7) == "exbcL")
-    return "BitLord/1.1";
-else
-    return "BitTorrent/$matches[1]";
-}
-elseif (preg_match("/^Python-urllib\\/([0-9]+\\.[0-9]+(\\.[0-9]+)*)/", $httpagent, $matches))
-    return "G3 Torrent";
-elseif (preg_match("/MLdonkey( |\/)([0-9]+\\.[0-9]+).*/", $httpagent, $matches))
-    return "MLdonkey$matches[1]";
-elseif (preg_match("/ed2k_plugin v([0-9]+\\.[0-9]+).*/", $httpagent, $matches))
-    return "eDonkey/$matches[1]";
-elseif (preg_match('~^uTorrent~', $httpagent))
-{
-if(substr($peer_id, 0, 8) == "-UT1130-")
-    return "uTorrent 1.1.3";
-if(substr($peer_id, 0, 8) == "-UT1140-")
-    return "uTorrent 1.1.4";
-if(substr($peer_id, 0, 8) == "-UT1150-")
-    return "uTorrent 1.1.5";
-if(substr($peer_id, 0, 8) == "-UT1161-")
-    return "uTorrent 1.1.6.1";
-if(substr($peer_id, 0, 8) == "-UT1171-")
-    return "uTorrent 1.1.7.1";
-if(substr($peer_id, 0, 8) == "-UT1172-")
-    return "uTorrent 1.1.7.2";
-if(substr($peer_id, 0, 8) == "-UT1200-")
-    return "uTorrent/1.2";
-if(substr($peer_id, 0, 8) == "-UT1220-")
-    return "uTorrent/1.2.2";
-if(substr($peer_id, 0, 8) == "-UT123B-")
-    return "uTorrent/1.2.3b";
-if(substr($peer_id, 0, 8) == "-UT1300-")
-    return "uTorrent/1.3.0";
-if(substr($peer_id, 0, 8) == "-UT1400-")
-    return "uTorrent/1.4.0";
-else
-    return "uTorrent";
-}
-else
-    return ($httpagent != "" ? $httpagent : "---");
+    if (preg_match("/^Azureus ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]\_B([0-9][0-9|*])(.+)$)/", $httpagent, $matches))
+        return "Azureus/$matches[1]";
+    elseif (preg_match("/^Azureus ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]\_CVS)/", $httpagent, $matches))
+        return "Azureus/$matches[1]";
+    elseif (preg_match("/^Java\/([0-9]+\.[0-9]+\.[0-9]+)/", $httpagent, $matches))
+        return "Azureus/<2.0.7.0";
+    elseif (preg_match("/^Azureus ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/", $httpagent, $matches))
+        return "Azureus/$matches[1]";
+    elseif (preg_match("/BitTorrent\/S-([0-9]+\.[0-9]+(\.[0-9]+)*)/", $httpagent, $matches))
+        return "Shadow's/$matches[1]";
+    elseif (preg_match("/BitTorrent\/U-([0-9]+\.[0-9]+\.[0-9]+)/", $httpagent, $matches))
+        return "UPnP/$matches[1]";
+    elseif (preg_match("/^BitTor(rent|nado)\\/T-(.+)$/", $httpagent, $matches))
+        return "BitTornado/$matches[2]";
+    elseif (preg_match("/^BitTornado\\/T-(.+)$/", $httpagent, $matches))
+        return "BitTornado/$matches[1]";
+    elseif (preg_match("/^BitTorrent\/ABC-([0-9]+\.[0-9]+(\.[0-9]+)*)/", $httpagent, $matches))
+        return "ABC/$matches[1]";
+    elseif (preg_match("/^ABC ([0-9]+\.[0-9]+(\.[0-9]+)*)\/ABC-([0-9]+\.[0-9]+(\.[0-9]+)*)/", $httpagent, $matches))
+        return "ABC/$matches[1]";
+    elseif (preg_match("/^ABC\/ABC-([0-9]+\.[0-9]+(\.[0-9]+)*)/", $httpagent, $matches))
+        return "ABC $matches[1]";
+    elseif (preg_match("/^Python-urllib\/.+?, BitTorrent\/([0-9]+\.[0-9]+(\.[0-9]+)*)/", $httpagent, $matches))
+        return "BitTorrent/$matches[1]";
+    elseif (preg_match('~^BitTorrent\/BitSpirit$~', $httpagent))
+        return "BitSpirit";
+    elseif (substr($peer_id, 0, 5) == "-BB09")
+        return "BitBuddy/0.9xx";
+    elseif (preg_match('~^DansClient~', $httpagent))
+        return "XanTorrent";
+    elseif (substr($peer_id, 0, 8) == "-KT1100-")
+        return "KTorrent/1.1";
+    elseif (preg_match("/^BitTorrent\/brst(.+)/", $httpagent, $matches))
+        return "Burst/$matches[1]";
+    elseif (preg_match("/^RAZA (.+)$/", $httpagent, $matches))
+        return "Shareaza/$matches[1]";
+    elseif (preg_match("/Rufus\/([0-9]+\.[0-9]+\.[0-9]+)/", $httpagent, $matches))
+        return "Rufus/$matches[1]";
+    elseif (preg_match("/^BitTorrent\\/([0-9]+\\.[0-9]+(\\.[0-9]+)*)/", $httpagent, $matches)) {
+        if (substr($peer_id, 0, 6) == "exbc\08")
+            return "BitComet/0.56";
+        elseif (substr($peer_id, 0, 6) == "exbc\09")
+            return "BitComet/0.57";
+        elseif (substr($peer_id, 0, 6) == "exbc\0:")
+            return "BitComet/0.58";
+        elseif (substr($peer_id, 0, 8) == "-BC0059-")
+            return "BitComet/0.59";
+        elseif (substr($peer_id, 0, 8) == "-BC0060-")
+            return "BitComet/0.60";
+        elseif (substr($peer_id, 0, 8) == "-BC0061-")
+            return "BitComet/0.61";
+        elseif ((strpos($httpagent, 'BitTorrent/4.1.2')!== false) && (substr($peer_id, 2, 2) == "BS"))
+            return "BitSpirit/v3";
+        elseif (substr($peer_id, 0, 7) == "exbc\0L")
+            return "BitLord/1.0";
+        elseif (substr($peer_id, 0, 7) == "exbcL")
+            return "BitLord/1.1";
+        else
+            return "BitTorrent/$matches[1]";
+    }
+    elseif (preg_match("/^Python-urllib\\/([0-9]+\\.[0-9]+(\\.[0-9]+)*)/", $httpagent, $matches))
+        return "G3 Torrent";
+    elseif (preg_match("/MLdonkey( |\/)([0-9]+\\.[0-9]+).*/", $httpagent, $matches))
+        return "MLdonkey$matches[1]";
+    elseif (preg_match("/ed2k_plugin v([0-9]+\\.[0-9]+).*/", $httpagent, $matches))
+        return "eDonkey/$matches[1]";
+    elseif (preg_match('~^uTorrent~', $httpagent)) {
+        if (substr($peer_id, 0, 8) == "-UT1130-")
+            return "uTorrent 1.1.3";
+        if (substr($peer_id, 0, 8) == "-UT1140-")
+            return "uTorrent 1.1.4";
+        if (substr($peer_id, 0, 8) == "-UT1150-")
+            return "uTorrent 1.1.5";
+        if (substr($peer_id, 0, 8) == "-UT1161-")
+            return "uTorrent 1.1.6.1";
+        if (substr($peer_id, 0, 8) == "-UT1171-")
+            return "uTorrent 1.1.7.1";
+        if (substr($peer_id, 0, 8) == "-UT1172-")
+            return "uTorrent 1.1.7.2";
+        if (substr($peer_id, 0, 8) == "-UT1200-")
+            return "uTorrent/1.2";
+        if (substr($peer_id, 0, 8) == "-UT1220-")
+            return "uTorrent/1.2.2";
+        if (substr($peer_id, 0, 8) == "-UT123B-")
+            return "uTorrent/1.2.3b";
+        if (substr($peer_id, 0, 8) == "-UT1300-")
+            return "uTorrent/1.3.0";
+        if (substr($peer_id, 0, 8) == "-UT1400-")
+            return "uTorrent/1.4.0";
+        else
+            return "uTorrent";
+    } else {
+        return ($httpagent != "" ? $httpagent : "---");
+    }
 }
 
 // PEERS TABLE FUNCTION
@@ -152,9 +150,8 @@ function dltable($name, $arr, $torrent)
     if (!count($arr)) {
         return $s;
     }
-    $s .= "\n";
-    $s .= "<table class=table_table cellspacing=0 cellpadding=3 width=95%>\n";
-    $s .= "<tr><td class=table_head>" . $txt['USERNAME'] . "/IP</td>" .
+    $s .= "<table class=table_table cellspacing=0 cellpadding=3 width=95%>\n" .
+          "<tr><td class=table_head>" . $txt['USERNAME'] . "/IP</td>" .
           "<td class=table_head>" . $txt['PORT'] . "</td>".
           "<td class=table_head>" . $txt['UPLOADED'] . "</td>".
           "<td class=table_head>" . $txt['DOWNLOADED'] . "</td>" .
@@ -239,7 +236,6 @@ function tt_peers_list(int $id)
     loadLanguage();
 
     $data = Cache::rise('tt-peerslist-'.$id, function() use ($id) {
-
         global $txt;
 
         ob_start();
@@ -288,11 +284,11 @@ function tt_peers_list(int $id)
         $row = DB::fetchAssoc('SELECT size FROM torrents WHERE id = '.$id);
 
         echo '<tr><td valign=top align=left><b>', $txt['SEEDS'], ' </b>', dltable(' '. $txt['SEEDS'].
-            '(s) <a href="torrents-details.php?id='.$id.'" class="sublink">['.$txt['HIDE'].']</a>',
+            '(s) ',
             $seeders, $row), ' </td></tr>';
 
         echo '<tr><td valign=top align=left><b>', $txt['LEECH'], ' </b>', dltable(' ' . $txt['LEECH'] .
-            '(s) <a href="torrents-details.php?id='.$id.'" class="sublink">[' . $txt['HIDE'] . ']</a>',
+            '(s) ',
             $downloaders, $row) . ' </td></tr>';
 
         return [ob_get_clean()];

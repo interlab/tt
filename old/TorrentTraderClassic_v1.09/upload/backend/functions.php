@@ -35,9 +35,9 @@ if (PHP_MAJOR_VERSION < 7) {
     die ('Your version not support. You will should be used php >= 7');
 }
 
-if (version_compare(PHP_VERSION, '7.3.0', '>')) {
-    die('PHP 7.3 not support.');
-}
+// if (version_compare(PHP_VERSION, '7.3.0', '>=')) {
+    // die('PHP 7.3 not support.');
+// }
 
 $GLOBALS['ttversion'] = '1.09';
 $tt = [];
