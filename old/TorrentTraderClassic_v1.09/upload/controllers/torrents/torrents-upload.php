@@ -27,15 +27,16 @@ $descr = '';
 ini_set("upload_max_filesize", $max_torrent_size);
 
 if (!empty($_POST['MAX_FILE_SIZE'])) {
-    require_once __DIR__ . '/../../backend/benc.php';
+    require_once TT_BACKEND_DIR . '/benc.php';
 
     foreach(explode(":","descr:type:name") as $v) {
         if (!isset($_POST[$v]))
             $message = "Missing form data";
     }
 
-    if (!isset($_FILES["file"]))
+    if (!isset($_FILES["file"])) {
         $message = "Missing form data";
+    }
 
     $f = $_FILES["file"];
     $fname = $f["name"];
@@ -61,12 +62,18 @@ if (!empty($_POST['MAX_FILE_SIZE'])) {
         $torrent = $_POST["name"];
 
     $tmpname = $f["tmp_name"];
-    if (!is_uploaded_file($tmpname))
+    if (!is_uploaded_file($tmpname)) {
         $message = "The file was uploaded, but wasn't found on the temp directoy.";
+    }
+
+    if (!is_writable($torrent_dir)) {
+        $message = 'Upload directory must writable!';
+    }
 
     $dict = bdec_file($tmpname, $max_torrent_size);
-    if (!isset($dict))
+    if (!isset($dict)) {
         $message = "What the hell did you upload? This is not a bencoded file!";
+    }
 
     function dict_check($d, $s)
     {
