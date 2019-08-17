@@ -66,8 +66,8 @@ echo '<img src="' . $avatar . '" alt="' . $uname . '" name="' . $uname . '" titl
 ?>
 </div>
 
-<table border=0 cellspacing=0 cellpadding="6" width=100%>
 <form method="post" action="take-theme.php">
+<table border=0 cellspacing=0 cellpadding="6" width=100%>
 <tr><td align="center"><B><?= $txt['THEME'] ?> </B>
     <select name=stylesheet class="tt-login-select"><?= $styles ?></select>
 </td></tr>
@@ -77,7 +77,9 @@ echo '<img src="' . $avatar . '" alt="' . $uname . '" name="' . $uname . '" titl
 <tr><td align="center">
     <input type="submit" value="<?= $txt['APPLY'] ?>" class="tt-login-select">
 </td></tr>
-</form></table>
+</table>
+</form>
+
 <div style="justify-content: center; display: flex;">
     <ul style="list-style: none; margin: 0; padding: 0;">
     <li><a href="account.php">

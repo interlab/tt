@@ -3,18 +3,18 @@
 dbconn(false);
 loggedinorreturn();
 
-$userid = (int) ($_GET["id"] ?? 0);
+$userid = (int) ($_GET['id'] ?? 0);
 
 if (! is_valid_id($userid)) {
-    bark("Error", "Invalid ID");
+    bark('Error', 'Invalid ID');
 }
 
-$page = (int) ($_GET["page"] ?? 0);
-$action = $_GET["action"] ?? '';
+$page = (int) ($_GET['page'] ?? 0);
+$action = $_GET['action'] ?? '';
 $perpage = 25;
 
 // Action: View posts - forum
-if ($action == "viewposts") {
+if ($action == 'viewposts') {
     $query = '
         SELECT COUNT(*)
         FROM forum_posts AS p
@@ -24,22 +24,22 @@ if ($action == "viewposts") {
             AND f.minclassread <= ' . $CURUSER['class'];
     $postcount = DB::fetchColumn($query);
     if (! $postcount) {
-        bark("Error", "No posts found");
+        bark('Error', 'No posts found');
     }
 
     // Make page menu
     [$pagertop, $pagerbottom, $limit] = pager($perpage, $postcount,
-        $_SERVER["PHP_SELF"] . '?' . b(['action' => 'viewposts', 'id' => $userid])
+        $_SERVER['PHP_SELF'] . '?' . b(['action' => 'viewposts', 'id' => $userid])
     );
 
     // Get user data
     $arr = DB::fetchAssoc('SELECT username, donated, warned FROM users WHERE id = ' . $userid);
     if (empty($arr)) {
-        $subject = "unknown[$userid]";
+        $subject = 'unknown['.$userid.']';
     } else {
         $subject = "<a href=account-details.php?id=$userid><b>$arr[username]</b></a>".
-            ($arr["donated"] > 1 ? "<img src=images/star.gif alt='Donor' style='margin-left: 4pt'>" : "") .
-            ($arr["warned"] == "yes" ? "<img src=images/warned.gif alt='Warned' style='margin-left: 4pt'>" : "");
+            ($arr['donated'] > 1 ? "<img src=images/star.gif alt='Donor' style='margin-left: 4pt'>" : '') .
+            ($arr['warned'] == 'yes' ? "<img src=images/warned.gif alt='Warned' style='margin-left: 4pt'>" : '');
     }
 
     // Get posts
@@ -56,30 +56,30 @@ if ($action == "viewposts") {
         ' . $limit;
     $res = DB::fetchAll($query);
     if (! $res) {
-        bark("Error", "No posts found");
+        bark('Error', 'No posts found');
     }
 
-    stdhead("Posts history");
+    stdhead('Posts history');
 
     // Print table
 
-    begin_frame("Post history for $subject");
+    begin_frame('Post history for ' . $subject);
 
     if ($postcount > $perpage) {
         echo $pagertop;
     }
 
     foreach ($res as $arr) {
-        $postid = $arr["id"];
-        $posterid = $arr["userid"];
-        $topicid = $arr["t_id"];
-        $topicname = $arr["subject"];
-        $forumid = $arr["f_id"];
-        $forumname = $arr["name"];
-        $newposts = ($arr["lastpostread"] < $arr["lastpost"]) && $CURUSER["id"] == $userid;
-        $added = $arr["added"] . " GMT (" . (get_elapsed_time(sql_timestamp_to_unix_timestamp($arr["added"]))) . " ago)";
+        $postid = $arr['id'];
+        $posterid = $arr['userid'];
+        $topicid = $arr['t_id'];
+        $topicname = $arr['subject'];
+        $forumid = $arr['f_id'];
+        $forumname = $arr['name'];
+        $newposts = ($arr['lastpostread'] < $arr['lastpost']) && $CURUSER['id'] == $userid;
+        $added = $arr['added'] . ' GMT (' . (get_elapsed_time(sql_timestamp_to_unix_timestamp($arr['added']))) . ' ago)';
 
-	print("<br><table border=0 cellspacing=0 cellpadding=0 width=95%><tr><td width=100% bgcolor=#66CCFF>
+        print("<br><table border=0 cellspacing=0 cellpadding=0 width=95%><tr><td width=100% bgcolor=#66CCFF>
 	    <b>Forum:&nbsp;</b>
 	    <a href=forums.php?action=viewforum&amp;forumid=$forumid>$forumname</a>
 	    &nbsp;--&nbsp;<b>Topic:&nbsp;</b>
@@ -89,9 +89,9 @@ if ($action == "viewposts") {
       ($newposts ? " &nbsp;<b>(<font color=red>NEW!</font>)</b>" : "") .
 	    "&nbsp;--&nbsp;$added</td></tr></table>\n");
 
-	begin_table(true);
+        begin_table(true);
 
-	$body = format_comment($arr["body"]);
+        $body = format_comment($arr["body"]);
 
         if (is_valid_id($arr['editedby'])) {
             $subrow = DB::fetchAssoc('SELECT username FROM users WHERE id = ' . $arr['editedby'] . ' LIMIT 1');
@@ -191,8 +191,9 @@ elseif ($action === "viewcomments") {
 
         print("<br><table border=0 cellspacing=0 cellpadding=0 width=95%><tr><td width=100% bgcolor=#66CCFF>".
             "<b>Torrent:&nbsp;</b>".
-            ($torrent?("<a href=/torrents-details.php?id=$torrentid&tocomm=1>$torrent</a>"):" [Deleted] ").
-            "&nbsp;---&nbsp;<b>Comment:&nbsp;</b>#<a href=/torrents-details.php?id=$torrentid&tocomm=1$page_url>$commentid</a>
+            ($torrent ? ("<a href=torrents-details.php?id=$torrentid&tocomm=1>$torrent</a>")
+                : " [Deleted] ").
+            "&nbsp;---&nbsp;<b>Comment:&nbsp;</b>#<a href=torrents-details.php?id=$torrentid&tocomm=1$page_url>$commentid</a>
             &nbsp;---&nbsp;$added
             </td></tr></table>\n");
 
