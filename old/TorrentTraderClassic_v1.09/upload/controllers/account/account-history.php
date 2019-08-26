@@ -19,7 +19,7 @@ if ($action == 'viewposts') {
         SELECT COUNT(*)
         FROM forum_posts AS p
             JOIN forum_topics as t ON p.topicid = t.id
-	        JOIN forum_forums AS f ON t.forumid = f.id
+            JOIN forum_forums AS f ON t.forumid = f.id
         WHERE p.userid = ' . $userid . '
             AND f.minclassread <= ' . $CURUSER['class'];
     $postcount = DB::fetchColumn($query);
@@ -80,14 +80,14 @@ if ($action == 'viewposts') {
         $added = $arr['added'] . ' GMT (' . (get_elapsed_time(sql_timestamp_to_unix_timestamp($arr['added']))) . ' ago)';
 
         print("<br><table border=0 cellspacing=0 cellpadding=0 width=95%><tr><td width=100% bgcolor=#66CCFF>
-	    <b>Forum:&nbsp;</b>
-	    <a href=forums.php?action=viewforum&amp;forumid=$forumid>$forumname</a>
-	    &nbsp;--&nbsp;<b>Topic:&nbsp;</b>
-	    <a href=forums.php?action=viewtopic&topicid=$topicid>$topicname</a>
+        <b>Forum:&nbsp;</b>
+        <a href=forums.php?action=viewforum&amp;forumid=$forumid>$forumname</a>
+        &nbsp;--&nbsp;<b>Topic:&nbsp;</b>
+        <a href=forums.php?action=viewtopic&topicid=$topicid>$topicname</a>
       &nbsp;--&nbsp;<b>Post:&nbsp;</b>
       #<a href=forums.php?action=viewtopic&topicid=$topicid&page=p$postid#$postid>$postid</a>" .
       ($newposts ? " &nbsp;<b>(<font color=red>NEW!</font>)</b>" : "") .
-	    "&nbsp;--&nbsp;$added</td></tr></table>\n");
+        "&nbsp;--&nbsp;$added</td></tr></table>\n");
 
         begin_table(true);
 
@@ -130,8 +130,8 @@ elseif ($action === "viewcomments") {
             LEFT JOIN torrents as t ON c.torrent = t.id
         WHERE c.user = ' . $userid . '
         ORDER BY c.id DESC';
-	$commentcount = DB::fetchColumn($query);
-	if (!$commentcount) {
+    $commentcount = DB::fetchColumn($query);
+    if (!$commentcount) {
         bark("Error", "No comments found");
     }
 
@@ -142,7 +142,7 @@ elseif ($action === "viewcomments") {
     // Get user data
     $arr = DB::fetchAssoc("SELECT username, donated, warned FROM users WHERE id = $userid");
 
-    if ($arr) {		
+    if ($arr) {
         $subject = "<a href=account-details.php?id=$userid><b>$arr[username]</b></a>" .
             ($arr["donated"] > 1 ? "<img src=images/star.gif alt='Donor' style='margin-left: 4pt'>" : "") .
             ($arr["warned"] == "yes" ? "<img src=images/warned.gif alt='Warned' style='margin-left: 4pt'>" : "");

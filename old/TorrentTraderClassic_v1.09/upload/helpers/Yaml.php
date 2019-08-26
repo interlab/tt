@@ -28,9 +28,7 @@ class Yaml
         }
 
         // todo : cache data
-
         // $txt = array_merge($txt, $data);
-
         // return array_merge($txt, $data);
 
         return $data;

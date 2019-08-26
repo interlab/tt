@@ -158,7 +158,7 @@ if ($res) {
 
 $avatar = $user['avatar'];
 if (!$avatar) {
-	$avatar = 'images/default_avatar.gif';
+    $avatar = 'images/default_avatar.gif';
 }
 
 $enabled = $user['enabled'] == 'yes';
@@ -187,7 +187,7 @@ stdhead('User Details for ' . $user['username']);
 begin_frame('User Details for ' . $user['username']);
 ?>
 <table width=100% border=0><tr><td width=50% valign=top>
-	<table width=100% border=0 cellpadding=0 cellspacing=0><tr><td width=100% valign=top>
+    <table width=100% border=0 cellpadding=0 cellspacing=0><tr><td width=100% valign=top>
 
 <table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
 <TR><TD width=100% valign=middle class=table_head height=30><b>Viewing Profile: <?= $user['username'] ?> </b>
@@ -221,33 +221,33 @@ User Class: <?= get_user_class_name($user['class']) ?>
 
 </TD></TR></TABLE>
 <br>
-		<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
+        <table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
         <TR><TD width=100% valign=middle class=table_head height=30><B>Information:</B></TD></TR>
-		<TR><TD>
+        <TR><TD>
 
-			<table width=100% border=0 cellspacing=0 cellpadding=3>
-			<tr><td><?= $txt['LAST_ACCESS'] ?>: </td><td align=left><?= $lastseen ?></td></tr>
-			<tr><td><?= $txt['COUNTRY'] ?>: </td><td align=left><?=$country?></td></tr>
-			<tr><td><?= $txt['AGE'] ?>: </td><td align=left><?=$user["age"]?></td></tr>
-			<tr><td><?= $txt['GENDER'] ?>: </td><td align=left><?=$user["gender"]?></td></tr>
-			<tr><td><?= $txt['CLIENT'] ?>: </td><td align=left><?=$user["client"]?></td></tr>
-			<tr><td><?= $txt['COMMENTS'] ?>: </td><td align=left><?=$torrentcomments?></td></tr>
-			<tr><td><?= $txt['WARNED'] ?>: </td><td align=left><?=$user["warned"]?></td></tr>
+            <table width=100% border=0 cellspacing=0 cellpadding=3>
+            <tr><td><?= $txt['LAST_ACCESS'] ?>: </td><td align=left><?= $lastseen ?></td></tr>
+            <tr><td><?= $txt['COUNTRY'] ?>: </td><td align=left><?=$country?></td></tr>
+            <tr><td><?= $txt['AGE'] ?>: </td><td align=left><?=$user["age"]?></td></tr>
+            <tr><td><?= $txt['GENDER'] ?>: </td><td align=left><?=$user["gender"]?></td></tr>
+            <tr><td><?= $txt['CLIENT'] ?>: </td><td align=left><?=$user["client"]?></td></tr>
+            <tr><td><?= $txt['COMMENTS'] ?>: </td><td align=left><?=$torrentcomments?></td></tr>
+            <tr><td><?= $txt['WARNED'] ?>: </td><td align=left><?=$user["warned"]?></td></tr>
             <?php if ($arr_rws['warned'] == 'yes') { ?><tr><td><?= "Days until ban" ?>: </td><td align=left><?=$timeleft?></td></tr><?php } ?>
-			<tr><td><?= $txt['FORUM_POSTS'] ?>: </td><td align=left><?=$forumposts?></td></tr>
-			<tr><td><?= $txt['TORRENTS_POSTED'] ?>: </td><td align=left><?= $num_torrents ?></td></tr>
-			</TABLE>
-		</TD></TR></TABLE>
+            <tr><td><?= $txt['FORUM_POSTS'] ?>: </td><td align=left><?=$forumposts?></td></tr>
+            <tr><td><?= $txt['TORRENTS_POSTED'] ?>: </td><td align=left><?= $num_torrents ?></td></tr>
+            </TABLE>
+        </TD></TR></TABLE>
 
-	</TD></TR></TABLE>
-	<td width=10 valign=top>&nbsp;</td>
+    </TD></TR></TABLE>
+    <td width=10 valign=top>&nbsp;</td>
 </td><td width=50% valign=top>
-	<table width=100% border=0 cellpadding=0 cellspacing=0><tr><td width=100% valign=top>
-		<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
+    <table width=100% border=0 cellpadding=0 cellspacing=0><tr><td width=100% valign=top>
+        <table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
         <TR><TD width=100% valign=middle class=table_head height=30><B>Statistics:</B></TD></TR>
-		<TR><TD>
-		<table width=100% border=0 cellspacing=0 cellpadding=3>
-		<?php
+        <TR><TD>
+        <table width=100% border=0 cellspacing=0 cellpadding=3>
+        <?php
         if ($CURUSER['id'] === $id || $privacylevel !== 'strong') {
             $avg_daily = round(strtotime($user["added"]) / (1 * 24 * 60 * 60)); // ежедневно
         ?>
@@ -258,9 +258,9 @@ User Class: <?= get_user_class_name($user['class']) ?>
         <?php
         } else {
         ?>
-			<tr><td><?= $txt['UPLOADED'] ?>: </td><td align=left>---</td></tr>
-			<tr><td><?= $txt['DOWNLOADED'] ?>: </td><td align=left>---</td></tr>
-		<?php
+            <tr><td><?= $txt['UPLOADED'] ?>: </td><td align=left>---</td></tr>
+            <tr><td><?= $txt['DOWNLOADED'] ?>: </td><td align=left>---</td></tr>
+        <?php
         }
 
   if ($user["downloaded"] > 0)
@@ -286,30 +286,30 @@ User Class: <?= get_user_class_name($user['class']) ?>
     $sr</td></tr>\n");
   }
   ?>
-		</table>
-		</TD></TR>
-		</TABLE>
+        </table>
+        </TD></TR>
+        </TABLE>
 
-		<?php
-		// now do the mod only stuff
+        <?php
+        // now do the mod only stuff
 if (get_user_class() >= UC_JMODERATOR) { ?>
-		<br>
-		<table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
+        <br>
+        <table width=100% border=1 align=center cellpadding=2 cellspacing=1 style='border-collapse: collapse' bordercolor=#646262>
         <TR><TD width=100% valign=middle bgcolor=green height=30><B>Moderator Only:</B></TD></TR>
-		<TR><TD>
-		<table width=100% border=0 cellspacing=0 cellpadding=3>
+        <TR><TD>
+        <table width=100% border=0 cellspacing=0 cellpadding=3>
         <tr><td>Email: </td>
             <td align=left><?= $user['email'] ?>- <a href="account-inbox.php?receiver=<?= $user['username'] ?>">Send PM</a></td></tr>
     <?php if ($addr) { ?>
         <tr><td>IP Address: </td><td align=left><?= $user['ip'] ?></td></tr>
-	<?php } ?>
+    <?php } ?>
     <tr><td>Host: </td><td align=left><?= $dom ?></td></tr>
-	<tr><td><?= $txt['UPLOADED'] ?>: </td><td align=left><?= mksize($user['uploaded']) ?></td></tr>
-	<tr><td><?= $txt['DOWNLOADED'] ?>: </td><td align=left><?= mksize($user['downloaded']) ?></td></tr>
-	<tr><td><?= $txt['DONATED'] ?>: </td><td align=left><?= $user['donated'] ?></td></tr>
-	<?php
+    <tr><td><?= $txt['UPLOADED'] ?>: </td><td align=left><?= mksize($user['uploaded']) ?></td></tr>
+    <tr><td><?= $txt['DOWNLOADED'] ?>: </td><td align=left><?= mksize($user['downloaded']) ?></td></tr>
+    <tr><td><?= $txt['DONATED'] ?>: </td><td align=left><?= $user['donated'] ?></td></tr>
+    <?php
 
-	// invite code start
+    // invite code start
 if (get_user_class() >= UC_JMODERATOR && $user['invites'] > 0
     || $user['id'] == $CURUSER['id'] && $user['invites'] > 0
 ) {
@@ -393,11 +393,11 @@ if (get_user_class() >= UC_JMODERATOR) {
 
 ?>
 
-		</table>
-		</td></tr></table>
+        </table>
+        </td></tr></table>
 <?php } ?>
 
-	</td></tr></table>
+    </td></tr></table>
 </td></tr></table><BR>
 <?php
 if ($torrents)
@@ -490,10 +490,10 @@ echo '
 
 <form method="post" action="admin.php?act=bans&do=add">
 <table border=0 cellspacing=0 cellpadding=3>
-	<tr><td class=rowhead>First IP</td><td><input type=text name=first size=40 value="<?= $user['ip'] ?>"></td>
-	<tr><td class=rowhead>Last IP</td><td><input type=text name=last size=40 value="<?= $user['ip'] ?>"></td>
-	<tr><td class=rowhead>Comment</td><td><input type=text name=comment size="40"></td>
-	<tr><td colspan=2><input type="submit" value="Okay" class="btn"></td></tr>
+    <tr><td class=rowhead>First IP</td><td><input type=text name=first size=40 value="<?= $user['ip'] ?>"></td>
+    <tr><td class=rowhead>Last IP</td><td><input type=text name=last size=40 value="<?= $user['ip'] ?>"></td>
+    <tr><td class=rowhead>Comment</td><td><input type=text name=comment size="40"></td>
+    <tr><td colspan=2><input type="submit" value="Okay" class="btn"></td></tr>
 </table>
 </form>
 <?php

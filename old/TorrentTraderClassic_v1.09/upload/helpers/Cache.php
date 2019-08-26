@@ -13,7 +13,7 @@ class Cache
         foreach ( $ri as $file ) {
             // echo $file, '<br>';
             if ($file->getFilename() === '.htaccess') { continue; }
-            $file->isDir() ?  rmdir($file) : unlink($file);
+            $file->isDir() ? rmdir($file) : unlink($file);
         }
     }
 
