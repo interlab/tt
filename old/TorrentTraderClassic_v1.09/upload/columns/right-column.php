@@ -106,7 +106,7 @@ $res = DB::query('
     WHERE status = confirmed AND added LIKE "'.$month.'-%" ':'').'
     GROUP BY date
     ORDER BY date DESC');
-while($users = $res->fetch()) {
+while ($users = $res->fetch()) {
     echo '<tr width=100%><td class=tableb>'.$users['date'].'</td><td class=tableb>'.$users['count'].'</td></tr>';
 }
 echo '</table>';

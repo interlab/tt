@@ -269,10 +269,10 @@ print("<tr><td valign=top align=right><a href=torrents-completed-advance.php?id=
 print("<tr><td valign=top align=right><B>" . $txt['LAST_SEEDED'] . ": </b>" . mkprettytime($row["lastseed"]) . " ago</td></tr>");
 
 if ($row['seeders'] < 3 && $row['times_completed'] >= 1){
-    print("<tr><td valign=top align=right><B>Request a re-seed: </b><a href=re-seed.php?id=" . $id . ">[SEND REQUEST!]</a></td></tr>");
+    echo '<tr><td valign=top align=right><B>Request a re-seed: </b><a href=re-seed.php?id=' . $id . '>[SEND REQUEST!]</a></td></tr>';
 }
 
-echo "</table>";
+echo '</table>';
 
 if (get_user_class() >= UC_JMODERATOR) {
     echo "<br><BR><table width=100% cellspacing=0 cellpadding=3 style='border-collapse: collapse' bordercolor=#33CC00 border=1>";

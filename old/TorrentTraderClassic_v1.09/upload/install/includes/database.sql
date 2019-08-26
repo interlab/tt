@@ -208,15 +208,20 @@ CREATE TABLE IF NOT EXISTS `dbbackup` (
 ||
 
 CREATE TABLE IF NOT EXISTS `downloaded` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `torrent` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `user` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
+  `added` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `torrent` (`torrent`),
+  KEY `user` (`user`),
+  KEY `torrent_2` (`torrent`,`user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ||
 
 CREATE TABLE IF NOT EXISTS `faq` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `type` set('categ','item') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'item',
   `question` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `answer` longtext COLLATE utf8mb4_unicode_ci NOT NULL,

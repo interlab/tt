@@ -9,6 +9,11 @@ define('TT_START_TIME', microtime(true));
 
 set_exception_handler('tt_exception_handler');
 
+function now()
+{
+    return date('Y-m-d H:i:s');
+}
+
 function tt_exception_handler(Throwable $exc)
 {
     $err_msg = "\n" .
