@@ -28,7 +28,7 @@ if (isset($_COOKIE['TTrsreq' . $reseedid])) {
 
     $pn_msg = $CURUSER['username'] .
         ' has requested a re-seed on the torrent below because there are currently no or few seeds: '
-        . $SITEURL . '/torrents-details.php?id=' . $_GET['id'] . " \nThank You!";
+        . $SITEURL . '/torrents-details.php?id=' . $reseedid . " \nThank You!";
 
     # @todo: set limit in settings in admin panel
     $res = DB::query('
