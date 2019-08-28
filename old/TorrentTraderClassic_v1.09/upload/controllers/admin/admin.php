@@ -1,5 +1,7 @@
 <?php
 
+use \Doctrine\DBAL\DBALException;
+
 dbconn(false);
 loggedinorreturn();
 
@@ -696,48 +698,55 @@ if ($act === 'settings') {
 #======================================================================#
 #    Tracker Log
 #======================================================================#
-if ($act === "view_log") {
+if ($act === 'view_log') {
     adminmenu();    // show menu
     // output
 
-    /*
-    if ($do === "del_log" && $arr['id'] != 1) {
-        $dl = DB::query("DELETE FROM log WHERE id = $arr[id]");
-        if ($dl)
-            autolink("admin.php?act=view_log", "Entry deleted ...");
-        else
-            die("<h2>mySQL-Error: Could not delete language-name (check connection & settings)</h2></body></html>");
+    $lid = (int) ($_GET['lid'] ?? 0);
+    if ($do === 'del_log' && !empty($lid)) {
+        try {
+            $dl = DB::query('DELETE FROM log WHERE id = ' . $lid);
+            if ($dl->rowCount()) {
+                autolink('admin.php?act=view_log', 'Entry deleted ...');
+            } else {
+                autolink('admin.php?act=view_log', 'Entry not found!');
+            }
+        } catch (DBALException $ex) {
+            die('<h2>MySQL-Error: check your sql query!</h2>');
+        }
     }
-    */
 
     // delete items older than a week - Should be a variable in db and should be changeable in AdminCP
     $secs = 14 * 24 * 60 * 60;
-    DB::query("DELETE FROM log WHERE " . gmtime() . " - UNIX_TIMESTAMP(added) > $secs");
-    $res = DB::fetchAll("SELECT added, txt, id FROM log ORDER BY added DESC");
+    DB::query('DELETE FROM log WHERE ' . gmtime() . ' - UNIX_TIMESTAMP(added) > ' . $secs);
+    $res = DB::fetchAll('SELECT added, txt, id FROM log ORDER BY added DESC');
 
     if (! $res) {
-        begin_frame("Admin Log");
-        print("<b><CENTER>The log is empty.</CENTER></b>
-            <br><BR><CENTER>Items older than 14 days are Automatically removed.</CENTER>\n");
+        begin_frame('Admin Log');
+        echo '<div align="center"><b>The log is empty.</b></div>
+            <br><br><div align="center">Items older than 14 days are Automatically removed.</div>';
         end_frame();
     } else {
-        begin_frame("Admin Log", 'justify');
+        begin_frame('Admin Log', 'justify');
         begin_table();
-        print("<tr><td class=alt3 align=left><font size=1 face=Verdana color=white>Date</td>
+        echo '<tr><td class=alt3 align=left><font size=1 face=Verdana color=white>Date</td>
             <td class=alt3 align=left><font size=1 face=Verdana color=white>Time</td>
             <td class=alt3 align=left><font size=1 face=Verdana color=white>Event</td>
-            <!--<td class=alt3 align=left><font size=1 face=Verdana color=white>Delete Entry</td>--></tr>\n");
+            <td class=alt3 align=left><font size=1 face=Verdana color=white>Delete Entry</td>
+            </tr>';
         foreach ($res as $arr) {
-            $date = substr($arr['added'], 0, strpos($arr['added'], " "));
-            $time = substr($arr['added'], strpos($arr['added'], " ") + 1);
-            print("<tr><td class=alt1>$date</td>
-                <td class=alt2>$time</td>
-                <td class=alt1 align=left>$arr[txt]</td>
-                <!--<td class=alt2><a href='admin.php?act=view_log&do=del_log&lid=$arr[id]' title='delete this entry'>delete</a></td>--></tr>\n");
+            $date = substr($arr['added'], 0, strpos($arr['added'], ' '));
+            $time = substr($arr['added'], strpos($arr['added'], ' ') + 1);
+            echo '<tr><td class=alt1>', $date, '</td>
+                <td class=alt2>', $time, '</td>
+                <td class=alt1 align=left>', $arr['txt'], '</td>
+                <td class=alt2><a href="admin.php?act=view_log&do=del_log&lid=', $arr['id'],
+                    '" title="delete this entry">delete</a></td>
+                </tr>';
         }
         end_table();
+        end_frame();
     }
-    // end_frame();
 }
 
 #======================================================================#
