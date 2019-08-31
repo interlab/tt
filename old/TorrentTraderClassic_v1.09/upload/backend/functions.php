@@ -7,23 +7,21 @@ ini_set('display_errors', 1);
 
 define('TT_START_TIME', microtime(true));
 
+require_once __DIR__ . '/../helpers/errors-helper.php';
+
 set_exception_handler('tt_exception_handler');
+set_error_handler('tt_error_handler');
 
 function now()
 {
     return date('Y-m-d H:i:s');
 }
 
-function tt_exception_handler(Throwable $exc)
+function get_current_url()
 {
-    $err_msg = "\n" .
-        '<h4>Message: </h4>' . $exc->getMessage() .
-        '<h4>Date: </h4>' . date('d M Y H:i:s') .
-        '<h4>Line: </h4>' . $exc->getLine() .
-        '<h4>File: </h4>' . $exc->getFile() .
-        '<h4>Trace: </h4>' . nl2br($exc->getTraceAsString());
-    // dump($exc);
-    echo $err_msg;
+    return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on'
+        ? 'https' : 'http')
+        . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 }
 
 session_start();
@@ -474,10 +472,10 @@ function parsedescr($d, $html)
     return $d;
 }
 
-function genbark($x,$y)
+function genbark($x, $y)
 {
     stdhead($y);
-    begin_frame("<font color=red>Error - ". h($y) ."</font>", 'center');
+    begin_frame("<font color=red>Error - " . h($y) . "</font>", 'center');
     print("<p>" . h($x) . "</p>\n");
     end_frame();
     stdfoot();
@@ -891,6 +889,12 @@ function stdhead($title = "", $msgalert = true)
 
     require_once TT_ROOT_DIR.'/themes/'.$ss_uri.'/block.php'; //add theme blocks modification
     require_once TT_ROOT_DIR.'/themes/'.$ss_uri.'/header.php';
+
+    if ($CURUSER['is_admin'] && file_exists(TT_ROOT_DIR . '/install')) {
+        begin_frame('Warning!');
+        echo '<h4 style="color:red;">Please delete <b>install</b> directory!</h4>';
+        end_frame();
+    }
 }
 
 function getThemeUri()
@@ -1329,17 +1333,6 @@ function show_error_msg($title, $message, $wrapper = "1")
     }
 }
 
-
-function stderr($heading = "", $text, $sort = "")
-{
-    stdhead("$sort: $heading"); 
-    begin_frame("<font color=red>$sort: $heading</font>", 'center');
-    echo $text;
-    end_frame();
-    stdfoot();
-    die;
-}
-
 function bark($heading = "Error", $text, $sort = "Error")
 {
     global $txt;
@@ -1351,6 +1344,11 @@ function bark($heading = "Error", $text, $sort = "Error")
     end_frame();
     stdfoot();
     die;
+}
+
+function stderr($heading = "", $text, $sort = "")
+{
+    bark($heading, $text, $sort);
 }
 
 function bark2($heading = "Error", $text, $sort = "Error")
@@ -1597,15 +1595,15 @@ function get_user_class()
 function get_user_class_name($class)
 {
     switch ($class) {
-        case UC_USER: return "User";
-        case UC_UPLOADER: return "Uploader";
-        case UC_VIP: return "VIP";
-        case UC_JMODERATOR: return "Moderator";
-        case UC_MODERATOR: return "Super Moderator";
-        case UC_ADMINISTRATOR: return "Administrator";
+        case UC_USER: return 'User';
+        case UC_UPLOADER: return 'Uploader';
+        case UC_VIP: return 'VIP';
+        case UC_JMODERATOR: return 'Moderator';
+        case UC_MODERATOR: return 'Super Moderator';
+        case UC_ADMINISTRATOR: return 'Administrator';
     }
 
-    return "";
+    return '';
 }
 
 function is_valid_user_class($class)
@@ -1621,8 +1619,8 @@ function is_valid_id($id)
 
 function begin_table()
 {
-    print("<table align=center cellpadding=\"0\" cellspacing=\"0\" class=\"ttable_headouter\" width=100%><tr><td>"
-         ."<table align=center cellpadding=\"0\" cellspacing=\"0\" class=\"ttable_headinner\" width=100%>\n"); 
+    echo '<table align=center cellpadding="0" cellspacing="0" class="ttable_headouter" width=100%><tr><td>'
+         . '<table align=center cellpadding="0" cellspacing="0" class="ttable_headinner" width=100%>' . "\n"; 
 }
 
 function end_table()
@@ -1632,7 +1630,8 @@ function end_table()
 
 function sql_timestamp_to_unix_timestamp($s)
 {
-    return mktime(substr($s, 11, 2), substr($s, 14, 2), substr($s, 17, 2), substr($s, 5, 2), substr($s, 8, 2), substr($s, 0, 4));
+    return mktime(substr($s, 11, 2), substr($s, 14, 2), substr($s, 17, 2),
+        substr($s, 5, 2), substr($s, 8, 2), substr($s, 0, 4));
 }
 
 function get_ratio_color($ratio)
@@ -1680,23 +1679,23 @@ function write_log($text)
 
 function get_elapsed_time($ts)
 {
-  $mins = floor((gmtime() - $ts) / 60);
-  $hours = floor($mins / 60);
-  $mins -= $hours * 60;
-  $days = floor($hours / 24);
-  $hours -= $days * 24;
-  $weeks = floor($days / 7);
-  $days -= $weeks * 7;
-  $t = "";
-  if ($weeks)
-    return "$weeks week" . ($weeks > 1 ? "s" : "");
-  if ($days)
-    return "$days day" . ($days > 1 ? "s" : "");
-  if ($hours)
-    return "$hours hour" . ($hours > 1 ? "s" : "");
-  if ($mins)
-    return "$mins min" . ($mins > 1 ? "s" : "");
-  return "< 1 min";
+    $mins = floor((gmtime() - $ts) / 60);
+    $hours = floor($mins / 60);
+    $mins -= $hours * 60;
+    $days = floor($hours / 24);
+    $hours -= $days * 24;
+    $weeks = floor($days / 7);
+    $days -= $weeks * 7;
+    $t = "";
+    if ($weeks)
+        return "$weeks week" . ($weeks > 1 ? "s" : "");
+    if ($days)
+        return "$days day" . ($days > 1 ? "s" : "");
+    if ($hours)
+        return "$hours hour" . ($hours > 1 ? "s" : "");
+    if ($mins)
+        return "$mins min" . ($mins > 1 ? "s" : "");
+    return "< 1 min";
 }
 
 if (! function_exists('hex2bin')) {

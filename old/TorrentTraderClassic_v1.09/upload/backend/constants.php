@@ -1,5 +1,11 @@
 <?php
 
+// errors
+const TT_DEBUG_ON = true;
+const TT_EXCEPTIONS_FILE = __DIR__ . '/../errors/unknown-exceptions.txt';
+const TT_ERRORS_FILE = __DIR__ . '/../errors/unknown-errors.txt';
+const TT_DB_ERRORS_FILE = __DIR__ . '/../errors/db-errors.txt';
+
 const UC_USER = 0;
 const UC_UPLOADER = 1;
 const UC_VIP = 2;
@@ -33,4 +39,3 @@ const TT_AVATARS_URL = TT_PUB_URL.'/avatars';
 
 const TT_CONTR_DIR = TT_ROOT_DIR . '/controllers';
 const TT_JS_URL = TT_PUB_URL . '/js';
-

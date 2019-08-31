@@ -6,7 +6,10 @@ function _write_error_to_file($file, Throwable $exc)
         'Message: ' . $exc->getMessage() . "\n" .
         'Date: ' . date('d M Y H:i:s') . "\n" .
         'Line: ' . $exc->getLine() . "\n" .
-        'File: ' . $exc->getFile() . "\n";
+        'File: ' . $exc->getFile() . "\n" .
+        (function_exists('get_current_url')
+            ? 'Url: ' . get_current_url() . "\n"
+            : '');
     file_put_contents($file, $err_msg, FILE_APPEND);
 }
 
@@ -48,8 +51,14 @@ function unknown_error_handler($errno, $errstr, $errfile, $errline)
         break;
     }
 
-    $err_msg = "\n" . 'Message: ' . $err_msg . "\n" . 'Date: ' . $date . "\n" .
-        'Line: ' . $errline . "\n" . 'File: ' . $errfile . "\n";
+    $err_msg = "\n" .
+        'Message: ' . $err_msg . "\n" .
+        'Date: ' . $date . "\n" .
+        'Line: ' . $errline . "\n" .
+        'File: ' . $errfile . "\n" .
+        (function_exists('get_current_url')
+            ? 'Url: ' . get_current_url() . "\n"
+            : '');
 
     file_put_contents(TT_ERRORS_FILE, $err_msg, FILE_APPEND);
 
@@ -73,4 +82,31 @@ function error($msg)
     benc_resp(['failure reason' => ['type' => 'str', 'value' => $msg]]);
     // echo $msg;
     exit();
+}
+
+function tt_exception_handler(Throwable $exc)
+{
+    global $CURUSER;
+
+    _write_error_to_file(TT_EXCEPTIONS_FILE, $exc);
+
+    // if ($CURUSER['is_admin']) {
+    if (TT_DEBUG_ON) {
+        $err_msg = "\n" .
+            '<h4>Message: </h4>' . $exc->getMessage() .
+            '<h4>Date: </h4>' . date('d M Y H:i:s') .
+            '<h4>Line: </h4>' . $exc->getLine() .
+            '<h4>File: </h4>' . $exc->getFile() .
+            '<h4>Trace: </h4>' . nl2br($exc->getTraceAsString()) .
+            '<h4>Url: </h4>' . get_current_url();
+
+        echo $err_msg;
+    }
+    // }
+    die('Exception detected.');
+}
+
+function tt_error_handler($errno, $errstr, $errfile, $errline)
+{
+    return unknown_error_handler($errno, $errstr, $errfile, $errline);
 }

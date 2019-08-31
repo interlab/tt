@@ -1,12 +1,10 @@
 <?php
 
-require_once '../../backend/functions.php';
-
 dbconn(true);
 loggedinorreturn();
 jmodonly();
 stdhead('Delete Requests');
-require_once '../../backend/admin-functions.php';
+require_once TT_BACKEND_DIR . '/admin-functions.php';
 adminmenu();
 
 $count = DB::fetchColumn('SELECT count(id) FROM requests');

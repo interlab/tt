@@ -698,6 +698,7 @@ if ($act === 'settings') {
 #======================================================================#
 #    Tracker Log
 #======================================================================#
+// @todo: paginator
 if ($act === 'view_log') {
     adminmenu();    // show menu
     // output
@@ -712,7 +713,7 @@ if ($act === 'view_log') {
                 autolink('admin.php?act=view_log', 'Entry not found!');
             }
         } catch (DBALException $ex) {
-            die('<h2>MySQL-Error: check your sql query!</h2>');
+            bark('MySQL-Error', '<h2>MySQL-Error: check your sql query!</h2>');
         }
     }
 
@@ -886,33 +887,43 @@ if (get_user_class() >= UC_JMODERATOR)
 #======================================================================#
 #    User Settings
 #======================================================================#
-if ($act == "users") {
-    $search = trim($search);
-    $class = $class;
-    if ($class == '-' || !is_valid_id($class))
+if ($act === 'users') {
+    $params = [];
+    $search = trim($_GET['search'] ?? '');
+    $class = $_GET['class'] ?? '';
+    if ($class == '-' || !is_valid_id($class)) {
         $class = '';
+    } else {
+        $class = (int) $class;
+    }
+
+    $letter = trim($_GET['letter'] ?? '');
+    if (strlen($letter) > 1) {
+        die('Bad letter!');
+    }
 
     if ($search != '' || $class) {
-        $query = "username LIKE " . sqlesc("%$search%") . " AND status='confirmed'";
+        $query = "username LIKE ? AND status='confirmed'";
+        $params[] = '%' . $search . '%';
         $q = 'search=' . h($search);
     } else {
-        $letter = trim($letter);
-        if (strlen($letter) > 1)
-            die;
-
-        if ($letter == "" || strpos("abcdefghijklmnopqrstuvwxyz", $letter) === false)
+        if ($letter == "" || strpos("abcdefghijklmnopqrstuvwxyz", $letter) === false) {
             $query = "status='confirmed'";
-        else
-            $query = "username LIKE '$letter%' AND status='confirmed'";
+        } else {
+            $query = 'username LIKE ? AND status=?';
+            $params[] = $letter . '%';
+            $params[] = 'confirmed';
+        }
         $q = "letter=$letter";
     }
 
     if ($class) {
-        $query .= " AND class=$class";
+        $query .= ' AND class=?';
+        $params[] = $class;
         $q .= '&class=$class';
     }
 
-    stdhead("Users");
+    stdhead('Users');
     adminmenu();
     begin_frame($txt['MEMBERS'], 'center');
     print("<center><a href='admin.php?act=confirmreg'>Manual Confirm User Registration</a></center><br>\n");
@@ -928,9 +939,9 @@ if ($act == "users") {
         else
             break;
     }
-    print("</select>\n");
-    print("<input type=submit value='Okay'>\n");
-    print("</form>\n");
+    echo '</select>
+    <input type="submit" value="Okay">
+    </form>';
 
     print("<p>\n");
 
@@ -946,11 +957,11 @@ if ($act == "users") {
 
     print("</p>\n");
 
-    $page = $_GET['page'];
+    $page = (int) ($_GET['page'] ?? 0);
     $perpage = 100;
 
-    $num = DB::fetchColumn("SELECT COUNT(*) FROM users WHERE $query");
-    $pages = floor($arr[0] / $perpage);
+    $num = DB::fetchColumn('SELECT COUNT(*) FROM users WHERE ' . $query, $params);
+    $pages = floor($num / $perpage);
     if ($pages * $perpage < $num) {
         ++$pages;
     }
@@ -985,15 +996,15 @@ if ($act == "users") {
 
     $offset = ($page * $perpage) - $perpage;
 
-    $res = DB::query("SELECT * FROM users WHERE $query ORDER BY username LIMIT $offset, $perpage");
+    $res = DB::executeQuery('SELECT * FROM users WHERE ' . $query . ' ORDER BY username LIMIT ' . $offset . ', ' . $perpage, $params);
 
     begin_table();
     print("<tr><td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>"
-            . USERNAME . "</td><td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>Delete</td>"
-            . "<td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . REGISTERED . "</td>"
-            . "<td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . LAST_ACCESS . "</td>"
-            . "<td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>" . RANK . "</td>"
-            . "<td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . COUNTRY . "</td></tr>\n");
+            . $txt['USERNAME'] . "</td><td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>Delete</td>"
+            . "<td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . $txt['REGISTERED'] . "</td>"
+            . "<td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . $txt['LAST_ACCESS'] . "</td>"
+            . "<td align=\"center\"  class=alt3 align=left><font size=1 face=Verdana color=white>" . $txt['RANK'] . "</td>"
+            . "<td align=\"center\"  class=alt3><font size=1 face=Verdana color=white>" . $txt['COUNTRY'] . "</td></tr>\n");
     while ($arr = $res->fetch()) {
         if ($arr['country'] > 0) {
             // todo: subquery
